@@ -1,4 +1,4 @@
-# kubernetes
+# Kubernetes
 
 #### Table of Contents
 
@@ -17,7 +17,7 @@ This module installs and configures Kubernetes https://kubernetes.io/
 Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
 
 It groups containers that make up an application into logical units for easy management and discovery.
-Kubernetes builds upon 15 years of experience of running production workloads at Google, \
+Kubernetes builds upon 15 years of experience of running production workloads at Google,
 combined with best-of-breed ideas and practices from the community.
 
 ## Setup
@@ -34,7 +34,7 @@ Change directory into the root of the module and issue `bundle install`
 Then cd into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory
 You will now be able to run the `kube_tool`
 
-To look at the kube_tools help menu. just issue `./kube_tool.rb` this will print out
+To look at the kube_tools help menu. Just issue `./kube_tool.rb` this will print out
 
 ```puppet
 Commands:
@@ -49,20 +49,63 @@ So to generate the hiera file for my cluster I would use
 ```
 
 The param for `FQDN` is the clusters fqdn, `BOOTSTRAP_CONTROLLER_IP` is the ip address of the controller puppet will use to create things like cluster role bindings, kube dns and the Kubernetes dashboard.
-For the params of `ETCD_IP KUBE_API_ADVERTISE_ADDRESS` we recomend passing the fact for interface that you would like the cluster to use. For example I am using `%{::ipaddress_enp0s8}"`
+For the params of `ETCD_IP KUBE_API_ADVERTISE_ADDRESS` we recommend passing the fact for interface that you would like the cluster to use. For example I am using `%{::ipaddress_enp0s8}"`
 You will also notice for the `ETCD_INITIAL_CLUSTER` I am passing 3 server addresses `"etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"`
-This is for high availiblity, if you wanted you could pass a single server address. When going this in a production environment please use either 3, 5 or 7 nodes for etcd.
+This is for high availability, if you wanted you could pass a single server address. When going this in a production environment please use either 3, 5 or 7 nodes for etcd.
 `INSTALL_DASHBOARD` is a boolean to install the dashboard or not.
 
 After the tool has run you will have a file called kuberntes.yaml. This is your hiera file to add to your Puppet server.
 
-If you `cat` the file you will see it has created all the certificates that Kubernetes needs, you will also see that
+If you `cat` the file you will see it has created all the certificates that Kubernetes needs, you will also see that we have created a bootstrap token, also base64 encoded any values that needed to be for Kubernetes.
+
+If you run this command agian, all the values will be re generated, including the certificates and tokens.
+
+You can then take the hiera file and add it to your control repo or version control (git, svn) and ship it via your cd process to your Pupet server.
+
+If you don't want to use this tool and want to configure the module from scratch all the params are listed in the [init.pp file](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp)
 
 ### Beginning with kubernetes
 
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
+Once you have your hiera file that we created in the steps above we only have 3 paramaters to add to a node.
+They are 
+
+### Bootstrap Controller 
+
+A bootstrap controller is the node a cluster will use to add cluster addons (ie kube dns, cluster role bindings etc)
+After the cluster is bootstrapped the bootstrap controller becomes a normal controller.
+To make a node a bootstrap controller use the following
+
+```puppet
+
+class {'kubernetes':
+  controller           => true,
+  bootstrap_controller => true,
+  }
+```
+
+### Controller
+A controller in Kubernetes contains the control plane and etcd. In a production cluster you should have
+3, 5 or 7 controllers 
+To make a node a controller use the following
+
+```puppet
+
+class {'kubernetes':
+  controller => true,
+  }
+```
+
+### Worker
+
+A worker node is a node that will as the name says do most of the work and run your applications.
+You can add as many of these as Kubernetes can handle see the docs [here](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node)
+To make a node a work use the following 
+```puppet
+class {'kubernetes':
+  woker => true,
+  }  
+```
+Please note a node can not be a controller and worker. It must be on or the other.
 
 ## Usage
 

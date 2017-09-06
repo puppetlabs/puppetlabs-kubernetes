@@ -32,14 +32,14 @@ class kubernetes::repos (
       if $manage_epel {
         include epel
       }
-      
+
       yumrepo { 'docker':
         descr    => 'docker',
         baseurl  => "https://yum.dockerproject.org/repo/main/${repo}/7",
         gpgkey   => 'https://yum.dockerproject.org/gpg',
         gpgcheck => true,
-      } 
-      
+      }
+
       yumrepo { 'kubernetes':
         descr    => 'Kubernetes',
         baseurl  => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',

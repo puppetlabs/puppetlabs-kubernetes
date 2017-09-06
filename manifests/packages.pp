@@ -10,16 +10,17 @@ class kubernetes::packages (
 
   case $::osfamily {
     'Debian' : {
-       package { 'docker-engine':
-         ensure => '1.12.0-0~xenial',
-       }
-    }
-    'RedHat' : {
-       package { 'docker-engine':
-        ensure => '1.12.6',
-          }
-        }
+      package { 'docker-engine':
+        ensure => '1.12.0-0~xenial',
       }
+    }
+
+    'RedHat' : {
+      package { 'docker-engine':
+        ensure => '1.12.6',
+      }
+    }
+  }
 
   package { $kube_packages:
     ensure => $kubernetes_package_version,
