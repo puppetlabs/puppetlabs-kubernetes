@@ -107,12 +107,6 @@ class {'kubernetes':
 ```
 Please note a node can not be a controller and worker. It must be on or the other.
 
-## Usage
-
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
-
 ## Reference
 
 Here, include a complete list of your module's classes, types, providers,
@@ -130,11 +124,4 @@ This module will only support Puppet 4 and above, due to use of functions like e
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+If you would like to contribute to this module please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md)
