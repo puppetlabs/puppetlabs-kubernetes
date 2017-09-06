@@ -20,6 +20,7 @@ class kubernetes::packages (
         ensure => '1.12.6',
       }
     }
+    default: { notify {"The OS family ${::os_family} is not supported by this module":} }
   }
 
   package { $kube_packages:

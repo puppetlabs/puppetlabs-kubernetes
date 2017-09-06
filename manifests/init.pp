@@ -194,7 +194,7 @@
 # Authors
 # -------
 #
-# Scott Coulton  scott.coulton@puppet.com
+# Puppet cloud and containers team 
 #
 # Copyright
 # ---------

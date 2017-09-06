@@ -47,5 +47,8 @@ class kubernetes::repos (
         gpgcheck => true,
       }
     }
+
+  default: { notify {"The OS family ${::os_family} is not supported by this module":} }
+
   }
 }
