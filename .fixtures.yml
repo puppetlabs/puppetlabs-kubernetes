@@ -1,0 +1,7 @@
+fixtures:
+  forge_modules:
+    stdlib: 'puppetlabs-stdlib'
+    apt: 'puppetlabs-apt'
+    epel: 'stahnma-epel'
+  symlinks:
+    kubernetes: "#{source_dir}"

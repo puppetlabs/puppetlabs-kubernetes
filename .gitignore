@@ -1,0 +1,7 @@
+Gemfile.lock
+/spec/fixtures
+coverage/
+.bundle/
+vendor/
+tooling/kubernetes.yaml
+

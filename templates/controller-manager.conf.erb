@@ -1,0 +1,19 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: <%= @certificate_authority_data %>
+    server: https://<%= @bootstrap_controller_ip %>:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: system:kube-controller-manager
+  name: system:kube-controller-manager@kubernetes
+current-context: system:kube-controller-manager@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: system:kube-controller-manager
+  user:
+    client-certificate-data: <%= @client_certificate_data_controller_manager  %>
+    client-key-data: <%= @client_key_data_controller_manager  %>

@@ -1,0 +1,31 @@
+{
+  "name": "puppetlabs/kubernetes",
+  "version": "0.1.0",
+  "author": "Puppet",
+  "summary": "The module installs and configures a Kubernetes cluster",
+  "license": "Apache-2.0",
+  "source": "",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-kubernetes",
+  "issues_url": "https://github.com/puppetlabs/puppetlabs-kubernetes/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":"== 4.19.0"},
+    {"name":"puppetlabs-apt","version_requirement":"== 4.1.0"},
+    {"name":"stahnma-epel","version_requirement":"== 1.2.2"}
+  ],
+  "data_provider": null
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+	"7.2"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+	  "16.04",
+          "16.10"
+      ]
+    }      
+}
+

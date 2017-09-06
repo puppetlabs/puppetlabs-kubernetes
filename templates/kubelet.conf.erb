@@ -1,0 +1,48 @@
+<% if @controller == true  %>
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: <%= @certificate_authority_data %>
+    server: https://<%= @bootstrap_controller_ip %>:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: system:node:kube-master
+  name: system:node:kube-master@kubernetes
+current-context: system:node:kube-master@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: system:node:kube-master
+  user:
+    client-certificate-data: <%= @client_certificate_data_controller  %>
+    client-key-data: <%= @client_key_data_controller  %>
+<% elsif @worker == true %>
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: <%= @certificate_authority_data %>
+    server: https://<%= @bootstrap_controller_ip %>:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubelet-csr
+  name: kubelet-csr
+- context:
+    cluster: kubernetes
+    user: tls-bootstrap-token-user
+  name: tls-bootstrap-token-user@kubernetes
+current-context: kubelet-csr
+kind: Config
+preferences: {}
+users:
+- name: kubelet-csr
+  user:
+    client-certificate-data: <%= @client_certificate_data_worker  %>
+    client-key-data: <%= @client_key_data_worker  %>
+- name: tls-bootstrap-token-user
+  user:
+    token: <%= @bootstrap_token  %>
+<% end %>
