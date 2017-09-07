@@ -14,7 +14,7 @@ class CreateCerts
       end
     end 
     csr = { "CN": "kubernetes", "key": { "algo": "rsa", "size": 2048 } }
-    conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
+    conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
     File.open("ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("ca-conf.json", "w+") { |file| file.write(conf.to_json) }
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare ca')
@@ -33,7 +33,7 @@ class CreateCerts
     dns = fqdn
     ip = ip
 
-    csr = { "CN": "kube-apiserver", "hosts": [ "kubernetes", "kube-master", dns, ip, 'cluster.local', "10.96.0.1", "kubernetes.default.svc,cluster.local",  "127.0.0.1", "kubernetes.default" ], "key": { "algo": "rsa", "size": 2048 }}
+    csr = { "CN": "kube-apiserver", "hosts": [  "kube-master", "kubernetes", "kubernetes.default", "kubernetes.default.svc", "kubernetes.default.svc.cluster.local", "cluster.local", dns,  ip, "10.96.0.1"  ], "key": { "algo": "rsa", "size": 2048 }}
     File.open("kube-api-csr.json", "w+") { |file| file.write(csr.to_json) }  
     system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server kube-api-csr.json | cfssljson -bare apiserver")
     FileUtils.rm_f('kube-api-csr.csr')
@@ -91,7 +91,7 @@ class CreateCerts
   def CreateCerts.front_proxy_ca
     puts "Creating front proxy ca certs"
     csr = { "CN": "kubernetes", "key": { "algo": "rsa", "size": 2048 } }
-    conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
+    conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
     File.open("front-proxy-ca.json", "w+") { |file| file.write(csr.to_json) }
     File.open("front-proxy-ca-conf.json", "w+") { |file| file.write(conf.to_json) }
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare front-proxy-ca')
@@ -107,7 +107,7 @@ class CreateCerts
     puts "Creating front proxy client certs"
     csr = { "CN": "front-proxy-client", "key": { "algo": "rsa", "size": 2048 } }
     File.open("front-proxy-client.json", "w+") { |file| file.write(csr.to_json) }
-    system('cfssl gencert -ca=front-proxy-ca.pem -ca-key=front-proxy-ca-key.pem -config=front-proxy-ca-conf.json -profile server front-proxy-client.json | cfssljson -bare front-proxy-client')
+    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server  front-proxy-client.json | cfssljson -bare front-proxy-client')
     data = Hash.new
     cer = File.read("front-proxy-client.pem")
     key = File.read("front-proxy-client-key.pem")
@@ -120,7 +120,7 @@ class CreateCerts
     puts "Creating system node certs"
     csr = { "CN": "system:node:kube-controller", "key": { "algo": "rsa", "size": 2048 }, "names": [ { "O": "system:nodes" } ] }
     File.open("system-node.json", "w+") { |file| file.write(csr.to_json) }
-    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile client system-node.json | cfssljson -bare system-node')
+    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server system-node.json | cfssljson -bare system-node')
     data = Hash.new
     cer = File.read("system-node.pem")
     key = File.read("system-node-key.pem")
@@ -133,7 +133,7 @@ class CreateCerts
     puts "Creating kube controller manager certs"	  
     csr = { "CN": "system:kube-controller-manager", "key": { "algo": "rsa", "size": 2048 }, "names": [ { "O": "system:masters" } ] }
     File.open("kube-controller-manager.json", "w+") { |file| file.write(csr.to_json) }
-    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile client kube-controller-manager.json | cfssljson -bare kube-controller-manager')
+    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server kube-controller-manager.json | cfssljson -bare kube-controller-manager')
     data = Hash.new
     cer = File.read("kube-controller-manager.pem")
     key = File.read("kube-controller-manager-key.pem")
@@ -146,7 +146,7 @@ class CreateCerts
     puts "Creating kube scheduler certs"
     csr = { "CN": "system:kube-scheduler", "key": { "algo": "rsa", "size": 2048 } }
     File.open("kube-scheduler.json", "w+") { |file| file.write(csr.to_json) }
-    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile client kube-scheduler.json | cfssljson -bare kube-scheduler')
+    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server kube-scheduler.json | cfssljson -bare kube-scheduler')
     data = Hash.new
     cer = File.read("kube-scheduler.pem")
     key = File.read("kube-scheduler-key.pem")
@@ -159,7 +159,7 @@ class CreateCerts
     puts "Creating kube worker certs"
     csr = { "CN": "system:node:kube-workers", "key": { "algo": "rsa", "size": 2048 }, "names": [ { "O": "system:nodes" } ] }
     File.open("kube-workers.json", "w+") { |file| file.write(csr.to_json) }
-    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile client kube-workers.json | cfssljson -bare kube-workers')
+    system('cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server kube-workers.json | cfssljson -bare kube-workers')
     data = Hash.new
     cer = File.read("kube-workers.pem")
     key = File.read("kube-workers-key.pem")
