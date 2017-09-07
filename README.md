@@ -60,16 +60,16 @@ If you `cat` the file you will see it has created all the certificates that Kube
 
 If you run this command agian, all the values will be re generated, including the certificates and tokens.
 
-You can then take the hiera file and add it to your control repo or version control (git, svn) and ship it via your cd process to your Pupet server.
+You can then take the hiera file and add it to your control repo or version control (git, svn) and ship it via your cd process to your Puppet server.
 
 If you don't want to use this tool and want to configure the module from scratch all the params are listed in the [init.pp file](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp)
 
 ### Beginning with kubernetes
 
 Once you have your hiera file that we created in the steps above we only have 3 paramaters to add to a node.
-They are 
+They are
 
-### Bootstrap Controller 
+### Bootstrap Controller
 
 A bootstrap controller is the node a cluster will use to add cluster addons (ie kube dns, cluster role bindings etc)
 After the cluster is bootstrapped the bootstrap controller becomes a normal controller.
@@ -85,7 +85,7 @@ class {'kubernetes':
 
 ### Controller
 A controller in Kubernetes contains the control plane and etcd. In a production cluster you should have
-3, 5 or 7 controllers 
+3, 5 or 7 controllers
 To make a node a controller use the following
 
 ```puppet
@@ -99,11 +99,11 @@ class {'kubernetes':
 
 A worker node is a node that will as the name says do most of the work and run your applications.
 You can add as many of these as Kubernetes can handle see the docs [here](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node)
-To make a node a work use the following 
+To make a node a work use the following
 ```puppet
 class {'kubernetes':
   woker => true,
-  }  
+  }
 ```
 Please note a node can not be a controller and worker. It must be on or the other.
 
