@@ -19,10 +19,6 @@ describe 'the Kubernetes module' do
           apply_manifest(pp, :catch_failures => true)
         end
 
-        # it 'should run idempotently' do
-        #   apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
-        # end
-
         it 'should install kubectl' do
           shell('kubectl', :acceptable_exit_codes => [0])
         end
