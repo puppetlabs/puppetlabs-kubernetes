@@ -24,7 +24,7 @@ class Kube_tool < Thor
     CreateCerts.kube_scheduler
     CreateCerts.kube_workers
     CreateToken.bootstrap
-    OtherParams.create(bootstrap_controller_ip, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard)    
+    OtherParams.create(bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard)    
     CleanUp.remove_files
   end 
 end
