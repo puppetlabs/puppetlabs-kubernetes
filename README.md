@@ -43,7 +43,7 @@ To view the kube_tool help menu, run the `./kube_tool.rb` command to display:
 ```puppet
 
 Commands:
-  kube_tool.rb build_heira FQDN, IP, BOOTSTRAP_CONTROLLER_IP, ETCD_INITIAL_CLUSTER, ETCD_IP, KUBE_API_ADVERTISE_ADDRESS, INSTALL_DASHBOARD  # Pass the cluster params to build your hiera configuration
+  kube_tool.rb build_hiera FQDN, IP, BOOTSTRAP_CONTROLLER_IP, ETCD_INITIAL_CLUSTER, ETCD_IP, KUBE_API_ADVERTISE_ADDRESS, INSTALL_DASHBOARD  # Pass the cluster params to build your hiera configuration
   kube_tool.rb help [COMMAND]                                                                                                               # Describe available commands or one specific command
 ```
 
@@ -51,7 +51,7 @@ This is an example of how to generate a kubernetes.yaml file for your cluster:
 
 ```puppet
 
-./kube_tool.rb build_heira kubernetes 172.17.10.101 172.17.10.101 "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"  "%{::ipaddress_enp0s8}"  "%{::ipaddress_enp0s8}" true
+./kube_tool.rb build_hiera kubernetes 172.17.10.101 172.17.10.101 "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"  "%{::ipaddress_enp0s8}"  "%{::ipaddress_enp0s8}" true
 ```
 
 The parameters are:
