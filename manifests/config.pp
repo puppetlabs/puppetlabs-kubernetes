@@ -4,6 +4,7 @@ class kubernetes::config (
 
   $kubernetes_version = $kubernetes::kubernetes_version,
   $kube_dns_version = $kubernetes::kube_dns_version,
+  $kubernetes_fqdn = $kubernetes::kubernetes_fqdn,
   $controller = $kubernetes::controller,
   $bootstrap_controller = $kubernetes::bootstrap_controller,
   $bootstrap_controller_ip = $kubernetes::bootstrap_controller_ip,

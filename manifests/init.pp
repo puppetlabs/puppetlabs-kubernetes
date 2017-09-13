@@ -196,14 +196,13 @@
 #
 # Puppet cloud and containers team 
 #
-# Copyright
-# ---------
 #
-# Copyright 2017 Your name here, unless otherwise noted.
 #
+
 class kubernetes (
   $kubernetes_version = $kubernetes::params::kubernetes_version,
   $kubernetes_package_version = $kubernetes::params::kubernetes_package_version,
+  $kubernetes_fqdn = $kubernetes::params::kubernetes_fqdn,
   $cni_version = $kubernetes::params::cni_version,
   $kube_dns_version = $kubernetes::params::kube_dns_version,
   $controller = $kubernetes::params::controller,

@@ -26,6 +26,7 @@ This module lets you use Puppet to install and configure Kubernetes for automati
 #### Installing the Cloudflare PKI Toolkit (CFSSL)
 
 To install CFSSL, follow these [instructions](https://github.com/cloudflare/cfssl).
+Please note CFSSL need to be in your `$PATH` for the kube_tool to gernerate your ssl certificates.
 
 #### Installing the kubernetes module
 
@@ -37,7 +38,7 @@ To help with the setup requirements, we have included `kube_tool` to automatical
 
 To run `kube_tool`, change to the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory.
 
-To view the kube_tools help menu, run the `./kube_tool.rb` command to display:
+To view the kube_tool help menu, run the `./kube_tool.rb` command to display:
 
 ```puppet
 
