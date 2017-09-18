@@ -4,5 +4,6 @@ coverage/
 .bundle/
 vendor/
 tooling/kubernetes.yaml
-.log/
+log/
 .vagrant/
+
