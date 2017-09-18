@@ -6,74 +6,77 @@
 1. [Setup - The basics of getting started with kubernetes](#setup)
     * [Setup requirements](#setup-requirements)
     * [Beginning with kubernetes](#beginning-with-kubernetes)
-1. [Usage - Configuration options and additional functionality](#usage)
 1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development - Guide for contributing to the module](#development)
 
+## Overview
+
+The Puppet kubernetes module installs and configures the [Kubernetes](https://Kubernetes.io/) system which arranges containers into logical units to improve management and discovery.
+
 ## Description
 
-This module installs and configures Kubernetes https://kubernetes.io/
-Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
+This module installs and configures [Kubernetes](https://kubernetes.io/). Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
 
 It groups containers that make up an application into logical units for easy management and discovery.
-Kubernetes builds upon 15 years of experience of running production workloads at Google,
-combined with best-of-breed ideas and practices from the community.
 
 ## Setup
 
 ### Setup Requirements
 
-To make this module easy to pick up and get going we have included a tool that will auto generate
-all the security params, bootstrap token, and other configs about your cluster into a hiera file.
+The included configuration tool, `kube_tools` auto generates all the security parameters, the bootstrap token, and other configurations for your cluster into a file.
 
-To take advantage of this first install the module `puppet module install puppetlabs-kubernetes --version 0.1.0`
-We would suggest doing this on a local machine and not a Puppet server as you need cfssl installed.
-To install cfssl follow the instructions [here](https://github.com/cloudflare/cfssl)
-Change directory into the root of the module and issue `bundle install`
-Then cd into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory
-You will now be able to run the `kube_tool`
+First install the module `puppet module install puppetlabs-kubernetes --version 0.1.0`. We would suggest doing this on a local machine and not a Puppet server as you need cfssl installed.
 
-To look at the kube_tools help menu. Just issue `./kube_tool.rb` this will print out
+To install cfssl, see Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl). Change directory into the root of the module and issue `bundle install`.
+Then cd into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory. You will now be able to run the `kube_tool`.
+
+To look at the kube_tools help menu. Just issue `./kube_tool.rb` this will print out:
 
 ```puppet
+
 Commands:
-  kube_tool.rb build_heira FQDN, IP, BOOTSTRAP_CONTROLLER_IP, ETCD_INITIAL_CLUSTER, ETCD_IP, KUBE_API_ADVERTISE_ADDRESS, INSTALL_DASHBOARD  # Pass the cluster params to build your hiera configuration
+  kube_tool.rb build_hiera FQDN, IP, BOOTSTRAP_CONTROLLER_IP, ETCD_INITIAL_CLUSTER, ETCD_IP, KUBE_API_ADVERTISE_ADDRESS, INSTALL_DASHBOARD  # Pass the cluster params to build your hiera configuration
   kube_tool.rb help [COMMAND]                                                                                                               # Describe available commands or one specific command
 ```
 
-So to generate the hiera file for my cluster I would use
+So to generate the hiera file for my cluster I would use:
 
 ```puppet
-./kube_tool.rb build_heira kubernetes 172.17.10.101 172.17.10.101 "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"  "%{::ipaddress_enp0s8}"  "%{::ipaddress_enp0s8}" true
+
+./kube_tool.rb build_hiera kubernetes 172.17.10.101 172.17.10.101 "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"  "%{::ipaddress_enp0s8}"  "%{::ipaddress_enp0s8}" true
 ```
 
-The param for `FQDN` is the clusters fqdn, `BOOTSTRAP_CONTROLLER_IP` is the ip address of the controller puppet will use to create things like cluster role bindings, kube dns and the Kubernetes dashboard.
-For the params of `ETCD_IP KUBE_API_ADVERTISE_ADDRESS` we recommend passing the fact for interface that you would like the cluster to use. For example I am using `%{::ipaddress_enp0s8}"`
-You will also notice for the `ETCD_INITIAL_CLUSTER` I am passing 3 server addresses `"etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"`
-This is for high availability, if you wanted you could pass a single server address. When going this in a production environment please use either 3, 5 or 7 nodes for etcd.
-`INSTALL_DASHBOARD` is a boolean to install the dashboard or not.
+The parameters are:
 
-After the tool has run you will have a file called kuberntes.yaml. This is your hiera file to add to your Puppet server.
+* `FQDN`: the cluster fqdn.
+* `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
+* `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd. 
+* `ETCD_IP` and `ETCD_IP KUBE_API_ADVERTISE_ADDRESS`: we recommend passing the fact for the interface to be used by the cluster. 
+* `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
-If you `cat` the file you will see it has created all the certificates that Kubernetes needs, you will also see that we have created a bootstrap token, also base64 encoded any values that needed to be for Kubernetes.
+The tool creates a `kuberntes.yaml` file. To view the file contents on screen, run the `cat` command.
 
-If you run this command agian, all the values will be re generated, including the certificates and tokens.
+Add the `kuberntes.yaml` file to the Hiera directory on your Puppet server. 
 
-You can then take the hiera file and add it to your control repo or version control (git, svn) and ship it via your cd process to your Puppet server.
+The tool also creates a bootstrap token and base64 encodes any values that need to be encoded for Kubernetes. If you run the `cat` command again, all the values are re-generated, including the certificates and tokens. You can then use Jenkins or Bamboo to add the Hiera file to your control repository or version control application.
 
-If you don't want to use this tool and want to configure the module from scratch all the params are listed in the [init.pp file](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp)
+If you don't want to use the `kube_tools` configuration tool and want to manually configure the module, all of the parameters are listed in the [Reference](#reference) section and in the [init.pp](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp) file.
 
-### Beginning with kubernetes
 
-Once you have your hiera file that we created in the steps above we only have 3 paramaters to add to a node.
-They are
+### Begininning with kubernetes
 
-### Bootstrap Controller
+After your `kuberntes.yaml` file has been added to the Hiera directory on your Puppet server, configure your node with one of the following parameters:
 
-A bootstrap controller is the node a cluster will use to add cluster addons (ie kube dns, cluster role bindings etc)
-After the cluster is bootstrapped the bootstrap controller becomes a normal controller.
-To make a node a bootstrap controller use the following
+* [bootstrap controller](###bootstrap-controller)
+* [controller](###controller)
+* [worker](###worker)
+
+#### Bootstrap Controller
+
+A bootstrap controller is the node a cluster uses to add cluster addons (such as kube dns, cluster role bindings etc). After the cluster is bootstrapped, the bootstrap controller becomes a normal controller.
+
+To make a node a bootstrap controller, add the following code to the manifest:
 
 ```puppet
 
@@ -83,10 +86,11 @@ class {'kubernetes':
   }
 ```
 
-### Controller
-A controller in Kubernetes contains the control plane and etcd. In a production cluster you should have
-3, 5 or 7 controllers
-To make a node a controller use the following
+#### Controller
+
+A controller in Kubernetes contains the control plane and `etcd`. In a production cluster you should have three, five, or seven controllers.
+
+To make a node a controller, add the following code to the manifest:
 
 ```puppet
 
@@ -95,33 +99,323 @@ class {'kubernetes':
   }
 ```
 
-### Worker
+#### Worker
 
-A worker node is a node that will as the name says do most of the work and run your applications.
-You can add as many of these as Kubernetes can handle see the docs [here](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node)
-To make a node a work use the following
+A worker node runs your applications. You can add as many of these as Kubernetes can handle. For information about nodes in Kubernetes, see the [Kubernetes docs](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node).
+
+To make a node a worker node, add the following code to the manifest:
+
 ```puppet
+
 class {'kubernetes':
   woker => true,
   }
 ```
-Please note a node can not be a controller and worker. It must be on or the other.
+
+Please note that a node can not be a controller and a worker. It must be one or the other.
+
+## Usage
+
+This section is where you describe how to customize, configure, and do the fancy stuff with your module here. It's especially helpful if you include usage examples and code samples for doing things with your module.
 
 ## Reference
 
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+### Parameters
+
+#### `kubernetes_version`
+
+The version of the Kubernetes containers to install.
+
+Defaults to  `1.7.3`.
+
+#### `kubernetes_package_version`
+
+The version the Kubernetes OS packages to install, such as kubectl and kubelet.
+
+Defaults to `1.7.3`.
+
+#### `cni_version`
+
+The version of the cni package to install.
+
+Defaults to `0.5.1`.
+
+#### `kube_dns_version`
+
+The version of kube DNS to install.
+
+Defaults to `1.14.2`.
+
+#### `controller`
+
+Specifies whether to set the node as a Kubernetes controller.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
+
+#### `bootstrap_controller`
+
+Specifies whether to set the node as the bootstrap controller.
+
+The bootstrap controller is used only for creating the initial cluster.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
+
+#### `bootstrap_controller_ip`
+
+The IP address of the bootstrap controller.
+
+Defaults to `undef`.
+
+#### `worker`
+
+Specifies whether to set a node as a worker.
+
+Defaults to `undef`.
+
+#### `manage_epel`
+
+Specifies whether you to manage epel for a RHEL box.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
+
+#### `kube_api_advertise_address`
+
+The IP address you want exposed by the API server. 
+
+An example with hiera would be `kubernetes::kube_api_advertise_address:"%{::ipaddress_enp0s8}"`.
+
+Defaults to `undef`. 
+
+#### `etcd_version`
+
+The version of etcd to use.
+
+Defaults to `3.0.17`.
+
+#### `etcd_ip`
+
+The IP address you want etcd to use for communications.
+
+An example with hiera would be `kubernetes::etcd_ip:"%{::ipaddress_enp0s8}"`.
+
+Defaults to `undef`.
+
+#### `etcd_initial_cluster`
+
+This will tell etcd how many nodes will be in the cluster and is passed as a string.
+
+A Hiera example is `kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380`.
+
+Defaults to `undef`.
+
+#### `bootstrap_token `
+
+The token Kubernetes uses to start components.
+
+For information on bootstrap tokens, see https://kubernetes.io/docs/admin/bootstrap-tokens/
+
+Defaults to `undef`.
+
+#### `bootstrap_token_name`
+
+The name of the bootstrap token.
+
+An example with hiera would be `kubernetes::bootstrap_token_name: bootstrap-token-95e1e0`.
+
+Defaults to `undef`.
+
+#### `bootstrap_token_description`
+
+The base64 encoded description of the bootstrap token.
+
+A Hiera example is `kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars`. 
+
+#### `bootstrap_token_id`
+
+The base64 encoded ID the cluster uses to point to the token.
+
+A Hiera example is `kubernetes::bootstrap_token_id: OTVlMWUwDQo=`.
+
+Defaults to `undef`.
+
+#### `bootstrap_token_secret`
+
+The base64 encoded secret which validates the bootstrap token.
+
+An example with hiera would be `kubernetes::bootstrap_token_secret: OTVlMWUwLmFlMmUzYjkwYTdmYjlkMzYNCg==`.
+
+Defaults to `undef`.
+
+#### `bootstrap_token_usage_bootstrap_authentication`
+
+The base64 encoded bool which uses the bootstrap token. (true = dHJ1ZQ==)
+
+An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==`.
+
+Defaults to `undef`.
+   
+#### `bootstrap_token_usage_bootstrap_signing`
+
+The base64 encoded bool which uses the bootstrap signing. (true = dHJ1ZQ==)
+
+An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==`.
+
+Defaults to `undef`.
+
+#### `certificate_authority_data`
+
+The string value for the cluster ca certificate data.
+
+Defaults to `undef`.
+
+#### `client_certificate_data_controller`
+
+The client certificate for the controller. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_certificate_data_controller_manager`
+
+The client certificate for the controller manager. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_certificate_data_scheduler`
+
+The client certificate for the scheduler. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_certificate_data_worker`
+
+The client certificate for the kubernetes worker. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_key_data_controller`
+
+The client certificate key for the controller. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_key_data_controller_manager`
+
+The client certificate key for the controller manager. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_key_data_scheduler`
+
+The client certificate key for the scheduler. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `client_key_data_worker`
+
+The client certificate key for the kubernetes worker. Must be a string value. 
+
+Defaults to `undef`.
+
+#### `apiserver_kubelet_client_crt`
+
+The certificate for the kubelet api server. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `apiserver_kubelet_client_key`
+
+The client key for the kubelet api server. Must be a certificate value and not a file. 
+
+Defaults to `undef`.
+
+#### `apiserver_crt`
+
+The certificate for the api server. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `apiserver_key`
+
+The key for the api server. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `ca_crt`
+
+The ca certificate for the cluster. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `ca_key`
+
+The ca key for the cluster. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `front_proxy_ca_crt`
+
+The ca certificate for the front proxy. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `front_proxy_ca_key`
+
+The ca key for the front proxy. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `front_proxy_client_crt`
+
+The client certificate for the front proxy. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `front_proxy_client_key`
+
+The client key for front proxy. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `sa_key`
+
+The key for the service account. Must be a certificate value and not a file.  
+
+Defaults to `undef`.
+
+#### `sa_pub`
+
+The public key for the service account. Must be a certificate value and not a file.
+
+Defaults to `undef`.
+
+#### `cni_network_provider`
+
+The network deployment URL that kubectl can locate.
+
+We support networking providers that supports cni.
+
+This defaults to `https://git.io/weave-kube-1.6`.
+
+#### `install_dashboard`
+
+Specifies whether the kubernetes dashboard is installed.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
 
 ## Limitations
 
-This module will only support Kubernetes 1.6 and above due to the changes
-that where introduced in that release. https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160
-The main feature that prevents us from supporting older releases of Kubernetes is rbac.
+This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) and above.
 
-This module will only support Puppet 4 and above, due to use of functions like each
+This module supports only Puppet 4 and above.
 
 ## Development
 
-If you would like to contribute to this module please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md)
+If you would like to contribute to this module please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md).
