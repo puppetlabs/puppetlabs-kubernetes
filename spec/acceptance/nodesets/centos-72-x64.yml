@@ -1,0 +1,12 @@
+HOSTS:
+  kube-master:
+    roles:
+      - default
+    platform: el-7-x86_64
+    box: puppetlabs/centos-7.2-64-nocm
+    box_url: https://vagrantcloud.com/puppetlabs/boxes/centos-7.2-64-nocm
+    hypervisor: vagrant
+    ip: 172.17.10.101
+CONFIG:
+  log_level: verbose
+  type: foss
