@@ -83,7 +83,7 @@ To make a node a bootstrap controller, add the following code to the manifest:
 class {'kubernetes':
   controller           => true,
   bootstrap_controller => true,
-  }
+}
 ```
 
 #### Controller
@@ -96,7 +96,7 @@ To make a node a controller, add the following code to the manifest:
 
 class {'kubernetes':
   controller => true,
-  }
+}
 ```
 
 #### Worker
