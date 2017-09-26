@@ -9,7 +9,7 @@ require_relative 'kube_tool/other_params.rb'
 
 class Kube_tool < Thor
   desc "build_hiera FQDN, IP, BOOTSTRAP_CONTROLLER_IP, ETCD_INITIAL_CLUSTER, ETCD_IP, KUBE_API_ADVERTISE_ADDRESS, INSTALL_DASHBOARD", "Pass the cluster params to build your hiera configuration"
-  def build_heira(fqdn, ip, bootstrap_controller_ip, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard)
+  def build_hiera(fqdn, ip, bootstrap_controller_ip, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard)
     PreChecks.checks
     CreateCerts.ca
     CreateCerts.api_servers(fqdn, ip)
