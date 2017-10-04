@@ -38,6 +38,6 @@ describe 'kubernetes::kube_addons', :type => :class do
       }
     end
 
-    it { should contain_exec('Install Kubernetes dashbaord')}
+    it { should contain_exec('Install Kubernetes dashboard')}
   end
 end

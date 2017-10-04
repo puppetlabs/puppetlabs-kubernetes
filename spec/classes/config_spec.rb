@@ -47,6 +47,7 @@ describe 'kubernetes::config', :type => :class do
       'apiserver_kubelet_client_key' => 'foo',
       'apiserver_crt' => 'foo',
       'apiserver_key' => 'foo',
+      'kubernetes_fqdn' => 'kube.foo.dev',
       'ca_crt' => 'foo',
       'ca_key' => 'foo',
       'front_proxy_ca_crt' => 'foo',
