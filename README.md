@@ -83,7 +83,7 @@ To make a node a bootstrap controller, add the following code to the manifest:
 class {'kubernetes':
   controller           => true,
   bootstrap_controller => true,
-  }
+}
 ```
 
 #### Controller
@@ -96,7 +96,7 @@ To make a node a controller, add the following code to the manifest:
 
 class {'kubernetes':
   controller => true,
-  }
+}
 ```
 
 #### Worker
@@ -109,14 +109,10 @@ To make a node a worker node, add the following code to the manifest:
 
 class {'kubernetes':
   woker => true,
-  }
+}
 ```
 
 Please note that a node can not be a controller and a worker. It must be one or the other.
-
-## Usage
-
-This section is where you describe how to customize, configure, and do the fancy stuff with your module here. It's especially helpful if you include usage examples and code samples for doing things with your module.
 
 ## Reference
 
