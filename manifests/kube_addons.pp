@@ -1,4 +1,4 @@
-# Class kuberntes Kube addonsv v
+# Class kuberntes kube_addons
 class kubernetes::kube_addons (
 
   $bootstrap_controller = $kubernetes::bootstrap_controller,

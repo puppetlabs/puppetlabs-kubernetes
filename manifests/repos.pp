@@ -1,4 +1,4 @@
-## Kubernetes repos 
+## kubernetes repos 
 
 class kubernetes::repos (
   $manage_epel = $kubernetes::manage_epel,

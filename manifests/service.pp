@@ -1,4 +1,4 @@
-# Puppet class that contorols the Kubelet service
+# Puppet class that controls the Kubelet service
 
 class kubernetes::service (
 

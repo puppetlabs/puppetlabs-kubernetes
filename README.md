@@ -108,7 +108,7 @@ To make a node a worker node, add the following code to the manifest:
 ```puppet
 
 class {'kubernetes':
-  woker => true,
+  worker => true,
 }
 ```
 
