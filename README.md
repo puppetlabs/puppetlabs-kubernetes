@@ -55,9 +55,9 @@ The parameters are:
 * `ETCD_IP` and `ETCD_IP KUBE_API_ADVERTISE_ADDRESS`: we recommend passing the fact for the interface to be used by the cluster. 
 * `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
-The tool creates a `kuberntes.yaml` file. To view the file contents on screen, run the `cat` command.
+The tool creates a `kubernetes.yaml` file. To view the file contents on screen, run the `cat` command.
 
-Add the `kuberntes.yaml` file to the Hiera directory on your Puppet server. 
+Add the `kubernetes.yaml` file to the Hiera directory on your Puppet server. 
 
 The tool also creates a bootstrap token and base64 encodes any values that need to be encoded for Kubernetes. If you run the `cat` command again, all the values are re-generated, including the certificates and tokens. You can then use Jenkins or Bamboo to add the Hiera file to your control repository or version control application.
 
@@ -66,7 +66,7 @@ If you don't want to use the `kube_tools` configuration tool and want to manuall
 
 ### Begininning with kubernetes
 
-After your `kuberntes.yaml` file has been added to the Hiera directory on your Puppet server, configure your node with one of the following parameters:
+After your `kubernetes.yaml` file has been added to the Hiera directory on your Puppet server, configure your node with one of the following parameters:
 
 * [bootstrap controller](###bootstrap-controller)
 * [controller](###controller)
