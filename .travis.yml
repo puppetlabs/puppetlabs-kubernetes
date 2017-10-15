@@ -1,0 +1,15 @@
+---
+sudo: false
+cache: bundler
+language: ruby
+bundler_args: --without development acceptance
+script: bundle exec rake test
+matrix:
+  fast_finish: true
+  include:
+  - rvm: 2.2.5
+    env: PUPPET_GEM_VERSION="~> 5.0" STRICT_VARIABLES="yes"
+  - rvm: 2.2.5
+    env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+  - rvm: 2.1.6
+    env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"

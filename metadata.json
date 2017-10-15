@@ -1,5 +1,5 @@
 {
-  "name": "puppetlabs/kubernetes",
+  "name": "puppetlabs-kubernetes",
   "version": "0.1.0",
   "author": "Puppet",
   "summary": "The module installs and configures a Kubernetes cluster",
