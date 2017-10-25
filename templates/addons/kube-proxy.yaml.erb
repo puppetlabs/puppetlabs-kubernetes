@@ -12,7 +12,7 @@ data:
     clusters:
     - cluster:
         certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        server: https://172.17.10.101:6443
+        server: https://<%= @bootstrap_controller_ip %>:6443
       name: default
     contexts:
     - context:
