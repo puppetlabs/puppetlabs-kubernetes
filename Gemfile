@@ -16,6 +16,7 @@ gem "beaker-puppet_install_helper", :require => false
 gem "beaker-rspec"
 gem "parallel_tests"
 gem "beaker", "~> 2.0"
+gem 'rspec_junit_formatter'
 
 # rspec must be v2 for ruby 1.8.7
 if RUBY_VERSION >= '1.8.7' && RUBY_VERSION < '1.9'
