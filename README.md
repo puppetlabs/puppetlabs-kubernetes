@@ -415,6 +415,12 @@ This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/b
 
 This module supports only Puppet 4 and above.
 
+This module has been tested on the following OS
+
+RedHat 7.x
+CentOS 7.x
+Ubuntu 16.04
+
 ## Development
 
 If you would like to contribute to this module please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md).
