@@ -27,7 +27,7 @@ It groups containers that make up an application into logical units for easy man
 
 ### Setup Requirements
 
-The included configuration tool, `kube_tools` auto generates all the security parameters, the bootstrap token, and other configurations for your cluster into a file.
+The included configuration tool, `kube_tools` auto generates all the security parameters, the bootstrap token, and other configurations for your cluster into a file. The `kube_tool` requires Ruby 2.3 and above.
 
 First install the module `puppet module install puppetlabs-kubernetes --version 0.1.0`. We would suggest doing this on a local machine and not a Puppet server as you need cfssl installed.
 
