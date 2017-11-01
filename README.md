@@ -417,9 +417,9 @@ This module supports only Puppet 4 and above.
 
 This module has been tested on the following OS
 
-RedHat 7.x
-CentOS 7.x
-Ubuntu 16.04
+RedHat 7.x  
+CentOS 7.x  
+Ubuntu 16.04  
 
 ## Development
 
