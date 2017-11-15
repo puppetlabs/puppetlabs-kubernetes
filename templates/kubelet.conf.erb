@@ -8,13 +8,13 @@ clusters:
 contexts:
 - context:
     cluster: kubernetes
-    user: system:node:kube-master
-  name: system:node:kube-master@kubernetes
-current-context: system:node:kube-master@kubernetes
+    user: system:node:<%= @hostname %>
+  name: system:node:<%= @hostname %>@kubernetes
+current-context: system:node:<%= @hostname %>@kubernetes
 kind: Config
 preferences: {}
 users:
-- name: system:node:kube-master
+- name: system:node:<%= @hostname %>
   user:
     client-certificate-data: <%= @client_certificate_data_controller  %>
     client-key-data: <%= @client_key_data_controller  %>
