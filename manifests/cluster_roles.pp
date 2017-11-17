@@ -3,7 +3,7 @@
 class kubernetes::cluster_roles (
 
   $bootstrap_controller = $kubernetes::bootstrap_controller,
-
+  $kubernetes_version = $kubernetes::kubernetes_version,
 ){
 
   if $bootstrap_controller {
@@ -30,6 +30,14 @@ class kubernetes::cluster_roles (
     subscribe   => File['/etc/kubernetes/manifests/clusterRoleBinding.yaml'],
     refreshonly => true,
     require     => File['/etc/kubernetes/manifests/clusterRoleBinding.yaml'],
+    }
+  
+  if $kubernetes_version =~ /1[.]8[.]\d/ {
+    
+    exec { 'Create role biniding for system nodes':
+      command => 'kubectl set subject clusterrolebinding system:node --group=system:nodes',
+      #unless => 'kubectl get clusterrolebindings system:node',
+      }
     }
   }
 }
