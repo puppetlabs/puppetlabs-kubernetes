@@ -36,7 +36,6 @@ class kubernetes::cluster_roles (
     
     exec { 'Create role biniding for system nodes':
       command => 'kubectl set subject clusterrolebinding system:node --group=system:nodes',
-      #unless => 'kubectl get clusterrolebindings system:node',
       }
     }
   }
