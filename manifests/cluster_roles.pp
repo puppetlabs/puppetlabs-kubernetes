@@ -31,9 +31,9 @@ class kubernetes::cluster_roles (
     refreshonly => true,
     require     => File['/etc/kubernetes/manifests/clusterRoleBinding.yaml'],
     }
-  
+
   if $kubernetes_version =~ /1[.]8[.]\d/ {
-    
+
     exec { 'Create role biniding for system nodes':
       command => 'kubectl set subject clusterrolebinding system:node --group=system:nodes',
       }
