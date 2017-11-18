@@ -32,6 +32,7 @@ describe 'kubernetes::config', :type => :class do
       'bootstrap_token_secret' => 'foo',
       'bootstrap_token_usage_bootstrap_authentication' => 'foo',
       'bootstrap_token_usage_bootstrap_signing' => 'foo',
+      'bootstrap_token_expiration' => 'foo',
       'certificate_authority_data' => 'foo',
       'client_certificate_data_controller' => 'foo',
       'client_certificate_data_controller_manager' => 'foo',

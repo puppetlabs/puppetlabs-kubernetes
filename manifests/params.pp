@@ -31,6 +31,7 @@ $bootstrap_token_description = undef
 $bootstrap_token_id = undef
 $bootstrap_token_secret = undef
 $bootstrap_token_usage_bootstrap_authentication = undef
+$bootstrap_token_expiration = undef
 $bootstrap_token_usage_bootstrap_signing = undef
 $certificate_authority_data = undef
 $client_certificate_data_controller = undef
