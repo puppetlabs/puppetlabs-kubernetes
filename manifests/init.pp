@@ -220,6 +220,7 @@ class kubernetes (
   $bootstrap_token_id =  $kubernetes::params::bootstrap_token_id,
   $bootstrap_token_secret =  $kubernetes::params::bootstrap_token_secret,
   $bootstrap_token_usage_bootstrap_authentication = $kubernetes::params::bootstrap_token_usage_bootstrap_authentication,
+  $bootstrap_token_expiration = $kubernetes::params::bootstrap_token_expiration,
   $bootstrap_token_usage_bootstrap_signing = $kubernetes::params::bootstrap_token_usage_bootstrap_signing,
   $certificate_authority_data = $kubernetes::params::certificate_authority_data,
   $client_certificate_data_controller = $kubernetes::params::client_certificate_data_controller,

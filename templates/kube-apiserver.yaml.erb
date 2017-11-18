@@ -30,7 +30,8 @@ spec:
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
     - --requestheader-username-headers=X-Remote-User
     - --requestheader-allowed-names=front-proxy-client
-    - --authorization-mode=RBAC
+    <% if @kubernetes_version =~ /1[.]8[.]\d/ -%>- --authorization-mode=Node,RBAC<% end %> 
+    <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --authorization-mode=RBAC<% end %>
     - --advertise-address=<%= @kube_api_advertise_address  %>
     - --etcd-servers=http://127.0.0.1:2379
     image: gcr.io/google_containers/kube-apiserver-amd64:v<%= @kubernetes_version  %>
