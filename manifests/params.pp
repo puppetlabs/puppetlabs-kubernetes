@@ -4,7 +4,7 @@ class kubernetes::params {
 
 case $::osfamily {
   'Debian' : {
-    $kubernetes_package_version = '1.8.3-00'
+    $kubernetes_package_version = '1.7.3-01'
     $cni_version = '0.5.1-00'
   }
   'RedHat' : {
@@ -13,7 +13,7 @@ case $::osfamily {
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
-$kubernetes_version = '1.8.3'
+$kubernetes_version = '1.7.3'
 $kube_dns_version = '1.14.2'
 $kubernetes_fqdn = 'kubernetes'
 $controller = false
