@@ -35,37 +35,52 @@ First install the module `puppet module install puppetlabs-kubernetes --version 
 To install cfssl, see Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl). Change directory into the root of the module and issue `bundle install`.
 Then cd into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory. You will now be able to run the `kube_tool`.
 
-To look at the kube_tools help menu. Just issue `./kube_tool.rb` this will print out:
+To look at the kube_tools help menu. Just issue `./kube_tool.rb -h` this will print out:
 
 ```puppet
-
-Commands:
-  kube_tool.rb build_hiera FQDN, IP, BOOTSTRAP_CONTROLLER_IP, ETCD_INITIAL_CLUSTER, ETCD_IP, KUBE_API_ADVERTISE_ADDRESS, INSTALL_DASHBOARD  # Pass the cluster params to build your hiera configuration
-  kube_tool.rb help [COMMAND]                                                                                                               # Describe available commands or one specific command
+Usage: kube_tool [options]
+    -f, --fqdn fqdn                  fqdn
+    -i, --ip ip                      ip
+    -b bootstrap,                    the bootstrap controller ip address
+        --bootstrap-controller-ip
+    -e etcd_initial_cluster,         members of the initial etcd cluster
+        --etcd-initial-cluster
+    -t, --etcd-ip etcd_ip            ip address of etcd
+    -a, --api-address api_address    the ip address that kube api will listen on
+    -d dashboard,                    install the kube dashboard
+        --install-dashboard
+    -h, --help                       Displays Help
 ```
 
 So to generate the hiera file for my cluster I would use:
 
 ```puppet
 
-./kube_tool.rb build_hiera kubernetes 172.17.10.101 172.17.10.101 "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380"  "%{::ipaddress_enp0s8}"  "%{::ipaddress_enp0s8}" true
+./kube_tool.rb -f kubernetes -i 172.17.10.101 -b 172.17.10.101 -e "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380" -t "%{::ipaddress_enp0s8}" -a "%{::ipaddress_enp0s8}" -d true
 ```
 
 The parameters are:
 
 * `FQDN`: the cluster fqdn.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
-* `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd. 
-* `ETCD_IP` and `ETCD_IP KUBE_API_ADVERTISE_ADDRESS`: we recommend passing the fact for the interface to be used by the cluster. 
+* `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
+* `ETCD_IP` and `ETCD_IP KUBE_API_ADVERTISE_ADDRESS`: we recommend passing the fact for the interface to be used by the cluster.
 * `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
 The tool creates a `kubernetes.yaml` file. To view the file contents on screen, run the `cat` command.
 
-Add the `kubernetes.yaml` file to the Hiera directory on your Puppet server. 
+Add the `kubernetes.yaml` file to the Hiera directory on your Puppet server.
 
 The tool also creates a bootstrap token and base64 encodes any values that need to be encoded for Kubernetes. If you run the `cat` command again, all the values are re-generated, including the certificates and tokens. You can then use Jenkins or Bamboo to add the Hiera file to your control repository or version control application.
 
 If you don't want to use the `kube_tools` configuration tool and want to manually configure the module, all of the parameters are listed in the [Reference](#reference) section and in the [init.pp](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp) file.
+
+A Dockerfile has also been included in case you don't wish to install the dependencies in your local environment. To build this yourself, `cd` into the tooling directory and run `docker build -t puppet/kubetool .`
+
+The docker image takes each of the parameters as environment variables. When run as follows it will output a kubernetes.yaml file in your current working directory:
+```puppet
+docker run -v $(pwd):/mnt -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppetlabs/kubetool
+```
 
 
 ### Begininning with kubernetes
@@ -186,11 +201,11 @@ Defaults to `false`.
 
 #### `kube_api_advertise_address`
 
-The IP address you want exposed by the API server. 
+The IP address you want exposed by the API server.
 
 An example with hiera would be `kubernetes::kube_api_advertise_address:"%{::ipaddress_enp0s8}"`.
 
-Defaults to `undef`. 
+Defaults to `undef`.
 
 #### `etcd_version`
 
@@ -234,7 +249,7 @@ Defaults to `undef`.
 
 The base64 encoded description of the bootstrap token.
 
-A Hiera example is `kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars`. 
+A Hiera example is `kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars`.
 
 #### `bootstrap_token_id`
 
@@ -259,7 +274,7 @@ The base64 encoded bool which uses the bootstrap token. (true = dHJ1ZQ==)
 An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==`.
 
 Defaults to `undef`.
-   
+
 #### `bootstrap_token_usage_bootstrap_signing`
 
 The base64 encoded bool which uses the bootstrap signing. (true = dHJ1ZQ==)
@@ -276,49 +291,49 @@ Defaults to `undef`.
 
 #### `client_certificate_data_controller`
 
-The client certificate for the controller. Must be a string value. 
+The client certificate for the controller. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_certificate_data_controller_manager`
 
-The client certificate for the controller manager. Must be a string value. 
+The client certificate for the controller manager. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_certificate_data_scheduler`
 
-The client certificate for the scheduler. Must be a string value. 
+The client certificate for the scheduler. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_certificate_data_worker`
 
-The client certificate for the kubernetes worker. Must be a string value. 
+The client certificate for the kubernetes worker. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_key_data_controller`
 
-The client certificate key for the controller. Must be a string value. 
+The client certificate key for the controller. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_key_data_controller_manager`
 
-The client certificate key for the controller manager. Must be a string value. 
+The client certificate key for the controller manager. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_key_data_scheduler`
 
-The client certificate key for the scheduler. Must be a string value. 
+The client certificate key for the scheduler. Must be a string value.
 
 Defaults to `undef`.
 
 #### `client_key_data_worker`
 
-The client certificate key for the kubernetes worker. Must be a string value. 
+The client certificate key for the kubernetes worker. Must be a string value.
 
 Defaults to `undef`.
 
@@ -330,7 +345,7 @@ Defaults to `undef`.
 
 #### `apiserver_kubelet_client_key`
 
-The client key for the kubelet api server. Must be a certificate value and not a file. 
+The client key for the kubelet api server. Must be a certificate value and not a file.
 
 Defaults to `undef`.
 
@@ -384,7 +399,7 @@ Defaults to `undef`.
 
 #### `sa_key`
 
-The key for the service account. Must be a certificate value and not a file.  
+The key for the service account. Must be a certificate value and not a file.
 
 Defaults to `undef`.
 
@@ -418,9 +433,9 @@ This module supports only Puppet 4 and above.
 
 This module has been tested on the following OS
 
-RedHat 7.x  
-CentOS 7.x  
-Ubuntu 16.04  
+RedHat 7.x
+CentOS 7.x
+Ubuntu 16.04
 
 ## Development
 
