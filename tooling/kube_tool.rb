@@ -46,9 +46,9 @@ end
 
 parser.parse!
 
+
 class Kube_tool
   def build_hiera(hash)
-    puts hash
     PreChecks.checks
     CreateCerts.ca
     CreateCerts.api_servers(hash[:fqdn], hash[:ip])
