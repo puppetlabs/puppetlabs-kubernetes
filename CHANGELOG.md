@@ -1,3 +1,6 @@
+#Version 0.1.3
+Provide cli switches for kubetool, and add Dockerfile
+
 # Version 0.1.2
 Supports Kubernetes up to 1.8.x
 
