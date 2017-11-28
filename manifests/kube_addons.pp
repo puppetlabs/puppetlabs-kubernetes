@@ -4,7 +4,7 @@ class kubernetes::kube_addons (
   $bootstrap_controller = $kubernetes::bootstrap_controller,
   $cni_network_provider = $kubernetes::cni_network_provider,
   $install_dashboard = $kubernetes::install_dashboard,
-
+  $kubernetes_version = $kubernetes::kubernetes_version
 ){
 
   if $bootstrap_controller {
@@ -71,9 +71,16 @@ class kubernetes::kube_addons (
     require     => Exec['Create kube dns service account'],
     }
 
-  if $install_dashboard {
+  if $install_dashboard and $kubernetes_version =~ /1[.]8[.]\d/ {
     exec { 'Install Kubernetes dashboard':
       command => 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml',
+      onlyif  => 'kubectl get nodes',
+      unless  => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
+      }
+    }
+  if $install_dashboard and $kubernetes_version =~ /1[.](6|7)[.]\d/ {
+    exec { 'Install Kubernetes dashboard':
+      command => 'kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.6.3/src/deploy/kubernetes-dashboard.yaml',
       onlyif  => 'kubectl get nodes',
       unless  => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
       }
