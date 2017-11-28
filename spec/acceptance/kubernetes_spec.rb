@@ -28,7 +28,7 @@ describe 'the Kubernetes module' do
         end
       end
 
-      context 'appliction deployment' do
+      context 'application deployment' do
 
         it 'can deploy an application into a namespace and expose it' do
           shell('sleep 180')
