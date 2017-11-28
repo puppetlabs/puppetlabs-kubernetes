@@ -1,4 +1,7 @@
-#Version 0.1.3
+# Version 0.1.4
+Hotfix for weave network not installing
+
+# Version 0.1.3
 Provide cli switches for kubetool, and add Dockerfile
 
 # Version 0.1.2
