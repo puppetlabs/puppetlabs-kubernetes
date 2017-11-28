@@ -31,14 +31,14 @@ describe 'the Kubernetes module' do
       context 'appliction deployment' do
 
         it 'can deploy an application into a namespace and expose it' do
-          shell('sleep 300')
+          shell('sleep 180')
           shell('KUBECONFIG=/root/admin.conf kubectl create -f /tmp/nginx.yml', :acceptable_exit_codes => [0]) do |r|
             expect(r.stdout).to match(/namespace "nginx" created\ndeployment "my-nginx" created\nservice "my-nginx" created\n/)
           end
         end
 
         it 'can access the deployed service' do
-          shell('sleep 120')
+          shell('sleep 60')
           shell('curl 10.96.188.5', :acceptable_exit_codes => [0]) do |r|
             expect(r.stdout).to match (/Welcome to nginx!/)
           end
