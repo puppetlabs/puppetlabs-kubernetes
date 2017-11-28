@@ -28,14 +28,23 @@ It groups containers that make up an application into logical units for easy man
 
 ### Setup Requirements
 
-The included configuration tool, `kube_tools` auto generates all the security parameters, the bootstrap token, and other configurations for your cluster into a file. The `kube_tool` requires Ruby 2.3 and above.
+The included configuration tool `kube_tools` auto generates all the security parameters, the bootstrap token, and other configurations for your cluster into a file. The `kube_tool` requires Ruby 2.3 and above.
 
-First install the module `puppet module install puppetlabs-kubernetes --version 0.1.0`. We would suggest doing this on a local machine and not a Puppet server as you need cfssl installed.
+1. cfssl is a requirement, so we recommend you install the module on a local machine and not a Puppet server by running this command:
 
-To install cfssl, see Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl). Change directory into the root of the module and issue `bundle install`.
-Then cd into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory. You will now be able to run the `kube_tool`.
+```puppet
+puppet module install puppetlabs-kubernetes --version 0.1.3
+```
 
-To look at the kube_tools help menu. Just issue `./kube_tool.rb -h` this will print out:
+2. Install cfssl. See Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl). 
+
+3. Change directory into the root of the module, and run the `bundle install` command.
+
+4. Change directory into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory, and run the `kube_tool` command.
+
+5. To view the help menu, run the `./kube_tool.rb -h` command.
+
+The kube_tools help menu:
 
 ```puppet
 Usage: kube_tool [options]
@@ -52,10 +61,9 @@ Usage: kube_tool [options]
     -h, --help                       Displays Help
 ```
 
-So to generate the hiera file for my cluster I would use:
+So to generate the hiera file for my cluster I use:
 
 ```puppet
-
 ./kube_tool.rb -f kubernetes -i 172.17.10.101 -b 172.17.10.101 -e "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380" -t "%{::ipaddress_enp0s8}" -a "%{::ipaddress_enp0s8}" -d true
 ```
 
@@ -69,15 +77,16 @@ The parameters are:
 
 The tool creates a `kubernetes.yaml` file. To view the file contents on screen, run the `cat` command.
 
-Add the `kubernetes.yaml` file to the Hiera directory on your Puppet server.
+6. Add the `kubernetes.yaml` file to the Hiera directory on your Puppet server.
 
 The tool also creates a bootstrap token and base64 encodes any values that need to be encoded for Kubernetes. If you run the `cat` command again, all the values are re-generated, including the certificates and tokens. You can then use Jenkins or Bamboo to add the Hiera file to your control repository or version control application.
 
 If you don't want to use the `kube_tools` configuration tool and want to manually configure the module, all of the parameters are listed in the [Reference](#reference) section and in the [init.pp](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp) file.
 
-A Dockerfile has also been included in case you don't wish to install the dependencies in your local environment. To build this yourself, `cd` into the tooling directory and run `docker build -t puppet/kubetool .`
+If you don't want to install the dependencies in your local environment, a Dockerfile is included. To build, change directory into the tooling directory, and run the `docker build -t puppet/kubetool` command.
 
 The docker image takes each of the parameters as environment variables. When run as follows it will output a kubernetes.yaml file in your current working directory:
+
 ```puppet
 docker run -v $(pwd):/mnt -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppetlabs/kubetool
 ```
@@ -98,7 +107,6 @@ A bootstrap controller is the node a cluster uses to add cluster addons (such as
 To make a node a bootstrap controller, add the following code to the manifest:
 
 ```puppet
-
 class {'kubernetes':
   controller           => true,
   bootstrap_controller => true,
@@ -112,7 +120,6 @@ A controller in Kubernetes contains the control plane and `etcd`. In a productio
 To make a node a controller, add the following code to the manifest:
 
 ```puppet
-
 class {'kubernetes':
   controller => true,
 }
@@ -125,7 +132,6 @@ A worker node runs your applications. You can add as many of these as Kubernetes
 To make a node a worker node, add the following code to the manifest:
 
 ```puppet
-
 class {'kubernetes':
   worker => true,
 }

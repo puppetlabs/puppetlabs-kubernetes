@@ -18,6 +18,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'bootstrap_controller' => true,
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
+      'kubernetes_version' => '1.7.3' 
       }
     end
 
@@ -35,6 +36,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'bootstrap_controller' => true,
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => true,
+      'kubernetes_version' => '1.7.3'
       }
     end
 
