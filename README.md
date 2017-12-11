@@ -75,7 +75,7 @@ The parameters are:
 
 * `OS`: the os kubernetes will run on.
 * `VERSION`: the version of kubernetes you want to deploy
-* 'CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd` 
+* `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd` 
 * `FQDN`: the cluster fqdn.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
