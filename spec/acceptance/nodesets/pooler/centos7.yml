@@ -2,7 +2,7 @@ HOSTS:
   centos7:
     roles:
       - default
-    platform: el7-x86_64
+    platform: el-7-x86_64
     hypervisor: vmpooler
     template: Delivery/Quality Assurance/Templates/vCloud/centos-7-x86_64
 CONFIG:
