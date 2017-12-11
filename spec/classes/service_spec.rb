@@ -15,7 +15,8 @@ describe 'kubernetes::service', :type => :class do
   context 'with defaults for all params' do
     let(:params) do
       {
-        'controller' => false,
+        'container_runtime' => 'docker',
+	'controller' => false,
         'bootstrap_controller' => false,
         'etcd_ip' => '127.0.0.1',
       }
@@ -31,7 +32,8 @@ describe 'kubernetes::service', :type => :class do
   context 'with bootstrap_controller => yes' do
     let(:params) do
       {
-        'bootstrap_controller' => true,
+        'container_runtime' => 'docker',
+	'bootstrap_controller' => true,
         'controller' => true,
         'etcd_ip' => '127.0.0.1',
       }

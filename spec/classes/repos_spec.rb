@@ -14,7 +14,7 @@ describe 'kubernetes::repos', :type => :class do
       }
     end
 
-    let(:params) { { 'manage_epel' => false } }
+    let(:params) { { 'manage_epel' => false, 'container_runtime' => 'docker' } }
 
     it { should contain_apt__source('kubernetes') }
     it { should contain_apt__source('docker') }
@@ -30,7 +30,7 @@ describe 'kubernetes::repos', :type => :class do
       }
     end
 
-    let(:params) { { 'manage_epel' => true } }
+    let(:params) { { 'manage_epel' => true, 'container_runtime' => 'docker' } }
 
     it { should contain_class('epel') }
     it { should contain_yumrepo('docker') }

@@ -48,6 +48,10 @@ The kube_tools help menu:
 
 ```puppet
 Usage: kube_tool [options]
+    -o, --os-type os-type            the os that kubernetes will run on
+    -v, --version version            the kubernetes version to install
+    -r container runtime,            the container runtime to use. this can only be docker or cri_containerd
+        --container_runtime
     -f, --fqdn fqdn                  fqdn
     -i, --ip ip                      ip
     -b bootstrap,                    the bootstrap controller ip address
@@ -64,11 +68,14 @@ Usage: kube_tool [options]
 So to generate the hiera file for my cluster I use:
 
 ```puppet
-./kube_tool.rb -f kubernetes -i 172.17.10.101 -b 172.17.10.101 -e "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380" -t "%{::ipaddress_enp0s8}" -a "%{::ipaddress_enp0s8}" -d true
+./kube_tool.rb -o debian -v 1.8.4 -r docker -f kubernetes -i 172.17.10.101 -b 172.17.10.101 -e "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380" -t "%{::ipaddress_enp0s8}" -a "%{::ipaddress_enp0s8}" -d true
 ```
 
 The parameters are:
 
+* `OS`: the os kubernetes will run on.
+* `VERSION`: the version of kubernetes you want to deploy
+* 'CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd` 
 * `FQDN`: the cluster fqdn.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.

@@ -4,14 +4,25 @@ class kubernetes::service (
 
   $controller = $kubernetes::controller,
   $bootstrap_controller = $kubernetes::bootstrap_controller,
+  $container_runtime = $kubernetes::container_runtime,
   $etcd_ip = $kubernetes::etcd_ip,
 ){
 
   $peeruls = inline_template("'{\"peerURLs\":[\"http://${etcd_ip}:2380\"]}'")
 
+  if $container_runtime == 'docker' {
+
   service { 'docker':
     ensure => running,
     enable => true,
+    }
+
+  service {'kubelet':
+    ensure    => running,
+    enable    => true,
+    subscribe => File['/etc/systemd/system/kubelet.service.d/kubernetes.conf'],
+    require   => Service['docker'],
+    }
   }
 
   file {'/etc/systemd/system/kubelet.service.d':
@@ -34,13 +45,30 @@ class kubernetes::service (
     refreshonly => true,
     }
 
+  if $container_runtime == 'cri_containerd' {
+
+  service {'containerd':
+    ensure  => running,
+    enable  => true,
+    require => Exec['Reload systemd'],
+    before  => Service['kubelet'],
+  }
+
+  service {'cri-containerd':
+    ensure  => running,
+    enable  => true,
+    require => Exec['Reload systemd'],
+    before  => Service['kubelet'],
+  }
+
   service {'kubelet':
     ensure    => running,
     enable    => true,
     subscribe => File['/etc/systemd/system/kubelet.service.d/kubernetes.conf'],
-    require   => Service['docker'],
+    require   => [Service['containerd'], Service['cri-containerd']],
   }
 
+}
   if $bootstrap_controller {
 
     exec {'Checking for the Kubernets cluster to be ready':
