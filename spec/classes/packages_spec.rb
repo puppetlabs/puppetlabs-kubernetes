@@ -3,6 +3,7 @@ describe 'kubernetes::packages', :type => :class do
   let(:facts) { { :osfamily => 'Debian' } }
   let(:params) do
     {
+      'container_runtime' => 'docker',
       'kubernetes_package_version' => '1.7.3-01',
       'cni_version' => '0.5.1-00',
     }

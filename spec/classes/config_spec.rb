@@ -15,6 +15,7 @@ describe 'kubernetes::config', :type => :class do
   let(:params) do
     {
       'kubernetes_version' => '1.7.3',
+      'container_runtime' => 'docker',
       'kube_dns_version' => '1.14.2',
       'controller' => true,
       'bootstrap_controller' => false,

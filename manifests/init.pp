@@ -14,7 +14,12 @@
 #   The version of the packages the Kubernetes os packages to install 
 #   ie kubectl and kubelet
 #   Defaults to 1.7.3
-# 
+#
+# [*container_runtime]
+#   This is the runtime that the Kubernetes cluster will use.
+#   It can only be set to "cri_containerd" or "docker"
+#   Defaults to docker
+#
 # [*cni_version*]
 #   The version of the cni package you would like to install
 #   Defaults to 0.5.1
@@ -203,6 +208,7 @@ class kubernetes (
   $kubernetes_version = $kubernetes::params::kubernetes_version,
   $kubernetes_package_version = $kubernetes::params::kubernetes_package_version,
   $kubernetes_fqdn = $kubernetes::params::kubernetes_fqdn,
+  $container_runtime = $kubernetes::params::container_runtime,
   $cni_version = $kubernetes::params::cni_version,
   $kube_dns_version = $kubernetes::params::kube_dns_version,
   $controller = $kubernetes::params::controller,

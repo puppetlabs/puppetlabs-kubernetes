@@ -7,9 +7,22 @@ require_relative 'kube_tool/create_token.rb'
 require_relative 'kube_tool/clean_up.rb'
 require_relative 'kube_tool/other_params.rb'
 
-options = {:fqdn => nil, :ip => nil, :bootstrap_controller_ip => nil, :etcd_initial_cluster => nil, :etcd_ip => nil, :kube_api_advertise_address => nil, :install_dashboard => nil}
+options = {:os => nil, :version => nil, :container_runtime => nil, :fqdn => nil, :ip => nil, :bootstrap_controller_ip => nil, :etcd_initial_cluster => nil, :etcd_ip => nil, :kube_api_advertise_address => nil, :install_dashboard => nil}
 
 parser = OptionParser.new do|opts|
+   
+   opts.on('-o', '--os-type os-type', 'the os that kubernetes will run on') do |os|
+    options[:os] = os;
+  end
+
+   opts.on('-v', '--version version', 'the kubernetes version to install') do |version|
+    options[:version] = version;
+  end
+ 
+   opts.on('-r', '--container_runtime container runtime', 'the container runtime to use. this can only be docker or cri_containerd') do |container_runtime|
+    options[:container_runtime] = container_runtime;
+  end
+   
   opts.on('-f', '--fqdn fqdn', 'fqdn') do |fqdn|
     options[:fqdn] = fqdn;
   end
@@ -63,7 +76,7 @@ class Kube_tool
     CreateCerts.kube_scheduler
     CreateCerts.kube_workers
     CreateToken.bootstrap
-    OtherParams.create(hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime],  hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     CleanUp.remove_files
   end
 end

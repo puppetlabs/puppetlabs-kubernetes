@@ -1,6 +1,7 @@
 ## kubernetes repos 
 
 class kubernetes::repos (
+  $container_runtime = $kubernetes::container_runtime,
   $manage_epel = $kubernetes::manage_epel,
 ){
 
@@ -18,14 +19,16 @@ class kubernetes::repos (
           },
         }
 
-        apt::source { 'docker':
-          location => 'https://apt.dockerproject.org/repo',
-          repos    => 'main',
-          release  => 'ubuntu-xenial',
-          key      => {
-            'id'     => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
-            'source' => 'https://download.docker.com/linux/ubuntu/gpg',
-        },
+        if $container_runtime == 'docker' {
+          apt::source { 'docker':
+            location => 'https://apt.dockerproject.org/repo',
+            repos    => 'main',
+            release  => 'ubuntu-xenial',
+            key      => {
+              'id'     => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+              'source' => 'https://download.docker.com/linux/ubuntu/gpg',
+          },
+        }
       }
     }
     'RedHat': {
@@ -33,11 +36,13 @@ class kubernetes::repos (
         include epel
       }
 
-      yumrepo { 'docker':
-        descr    => 'docker',
-        baseurl  => "https://yum.dockerproject.org/repo/main/${repo}/7",
-        gpgkey   => 'https://yum.dockerproject.org/gpg',
-        gpgcheck => true,
+      if $container_runtime == 'docker' {
+        yumrepo { 'docker':
+          descr    => 'docker',
+          baseurl  => "https://yum.dockerproject.org/repo/main/${repo}/7",
+          gpgkey   => 'https://yum.dockerproject.org/gpg',
+          gpgcheck => true,
+        }
       }
 
       yumrepo { 'kubernetes':
