@@ -5,7 +5,7 @@ class kubernetes::params {
 case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = '1.7.3-01'
-    $cni_version = '0.5.1:-00'
+    $cni_version = '0.5.1-00'
   }
   'RedHat' : {
     $kubernetes_package_version = '1.7.3'
