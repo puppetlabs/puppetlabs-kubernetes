@@ -4,19 +4,15 @@ class kubernetes::service (
 
   $controller = $kubernetes::controller,
   $bootstrap_controller = $kubernetes::bootstrap_controller,
+  $container_runtime = $kubernetes::container_runtime,
   $etcd_ip = $kubernetes::etcd_ip,
 ){
 
   $peeruls = inline_template("'{\"peerURLs\":[\"http://${etcd_ip}:2380\"]}'")
 
-  service { 'docker':
-    ensure => running,
-    enable => true,
-  }
-
   file {'/etc/systemd/system/kubelet.service.d':
     ensure => 'directory',
-    }
+  }
 
   file {'/etc/systemd/system/kubelet.service.d/kubernetes.conf':
     ensure  => 'file',
@@ -26,19 +22,55 @@ class kubernetes::service (
     content => template('kubernetes/kubernetes.conf.erb'),
     require => File['/etc/systemd/system/kubelet.service.d'],
     notify  => Exec['Reload systemd'],
-    }
+  }
 
   exec { 'Reload systemd':
     path        => '/bin',
     command     => 'systemctl daemon-reload',
     refreshonly => true,
+  }
+
+  case $container_runtime {
+    'docker': {
+      service { 'docker':
+        ensure => running,
+        enable => true,
+      }
+
+      service {'kubelet':
+        ensure    => running,
+        enable    => true,
+        subscribe => File['/etc/systemd/system/kubelet.service.d/kubernetes.conf'],
+        require   => Service['docker'],
+      }
     }
 
-  service {'kubelet':
-    ensure    => running,
-    enable    => true,
-    subscribe => File['/etc/systemd/system/kubelet.service.d/kubernetes.conf'],
-    require   => Service['docker'],
+    'cri_containerd': {
+      service {'containerd':
+        ensure  => running,
+        enable  => true,
+        require => Exec['Reload systemd'],
+        before  => Service['kubelet'],
+      }
+
+      service {'cri-containerd':
+        ensure  => running,
+        enable  => true,
+        require => Exec['Reload systemd'],
+        before  => Service['kubelet'],
+      }
+
+      service {'kubelet':
+        ensure    => running,
+        enable    => true,
+        subscribe => File['/etc/systemd/system/kubelet.service.d/kubernetes.conf'],
+        require   => [Service['containerd'], Service['cri-containerd']],
+      }
+    }
+
+    default: {
+      fail('Please specify a valid container runtime')
+    }
   }
 
   if $bootstrap_controller {

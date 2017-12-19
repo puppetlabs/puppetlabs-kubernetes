@@ -71,7 +71,7 @@ class kubernetes::kube_addons (
     require     => Exec['Create kube dns service account'],
     }
 
-  if $install_dashboard and $kubernetes_version =~ /1[.]8[.]\d/ {
+  if $install_dashboard and $kubernetes_version =~ /1[.](8|9)[.]\d/ {
     exec { 'Install Kubernetes dashboard':
       command => 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml',
       onlyif  => 'kubectl get nodes',

@@ -13,7 +13,8 @@ spec:
     - kube-apiserver
     - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
     - --allow-privileged=true
-    - --experimental-bootstrap-token-auth=true
+    <% if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>- --enable-bootstrap-token-auth=true<% end %>
+    <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --experimental-bootstrap-token-auth=true<% end %>
     - --service-cluster-ip-range=10.96.0.0/12
     - --insecure-port=0
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
@@ -30,7 +31,7 @@ spec:
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
     - --requestheader-username-headers=X-Remote-User
     - --requestheader-allowed-names=front-proxy-client
-    <% if @kubernetes_version =~ /1[.]8[.]\d/ -%>- --authorization-mode=Node,RBAC<% end %> 
+    <% if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>- --authorization-mode=Node,RBAC<% end %>
     <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --authorization-mode=RBAC<% end %>
     - --advertise-address=<%= @kube_api_advertise_address  %>
     - --etcd-servers=http://127.0.0.1:2379

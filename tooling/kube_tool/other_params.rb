@@ -2,13 +2,21 @@ require 'yaml'
 
 class OtherParams
 
-  def OtherParams.create(bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard)
+  def OtherParams.create(os, version, container_runtime, bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard)
     if install_dashboard.match('true')
-       install = true 
+       install = true
     else
        install = false
-    end   
+    end
+    if os.downcase.match('debian')
+      kubernetes_package_version = "#{version}-00"
+    elsif os.downcase.match('redhat')
+      kubernetes_package_version = version
+    end
     data = Hash.new
+    data['kubernetes::kubernetes_version'] = version
+    data['kubernetes::kubernetes_package_version'] = kubernetes_package_version
+    data['kubernetes::container_runtime'] = container_runtime
     data['kubernetes::kubernetes_fqdn'] = fqdn
     data['kubernetes::bootstrap_controller_ip'] = bootstrap_controller_ip
     data['kubernetes::etcd_initial_cluster'] = etcd_initial_cluster
@@ -18,4 +26,4 @@ class OtherParams
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
     File.write("kubernetes.yaml",File.open("kubernetes.yaml",&:read).gsub(/^---$/," "))
   end
-end  
+end

@@ -3,5 +3,7 @@ fixtures:
     stdlib: 'puppetlabs-stdlib'
     apt: 'puppetlabs-apt'
     epel: 'stahnma-epel'
+    wget: 'maestrodev-wget'
+    archive: "puppet-archive"    
   symlinks:
     kubernetes: "#{source_dir}"
