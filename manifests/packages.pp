@@ -5,9 +5,21 @@ class kubernetes::packages (
   $kubernetes_package_version = $kubernetes::kubernetes_package_version,
   $container_runtime = $kubernetes::container_runtime,
   $cni_version = $kubernetes::cni_version,
+
 ) {
 
   $kube_packages = ['kubelet', 'kubectl']
+
+  case $kubernetes_package_version {
+    /1[.]9[.]\d/: {
+      $cri_source = 'https://github.com/kubernetes-incubator/cri-containerd/releases/download/v1.0.0-beta.0/cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz'
+      $cri_archive = 'cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz'
+    }
+    default: {
+      $cri_source = 'https://github.com/kubernetes-incubator/cri-containerd/releases/download/v1.0.0-alpha.1/cri-containerd-1.0.0-alpha.1.tar.gz'
+      $cri_archive = 'cri-containerd-1.0.0-alpha.1.tar.gz'
+    }
+  }
 
   if $container_runtime == 'docker' {
     case $::osfamily {
@@ -33,15 +45,15 @@ class kubernetes::packages (
 
   elsif $container_runtime == 'cri_containerd' {
     wget::fetch { 'wget cri-containerd':
-      source      => 'https://github.com/kubernetes-incubator/cri-containerd/releases/download/v1.0.0-alpha.1/cri-containerd-1.0.0-alpha.1.tar.gz',
+      source      => $cri_source,
       destination => '/',
       timeout     => 0,
       verbose     => false,
     }
 
-  -> archive { 'cri-containerd-1.0.0-alpha.1.tar.gz':
+  -> archive { $cri_archive:
       ensure          => present,
-      path            => '/cri-containerd-1.0.0-alpha.1.tar.gz',
+      path            => "/${cri_archive}",
       extract         => true,
       extract_command => 'tar xfz %s --strip-components=1',
       extract_path    => '/',
