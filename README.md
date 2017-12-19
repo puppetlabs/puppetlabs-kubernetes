@@ -33,10 +33,10 @@ The included configuration tool `kube_tools` auto generates all the security par
 1. cfssl is a requirement, so we recommend you install the module on a local machine and not a Puppet server by running this command:
 
 ```puppet
-puppet module install puppetlabs-kubernetes --version 0.1.3
+puppet module install puppetlabs-kubernetes --version 0.2.0
 ```
 
-2. Install cfssl. See Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl). 
+2. Install cfssl. See Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl).
 
 3. Change directory into the root of the module, and run the `bundle install` command.
 
@@ -75,7 +75,7 @@ The parameters are:
 
 * `OS`: the os kubernetes will run on.
 * `VERSION`: the version of kubernetes you want to deploy
-* `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd` 
+* `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd`
 * `FQDN`: the cluster fqdn.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
@@ -173,6 +173,12 @@ Defaults to `0.5.1`.
 The version of kube DNS to install.
 
 Defaults to `1.14.2`.
+
+#### `container_runtime`
+
+Choose between docker or cri_containerd
+
+Defaults to docker
 
 #### `controller`
 
