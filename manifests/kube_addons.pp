@@ -19,7 +19,7 @@ class kubernetes::kube_addons (
     try_sleep   => 5,
     }
 
-  if $cni_network_provider !== 'none' {
+  if $cni_network_provider != 'none' {
     exec { 'Install cni network provider':
       command => "kubectl apply -f ${cni_network_provider}",
       onlyif  => 'kubectl get nodes',
