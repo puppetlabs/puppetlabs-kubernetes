@@ -69,7 +69,7 @@ class kubernetes::service (
     }
 
     default: {
-      fail("Please specify a valid container runtime")
+      fail('Please specify a valid container runtime')
     }
   }
 
