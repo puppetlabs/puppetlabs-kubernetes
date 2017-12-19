@@ -36,7 +36,7 @@ The included configuration tool `kube_tools` auto generates all the security par
 puppet module install puppetlabs-kubernetes --version 0.1.3
 ```
 
-2. Install cfssl. See Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl). 
+2. Install cfssl. See Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl).
 
 3. Change directory into the root of the module, and run the `bundle install` command.
 
@@ -420,6 +420,8 @@ Defaults to `undef`.
 The network deployment URL that kubectl can locate.
 
 We support networking providers that supports cni.
+
+If set to 'none' no cni plugin is installed.
 
 This defaults to `https://git.io/weave-kube-1.6`.
 

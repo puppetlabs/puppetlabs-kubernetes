@@ -19,10 +19,12 @@ class kubernetes::kube_addons (
     try_sleep   => 5,
     }
 
-  exec { 'Install cni network provider':
-    command => "kubectl apply -f ${cni_network_provider}",
-    onlyif  => 'kubectl get nodes',
+  if $cni_network_provider !== 'none' {
+    exec { 'Install cni network provider':
+      command => "kubectl apply -f ${cni_network_provider}",
+      onlyif  => 'kubectl get nodes',
     }
+  }
 
   exec { 'Create kube proxy service account':
     command     => 'kubectl create -f kube-proxy-sa.yaml',
