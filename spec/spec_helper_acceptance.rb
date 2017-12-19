@@ -45,7 +45,7 @@ RSpec.configure do |c|
       # shell('echo "#{vmhostname}" > /etc/hostname')
       # shell("hostname #{vmhostname}")
       hosts_file = <<-EOS
-127.0.0.1 #{vmhostname}
+127.0.0.1 localhost #{vmhostname} kubernetes
 #{vmipaddr} #{vmhostname}
 #{vmipaddr} kubernetes
       EOS
@@ -88,19 +88,31 @@ spec:
   selector:
     run: my-nginx
 EOS
-        # Return ip adress
+        if fact('osfamily') == 'Debian'
+          #Installing rubydev environment
+          on(host, "apt install ruby-bundler --yes", acceptable_exit_codes: [0]).stdout
+          on(host, "apt-get install ruby-dev --yes", acceptable_exit_codes: [0]).stdout
+          on(host, "apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes", acceptable_exit_codes: [0]).stdout
+        end
+        if fact('osfamily') == 'RedHat'
+          #Installing rubydev environment
+          on(host, "yum install -y ruby-devel git zlib-devel gcc-c++ lib yaml-devel libffi-devel make bzip2 libtool curl openssl-devel readline-devel", acceptable_exit_codes: [0]).stdout
+          on(host, "gem install bundler", acceptable_exit_codes: [0]).stdout
+          on(host, "git clone git://github.com/sstephenson/rbenv.git .rbenv", acceptable_exit_codes: [0]).stdout
+          on(host, "echo 'export PATH=\"$HOME/.rbenv/bin:$PATH\"' >> ~/.bash_profile", acceptable_exit_codes: [0]).stdout
+          on(host, "echo 'eval \"$(rbenv init -)\"' >> ~/.bash_profile" ,acceptable_exit_codes: [0]).stdout
+          on(host, "git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build", acceptable_exit_codes: [0]).stdout
+          on(host, "echo 'export PATH=\"$HOME/.rbenv/plugins/ruby-build/bin:$PATH\"' >> ~/.bash_profile", acceptable_exit_codes: [0]).stdout
+          on(host, "source ~/.bash_profile;rbenv install -v 2.3.1;rbenv global 2.3.1;rbenv local 2.3.1", acceptable_exit_codes: [0]).stdout
+        end
+
         # Installing go, cfssl
+        on(host, "cd  /etc/puppetlabs/code/modules/kubernetes;rm -rf Gemfile.lock;bundle install --path vendor/bundle", acceptable_exit_codes: [0]).stdout
         on(host, "curl -o go.tar.gz https://storage.googleapis.com/golang/go1.9.2.linux-amd64.tar.gz", acceptable_exit_codes: [0]).stdout
         on(host, "tar -C /usr/local -xzf go.tar.gz", acceptable_exit_codes: [0]).stdout
-        on(host, "apt-get install git -y", acceptable_exit_codes: [0]).stdout
         on(host, "export PATH=$PATH:/usr/local/go/bin;go get -u github.com/cloudflare/cfssl/cmd/...", acceptable_exit_codes: [0]).stdout
-        #Installing rubydev environment
-        on(host, "apt install ruby-bundler --yes", acceptable_exit_codes: [0]).stdout
-        on(host, "apt-get install ruby-dev --yes", acceptable_exit_codes: [0]).stdout
-        on(host, "apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes", acceptable_exit_codes: [0]).stdout
-        on(host, "cd  /etc/puppetlabs/code/modules/kubernetes;rm -rf Gemfile.lock;bundle install --path vendor/bundle", acceptable_exit_codes: [0]).stdout
         # Creating certs
-        on(host, "export PATH=$PATH:/usr/local/go/bin;export PATH=$PATH:/root/go/bin;cd  /etc/puppetlabs/code/modules/kubernetes/tooling;./kube_tool.rb -o #{os} -v 1.8.5 -r docker -f kubernetes -i #{vmipaddr} -b #{vmipaddr} -e \"etcd-#{vmhostname}=http://#{vmipaddr}:2380\" -t \"#{vmipaddr}\" -a \"#{vmipaddr}\" -d true", acceptable_exit_codes: [0]).stdout
+        on(host, "source ~/.bash_profile;rbenv global 2.3.1;rbenv local 2.3.1;export PATH=$PATH:/usr/local/go/bin;export PATH=$PATH:/root/go/bin;cd  /etc/puppetlabs/code/modules/kubernetes/tooling;./kube_tool.rb -o #{os} -v 1.8.5 -r docker -f kubernetes -i #{vmipaddr} -b #{vmipaddr} -e \"etcd-#{vmhostname}=http://#{vmipaddr}:2380\" -t \"#{vmipaddr}\" -a \"#{vmipaddr}\" -d true", acceptable_exit_codes: [0]).stdout
         create_remote_file(host, "/etc/hosts", hosts_file)
         create_remote_file(host, "/tmp/nginx.yml", nginx)
         on(host, 'cp /etc/puppetlabs/code/modules/kubernetes/tooling/kubernetes.yaml /etc/puppetlabs/code/environments/production/hieradata/common.yaml', acceptable_exit_codes: [0]).stdout
