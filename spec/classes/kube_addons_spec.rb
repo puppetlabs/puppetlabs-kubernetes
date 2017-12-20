@@ -18,7 +18,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'bootstrap_controller' => true,
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
-      'kubernetes_version' => '1.7.3' 
+      'kubernetes_version' => '1.7.3'
       }
     end
 
@@ -41,5 +41,17 @@ describe 'kubernetes::kube_addons', :type => :class do
     end
 
     it { should contain_exec('Install Kubernetes dashboard')}
+  end
+
+  context 'with cni_network_provider => none' do
+    let(:params) do {
+      'bootstrap_controller' => true,
+      'cni_network_provider' => 'none',
+      'install_dashboard' => false,
+      'kubernetes_version' => '1.7.3'
+      }
+    end
+
+    it { should_not contain_exec('Install cni network provider') }
   end
 end
