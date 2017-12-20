@@ -45,7 +45,7 @@ class kubernetes::service (
 
     exec {'Checking for the Kubernets cluster to be ready':
       path        => ['/usr/bin', '/bin'],
-      command     => 'kubectl get nodes | grep -w NotReady',
+      command     => 'kubectl get nodes --no-headers=true | grep -vw NotReady',
       tries       => 50,
       try_sleep   => 10,
       logoutput   => true,
