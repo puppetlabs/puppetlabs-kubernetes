@@ -31,7 +31,7 @@ class kubernetes::kube_addons (
     cwd         => $addon_dir,
     subscribe   => File['/etc/kubernetes/addons/kube-proxy-sa.yaml'],
     refreshonly => true,
-    onlyif  => 'kubectl get nodes',
+    onlyif      => 'kubectl get nodes',
   }
 
   exec { 'Create kube proxy ConfigMap':
