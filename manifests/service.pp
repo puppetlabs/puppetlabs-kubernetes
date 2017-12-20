@@ -5,6 +5,7 @@ class kubernetes::service (
   $controller = $kubernetes::controller,
   $bootstrap_controller = $kubernetes::bootstrap_controller,
   $etcd_ip = $kubernetes::etcd_ip,
+  $cni_network_provider = $kubernetes::cni_network_provider,
 ){
 
   $peeruls = inline_template("'{\"peerURLs\":[\"http://${etcd_ip}:2380\"]}'")
