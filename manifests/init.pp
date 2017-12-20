@@ -1,17 +1,17 @@
 # Class: kubernetes
 # ===========================
 #
-# A module to build a Kubernetes cluster https://kubernetes.io/ 
+# A module to build a Kubernetes cluster https://kubernetes.io/
 #
 # Parameters
 # ----------
 # [*kubernetes_version*]
 #   The version of Kubernetes containers you want to install.
-#   ie api server, 
+#   ie api server,
 #   Defaults to  1.7.3
 #
 # [*kubernetes_package_version*]
-#   The version of the packages the Kubernetes os packages to install 
+#   The version of the packages the Kubernetes os packages to install
 #   ie kubectl and kubelet
 #   Defaults to 1.7.3
 #
@@ -50,14 +50,14 @@
 #   Defaults to false
 #
 # [*kube_api_advertise_address*]
-#   This is the ip address that the want to api server to expose. 
+#   This is the ip address that the want to api server to expose.
 #   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
-#   defaults to undef 
+#   defaults to undef
 #
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
 #   Defaults to 3.0.17
-# 
+#
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
 #   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
@@ -80,7 +80,7 @@
 #
 # [*bootstrap_token_description*]
 #   The boot strap token description, this must be base64 encoded.
-#   An example with hiera would be kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars 
+#   An example with hiera would be kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars
 #
 # [*bootstrap_token_id*]
 #   This is the id the cluster will use to point to the token, this must be base64 encoded.
@@ -96,7 +96,7 @@
 #   This is the bool to use the boot strap token, this must be base64 encoded. (true = dHJ1ZQ==)
 #   An example with hiera would be kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==
 #   Defaults to undef
-#   
+#
 # [*bootstrap_token_usage_bootstrap_signing*]
 #   This is a bool to use boot trap signing, , this must be base64 encoded. (true = dHJ1ZQ==)
 #   An example with hiera would be kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==
@@ -105,7 +105,7 @@
 # [*certificate_authority_data*]
 #   This is the ca certificate data for the cluster. This must be passed as string not as a file.
 #   Defaults to undef
-# 
+#
 # [*client_certificate_data_controller*]
 #   This is the client certificate data for the controllers. This must be passed as string not as a file.
 #   Defaults to undef
@@ -179,7 +179,7 @@
 #   Defaults to undef
 #
 # [*sa_key*]
-#   The service account key. Must be passed as cert not a file.   
+#   The service account key. Must be passed as cert not a file.
 #   Defaults to undef
 #
 # [*sa_pub*]
@@ -188,7 +188,8 @@
 #
 # [*cni_network_provider*]
 #   This is the url that kubectl can find the networking deployment.
-#   We will support any networking provider that supports cni
+#   We will support any networking provider that supports cni.
+#   If set to 'none' no cni plugin is installed.
 #   This defaults to https://git.io/weave-kube-1.6
 #
 # [*install_dashboard*]
@@ -199,7 +200,7 @@
 # Authors
 # -------
 #
-# Puppet cloud and containers team 
+# Puppet cloud and containers team
 #
 #
 #

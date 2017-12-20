@@ -434,6 +434,8 @@ The network deployment URL that kubectl can locate.
 
 We support networking providers that supports cni.
 
+If set to 'none' no cni plugin is installed.
+
 This defaults to `https://git.io/weave-kube-1.6`.
 
 #### `install_dashboard`
