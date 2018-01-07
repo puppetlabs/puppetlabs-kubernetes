@@ -28,47 +28,20 @@ It groups containers that make up an application into logical units for easy man
 
 ### Setup Requirements
 
-The included configuration tool `kube_tools` auto generates all the security parameters, the bootstrap token, and other configurations for your cluster into a file. The `kube_tool` requires Ruby 2.3 and above.
+This module includes a configuration tool called `kubetool` to auto generate
+all the security parameters, the bootstrap token, and other configurations for
+your Kubernetes cluster into a Hiera file. The tool is available as a Docker
+image to simplify installation and use.
 
-1. cfssl is a requirement, so we recommend you install the module on a local machine and not a Puppet server by running this command:
 
-```puppet
-puppet module install puppetlabs-kubernetes --version 0.2.0
-```
+#### Generate the module's configuration
 
-2. Install cfssl. See Cloudflare's [cfssl documentation](https://github.com/cloudflare/cfssl).
+If you do not already have Docker installed on your workstation, install it [here](https://www.docker.com/community-edition)
 
-3. Change directory into the root of the module, and run the `bundle install` command.
-
-4. Change directory into the [tools](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/master/tooling) directory, and run the `kube_tool` command.
-
-5. To view the help menu, run the `./kube_tool.rb -h` command.
-
-The kube_tools help menu:
+The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 
 ```puppet
-Usage: kube_tool [options]
-    -o, --os-type os-type            the os that kubernetes will run on
-    -v, --version version            the kubernetes version to install
-    -r container runtime,            the container runtime to use. this can only be docker or cri_containerd
-        --container_runtime
-    -f, --fqdn fqdn                  fqdn
-    -i, --ip ip                      ip
-    -b bootstrap,                    the bootstrap controller ip address
-        --bootstrap-controller-ip
-    -e etcd_initial_cluster,         members of the initial etcd cluster
-        --etcd-initial-cluster
-    -t, --etcd-ip etcd_ip            ip address of etcd
-    -a, --api-address api_address    the ip address that kube api will listen on
-    -d dashboard,                    install the kube dashboard
-        --install-dashboard
-    -h, --help                       Displays Help
-```
-
-So to generate the hiera file for my cluster I use:
-
-```puppet
-./kube_tool.rb -o debian -v 1.8.4 -r docker -f kubernetes -i 172.17.10.101 -b 172.17.10.101 -e "etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380" -t "%{::ipaddress_enp0s8}" -a "%{::ipaddress_enp0s8}" -d true
+docker run -v $(pwd):/mnt -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppetlabs/kubetool
 ```
 
 The parameters are:
@@ -82,22 +55,16 @@ The parameters are:
 * `ETCD_IP` and `ETCD_IP KUBE_API_ADVERTISE_ADDRESS`: we recommend passing the fact for the interface to be used by the cluster.
 * `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
-The tool creates a `kubernetes.yaml` file. To view the file contents on screen, run the `cat` command.
+The kubetool creates a `kubernetes.yaml` file. To view the file contents on
+screen, run the `cat kubernetes.yaml` command.
 
-6. Add the `kubernetes.yaml` file to the Hiera directory on your Puppet server.
+The tool also creates a bootstrap token and base64 encodes any values that need
+to be encoded for Kubernetes. If you run the `kubetool` command again, all the
+values are re-generated, including the certificates and tokens.
 
-The tool also creates a bootstrap token and base64 encodes any values that need to be encoded for Kubernetes. If you run the `cat` command again, all the values are re-generated, including the certificates and tokens. You can then use Jenkins or Bamboo to add the Hiera file to your control repository or version control application.
+#### 2. Add the `kubernetes.yaml` file to Hiera
 
-If you don't want to use the `kube_tools` configuration tool and want to manually configure the module, all of the parameters are listed in the [Reference](#reference) section and in the [init.pp](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/manifests/init.pp) file.
-
-If you don't want to install the dependencies in your local environment, a Dockerfile is included. To build, change directory into the tooling directory, and run the `docker build -t puppet/kubetool` command.
-
-The docker image takes each of the parameters as environment variables. When run as follows it will output a kubernetes.yaml file in your current working directory:
-
-```puppet
-docker run -v $(pwd):/mnt -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppetlabs/kubetool
-```
-
+The resuling `kubernetes.yaml` file should be added to your [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where you keep your [Hiera](https://docs.puppet.com/hiera/) data, usually the `data` directory. Each cluster can be given its own configuration by leveraging location facts such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts).
 
 ### Begininning with kubernetes
 
