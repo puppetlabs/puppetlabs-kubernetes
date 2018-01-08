@@ -41,7 +41,7 @@ If you do not already have Docker installed on your workstation, install it [her
 The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 
 ```puppet
-docker run -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.1 -e CONTAINER_RUNTIME=docker -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppetlabs/kubetool
+docker run -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.1 -e CONTAINER_RUNTIME=docker -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool
 ```
 
 The parameters are:
