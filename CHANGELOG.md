@@ -1,3 +1,6 @@
+$Version 1.0.0
+Officially supported version of puppetlabs-kubernetes
+
 #Version 0.2.0
 Supports Kubernetes up to 1.9.x
 Adds support for cri-containerd runtime
