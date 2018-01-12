@@ -1,17 +1,17 @@
 # Class: kubernetes
 # ===========================
 #
-# A module to build a Kubernetes cluster https://kubernetes.io/ 
+# A module to build a Kubernetes cluster https://kubernetes.io/
 #
 # Parameters
 # ----------
 # [*kubernetes_version*]
 #   The version of Kubernetes containers you want to install.
-#   ie api server, 
+#   ie api server,
 #   Defaults to  1.7.3
 #
 # [*kubernetes_package_version*]
-#   The version of the packages the Kubernetes os packages to install 
+#   The version of the packages the Kubernetes os packages to install
 #   ie kubectl and kubelet
 #   Defaults to 1.7.3
 #
@@ -50,14 +50,14 @@
 #   Defaults to false
 #
 # [*kube_api_advertise_address*]
-#   This is the ip address that the want to api server to expose. 
+#   This is the ip address that the want to api server to expose.
 #   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
-#   defaults to undef 
+#   defaults to undef
 #
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
 #   Defaults to 3.0.17
-# 
+#
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
 #   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
@@ -80,7 +80,7 @@
 #
 # [*bootstrap_token_description*]
 #   The boot strap token description, this must be base64 encoded.
-#   An example with hiera would be kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars 
+#   An example with hiera would be kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars
 #
 # [*bootstrap_token_id*]
 #   This is the id the cluster will use to point to the token, this must be base64 encoded.
@@ -96,7 +96,7 @@
 #   This is the bool to use the boot strap token, this must be base64 encoded. (true = dHJ1ZQ==)
 #   An example with hiera would be kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==
 #   Defaults to undef
-#   
+#
 # [*bootstrap_token_usage_bootstrap_signing*]
 #   This is a bool to use boot trap signing, , this must be base64 encoded. (true = dHJ1ZQ==)
 #   An example with hiera would be kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==
@@ -105,7 +105,7 @@
 # [*certificate_authority_data*]
 #   This is the ca certificate data for the cluster. This must be passed as string not as a file.
 #   Defaults to undef
-# 
+#
 # [*client_certificate_data_controller*]
 #   This is the client certificate data for the controllers. This must be passed as string not as a file.
 #   Defaults to undef
@@ -179,7 +179,7 @@
 #   Defaults to undef
 #
 # [*sa_key*]
-#   The service account key. Must be passed as cert not a file.   
+#   The service account key. Must be passed as cert not a file.
 #   Defaults to undef
 #
 # [*sa_pub*]
@@ -199,67 +199,63 @@
 # Authors
 # -------
 #
-# Puppet cloud and containers team 
+# Puppet cloud and containers team
 #
 #
 #
 
 class kubernetes (
-  $kubernetes_version = $kubernetes::params::kubernetes_version,
-  $kubernetes_package_version = $kubernetes::params::kubernetes_package_version,
-  $kubernetes_fqdn = $kubernetes::params::kubernetes_fqdn,
-  $container_runtime = $kubernetes::params::container_runtime,
-  $cni_version = $kubernetes::params::cni_version,
-  $kube_dns_version = $kubernetes::params::kube_dns_version,
-  $controller = $kubernetes::params::controller,
-  $bootstrap_controller = $kubernetes::params::bootstrap_controller,
-  $bootstrap_controller_ip = $kubernetes::params::bootstrap_controller_ip,
-  $worker = $kubernetes::params::worker,
-  $manage_epel = $kubernetes::params::manage_epel,
-  $kube_api_advertise_address = $kubernetes::params::kube_api_advertise_address,
-  $etcd_version = $kubernetes::params::etcd_version,
-  $etcd_ip = $kubernetes::params::etcd_ip,
-  $etcd_initial_cluster = $kubernetes::params::etcd_initial_cluster,
-  $bootstrap_token = $kubernetes::params::bootstrap_token,
-  $bootstrap_token_name = $kubernetes::params::bootstrap_token_name,
-  $bootstrap_token_description = $kubernetes::params::bootstrap_token_description,
-  $bootstrap_token_id =  $kubernetes::params::bootstrap_token_id,
-  $bootstrap_token_secret =  $kubernetes::params::bootstrap_token_secret,
-  $bootstrap_token_usage_bootstrap_authentication = $kubernetes::params::bootstrap_token_usage_bootstrap_authentication,
-  $bootstrap_token_expiration = $kubernetes::params::bootstrap_token_expiration,
-  $bootstrap_token_usage_bootstrap_signing = $kubernetes::params::bootstrap_token_usage_bootstrap_signing,
-  $certificate_authority_data = $kubernetes::params::certificate_authority_data,
-  $client_certificate_data_controller = $kubernetes::params::client_certificate_data_controller,
-  $client_certificate_data_controller_manager = $kubernetes::params::client_certificate_data_controller_manager,
-  $client_certificate_data_scheduler = $kubernetes::params::client_certificate_data_scheduler,
-  $client_certificate_data_worker = $kubernetes::params::client_certificate_data_worker,
-  $client_certificate_data_admin = $kubernetes::params::client_certificate_data_admin,
-  $client_key_data_controller = $kubernetes::params::client_key_data_controller,
-  $client_key_data_controller_manager = $kubernetes::params::client_key_data_controller_manager,
-  $client_key_data_scheduler = $kubernetes::params::client_key_data_scheduler,
-  $client_key_data_worker = $kubernetes::params::client_key_data_worker,
-  $client_key_data_admin = $kubernetes::params::client_key_data_admin,
-  $apiserver_kubelet_client_crt = $kubernetes::params::apiserver_kubelet_client_crt,
-  $apiserver_kubelet_client_key = $kubernetes::params::apiserver_kubelet_client_key,
-  $apiserver_crt = $kubernetes::params::apiserver_crt,
-  $apiserver_key = $kubernetes::params::apiserver_key,
-  $ca_crt = $kubernetes::params::ca_crt,
-  $ca_key = $kubernetes::params::ca_key,
-  $front_proxy_ca_crt = $kubernetes::params::front_proxy_ca_crt,
-  $front_proxy_ca_key = $kubernetes::params::front_proxy_ca_key,
-  $front_proxy_client_crt = $kubernetes::params::front_proxy_client_crt,
-  $front_proxy_client_key = $kubernetes::params::front_proxy_client_key,
-  $sa_key = $kubernetes::params::sa_key,
-  $sa_pub = $kubernetes::params::sa_pub,
-  $cni_network_provider = $kubernetes::params::cni_network_provider,
-  $install_dashboard = $kubernetes::params::install_dashboard,
+  String $kubernetes_version                                       = $kubernetes::params::kubernetes_version,
+  Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
+  String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
+  String $container_runtime                                        = $kubernetes::params::container_runtime,
+  Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
+  String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,
+  Boolean $controller                                              = $kubernetes::params::controller,
+  Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
+  Optional[String] $bootstrap_controller_ip                        = $kubernetes::params::bootstrap_controller_ip,
+  Boolean $worker                                                  = $kubernetes::params::worker,
+  Boolean $manage_epel                                             = $kubernetes::params::manage_epel,
+  Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,
+  String $etcd_version                                             = $kubernetes::params::etcd_version,
+  Optional[String] $etcd_ip                                        = $kubernetes::params::etcd_ip,
+  Optional[String] $etcd_initial_cluster                           = $kubernetes::params::etcd_initial_cluster,
+  Optional[String] $bootstrap_token                                = $kubernetes::params::bootstrap_token,
+  Optional[String] $bootstrap_token_name                           = $kubernetes::params::bootstrap_token_name,
+  Optional[String] $bootstrap_token_description                    = $kubernetes::params::bootstrap_token_description,
+  Optional[String] $bootstrap_token_id                             = $kubernetes::params::bootstrap_token_id,
+  Optional[String] $bootstrap_token_secret                         = $kubernetes::params::bootstrap_token_secret,
+  Optional[String] $bootstrap_token_usage_bootstrap_authentication = $kubernetes::params::bootstrap_token_usage_bootstrap_authentication,
+  Optional[String] $bootstrap_token_expiration                     = $kubernetes::params::bootstrap_token_expiration,
+  Optional[String] $bootstrap_token_usage_bootstrap_signing        = $kubernetes::params::bootstrap_token_usage_bootstrap_signing,
+  Optional[String] $certificate_authority_data                     = $kubernetes::params::certificate_authority_data,
+  Optional[String] $client_certificate_data_controller             = $kubernetes::params::client_certificate_data_controller,
+  Optional[String] $client_certificate_data_controller_manager     = $kubernetes::params::client_certificate_data_controller_manager,
+  Optional[String] $client_certificate_data_scheduler              = $kubernetes::params::client_certificate_data_scheduler,
+  Optional[String] $client_certificate_data_worker                 = $kubernetes::params::client_certificate_data_worker,
+  Optional[String] $client_certificate_data_admin                  = $kubernetes::params::client_certificate_data_admin,
+  Optional[String] $client_key_data_controller                     = $kubernetes::params::client_key_data_controller,
+  Optional[String] $client_key_data_controller_manager             = $kubernetes::params::client_key_data_controller_manager,
+  Optional[String] $client_key_data_scheduler                      = $kubernetes::params::client_key_data_scheduler,
+  Optional[String] $client_key_data_worker                         = $kubernetes::params::client_key_data_worker,
+  Optional[String] $client_key_data_admin                          = $kubernetes::params::client_key_data_admin,
+  Optional[String] $apiserver_kubelet_client_crt                   = $kubernetes::params::apiserver_kubelet_client_crt,
+  Optional[String] $apiserver_kubelet_client_key                   = $kubernetes::params::apiserver_kubelet_client_key,
+  Optional[String] $apiserver_crt                                  = $kubernetes::params::apiserver_crt,
+  Optional[String] $apiserver_key                                  = $kubernetes::params::apiserver_key,
+  Optional[String] $ca_crt                                         = $kubernetes::params::ca_crt,
+  Optional[String] $ca_key                                         = $kubernetes::params::ca_key,
+  Optional[String] $front_proxy_ca_crt                             = $kubernetes::params::front_proxy_ca_crt,
+  Optional[String] $front_proxy_ca_key                             = $kubernetes::params::front_proxy_ca_key,
+  Optional[String] $front_proxy_client_crt                         = $kubernetes::params::front_proxy_client_crt,
+  Optional[String] $front_proxy_client_key                         = $kubernetes::params::front_proxy_client_key,
+  Optional[String] $sa_key                                         = $kubernetes::params::sa_key,
+  Optional[String] $sa_pub                                         = $kubernetes::params::sa_pub,
+  String $cni_network_provider                                     = $kubernetes::params::cni_network_provider,
+  Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
 
   )  inherits kubernetes::params {
 
-  validate_bool($controller)
-  validate_bool($worker)
-  validate_bool($manage_epel)
-  validate_bool($install_dashboard)
 
   if $controller {
     if $worker {

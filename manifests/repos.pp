@@ -1,8 +1,8 @@
-## kubernetes repos 
+## kubernetes repos
 
 class kubernetes::repos (
-  $container_runtime = $kubernetes::container_runtime,
-  $manage_epel = $kubernetes::manage_epel,
+  String $container_runtime = $kubernetes::container_runtime,
+  Boolean $manage_epel      = $kubernetes::manage_epel,
 ){
 
   $repo = downcase($::operatingsystem)
