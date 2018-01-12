@@ -2,9 +2,9 @@
 
 class kubernetes::packages (
 
-  $kubernetes_package_version = $kubernetes::kubernetes_package_version,
-  $container_runtime = $kubernetes::container_runtime,
-  $cni_version = $kubernetes::cni_version,
+  Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
+  String $container_runtime                    = $kubernetes::container_runtime,
+  String $cni_version                          = $kubernetes::cni_version,
 
 ) {
 

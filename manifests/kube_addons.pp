@@ -1,10 +1,10 @@
 # Class kuberntes kube_addons
 class kubernetes::kube_addons (
 
-  $bootstrap_controller = $kubernetes::bootstrap_controller,
-  $cni_network_provider = $kubernetes::cni_network_provider,
-  $install_dashboard = $kubernetes::install_dashboard,
-  $kubernetes_version = $kubernetes::kubernetes_version
+  Boolean $bootstrap_controller = $kubernetes::bootstrap_controller,
+  String $cni_network_provider  = $kubernetes::cni_network_provider,
+  Boolean $install_dashboard    = $kubernetes::install_dashboard,
+  String $kubernetes_version    = $kubernetes::kubernetes_version
 ){
 
   if $bootstrap_controller {
