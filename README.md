@@ -177,14 +177,6 @@ Specifies whether to set a node as a worker.
 
 Defaults to `undef`.
 
-#### `manage_epel`
-
-Specifies whether you to manage epel for a RHEL box.
-
-Valid values are `true`, `false`.
-
-Defaults to `false`.
-
 #### `kube_api_advertise_address`
 
 The IP address you want exposed by the API server.

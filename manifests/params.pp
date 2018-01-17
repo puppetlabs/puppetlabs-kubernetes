@@ -21,7 +21,6 @@ $controller = false
 $bootstrap_controller = false
 $bootstrap_controller_ip = undef
 $worker = false
-$manage_epel = true
 $kube_api_advertise_address = undef
 $etcd_version = '3.0.17'
 $etcd_ip = undef
