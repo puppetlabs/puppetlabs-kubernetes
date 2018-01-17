@@ -45,10 +45,6 @@
 #   This is a bool that sets a node to a worker.
 #   defaults to undef
 #
-# [*manage_epel*]
-#   This is a bool that allows you to manage epel for a RHEL box.
-#   Defaults to false
-#
 # [*kube_api_advertise_address*]
 #   This is the ip address that the want to api server to expose.
 #   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
@@ -215,7 +211,6 @@ class kubernetes (
   Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
   Optional[String] $bootstrap_controller_ip                        = $kubernetes::params::bootstrap_controller_ip,
   Boolean $worker                                                  = $kubernetes::params::worker,
-  Boolean $manage_epel                                             = $kubernetes::params::manage_epel,
   Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,
   String $etcd_version                                             = $kubernetes::params::etcd_version,
   Optional[String] $etcd_ip                                        = $kubernetes::params::etcd_ip,
