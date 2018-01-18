@@ -76,7 +76,9 @@
 #
 # [*bootstrap_token_description*]
 #   The boot strap token description, this must be base64 encoded.
-#   An example with hiera would be kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars
+# lint:ignore:140chars
+#   An example with hierawould be  kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg==
+# lint:endignore 
 #
 # [*bootstrap_token_id*]
 #   This is the id the cluster will use to point to the token, this must be base64 encoded.
@@ -254,7 +256,7 @@ class kubernetes (
 
   if $controller {
     if $worker {
-      fail('A node can not be both a controller and a node')
+      fail translate(('A node can not be both a controller and a node'))
     }
   }
 

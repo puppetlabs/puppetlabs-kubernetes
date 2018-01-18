@@ -4,5 +4,6 @@ fixtures:
     apt: 'puppetlabs-apt'
     wget: 'maestrodev-wget'
     archive: "puppet-archive"    
+    translate: "puppetlabs-translate"
   symlinks:
     kubernetes: "#{source_dir}"
