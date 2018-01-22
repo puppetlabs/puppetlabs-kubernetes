@@ -4,7 +4,9 @@ class kubernetes::kube_addons (
   Boolean $bootstrap_controller = $kubernetes::bootstrap_controller,
   String $cni_network_provider  = $kubernetes::cni_network_provider,
   Boolean $install_dashboard    = $kubernetes::install_dashboard,
-  String $kubernetes_version    = $kubernetes::kubernetes_version
+  String $kubernetes_version    = $kubernetes::kubernetes_version,
+  Boolean $controller           = $kubernetes::controller,
+  Boolean $taint_master         = $kubernetes::taint_master,
 ){
 
   if $bootstrap_controller {
@@ -70,6 +72,15 @@ class kubernetes::kube_addons (
     refreshonly => true,
     require     => Exec['Create kube dns service account'],
     }
+
+
+  # if $controller {
+  #   exec {'Assign master role to controller':
+  #     command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
+  #     unless  => "kubectl"
+  # }
+
+
 
   if $install_dashboard and $kubernetes_version =~ /1[.](8|9)[.]\d/ {
     exec { 'Install Kubernetes dashboard':

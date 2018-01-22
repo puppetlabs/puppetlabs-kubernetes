@@ -250,6 +250,7 @@ class kubernetes (
   Optional[String] $sa_pub                                         = $kubernetes::params::sa_pub,
   String $cni_network_provider                                     = $kubernetes::params::cni_network_provider,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
+  Boolean $taint_master                                            = $kubernetes::params::taint_master,
 
   )  inherits kubernetes::params {
 
