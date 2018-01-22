@@ -74,13 +74,19 @@ class kubernetes::kube_addons (
     }
 
 
-  # if $controller {
-  #   exec {'Assign master role to controller':
-  #     command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
-  #     unless  => "kubectl"
-  # }
+  if $controller {
+    exec { 'Assign master role to controller':
+      command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
+      unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Roles: master'",
+    }
 
-
+    if $taint_master {
+      exec {'Taint master node':
+        command => "kubectl taint nodes ${::hostname} key=value:NoSchedule",
+        unless  => "kubectl describe nodes kube-master | tr -s ' ' | grep 'Taints: key=value:NoSchedule'"
+      }
+    }
+  }
 
   if $install_dashboard and $kubernetes_version =~ /1[.](8|9)[.]\d/ {
     exec { 'Install Kubernetes dashboard':
