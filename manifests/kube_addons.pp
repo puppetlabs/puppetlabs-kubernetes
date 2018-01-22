@@ -72,7 +72,7 @@ class kubernetes::kube_addons (
     refreshonly => true,
     require     => Exec['Create kube dns service account'],
     }
-
+  }
 
   if $controller {
     exec { 'Assign master role to controller':
@@ -88,6 +88,7 @@ class kubernetes::kube_addons (
     }
   }
 
+
   if $install_dashboard and $kubernetes_version =~ /1[.](8|9)[.]\d/ {
     exec { 'Install Kubernetes dashboard':
       command => 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml',
@@ -102,5 +103,5 @@ class kubernetes::kube_addons (
       unless  => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
       }
     }
-  }
+
 }

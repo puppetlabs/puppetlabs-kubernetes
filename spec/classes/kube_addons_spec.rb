@@ -18,7 +18,9 @@ describe 'kubernetes::kube_addons', :type => :class do
       'bootstrap_controller' => true,
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
-      'kubernetes_version' => '1.7.3' 
+      'kubernetes_version' => '1.7.3',
+      'controller' => true,
+      'taint_master' => true
       }
     end
 
@@ -29,6 +31,21 @@ describe 'kubernetes::kube_addons', :type => :class do
     it { should contain_exec('Create kube dns service account') }
     it { should contain_exec('Create kube dns service') }
     it { should contain_exec('Create kube dns deployment') }
+    it { should contain_exec('Assign master role to controller') }
+    it { should contain_exec('Taint master node') }
+  end
+
+  context 'with controller => true and taint_master => true' do
+    let(:params) do {
+      'bootstrap_controller' => false,
+      'controller' => true,
+      'cni_network_provider' => 'https://foo.test',
+      'install_dashboard' => false,
+      'kubernetes_version' => '1.7.3',
+      'taint_master' => true
+      }
+    end
+    it { should contain_exec('Taint master node') }
   end
 
   context 'with install_dashboard => true' do
@@ -36,7 +53,9 @@ describe 'kubernetes::kube_addons', :type => :class do
       'bootstrap_controller' => true,
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => true,
-      'kubernetes_version' => '1.7.3'
+      'kubernetes_version' => '1.7.3',
+      'controller' => true,
+      'taint_master' => false
       }
     end
 
