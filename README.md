@@ -403,6 +403,14 @@ Valid values are `true`, `false`.
 
 Defaults to `false`.
 
+#### `taint_master`
+
+Specifies whether to add the NoSchedule taint to any controller nodes in the cluster.
+
+Valid values are `true, `false`.
+
+Defaults to `true`
+
 ## Limitations
 
 This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) and above.
