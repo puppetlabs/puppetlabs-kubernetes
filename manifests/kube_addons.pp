@@ -84,11 +84,11 @@ class kubernetes::kube_addons (
 
       exec { 'Checking for dns to be deployed':
         path        => ['/usr/bin', '/bin'],
-        command     => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s ' ' | grep "Deployment does not have minimum availability"',
+        command     => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s " " | grep "Deployment does not have minimum availability"',
         tries       => 50,
         try_sleep   => 10,
         logoutput   => true,
-        unless      => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s ' ' | grep "Deployment has minimum availability"',
+        unless      => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s " " | grep "Deployment has minimum availability"',
         }
 
       exec { 'Taint master node':
