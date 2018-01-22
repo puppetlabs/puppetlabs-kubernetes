@@ -32,6 +32,7 @@ describe 'kubernetes::kube_addons', :type => :class do
     it { should contain_exec('Create kube dns service') }
     it { should contain_exec('Create kube dns deployment') }
     it { should contain_exec('Assign master role to controller') }
+    it { should contain_exec('Checking for dns to be deployed') }
     it { should contain_exec('Taint master node') }
   end
 
@@ -45,6 +46,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'taint_master' => true
       }
     end
+    it { should contain_exec('Checking for dns to be deployed') }
     it { should contain_exec('Taint master node') }
   end
 
