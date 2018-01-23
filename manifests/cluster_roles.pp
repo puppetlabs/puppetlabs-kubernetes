@@ -2,8 +2,8 @@
 
 class kubernetes::cluster_roles (
 
-  $bootstrap_controller = $kubernetes::bootstrap_controller,
-  $kubernetes_version = $kubernetes::kubernetes_version,
+  Boolean $bootstrap_controller = $kubernetes::bootstrap_controller,
+  String $kubernetes_version    = $kubernetes::kubernetes_version,
 ){
 
   if $bootstrap_controller {

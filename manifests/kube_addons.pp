@@ -1,10 +1,12 @@
 # Class kuberntes kube_addons
 class kubernetes::kube_addons (
 
-  $bootstrap_controller = $kubernetes::bootstrap_controller,
-  $cni_network_provider = $kubernetes::cni_network_provider,
-  $install_dashboard = $kubernetes::install_dashboard,
-  $kubernetes_version = $kubernetes::kubernetes_version
+  Boolean $bootstrap_controller          = $kubernetes::bootstrap_controller,
+  Optional[String]$cni_network_provider  = $kubernetes::cni_network_provider,
+  Boolean $install_dashboard             = $kubernetes::install_dashboard,
+  String $kubernetes_version             = $kubernetes::kubernetes_version,
+  Boolean $controller                    = $kubernetes::controller,
+  Boolean $taint_master                  = $kubernetes::taint_master,
 ){
 
   if $bootstrap_controller {
@@ -70,6 +72,33 @@ class kubernetes::kube_addons (
     refreshonly => true,
     require     => Exec['Create kube dns service account'],
     }
+  }
+
+  if $controller {
+    exec { 'Assign master role to controller':
+      command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
+      unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Roles: master'",
+    }
+
+    if $taint_master {
+
+      exec { 'Checking for dns to be deployed':
+        path      => ['/usr/bin', '/bin'],
+        command   => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s " " | grep "Deployment has minimum availability"',
+        tries     => 50,
+        try_sleep => 10,
+        logoutput => true,
+        onlyif    => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s " " | grep "Deployment does not have minimum availability"',
+        }
+
+      exec { 'Taint master node':
+        command => "kubectl taint nodes ${::hostname} key=value:NoSchedule",
+        onlyif  => 'kubectl get nodes',
+        unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Taints: key=value:NoSchedule'"
+      }
+    }
+  }
+
 
   if $install_dashboard and $kubernetes_version =~ /1[.](8|9)[.]\d/ {
     exec { 'Install Kubernetes dashboard':
@@ -85,5 +114,5 @@ class kubernetes::kube_addons (
       unless  => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
       }
     }
-  }
+
 }

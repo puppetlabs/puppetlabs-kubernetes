@@ -2,8 +2,8 @@ fixtures:
   forge_modules:
     stdlib: 'puppetlabs-stdlib'
     apt: 'puppetlabs-apt'
-    epel: 'stahnma-epel'
     wget: 'maestrodev-wget'
     archive: "puppet-archive"    
+    translate: "puppetlabs-translate"
   symlinks:
     kubernetes: "#{source_dir}"

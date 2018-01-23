@@ -1,8 +1,7 @@
-## kubernetes repos 
+## kubernetes repos
 
 class kubernetes::repos (
-  $container_runtime = $kubernetes::container_runtime,
-  #$manage_epel = $kubernetes::manage_epel,
+  String $container_runtime = $kubernetes::container_runtime,
 ){
 
   $repo = downcase($::operatingsystem)
@@ -32,10 +31,6 @@ class kubernetes::repos (
       }
     }
     'RedHat': {
-      #if $manage_epel {
-      #  include epel
-      #}
-
       if $container_runtime == 'docker' {
         yumrepo { 'docker':
           descr    => 'docker',

@@ -41,7 +41,7 @@ If you do not already have Docker installed on your workstation, install it [her
 The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 
 ```puppet
-docker run -v $(pwd):/mnt -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppetlabs/kubetool
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.1 -e CONTAINER_RUNTIME=docker -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool
 ```
 
 The parameters are:
@@ -176,14 +176,6 @@ Defaults to `undef`.
 Specifies whether to set a node as a worker.
 
 Defaults to `undef`.
-
-#### `manage_epel`
-
-Specifies whether you to manage epel for a RHEL box.
-
-Valid values are `true`, `false`.
-
-Defaults to `false`.
 
 #### `kube_api_advertise_address`
 
@@ -410,6 +402,14 @@ Specifies whether the kubernetes dashboard is installed.
 Valid values are `true`, `false`.
 
 Defaults to `false`.
+
+#### `taint_master`
+
+Specifies whether to add the NoSchedule taint to any controller nodes in the cluster.
+
+Valid values are `true, `false`.
+
+Defaults to `true`
 
 ## Limitations
 

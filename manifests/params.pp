@@ -21,7 +21,6 @@ $controller = false
 $bootstrap_controller = false
 $bootstrap_controller_ip = undef
 $worker = false
-#$manage_epel = true
 $kube_api_advertise_address = undef
 $etcd_version = '3.1.11'
 $etcd_ip = undef
@@ -57,10 +56,10 @@ $front_proxy_client_crt = undef
 $front_proxy_client_key = undef
 $sa_key = undef
 $sa_pub = undef
-#$cni_network_provider = 'https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d "\n")\&env.IPALLOC_RANGE=100.32.0.0/12'
 $cni_cluster_cidr = undef
 $cni_node_cidr = undef
-$cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
+$cni_network_provider = undef
 $install_dashboard = false
+$taint_master = true
 
 }

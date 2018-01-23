@@ -16,6 +16,8 @@ describe 'kubernetes::config', :type => :class do
     {
       'kubernetes_version' => '1.7.3',
       'container_runtime' => 'docker',
+      'cni_cluster_cidr' => '10.0.0.0/24',
+      'cni_node_cidr' => '10.0.1.0/24',
       'kube_dns_version' => '1.14.2',
       'controller' => true,
       'bootstrap_controller' => false,
@@ -25,7 +27,7 @@ describe 'kubernetes::config', :type => :class do
       'kube_api_advertise_address' => '127.0.0.1',
       'etcd_version' => '3.0.17',
       'etcd_ip' => '127.0.01',
-      'etcd_initial_cluster' => false,
+      'etcd_initial_cluster' => 'foo',
       'bootstrap_token' => 'foo',
       'bootstrap_token_name' => 'foo',
       'bootstrap_token_description' => 'foo',
