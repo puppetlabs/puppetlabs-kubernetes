@@ -4,6 +4,8 @@ class kubernetes::config (
 
   $kubernetes_version = $kubernetes::kubernetes_version,
   $container_runtime = $kubernetes::container_runtime,
+  $cni_cluster_cidr = $kubernetes::cni_cluster_cidr,
+  $cni_node_cidr = $kubernetes::cni_node_cidr,
   $kube_dns_version = $kubernetes::kube_dns_version,
   $kubernetes_fqdn = $kubernetes::kubernetes_fqdn,
   $controller = $kubernetes::controller,

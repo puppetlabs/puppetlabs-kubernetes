@@ -210,12 +210,14 @@ class kubernetes (
   $kubernetes_fqdn = $kubernetes::params::kubernetes_fqdn,
   $container_runtime = $kubernetes::params::container_runtime,
   $cni_version = $kubernetes::params::cni_version,
+  $cni_cluster_cidr = $kubernetes::params::cni_cluster_cidr,
+  $cni_node_cidr = $kubernetes::params::cni_node_cidr,
   $kube_dns_version = $kubernetes::params::kube_dns_version,
   $controller = $kubernetes::params::controller,
   $bootstrap_controller = $kubernetes::params::bootstrap_controller,
   $bootstrap_controller_ip = $kubernetes::params::bootstrap_controller_ip,
   $worker = $kubernetes::params::worker,
-  $manage_epel = $kubernetes::params::manage_epel,
+  #$manage_epel = $kubernetes::params::manage_epel,
   $kube_api_advertise_address = $kubernetes::params::kube_api_advertise_address,
   $etcd_version = $kubernetes::params::etcd_version,
   $etcd_ip = $kubernetes::params::etcd_ip,
@@ -258,7 +260,7 @@ class kubernetes (
 
   validate_bool($controller)
   validate_bool($worker)
-  validate_bool($manage_epel)
+  #validate_bool($manage_epel)
   validate_bool($install_dashboard)
 
   if $controller {
