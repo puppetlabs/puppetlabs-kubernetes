@@ -426,4 +426,3 @@ Ubuntu 16.04
 ## Development
 
 If you would like to contribute to this module please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md).
-Mark testing
