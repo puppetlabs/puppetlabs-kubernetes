@@ -49,6 +49,7 @@ describe 'kubernetes::config', :type => :class do
       'apiserver_kubelet_client_key' => 'foo',
       'apiserver_crt' => 'foo',
       'apiserver_key' => 'foo',
+      'apiserver_extra_arguments' => ['--some-extra-arg=foo'],
       'kubernetes_fqdn' => 'kube.foo.dev',
       'ca_crt' => 'foo',
       'ca_key' => 'foo',
@@ -98,6 +99,13 @@ describe 'kubernetes::config', :type => :class do
       it { should contain_file('/etc/kubernetes/secrets/bootstraptoken.yaml') }
       it { should contain_file('/root/admin.conf') }
       it { should contain_file('/etc/profile.d/kubectl.sh') }
+
+      # Check API server config
+      it {
+        should contain_file('/etc/kubernetes/manifests/kube-apiserver.yaml')
+                   .with_content(/^\s*- --experimental-bootstrap-token-auth=true$/) # with kubernetes_version = 1.7.x
+                   .with_content(/^\s*- --some-extra-arg=foo$/)
+      }
     end
 
   context 'with worker => true' do

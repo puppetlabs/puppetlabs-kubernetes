@@ -152,6 +152,10 @@
 #   The api server key. Must be passed as cert not a file.
 #   Defaults to undef
 #
+# [*apiserver_extra_arguments*]
+#   A string array of extra arguments to be passed to the api server.
+#   Defaults to []
+#
 # [*ca_crt*]
 #   The clusters ca certificate. Must be passed as cert not a file.
 #   Defaults to undef
@@ -240,6 +244,7 @@ class kubernetes (
   Optional[String] $apiserver_kubelet_client_key                   = $kubernetes::params::apiserver_kubelet_client_key,
   Optional[String] $apiserver_crt                                  = $kubernetes::params::apiserver_crt,
   Optional[String] $apiserver_key                                  = $kubernetes::params::apiserver_key,
+  Array $apiserver_extra_arguments                                 = $kubernetes::params::apiserver_extra_arguments,
   Optional[String] $ca_crt                                         = $kubernetes::params::ca_crt,
   Optional[String] $ca_key                                         = $kubernetes::params::ca_key,
   Optional[String] $front_proxy_ca_crt                             = $kubernetes::params::front_proxy_ca_crt,
