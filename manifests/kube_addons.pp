@@ -9,10 +9,6 @@ class kubernetes::kube_addons (
   Boolean $taint_master                  = $kubernetes::taint_master,
 ){
 
-  if $bootstrap_controller {
-
-  $addon_dir = '/etc/kubernetes/addons'
-
   Exec {
     path        => ['/usr/bin', '/bin'],
     environment => [ 'HOME=/root', 'KUBECONFIG=/root/admin.conf'],
@@ -20,6 +16,10 @@ class kubernetes::kube_addons (
     tries       => 5,
     try_sleep   => 5,
     }
+
+  if $bootstrap_controller {
+
+  $addon_dir = '/etc/kubernetes/addons'
 
   exec { 'Install cni network provider':
     command => "kubectl apply -f ${cni_network_provider}",
