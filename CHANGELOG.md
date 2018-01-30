@@ -1,4 +1,4 @@
-#Version 1.0.1
+# Version 1.0.1
 Support for weave and flannel
 EPEL module removed as dependency 
 Added `$apiserver_extra_arguments` PR #47
@@ -6,15 +6,15 @@ Added support for PDK
 Added support for stdlib 4.24.0
 Updated kubetool to include CNI information in hiera (see README)
 
-#Version 1.0.0
+# Version 1.0.0
 Officially supported version of puppetlabs-kubernetes
 
-#Version 0.2.0
+# Version 0.2.0
 Supports Kubernetes up to 1.9.x
 Adds support for cri-containerd runtime
 Provides additional os and runtime switches for Kubetool
 
-#Version 0.1.3
+# Version 0.1.3
 Provide cli switches for kubetool, and add Dockerfile
 
 # Version 0.1.2
