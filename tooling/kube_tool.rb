@@ -7,7 +7,7 @@ require_relative 'kube_tool/create_token.rb'
 require_relative 'kube_tool/clean_up.rb'
 require_relative 'kube_tool/other_params.rb'
 
-options = {:os => nil, :version => nil, :container_runtime => nil, :fqdn => nil, :ip => nil, :bootstrap_controller_ip => nil, :etcd_initial_cluster => nil, :etcd_ip => nil, :kube_api_advertise_address => nil, :install_dashboard => nil}
+options = {:os => nil, :version => nil, :container_runtime => nil, :cni_provider=> nil, :fqdn => nil, :ip => nil, :bootstrap_controller_ip => nil, :etcd_initial_cluster => nil, :etcd_ip => nil, :kube_api_advertise_address => nil, :install_dashboard => nil}
 
 parser = OptionParser.new do|opts|
 
@@ -23,6 +23,10 @@ parser = OptionParser.new do|opts|
     options[:container_runtime] = container_runtime;
   end
 
+  opts.on('-c', '--cni-provider cni-provider', 'the networking provider to use') do |cni_provider|
+    options[:cni_provider] = cni_provider;
+  end
+  
   opts.on('-f', '--fqdn fqdn', 'fqdn') do |fqdn|
     options[:fqdn] = fqdn;
   end
@@ -76,7 +80,7 @@ class Kube_tool
     CreateCerts.kube_scheduler
     CreateCerts.kube_workers
     CreateToken.bootstrap
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime],  hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     CleanUp.remove_files
   end
 end

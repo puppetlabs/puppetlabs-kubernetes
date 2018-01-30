@@ -16,6 +16,8 @@ describe 'kubernetes::config', :type => :class do
     {
       'kubernetes_version' => '1.7.3',
       'container_runtime' => 'docker',
+      'cni_cluster_cidr' => '10.0.0.0/24',
+      'cni_node_cidr' => '10.0.1.0/24',
       'kube_dns_version' => '1.14.2',
       'controller' => true,
       'bootstrap_controller' => false,

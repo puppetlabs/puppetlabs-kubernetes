@@ -40,8 +40,7 @@ If you do not already have Docker installed on your workstation, install it [her
 
 The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 
-```puppet
-docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool:1.0.1
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool
 ```
 
 The parameters are:
@@ -49,6 +48,7 @@ The parameters are:
 * `OS`: the os kubernetes will run on.
 * `VERSION`: the version of kubernetes you want to deploy
 * `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd`
+* `CNI_PROVIDER` : This is the CNI network to install. This can be set to `weave` or `flannel`
 * `FQDN`: the cluster fqdn.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
@@ -185,6 +185,9 @@ An example with hiera would be `kubernetes::kube_api_advertise_address:"%{::ipad
 
 Defaults to `undef`.
 
+#### `apiserver_extra_arguments`
+An array of extra configuration you can pass to the Kubernetes api container
+defaults to []
 #### `etcd_version`
 
 The version of etcd to use.

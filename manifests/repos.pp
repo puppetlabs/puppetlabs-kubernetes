@@ -31,7 +31,6 @@ class kubernetes::repos (
       }
     }
     'RedHat': {
-
       if $container_runtime == 'docker' {
         yumrepo { 'docker':
           descr    => 'docker',
