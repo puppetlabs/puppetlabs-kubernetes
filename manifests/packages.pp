@@ -37,6 +37,10 @@ class kubernetes::packages (
 
     default: { notify {"The OS family ${::os_family} is not supported by this module":} }
     }
+
+    package { 'kubernetes-cni':
+      ensure => $cni_version,
+    }
   }
 
   elsif $container_runtime == 'cri_containerd' {
