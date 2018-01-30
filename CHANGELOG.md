@@ -1,5 +1,4 @@
 #Version 1.0.1
-
 Support for weave and flannel
 EPEL module removed as dependency 
 Added `$apiserver_extra_arguments` PR #47
