@@ -14,6 +14,5 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('docker-engine').with_ensure('1.12.0-0~xenial')}
     it { should contain_package('kubelet').with_ensure('1.7.3-01')}
     it { should contain_package('kubectl').with_ensure('1.7.3-01')}
-    it { should contain_package('kubernetes-cni').with_ensure('0.5.1-00')}
   end
 end
