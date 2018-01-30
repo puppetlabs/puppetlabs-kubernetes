@@ -50,6 +50,10 @@
 #   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
 #   defaults to undef
 #
+# [*$apiserver_extra_arguments*]
+#   This is an array to pass extra configuration to the Kubernetes api.
+#   Defaults to []
+#
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
 #   Defaults to 3.0.17
