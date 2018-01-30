@@ -4,6 +4,8 @@ class kubernetes::config (
 
   String $kubernetes_version                                       = $kubernetes::kubernetes_version,
   String $container_runtime                                        = $kubernetes::container_runtime,
+  Optional[String] $cni_cluster_cidr                               = $kubernetes::cni_cluster_cidr,
+  Optional[String] $cni_node_cidr                                  = $kubernetes::cni_node_cidr,
   String $kube_dns_version                                         = $kubernetes::kube_dns_version,
   String $kubernetes_fqdn                                          = $kubernetes::kubernetes_fqdn,
   Boolean $controller                                              = $kubernetes::controller,

@@ -22,7 +22,7 @@
 #
 # [*cni_version*]
 #   The version of the cni package you would like to install
-#   Defaults to 0.5.1
+#   Defaults to 0.6.0
 #
 # [*kube_dns_version*]
 #   The version of kube DNS you would like to install
@@ -212,6 +212,8 @@ class kubernetes (
   String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
   String $container_runtime                                        = $kubernetes::params::container_runtime,
   Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
+  Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
+  Optional[String] $cni_node_cidr                                  = $kubernetes::params::cni_node_cidr,
   String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,
   Boolean $controller                                              = $kubernetes::params::controller,
   Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
@@ -253,12 +255,11 @@ class kubernetes (
   Optional[String] $front_proxy_client_key                         = $kubernetes::params::front_proxy_client_key,
   Optional[String] $sa_key                                         = $kubernetes::params::sa_key,
   Optional[String] $sa_pub                                         = $kubernetes::params::sa_pub,
-  String $cni_network_provider                                     = $kubernetes::params::cni_network_provider,
+  Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
 
   )  inherits kubernetes::params {
-
 
   if $controller {
     if $worker {

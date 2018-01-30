@@ -5,11 +5,11 @@ class kubernetes::params {
 case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = '1.7.3-01'
-    $cni_version                = '0.5.1-00'
+    $cni_version = '0.6.0-00'
   }
   'RedHat' : {
     $kubernetes_package_version = '1.7.3'
-    $cni_version = '0.5.1'
+    $cni_version = '0.6.0'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
@@ -22,7 +22,7 @@ $bootstrap_controller = false
 $bootstrap_controller_ip = undef
 $worker = false
 $kube_api_advertise_address = undef
-$etcd_version = '3.0.17'
+$etcd_version = '3.1.11'
 $etcd_ip = undef
 $etcd_initial_cluster = undef
 $bootstrap_token = undef
@@ -57,7 +57,9 @@ $front_proxy_client_crt = undef
 $front_proxy_client_key = undef
 $sa_key = undef
 $sa_pub = undef
-$cni_network_provider = 'https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d "\n")\&env.IPALLOC_RANGE=100.32.0.0/12'
+$cni_cluster_cidr = undef
+$cni_node_cidr = undef
+$cni_network_provider = undef
 $install_dashboard = false
 $taint_master = true
 

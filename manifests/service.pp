@@ -2,10 +2,10 @@
 
 class kubernetes::service (
 
-  Boolean $controller           = $kubernetes::controller,
-  Boolean $bootstrap_controller = $kubernetes::bootstrap_controller,
-  String $container_runtime     = $kubernetes::container_runtime,
-  Optional[String] $etcd_ip     = $kubernetes::etcd_ip,
+  Boolean $controller                = $kubernetes::controller,
+  Boolean $bootstrap_controller      = $kubernetes::bootstrap_controller,
+  String $container_runtime          = $kubernetes::container_runtime,
+  Optional[String] $etcd_ip          = $kubernetes::etcd_ip,
 ){
 
   $peeruls = inline_template("'{\"peerURLs\":[\"http://${etcd_ip}:2380\"]}'")
