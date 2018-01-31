@@ -24,8 +24,8 @@ class kubernetes::repos (
             repos    => 'main',
             release  => 'ubuntu-xenial',
             key      => {
-              'id'     => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
-              'source' => 'https://download.docker.com/linux/ubuntu/gpg',
+              'id'     => '58118E89F3A912897C070ADBF76221572C52609D',
+              'source' => 'https://apt.dockerproject.org/gpg',
           },
         }
       }
