@@ -17,7 +17,13 @@ describe 'kubernetes::repos', :type => :class do
     let(:params) { { 'container_runtime' => 'docker' } }
 
     it { should contain_apt__source('kubernetes') }
-    it { should contain_apt__source('docker') }
+    it { should contain_apt__source('docker').with(
+              :ensure   => 'present',
+              :location => 'https://apt.dockerproject.org/repo',
+              :repos    => 'main',
+              :release  => 'ubuntu-xenial',
+              :key      => { 'id' => '58118E89F3A912897C070ADBF76221572C52609D', 'source' => 'https://apt.dockerproject.org/gpg' }
+       ) }
 
   end
 
