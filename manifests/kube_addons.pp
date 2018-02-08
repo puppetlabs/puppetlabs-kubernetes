@@ -88,7 +88,7 @@ class kubernetes::kube_addons (
         tries     => 50,
         try_sleep => 10,
         logoutput => true,
-        onlyif    => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s " " | grep "Deployment does not have minimum availability"',
+        onlyif    => 'kubectl get deploy -n kube-system kube-dns -o yaml | tr -s " " | grep "Deployment does not have minimum availability"', # lint:ignore:140chars
         }
 
       exec { 'Taint master node':
