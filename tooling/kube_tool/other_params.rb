@@ -15,7 +15,7 @@ class OtherParams
     end
 
     if cni_provider.match('weave')
-       cni_network_provider = 'https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d "\n")'
+       cni_network_provider = 'https://git.io/weave-kube-1.6'
     elsif
        cni_provider.match('flannel')
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
@@ -44,5 +44,6 @@ class OtherParams
     data['kubernetes::install_dashboard'] = install
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
     File.write("kubernetes.yaml",File.open("kubernetes.yaml",&:read).gsub(/^---$/," "))
+
   end
 end
