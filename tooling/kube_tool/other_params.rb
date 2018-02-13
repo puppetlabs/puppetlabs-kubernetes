@@ -13,29 +13,29 @@ class OtherParams
     elsif os.downcase.match('redhat')
       kubernetes_package_version = version
     end
-    
+
     if cni_provider.match('weave')
-       cni_network_provider = 'https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d "\n")\&env.IPALLOC_RANGE=100.32.0.0/12'
-    elsif      
+       cni_network_provider = 'https://git.io/weave-kube-1.6'
+    elsif
        cni_provider.match('flannel')
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
-       cni_cluster_cidr = '- --cluster-cidr=10.244.0.0/16' 
-       cni_node_cidr = '- --allocate-node-cidrs=true'    
+       cni_cluster_cidr = '- --cluster-cidr=10.244.0.0/16'
+       cni_node_cidr = '- --allocate-node-cidrs=true'
     elsif cni_provider.match('calico')
        cni_network_provider = 'https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml'
        cni_cluster_cidr = '- --cluster-cidr=192.168.0.0/16'
-       cni_node_cidr = '- --allocate-node-cidrs=true'  
+       cni_node_cidr = '- --allocate-node-cidrs=true'
     elsif cni_provider.match('romana')
-      cni_network_provider = 'https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-kubeadm.yml'	    
+      cni_network_provider = 'https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-kubeadm.yml'
     end
-    
+
     data = Hash.new
     data['kubernetes::kubernetes_version'] = version
     data['kubernetes::kubernetes_package_version'] = kubernetes_package_version
     data['kubernetes::container_runtime'] = container_runtime
     data['kubernetes::cni_network_provider'] = cni_network_provider
     data['kubernetes::cni_cluster_cidr'] = cni_cluster_cidr
-    data['kubernetes::cni_node_cidr'] = cni_node_cidr 
+    data['kubernetes::cni_node_cidr'] = cni_node_cidr
     data['kubernetes::kubernetes_fqdn'] = fqdn
     data['kubernetes::bootstrap_controller_ip'] = bootstrap_controller_ip
     data['kubernetes::etcd_initial_cluster'] = etcd_initial_cluster
@@ -44,5 +44,6 @@ class OtherParams
     data['kubernetes::install_dashboard'] = install
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
     File.write("kubernetes.yaml",File.open("kubernetes.yaml",&:read).gsub(/^---$/," "))
+
   end
 end
