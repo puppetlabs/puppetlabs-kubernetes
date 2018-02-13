@@ -39,7 +39,7 @@ describe 'the Kubernetes module' do
 
         it 'can access the deployed service' do
           shell('sleep 60')
-          shell('curl 10.96.188.5', :acceptable_exit_codes => [0]) do |r|
+          shell('curl -s 10.96.188.5', :acceptable_exit_codes => [0]) do |r|
             expect(r.stdout).to match (/Welcome to nginx!/)
           end
         end
