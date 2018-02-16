@@ -1,7 +1,14 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
+if puppet_gem_version = ENV['PUPPET_GEM_VERSION']
+  gem "puppet", puppet_gem_version
+elsif puppet_git_url = ENV['PUPPET_GIT_URL']
+  gem "puppet", :git => puppet_git_url
+else
+  gem "puppet"
+end
+
 gem 'metadata-json-lint'
-gem 'puppet', '~> 4'
 gem 'puppetlabs_spec_helper', '>= 1.0.0'
 gem 'puppet-lint', '>= 1.0.0'
 gem 'facter', '>= 1.7.0'

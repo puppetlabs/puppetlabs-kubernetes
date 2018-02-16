@@ -1,5 +1,6 @@
 require 'spec_helper'
 describe 'kubernetes::kube_addons', :type => :class do
+  let (:pre_condition) { 'include kubernetes::config'}
   let(:facts) do
     {
       :osfamily         => 'Debian',
