@@ -8,12 +8,12 @@
 # [*kubernetes_version*]
 #   The version of Kubernetes containers you want to install.
 #   ie api server,
-#   Defaults to  1.7.3
+#   Defaults to  1.9.2
 #
 # [*kubernetes_package_version*]
 #   The version of the packages the Kubernetes os packages to install
 #   ie kubectl and kubelet
-#   Defaults to 1.7.3
+#   Defaults to 1.9.2
 #
 # [*container_runtime]
 #   This is the runtime that the Kubernetes cluster will use.
@@ -23,6 +23,10 @@
 # [*cni_version*]
 #   The version of the cni package you would like to install
 #   Defaults to 0.6.0
+#
+# [*cni_provider]
+#   The url location for the cni providers yaml. This can only be set to weave or flannel.
+#   Defaults to undef 
 #
 # [*kube_dns_version*]
 #   The version of kube DNS you would like to install

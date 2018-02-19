@@ -121,19 +121,24 @@ Please note that a node can not be a controller and a worker. It must be one or 
 
 The version of the Kubernetes containers to install.
 
-Defaults to  `1.7.3`.
+Defaults to  `1.9.2`.
 
 #### `kubernetes_package_version`
 
 The version the Kubernetes OS packages to install, such as kubectl and kubelet.
 
-Defaults to `1.7.3`.
+Defaults to `1.9.2`.
 
 #### `cni_version`
 
 The version of the cni package to install.
 
-Defaults to `0.5.1`.
+Defaults to `0.6.0`.
+
+#### `cni_provider`
+
+The url to get the cni providers yaml file. This can only be weave or flannel
+defaults to `undef`
 
 #### `kube_dns_version`
 
