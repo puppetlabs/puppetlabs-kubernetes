@@ -1,5 +1,7 @@
 require 'spec_helper'
 describe 'kubernetes::repos', :type => :class do
+
+  
   context 'with osfamily => Ubuntu' do
     let(:facts) do
       {
