@@ -13,7 +13,7 @@ class kubernetes::packages (
   case $kubernetes_package_version {
     /1[.]9[.]\d/: {
       $cri_source = 'https://github.com/containerd/cri-containerd/releases/download/v1.0.0-beta.1/cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz'
-      $cri_archive = 'cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz'
+      $cri_archive = 'cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz'
     }
     default: {
       $cri_source = 'https://github.com/containerd/cri-containerd/releases/download/v1.0.0-alpha.1/cri-containerd-1.0.0-alpha.1.tar.gz'
