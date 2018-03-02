@@ -7,6 +7,7 @@
 #### Table of Contents
 
 1. [Description](#description)
+1. [Installing the Module](#install)
 1. [Setup - The basics of getting started with kubernetes](#setup)
     * [Setup requirements](#setup-requirements)
     * [Beginning with kubernetes](#beginning-with-kubernetes)
@@ -24,15 +25,26 @@ This module installs and configures [Kubernetes](https://kubernetes.io/). Kubern
 
 It groups containers that make up an application into logical units for easy management and discovery.
 
+## Install
+
+To use this module, add this declaration to your Puppetfile:
+```
+mod 'puppetlabs-kubernetes', '1.0.3'
+```
+To manually install this module with puppet module tool:
+```
+puppet module install puppetlabs-kubernetes --version 1.0.3
+```
+
 ## Setup
 
 ### Setup Requirements
 
-This module includes a configuration tool called `kubetool` to auto generate
-all the security parameters, the bootstrap token, and other configurations for
-your Kubernetes cluster into a Hiera file. The tool is available as a Docker
+This module includes a configuration tool called
+[kubetool](tooling/kube_tool.rb) to auto generate all the security
+parameters, the bootstrap token, and other configurations for your Kubernetes
+cluster into a Hiera file. The tool is available as a Docker
 image to simplify installation and use.
-
 
 #### Generate the module's configuration
 
@@ -64,9 +76,9 @@ values are re-generated, including the certificates and tokens.
 
 #### 2. Add the `kubernetes.yaml` file to Hiera
 
-The resuling `kubernetes.yaml` file should be added to your [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where you keep your [Hiera](https://docs.puppet.com/hiera/) data, usually the `data` directory. Each cluster can be given its own configuration by leveraging location facts such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts).
+The resulting `kubernetes.yaml` file should be added to your [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where you keep your [Hiera](https://docs.puppet.com/hiera/) data, usually the `data` directory. Each cluster can be given its own configuration by leveraging location facts such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts).
 
-### Begininning with kubernetes
+### Begininning with Kubernetes
 
 After your `kubernetes.yaml` file has been added to the Hiera directory on your Puppet server, configure your node with one of the following parameters:
 
