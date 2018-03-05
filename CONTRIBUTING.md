@@ -1,7 +1,4 @@
-This module has grown over time based on a range of contributions from
-people using it. If you follow these contributing guidelines your patch
-will likely make it into a release a little quicker.
-
+To ensure the module maintains consistency throughout its lifecycle, please follow the process below to have your PR reviewed
 
 ## Contributing
 
@@ -29,7 +26,7 @@ By default the tests use a baseline version of Puppet.
 If you have Ruby 2.x or want a specific version of Puppet,
 you must set an environment variable such as:
 
-    export PUPPET_GEM_VERSION="~> 4.2.0"
+    export PUPPET_GEM_VERSION="~> 3.2.0"
 
 Install the dependencies like so...
 
@@ -71,14 +68,18 @@ This fires up a new virtual machine (using vagrant) and runs a series of
 simple tests against it after applying the module. You can run this
 with:
 
-    bundle exec rake beaker
+    bundle exec rake acceptance
 
 This will run the tests on an Ubuntu 16.04 virtual machine. You can also
-run the integration tests against Centos 7.2 with:
+run the integration tests against RHEL, CentOS and Debian.
 
-    BEAKER_set=centos-72-x64 bundle exec rake beaker
-
-Or with another version Ubuntu:
-
-    BEAKER_set=ubuntu-<VERSION>-x64 bundle exec rake beaker
+    bundle exec rake acceptance:pooler:centos7
+    bundle exec rake acceptance:pooler:rhel7
+    bundle exec rake acceptance:pooler:ubuntu-1404
+    bundle exec rake acceptance:pooler:ubuntu-1604
+    bundle exec rake acceptance:pooler:ubuntu-1610
+    bundle exec rake acceptance:vagrant:centos-70-x64
+    bundle exec rake acceptance:vagrant:debian-81-x64
+    bundle exec rake acceptance:vagrant:ubuntu-1404-x64
+    bundle exec rake acceptance:vagrant:ubuntu-1604-x64
 
