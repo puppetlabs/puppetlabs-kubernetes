@@ -4,6 +4,7 @@ class kubernetes::packages (
 
   Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
+  String $cni_package_name                     = $kubernetes::cni_package_name,
   String $cni_package_version                  = $kubernetes::cni_package_version,
 
 ) {
@@ -38,7 +39,7 @@ class kubernetes::packages (
       default: { notify {"The OS family ${::os_family} is not supported by this module":} }
     }
 
-    package { 'kubernetes-cni':
+    package { $cni_package_name:
       ensure => $cni_package_version,
     }
   }
