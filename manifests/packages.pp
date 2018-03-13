@@ -4,7 +4,7 @@ class kubernetes::packages (
 
   Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
-  String $cni_version                          = $kubernetes::cni_version,
+  String $cni_package_version                  = $kubernetes::cni_package_version,
 
 ) {
 
@@ -39,7 +39,7 @@ class kubernetes::packages (
     }
 
     package { 'kubernetes-cni':
-      ensure => $cni_version,
+      ensure => $cni_package_version,
     }
   }
 

@@ -5,11 +5,11 @@ class kubernetes::params {
 case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = '1.9.2-00'
-    $cni_version = '0.6.0-00'
+    $cni_package_version = '0.6.0-00'
   }
   'RedHat' : {
     $kubernetes_package_version = '1.9.2'
-    $cni_version = '0.6.0'
+    $cni_package_version = '0.6.0'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
