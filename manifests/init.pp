@@ -26,7 +26,7 @@
 #
 # [*cni_provider]
 #   The url location for the cni providers yaml. This can only be set to weave or flannel.
-#   Defaults to undef 
+#   Defaults to undef
 #
 # [*kube_dns_version*]
 #   The version of kube DNS you would like to install
@@ -86,7 +86,7 @@
 #   The boot strap token description, this must be base64 encoded.
 # lint:ignore:140chars
 #   An example with hierawould be  kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg==
-# lint:endignore 
+# lint:endignore
 #
 # [*bootstrap_token_id*]
 #   This is the id the cluster will use to point to the token, this must be base64 encoded.
@@ -266,6 +266,7 @@ class kubernetes (
   Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
+  String $node_label                                               = $kubernetes::params::node_label,
 
   )  inherits kubernetes::params {
 
