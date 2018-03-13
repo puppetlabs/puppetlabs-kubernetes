@@ -6,204 +6,206 @@
 # Parameters
 # ----------
 # [*kubernetes_version*]
-#   The version of Kubernetes containers you want to install.
-#   ie api server,
-#   Defaults to 1.9.2
+#   The version of Kubernetes containers you want to install - i.e. API server.
+#   Default: `1.9.2`
 #
 # [*kubernetes_package_version*]
-#   The version of the packages the Kubernetes os packages to install
-#   ie kubectl and kubelet
-#   Defaults to 1.9.2
+#   The version of the packages the Kubernetes os packages to install - i.e.
+#   `kubectl` and `kubelet`.
+#   Default: `1.9.2`
 #
 # [*container_runtime*]
 #   This is the runtime that the Kubernetes cluster will use.
-#   It can only be set to "cri_containerd" or "docker"
-#   Defaults to docker
+#   It can only be set to `cri_containerd` or `docker`.
+#   Default: `docker`
 #
 # [*cni_version*]
-#   The version of the cni package you would like to install
-#   Defaults to 0.6.0
+#   The version of the cni package you would like to install.
+#   Default: `0.6.0`
 #
 # [*cni_provider*]
-#   The url location for the cni providers yaml. This can only be set to weave or flannel.
-#   Defaults to undef 
+#   The url location for the cni providers yaml. This can only be set to `weave`
+#   or `flannel`.
+#   Default: `undef`
 #
 # [*kube_dns_version*]
-#   The version of kube DNS you would like to install
-#   Defaults to 1.14.2
+#   The version of kube DNS you would like to install.
+#   Default: `1.14.2`
 #
 # [*controller*]
-#   This is a bool that sets the node as a Kubernetes controller
-#   Defaults to false
+#   This is a bool that sets the node as a Kubernetes controller.
+#   Default: `false`
 #
 # [*bootstrap_controller*]
-#   This sets the node to use as the bootstrap controller
-#   The bootstrap controller is only used for initial cluster creation
-#   Defaults to false
+#   This sets the node to use as the bootstrap controller.
+#   The bootstrap controller is only used for initial cluster creation.
+#   Default: `false`
 #
 # [*bootstrap_controller_ip*]
 #   The ip address of the bootstrap controller.
-#   defaults to undef
+#   Default: `undef`
 #
 # [*worker*]
 #   This is a bool that sets a node to a worker.
-#   defaults to undef
+#   Default: `undef`
 #
 # [*kube_api_advertise_address*]
 #   This is the ip address that the want to api server to expose.
-#   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
-#   defaults to undef
+#   An example with hiera would be `kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"`.
+#   Default: `undef`
 #
 # [*$apiserver_extra_arguments*]
-#   This is an array to pass extra configuration to the Kubernetes api.
-#   Defaults to []
+#   This is an array to pass extra configuration to the Kubernetes API.
+#   Default: []
 #
 # [*etcd_version*]
-#   The version of etcd that you would like to use.
-#   Defaults to 3.0.17
+#   The version of `etcd` that you would like to use.
+#   Default: `3.0.17`
 #
 # [*etcd_ip*]
-#   The ip address that you want etcd to use for communications.
-#   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
-#   Defaults to undef
+#   The ip address that you want `etcd` to use for communications.
+#   An example with hiera would be `kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"`.
+#   Default: `undef`
 #
 # [*etcd_initial_cluster*]
-#   This will tell etcd how many nodes will be in the cluster and is passed as a string.
-#   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
-#   Defaults to undef
+#   This will tell `etcd` how many nodes will be in the cluster and is passed as a string.
+#   An example with hiera would be `kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380`.
+#   Default: `undef`
 #
 # [*bootstrap_token*]
 #   This is the token Kubernetes will use to start components.
-#   For more information around bootstrap tokens please see https://kubernetes.io/docs/admin/bootstrap-tokens/
-#   Defaults to undef
+#   For more information around bootstrap tokens please see https://kubernetes.io/docs/admin/bootstrap-tokens/.
+#   Default: `undef`
 #
 # [*bootstrap_token_name*]
 #   This is the name of the bootstrap token.
-#   An example with hiera would be kubernetes::bootstrap_token_name: bootstrap-token-95e1e0
-#   Defaults to undef
+#   An example with hiera would be `kubernetes::bootstrap_token_name: bootstrap-token-95e1e0`.
+#   Default: `undef`
 #
 # [*bootstrap_token_description*]
 #   The boot strap token description, this must be base64 encoded.
 # lint:ignore:140chars
-#   An example with hierawould be  kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg==
-# lint:endignore 
+#   An example with hierawould be `kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg==`.
+# lint:endignore
+#   Default: `undef`
 #
 # [*bootstrap_token_id*]
 #   This is the id the cluster will use to point to the token, this must be base64 encoded.
-#   An example with hiera would be kubernetes::bootstrap_token_id: OTVlMWUwDQo=
-#   Defaults to undef
+#   An example with hiera would be `kubernetes::bootstrap_token_id: OTVlMWUwDQo=`.
+#   Default: `undef`
 #
 # [*bootstrap_token_secret*]
 #   This is the secret to validate the boot strap token, this must be base64 encoded.
-#   An example with hiera would be kubernetes::bootstrap_token_secret: OTVlMWUwLmFlMmUzYjkwYTdmYjlkMzYNCg==
-#   Defaults to undef
+#   An example with hiera would be `kubernetes::bootstrap_token_secret: OTVlMWUwLmFlMmUzYjkwYTdmYjlkMzYNCg==`.
+#   Default: `undef`
 #
 # [*bootstrap_token_usage_bootstrap_authentication*]
-#   This is the bool to use the boot strap token, this must be base64 encoded. (true = dHJ1ZQ==)
-#   An example with hiera would be kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==
-#   Defaults to undef
+#   This is the bool to use the boot strap token, this must be base64 encoded. (`true` = `dHJ1ZQ==`)
+#   An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==`.
+#   Default: `undef`
 #
 # [*bootstrap_token_usage_bootstrap_signing*]
-#   This is a bool to use boot trap signing, , this must be base64 encoded. (true = dHJ1ZQ==)
-#   An example with hiera would be kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==
-#   Defaults to undef
+#   This is a bool to use boot trap signing, this must be base64 encoded. (`true` = `dHJ1ZQ==`)
+#   An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==`.
+#   Default: `undef`
 #
 # [*certificate_authority_data*]
 #   This is the ca certificate data for the cluster. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_certificate_data_controller*]
 #   This is the client certificate data for the controllers. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_certificate_data_controller_manager*]
 #   This is the client certificate data for the controller manager. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_certificate_data_scheduler*]
 #   This is the client certificate data for the scheduler. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_certificate_data_worker*]
 #   This is the client certificate data for the kubernetes workers. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_key_data_controller*]
 #   This is the client certificate key for the controllers. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_key_data_controller_manager*]
 #   This is the client certificate key for the controller manager. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_key_data_scheduler*]
 #   This is the client certificate key for the scheduler. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*client_key_data_worker*]
 #   This is the client certificate key for the kubernetes workers. This must be passed as string not as a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*apiserver_kubelet_client_crt*]
 #   The kubelet api server certificate. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*apiserver_kubelet_client_key*]
 #   The kubelet api server key. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*apiserver_crt*]
 #   The api server certificate. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*apiserver_key*]
 #   The api server key. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*apiserver_extra_arguments*]
 #   A string array of extra arguments to be passed to the api server.
-#   Defaults to []
+#   Default: []
 #
 # [*ca_crt*]
 #   The clusters ca certificate. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*ca_key*]
 #   The clusters ca key. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*front_proxy_ca_crt*]
 #   The front proxy ca certificate. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*front_proxy_ca_key*]
 #   The front proxy ca key. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*front_proxy_client_crt*]
 #   The front proxy client certificate. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*front_proxy_client_key*]
 #   The front proxy client key. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*sa_key*]
 #   The service account key. Must be passed as cert not a file.
-#   Defaults to undef
+#   Default: `undef`
 #
 # [*sa_pub*]
-#  The service account public key. Must be passed as cert not a file.
-#  Defaults to undef
+#   The service account public key. Must be passed as cert not a file.
+#   Default: `undef`
 #
 # [*cni_network_provider*]
-#   This is the url that kubectl can find the networking deployment.
-#   We will support any networking provider that supports cni
-#   This defaults to https://git.io/weave-kube-1.6
+#   This is the url that `kubectl` can find the networking deployment - i.e.
+#   `https://git.io/weave-kube-1.6`.
+#   We will support any networking provider that supports cni.
+#   Default: `undef`
 #
 # [*install_dashboard*]
 #   This is a bool that determines if the kubernetes dashboard is installed.
-#   Defaults to false
+#   Default: `false`
 #
 #
 # Authors
