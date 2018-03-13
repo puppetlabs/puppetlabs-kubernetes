@@ -229,6 +229,8 @@ class kubernetes (
   Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
   String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
   String $container_runtime                                        = $kubernetes::params::container_runtime,
+  Optional[String] $docker_package_name                            = $kubernetes::params::docker_package_name,
+  Optional[String] $cni_package_name                               = $kubernetes::params::cni_package_name,
   Optional[String] $cni_package_version                            = $kubernetes::params::cni_package_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
   Optional[String] $cni_node_cidr                                  = $kubernetes::params::cni_node_cidr,
