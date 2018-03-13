@@ -25,7 +25,7 @@ class kubernetes::packages (
     case $::osfamily {
       'Debian' : {
         package { 'docker-engine':
-        ensure => '1.12.0-0~xenial',
+          ensure => '1.12.0-0~xenial',
         }
       }
 
@@ -35,7 +35,7 @@ class kubernetes::packages (
         }
       }
 
-    default: { notify {"The OS family ${::os_family} is not supported by this module":} }
+      default: { notify {"The OS family ${::os_family} is not supported by this module":} }
     }
 
     package { 'kubernetes-cni':
@@ -59,10 +59,10 @@ class kubernetes::packages (
       extract_path    => '/',
       cleanup         => true,
       creates         => '/usr/local/bin/cri-containerd'
-      }
+    }
   }
 
   package { $kube_packages:
     ensure => $kubernetes_package_version,
-    }
+  }
 }
