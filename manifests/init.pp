@@ -19,6 +19,10 @@
 #   It can only be set to `cri_containerd` or `docker`.
 #   Default: `docker`
 #
+# [*docker_package_name*]
+#   The name of the docker package you would like to install.
+#   Default: `docker-engine`
+#
 # [*cni_package_name*]
 #   The name of the cni package you would like to install.
 #   Default: `kubernetes-cni`

@@ -16,6 +16,7 @@ case $::osfamily {
 $kubernetes_version = '1.7.3'
 $kube_dns_version = '1.14.2'
 $container_runtime = 'docker'
+$docker_package_name = 'docker-engine'
 $cni_package_name = 'kubernetes-cni'
 $kubernetes_fqdn = 'kubernetes'
 $controller = false
