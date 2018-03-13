@@ -419,6 +419,12 @@ Valid values are `true, `false`.
 
 Defaults to `true`
 
+#### `node_label`
+
+Allows the user to override the label of a node.
+
+Defaults for hostname
+
 ## Limitations
 
 This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) and above.
