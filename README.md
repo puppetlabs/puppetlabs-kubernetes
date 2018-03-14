@@ -129,7 +129,7 @@ The version the Kubernetes OS packages to install, such as kubectl and kubelet.
 
 Defaults to `1.9.2`.
 
-#### `cni_version`
+#### `cni_package_version`
 
 The version of the cni package to install.
 

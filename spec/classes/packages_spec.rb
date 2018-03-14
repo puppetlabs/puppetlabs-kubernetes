@@ -58,7 +58,7 @@ describe 'kubernetes::packages', :type => :class do
       'container_runtime' => 'docker',
       'docker_package_name' => 'docker-engine',
       'cni_package_name' => 'kubernetes-cni',
-      'cni_version' => '0.6.0-00',
+      'cni_package_version' => '0.6.0-00',
     }
   end
 
