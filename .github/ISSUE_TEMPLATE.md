@@ -41,7 +41,6 @@ $ puppet module list
 
 ## Logs:
 ```
-Paste any relevant logs from a puppet run
+Paste any relevant logs from a puppet run, kubernetes and syslog/messages
 ```
-
 
