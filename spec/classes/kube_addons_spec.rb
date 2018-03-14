@@ -69,7 +69,8 @@ describe 'kubernetes::kube_addons', :type => :class do
       'install_dashboard' => false,
       'kubernetes_version' => '1.7.3',
       'controller' => true,
-      'taint_master' => true
+      'taint_master' => true,
+      'node_label' => 'foo',
       }
     end
 
@@ -92,7 +93,8 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
       'kubernetes_version' => '1.7.3',
-      'taint_master' => true
+      'taint_master' => true,
+      'node_label' => 'foo',
       }
     end
     it { should contain_exec('Checking for dns to be deployed') }
@@ -106,7 +108,8 @@ describe 'kubernetes::kube_addons', :type => :class do
       'install_dashboard' => true,
       'kubernetes_version' => '1.7.3',
       'controller' => true,
-      'taint_master' => false
+      'taint_master' => false,
+      'node_label' => 'foo',
       }
     end
 

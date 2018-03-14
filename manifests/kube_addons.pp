@@ -7,6 +7,7 @@ class kubernetes::kube_addons (
   String $kubernetes_version             = $kubernetes::kubernetes_version,
   Boolean $controller                    = $kubernetes::controller,
   Boolean $taint_master                  = $kubernetes::taint_master,
+  String $node_label                     = $kubernetes::node_label,
 ){
 
   Exec {
@@ -76,8 +77,8 @@ class kubernetes::kube_addons (
 
   if $controller {
     exec { 'Assign master role to controller':
-      command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
-      unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Roles: master'",
+      command => "kubectl label node ${node_label} node-role.kubernetes.io/master=",
+      unless  => "kubectl describe nodes ${node_label} | tr -s ' ' | grep 'Roles: master'",
     }
 
     if $taint_master {
@@ -92,9 +93,9 @@ class kubernetes::kube_addons (
         }
 
       exec { 'Taint master node':
-        command => "kubectl taint nodes ${::hostname} key=value:NoSchedule",
+        command => "kubectl taint nodes ${node_label} key=value:NoSchedule",
         onlyif  => 'kubectl get nodes',
-        unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Taints: key=value:NoSchedule'"
+        unless  => "kubectl describe nodes ${node_label} | tr -s ' ' | grep 'Taints: key=value:NoSchedule'"
       }
     }
   }
