@@ -54,8 +54,10 @@ describe 'kubernetes::packages', :type => :class do
 
   let(:params) do
     {
-      'container_runtime' => 'docker',
       'kubernetes_package_version' => '1.9.2-00',
+      'container_runtime' => 'docker',
+      'docker_package_name' => 'docker-engine',
+      'cni_package_name' => 'kubernetes-cni',
       'cni_version' => '0.6.0-00',
     }
   end
