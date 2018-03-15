@@ -21,8 +21,12 @@ spec:
     - --leader-elect=true
     - --root-ca-file=/etc/kubernetes/pki/ca.crt
     - --cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt
-    <%= @cni_node_cidr  %> 
-    <%= @cni_cluster_cidr  %>
+    <% if @cni_node_cidr %>
+    - --allocate-node-cidrs=true
+    <% end %>
+    <% if @cni_cluster_cidr %>
+    - --cluster-cidr=<%= @cni_cluster_cidr  %>
+    <% end %>
     image: gcr.io/google_containers/kube-controller-manager-amd64:v<%= @kubernetes_version  %>
     livenessProbe:
       failureThreshold: 8

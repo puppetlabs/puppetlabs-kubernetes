@@ -14,17 +14,19 @@ class OtherParams
       kubernetes_package_version = version
     end
 
+    cni_cluster_cidr = false
+    cni_node_cidr = false
     if cni_provider.match('weave')
        cni_network_provider = 'https://git.io/weave-kube-1.6'
     elsif
        cni_provider.match('flannel')
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
-       cni_cluster_cidr = '- --cluster-cidr=10.244.0.0/16'
-       cni_node_cidr = '- --allocate-node-cidrs=true'
+       cni_cluster_cidr = '10.244.0.0/16'
+       cni_node_cidr = true
     elsif cni_provider.match('calico')
        cni_network_provider = 'https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml'
-       cni_cluster_cidr = '- --cluster-cidr=192.168.0.0/16'
-       cni_node_cidr = '- --allocate-node-cidrs=true'
+       cni_cluster_cidr = '192.168.0.0/16'
+       cni_node_cidr = true
     elsif cni_provider.match('romana')
       cni_network_provider = 'https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-kubeadm.yml'
     end

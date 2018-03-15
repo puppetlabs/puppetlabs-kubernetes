@@ -7,15 +7,26 @@ require_relative 'kube_tool/create_token.rb'
 require_relative 'kube_tool/clean_up.rb'
 require_relative 'kube_tool/other_params.rb'
 
-options = {:os => nil, :version => nil, :container_runtime => nil, :cni_provider=> nil, :fqdn => nil, :ip => nil, :bootstrap_controller_ip => nil, :etcd_initial_cluster => nil, :etcd_ip => nil, :kube_api_advertise_address => nil, :install_dashboard => nil}
+options = {:os                         => nil,
+           :version                    => nil,
+           :container_runtime          => nil,
+           :cni_provider               => nil,
+           :fqdn                       => nil,
+           :ip                         => nil,
+           :bootstrap_controller_ip    => nil,
+           :etcd_initial_cluster       => nil,
+           :etcd_ip                    => nil,
+           :kube_api_advertise_address => nil,
+           :install_dashboard          => nil
+          }
 
 parser = OptionParser.new do|opts|
 
-   opts.on('-o', '--os-type os-type', 'the os that kubernetes will run on') do |os|
+  opts.on('-o', '--os-type os-type', 'the os that kubernetes will run on') do |os|
     options[:os] = os;
   end
 
-   opts.on('-v', '--version version', 'the kubernetes version to install') do |version|
+  opts.on('-v', '--version version', 'the kubernetes version to install') do |version|
     options[:version] = version;
   end
 
@@ -26,7 +37,7 @@ parser = OptionParser.new do|opts|
   opts.on('-c', '--cni-provider cni-provider', 'the networking provider to use') do |cni_provider|
     options[:cni_provider] = cni_provider;
   end
-  
+
   opts.on('-f', '--fqdn fqdn', 'fqdn') do |fqdn|
     options[:fqdn] = fqdn;
   end
@@ -68,7 +79,7 @@ class Kube_tool
   def build_hiera(hash)
     PreChecks.checks
     CreateCerts.ca
-    CreateCerts.api_servers(hash[:fqdn], hash[:ip])
+    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip])
     PreChecks.checks
     CreateCerts.sa
     CreateCerts.admin
@@ -88,4 +99,3 @@ end
 generate = Kube_tool.new
 
 generate.build_hiera(options)
-

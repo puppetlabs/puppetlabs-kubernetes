@@ -15,6 +15,7 @@ case $::osfamily {
 }
 $kubernetes_version = '1.7.3'
 $kube_dns_version = '1.14.2'
+$kube_proxy_version = $kubernetes_version
 $container_runtime = 'docker'
 $kubernetes_fqdn = 'kubernetes'
 $controller = false
@@ -57,11 +58,13 @@ $front_proxy_client_crt = undef
 $front_proxy_client_key = undef
 $sa_key = undef
 $sa_pub = undef
-$cni_cluster_cidr = undef
-$cni_node_cidr = undef
+$cni_cluster_cidr = '10.96.0.0/16'
+$cni_node_cidr = false
 $cni_network_provider = undef
 $install_dashboard = false
 $taint_master = true
 $node_label = $::hostname
+$kube_api_ip = '10.96.0.1'
+$kube_dns_ip = '10.96.0.10'
 
 }

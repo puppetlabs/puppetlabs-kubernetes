@@ -15,7 +15,7 @@ spec:
     - --allow-privileged=true
     <% if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>- --enable-bootstrap-token-auth=true<% end %>
     <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --experimental-bootstrap-token-auth=true<% end %>
-    - --service-cluster-ip-range=10.96.0.0/12
+    - --service-cluster-ip-range=<%= @cni_cluster_cidr %>
     - --insecure-port=0
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
     - --client-ca-file=/etc/kubernetes/pki/ca.crt

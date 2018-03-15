@@ -201,9 +201,29 @@
 #   We will support any networking provider that supports cni
 #   This defaults to https://git.io/weave-kube-1.6
 #
+# [*cni_cluster_cidr*]
+#   The overlay (internal) network range to use.
+#   Defaults to 10.96.0.0/16. kube_tool sets this per cni provider.
+#
+# [*cni_node_cidr*]
+#   This triggers 'allocate-node-cidrs=true' to be added to the controller-manager.
+#   Defaults to false.
+#
 # [*install_dashboard*]
 #   This is a bool that determines if the kubernetes dashboard is installed.
 #   Defaults to false
+#
+# [*kube_dns_ip*]
+#   The service IP to use for kube-dns.
+#   Defaults to 10.96.0.10
+#
+# [*kube_api_ip*]
+#   The service IP to use for the kube api.
+#   Defaults to 10.96.0.1
+#
+# [*kube_proxy_version*]
+#   The version of kube-proxy you would like to install
+#   Defaults to $kubernetes_version
 #
 #
 # Authors
@@ -267,6 +287,9 @@ class kubernetes (
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
   String $node_label                                               = $kubernetes::params::node_label,
+  String $kube_dns_ip                                              = $kubernetes::params::kube_dns_ip,
+  String $kube_api_ip                                              = $kubernetes::params::kube_api_ip,
+  String $kube_proxy_version                                       = $kubernetes::params::kube_proxy_version,
 
   )  inherits kubernetes::params {
 

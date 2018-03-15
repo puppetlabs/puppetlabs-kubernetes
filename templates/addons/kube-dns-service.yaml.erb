@@ -9,7 +9,7 @@ metadata:
   namespace: kube-system
   resourceVersion: "0"
 spec:
-  clusterIP: 10.96.0.10 
+  clusterIP: <%= @kube_dns_ip  %>
   ports:
   - name: dns
     port: 53
