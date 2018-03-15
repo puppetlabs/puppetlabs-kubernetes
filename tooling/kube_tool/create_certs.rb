@@ -25,7 +25,7 @@ class CreateCerts
     data['kubernetes::ca_crt'] = cer
     data['kubernetes::ca_key'] = key
     data['kubernetes::certificate_authority_data'] = Base64.strict_encode64(cer)
-    File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
+    File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
   end
 
   def CreateCerts.api_servers(fqdn, ip, bootstrap)

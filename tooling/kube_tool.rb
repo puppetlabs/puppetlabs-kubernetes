@@ -38,11 +38,11 @@ parser = OptionParser.new do|opts|
     options[:cni_provider] = cni_provider;
   end
 
-  opts.on('-f', '--fqdn fqdn', 'fqdn') do |fqdn|
+  opts.on('-f', '--fqdn fqdn', 'the cluster fqdn. Should match ip.') do |fqdn|
     options[:fqdn] = fqdn;
   end
 
-  opts.on('-i', '--ip ip', 'ip') do |ip|
+  opts.on('-i', '--ip ip', 'the api ip to use. Loadbalance in production.') do |ip|
     options[:ip] = ip;
   end
 
@@ -54,7 +54,7 @@ parser = OptionParser.new do|opts|
     options[:etcd_initial_cluster] = etcd_initial_cluster;
   end
 
-  opts.on('-t', '--etcd-ip etcd_ip', 'ip address of etcd') do |etcd_ip|
+  opts.on('-t', '--etcd-ip etcd_ip', 'ip address etcd will listen on') do |etcd_ip|
     options[:etcd_ip] = etcd_ip;
   end
 
@@ -77,6 +77,7 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     PreChecks.checks
     CreateCerts.ca
     CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip])
@@ -91,8 +92,8 @@ class Kube_tool
     CreateCerts.kube_scheduler
     CreateCerts.kube_workers
     CreateToken.bootstrap
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     CleanUp.remove_files
+    CleanUp.clean_yaml
   end
 end
 

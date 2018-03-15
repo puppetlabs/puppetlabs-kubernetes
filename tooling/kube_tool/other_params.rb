@@ -44,8 +44,7 @@ class OtherParams
     data['kubernetes::etcd_ip'] = etcd_ip
     data['kubernetes::kube_api_advertise_address'] = kube_api_advertise_address
     data['kubernetes::install_dashboard'] = install
-    File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
-    File.write("kubernetes.yaml",File.open("kubernetes.yaml",&:read).gsub(/^---$/," "))
-
+    File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
+    
   end
 end
