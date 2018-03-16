@@ -1,8 +1,19 @@
 require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
-  let(:facts) { { :osfamily => 'Debian' } }
+  let(:facts) do
+    {
+      :osfamily         => 'Debian',
+      :operatingsystem  => 'Ubuntu',
+      :os               => {
+        :name    => 'Ubuntu',
+        :release => {
+          :full => '16.04',
+        },
+      },
+    }
+  end
 
- let(:pre_condition) { 'class {"kubernetes::config":
+  let(:pre_condition) { 'class {"kubernetes::config":
     kubernetes_version => "1.7.3",
     container_runtime => "docker",
     cni_cluster_cidr => "10.0.0.0/24",
@@ -57,6 +68,8 @@ describe 'kubernetes::packages', :type => :class do
       'kubernetes_package_version' => '1.9.2-00',
       'container_runtime' => 'docker',
       'docker_package_name' => 'docker-engine',
+      'docker_package_version' => '1.12.0-0~xenial',
+      'docker_package_pin' => true,
       'cni_package_name' => 'kubernetes-cni',
       'cni_package_version' => '0.6.0-00',
     }

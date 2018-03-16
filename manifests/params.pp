@@ -5,18 +5,22 @@ class kubernetes::params {
 case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = '1.9.2-00'
+    $docker_package_version = '1.12.0-0~xenial'
     $cni_package_version = '0.6.0-00'
   }
   'RedHat' : {
     $kubernetes_package_version = '1.9.2'
+    $docker_package_version = '1.12.6'
     $cni_package_version = '0.6.0'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
+
 $kubernetes_version = '1.7.3'
 $kube_dns_version = '1.14.2'
 $container_runtime = 'docker'
 $docker_package_name = 'docker-engine'
+$docker_package_pin = true
 $cni_package_name = 'kubernetes-cni'
 $kubernetes_fqdn = 'kubernetes'
 $controller = false

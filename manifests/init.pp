@@ -23,6 +23,16 @@
 #   The name of the docker package you would like to install.
 #   Default: `docker-engine`
 #
+# [*docker_package_version*]
+#   The version of the docker package you would like to install.
+#   Default: Depends on operating system.
+#     - Red Hat: `1.12.6`
+#     - Debian: `1.12.0`
+#
+# [*docker_package_pin*]
+#   If you would like to pin version of docker package. Works only for Debian/Ubuntu.
+#   Default: true
+#
 # [*cni_package_name*]
 #   The name of the cni package you would like to install.
 #   Default: `kubernetes-cni`
@@ -230,6 +240,8 @@ class kubernetes (
   String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
   String $container_runtime                                        = $kubernetes::params::container_runtime,
   Optional[String] $docker_package_name                            = $kubernetes::params::docker_package_name,
+  Optional[String] $docker_package_version                         = $kubernetes::params::docker_package_version,
+  Optional[Boolean] $docker_package_pin                            = $kubernetes::params::docker_package_pin,
   Optional[String] $cni_package_name                               = $kubernetes::params::cni_package_name,
   Optional[String] $cni_package_version                            = $kubernetes::params::cni_package_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,

@@ -5,6 +5,8 @@ class kubernetes::packages (
   Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
   String $docker_package_name                  = $kubernetes::docker_package_name,
+  String $docker_package_version               = $kubernetes::docker_package_version,
+  Boolean $docker_package_pin                  = $kubernetes::docker_package_pin,
   String $cni_package_name                     = $kubernetes::cni_package_name,
   String $cni_package_version                  = $kubernetes::cni_package_version,
 
@@ -24,20 +26,20 @@ class kubernetes::packages (
   }
 
   if $container_runtime == 'docker' {
-    case $::osfamily {
-      'Debian' : {
-        package { $docker_package_name:
-          ensure => '1.12.0-0~xenial',
+    if $docker_package_pin {
+      if $::osfamily == 'Debian' {
+        include apt
+
+        apt::pin { 'docker-engine':
+          packages => $docker_package_name,
+          version  => $docker_package_name,
+          priority => '550',
         }
       }
+    }
 
-      'RedHat' : {
-        package { $docker_package_name:
-          ensure => '1.12.6',
-        }
-      }
-
-      default: { notify {"The OS family ${::os_family} is not supported by this module":} }
+    package { $docker_package_name:
+      ensure => $docker_package_version,
     }
 
     package { $cni_package_name:
