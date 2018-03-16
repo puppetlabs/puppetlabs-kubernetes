@@ -6,6 +6,10 @@ metadata:
   name: kube-proxy
   namespace: kube-system
 spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   selector:
     matchLabels:
       k8s-app: kube-proxy

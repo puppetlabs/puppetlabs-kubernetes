@@ -33,7 +33,7 @@ class CreateCerts
     dns = fqdn
     ip = ip
 
-    csr = { "CN": "kube-apiserver", "hosts": [  "kube-master", "kubernetes", "kubernetes.default", "kubernetes.default.svc", "kubernetes.default.svc.cluster.local", "cluster.local", dns, ip, bootstrap ], "key": { "algo": "rsa", "size": 2048 }}
+    csr = { "CN": "kube-apiserver", "hosts": [  "kube-master", "kubernetes", "kubernetes.default", "kubernetes.default.svc", "kubernetes.default.svc.cluster.local", "cluster.local", "127.0.0.1", dns, ip, bootstrap ], "key": { "algo": "rsa", "size": 2048 }}
     File.open("kube-api-csr.json", "w+") { |file| file.write(csr.to_json) }
     system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server kube-api-csr.json | cfssljson -bare apiserver")
     FileUtils.rm_f('kube-api-csr.csr')

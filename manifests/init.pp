@@ -241,7 +241,7 @@ class kubernetes (
   String $container_runtime                                        = $kubernetes::params::container_runtime,
   Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
-  Optional[String] $cni_node_cidr                                  = $kubernetes::params::cni_node_cidr,
+  Optional[Boolean] $cni_node_cidr                                 = $kubernetes::params::cni_node_cidr,
   String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,
   Boolean $controller                                              = $kubernetes::params::controller,
   Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
