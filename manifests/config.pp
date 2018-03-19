@@ -6,6 +6,7 @@ class kubernetes::config (
   String $container_runtime                                        = $kubernetes::container_runtime,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::cni_cluster_cidr,
   Optional[Boolean] $cni_node_cidr                                 = $kubernetes::cni_node_cidr,
+  String $kube_dns_ip                                              = $kubernetes::kube_dns_ip,
   String $kube_dns_version                                         = $kubernetes::kube_dns_version,
   String $kube_proxy_version                                       = $kubernetes::kube_proxy_version,
   String $kubernetes_fqdn                                          = $kubernetes::kubernetes_fqdn,
