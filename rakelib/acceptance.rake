@@ -22,6 +22,7 @@ namespace :acceptance do
       'centos7',
       'default',
       'ubuntu-1604',
+      'rhel7',
     ]
   }.each do |ns, configs|
     namespace ns.to_sym do
