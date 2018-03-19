@@ -18,6 +18,10 @@ spec:
       labels:
         k8s-app: kube-proxy
     spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: kube-proxy
         image: gcr.io/google_containers/kube-proxy-amd64:v<%= @kube_proxy_version %>
@@ -26,7 +30,6 @@ spec:
         - /usr/local/bin/kube-proxy
         - --kubeconfig=/var/lib/kube-proxy/kubeconfig.conf
         - --cluster-cidr=<%= @cni_cluster_cidr %>
-        - --proxy-mode=userspace
         securityContext:
           privileged: true
         volumeMounts:
