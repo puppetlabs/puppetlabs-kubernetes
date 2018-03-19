@@ -17,6 +17,7 @@ options = {:os                         => nil,
            :etcd_initial_cluster       => nil,
            :etcd_ip                    => nil,
            :kube_api_advertise_address => nil,
+           :kube_api_cluster_address   => nil,
            :install_dashboard          => nil
           }
 
@@ -30,7 +31,7 @@ parser = OptionParser.new do|opts|
     options[:version] = version;
   end
 
-   opts.on('-r', '--container_runtime container runtime', 'the container runtime to use. this can only be docker or cri_containerd') do |container_runtime|
+  opts.on('-r', '--container_runtime container runtime', 'the container runtime to use. this can only be docker or cri_containerd') do |container_runtime|
     options[:container_runtime] = container_runtime;
   end
 
@@ -62,6 +63,10 @@ parser = OptionParser.new do|opts|
     options[:kube_api_advertise_address] = api_address;
   end
 
+  opts.on('-s', '--cluster-api-address cluster_api_address', 'the ClusterIP address that kube api will listen on internally') do |cluster_api_address|
+    options[:kube_api_cluster_address] = cluster_api_address;
+  end
+
   opts.on('-d', '--install-dashboard dashboard', 'install the kube dashboard') do |dashboard|
     options[:install_dashboard] = dashboard;
   end
@@ -77,10 +82,10 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_api_cluster_address])
     PreChecks.checks
     CreateCerts.ca
-    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip])
+    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_api_cluster_address])
     PreChecks.checks
     CreateCerts.sa
     CreateCerts.admin
