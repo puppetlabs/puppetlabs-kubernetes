@@ -34,8 +34,9 @@ class kubernetes::cluster_roles (
 
   if $kubernetes_version =~ /1[.](8|9)[.]\d/ {
 
-    exec { 'Create role biniding for system nodes':
+    exec { 'Create role binding for system nodes':
       command => 'kubectl set subject clusterrolebinding system:node --group=system:nodes',
+      unless  => 'kubectl describe clusterrolebinding system:node | tr -s \' \' | grep \'Group system:nodes\'',
       }
     }
   }
