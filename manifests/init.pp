@@ -20,6 +20,11 @@
 #   It can only be set to "cri_containerd" or "docker"
 #   Defaults to docker
 #
+# [*docker_version]
+#   This is the version of the docker runtime that you want to install.
+#   Defaults to 1.12.6 on RedHat
+#   Defaults to 1.12.0-0~xenial on Debian
+#
 # [*cni_version*]
 #   The version of the cni package you would like to install
 #   Defaults to 0.6.0
@@ -239,6 +244,7 @@ class kubernetes (
   Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
   String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
   String $container_runtime                                        = $kubernetes::params::container_runtime,
+  Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
   Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
   Optional[Boolean] $cni_node_cidr                                 = $kubernetes::params::cni_node_cidr,

@@ -5,7 +5,7 @@ class kubernetes::packages (
   Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
   String $cni_version                          = $kubernetes::cni_version,
-
+  String $docker_version                       = $kubernetes::docker_version,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl']
@@ -23,15 +23,9 @@ class kubernetes::packages (
 
   if $container_runtime == 'docker' {
     case $::osfamily {
-      'Debian' : {
+      'Debian','RedHat' : {
         package { 'docker-engine':
-        ensure => '1.12.0-0~xenial',
-        }
-      }
-
-      'RedHat' : {
-        package { 'docker-engine':
-          ensure => '1.12.6',
+          ensure => $docker_version,
         }
       }
 

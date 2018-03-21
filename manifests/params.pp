@@ -7,10 +7,12 @@ case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = "${kubernetes_version}-00"
     $cni_version = '0.6.0-00'
+    $docker_version = '1.12.0-0~xenial'
   }
   'RedHat' : {
     $kubernetes_package_version = $kubernetes_version
     $cni_version = '0.6.0'
+    $docker_version = '1.12.6'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
