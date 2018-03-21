@@ -238,7 +238,6 @@
 #
 #
 #
-
 class kubernetes (
   String $kubernetes_version                                       = $kubernetes::params::kubernetes_version,
   Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
