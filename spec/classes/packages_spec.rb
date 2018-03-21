@@ -59,6 +59,7 @@ describe 'kubernetes::packages', :type => :class do
       'container_runtime' => 'docker',
       'kubernetes_package_version' => '1.9.2-00',
       'cni_version' => '0.6.0-00',
+      'docker_version' => '1.12.0-0~xenial',
     }
   end
 
