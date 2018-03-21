@@ -88,6 +88,7 @@ describe 'kubernetes::service', :type => :class do
 	      'bootstrap_controller' => true,
         'controller' => true,
         'etcd_ip' => '127.0.0.1',
+        'kube_dns_ip' => '10.0.0.10',
       }
     end
 
