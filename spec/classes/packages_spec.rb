@@ -6,7 +6,6 @@ describe 'kubernetes::packages', :type => :class do
     kubernetes_version => "1.7.3",
     container_runtime => "docker",
     cni_cluster_cidr => "10.0.0.0/24",
-    cni_node_cidr => "10.0.1.0/24",
     cni_node_cidr => true,
     kube_dns_ip => "10.0.0.10",
     kube_dns_version => "1.14.2",
