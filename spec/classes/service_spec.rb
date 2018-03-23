@@ -88,6 +88,6 @@ describe 'kubernetes::service', :type => :class do
       }
     end
 
-    it { should contain_exec('Checking for the Kubernets cluster to be ready')}
+    it { should contain_exec('Checking for the Kubernetes cluster to be ready')}
   end
 end
