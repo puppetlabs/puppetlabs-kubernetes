@@ -41,6 +41,12 @@ class kubernetes::packages (
           version  => $kubernetes_package_version,
           priority => '550',
         }
+
+        apt::pin { 'kubernetes-cni':
+          packages => $cni_package_name,
+          version  => $cni_version,
+          priority => '550',
+        }
       }
     }
 
