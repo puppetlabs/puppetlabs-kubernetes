@@ -76,6 +76,12 @@ describe 'kubernetes::packages', :type => :class do
   end
 
   context 'with defaults for params and osfamily => Debian' do
+    it { should contain_file('/etc/apt/preferences.d/docker-engine.pref').with('content' => %r{Package: docker-engine}) }
+    it { should contain_file('/etc/apt/preferences.d/docker-engine.pref').with('content' => %r{Pin: version 1.12.0-0~xenial}) }
+    it { should contain_file('/etc/apt/preferences.d/kube.pref').with('content' => %r{Package: kubelet kubectl}) }
+    it { should contain_file('/etc/apt/preferences.d/kube.pref').with('content' => %r{Pin: version 1.9.2-00}) }
+    it { should contain_file('/etc/apt/preferences.d/kubernetes-cni.pref').with('content' => %r{Package: kubernetes-cni}) }
+    it { should contain_file('/etc/apt/preferences.d/kubernetes-cni.pref').with('content' => %r{Pin: version 0.6.0-00}) }
 
     it { should contain_package('docker-engine').with_ensure('1.12.0-0~xenial')}
     it { should contain_package('kubelet').with_ensure('1.9.2-00')}
