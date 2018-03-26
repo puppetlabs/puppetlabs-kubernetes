@@ -75,7 +75,7 @@ class kubernetes::service (
 
   if $bootstrap_controller {
 
-    exec {'Checking for the Kubernets cluster to be ready':
+    exec {'Checking for the Kubernetes cluster to be ready':
       path        => ['/usr/bin', '/bin'],
       command     => 'kubectl get nodes | grep -w NotReady',
       tries       => 50,
