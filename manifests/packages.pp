@@ -35,6 +35,12 @@ class kubernetes::packages (
           version  => $docker_package_version,
           priority => '550',
         }
+
+        apt::pin { 'kube':
+          packages => $kube_packages,
+          version  => $kubernetes_package_version,
+          priority => '550',
+        }
       }
     }
 
