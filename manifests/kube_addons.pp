@@ -14,8 +14,8 @@ class kubernetes::kube_addons (
     path        => ['/usr/bin', '/bin'],
     environment => [ 'HOME=/root', 'KUBECONFIG=/root/admin.conf'],
     logoutput   => true,
-    tries       => 5,
-    try_sleep   => 5,
+    tries       => 10,
+    try_sleep   => 10,
     }
 
   if $bootstrap_controller {
