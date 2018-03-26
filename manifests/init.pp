@@ -29,8 +29,9 @@
 #     - Red Hat: `1.12.6`
 #     - Debian: `1.12.0`
 #
-# [*docker_package_pin*]
-#   If you would like to pin version of docker package. Works only for Debian/Ubuntu.
+# [*package_pin*]
+#   If you would like to pin versions of Docker and Kubernetes packages.
+#   Works only for Debian/Ubuntu.
 #   Defaults to `true`.
 #
 # [*cni_package_name*]
@@ -241,7 +242,7 @@ class kubernetes (
   String $container_runtime                                        = $kubernetes::params::container_runtime,
   Optional[String] $docker_package_name                            = $kubernetes::params::docker_package_name,
   Optional[String] $docker_package_version                         = $kubernetes::params::docker_package_version,
-  Optional[Boolean] $docker_package_pin                            = $kubernetes::params::docker_package_pin,
+  Optional[Boolean] $package_pin                                   = $kubernetes::params::package_pin,
   Optional[String] $cni_package_name                               = $kubernetes::params::cni_package_name,
   Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,

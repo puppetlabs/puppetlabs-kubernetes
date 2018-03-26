@@ -69,7 +69,7 @@ describe 'kubernetes::packages', :type => :class do
       'container_runtime' => 'docker',
       'docker_package_name' => 'docker-engine',
       'docker_package_version' => '1.12.0-0~xenial',
-      'docker_package_pin' => true,
+      'package_pin' => true,
       'cni_package_name' => 'kubernetes-cni',
       'cni_version' => '0.6.0-00',
     }

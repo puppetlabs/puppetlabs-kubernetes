@@ -143,9 +143,9 @@ Defaults depends on operating system.
   - Red Hat: `1.12.6`
   - Debian: `1.12.0`
 
-#### `docker_package_pin`
+#### `package_pin`
 
-If you would like to pin version of docker package. Works only for Debian/Ubuntu.
+If you would like to pin versions of Docker and Kubernetes packages. Works only for Debian/Ubuntu.
 
 Defaults to `true`.
 
