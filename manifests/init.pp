@@ -37,7 +37,7 @@
 #   The name of the cni package you would like to install.
 #   Defaults to `kubernetes-cni`.
 #
-# [*cni_package_version*]
+# [*cni_version*]
 #   The version of the cni package you would like to install.
 #   Defaults to `0.6.0`.
 #
@@ -243,7 +243,7 @@ class kubernetes (
   Optional[String] $docker_package_version                         = $kubernetes::params::docker_package_version,
   Optional[Boolean] $docker_package_pin                            = $kubernetes::params::docker_package_pin,
   Optional[String] $cni_package_name                               = $kubernetes::params::cni_package_name,
-  Optional[String] $cni_package_version                            = $kubernetes::params::cni_package_version,
+  Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
   Optional[String] $cni_node_cidr                                  = $kubernetes::params::cni_node_cidr,
   String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,

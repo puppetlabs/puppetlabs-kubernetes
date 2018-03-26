@@ -155,7 +155,7 @@ The name of the cni package you would like to install.
 
 Defaults to `kubernetes-cni`.
 
-#### `cni_package_version`
+#### `cni_version`
 
 The version of the cni package to install.
 

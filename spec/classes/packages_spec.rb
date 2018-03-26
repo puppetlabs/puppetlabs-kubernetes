@@ -71,7 +71,7 @@ describe 'kubernetes::packages', :type => :class do
       'docker_package_version' => '1.12.0-0~xenial',
       'docker_package_pin' => true,
       'cni_package_name' => 'kubernetes-cni',
-      'cni_package_version' => '0.6.0-00',
+      'cni_version' => '0.6.0-00',
     }
   end
 
