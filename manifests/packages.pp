@@ -32,7 +32,7 @@ class kubernetes::packages (
 
         apt::pin { 'docker-engine':
           packages => $docker_package_name,
-          version  => $docker_package_name,
+          version  => $docker_package_version,
           priority => '550',
         }
       }
