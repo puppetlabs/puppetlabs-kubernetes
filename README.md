@@ -40,7 +40,7 @@ If you do not already have Docker installed on your workstation, install it [her
 
 The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 ```
-docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e SERVICE_API_IP=10.96.0.1 -e INSTALL_DASHBOARD=true puppet/kubetool
 ```
 
 The parameters are:
@@ -54,6 +54,7 @@ The parameters are:
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
 * `ETCD_IP` and `KUBE_API_ADVERTISE_ADDRESS`: the IP each etcd/apiserver instance will use on each controller. We recommend passing the fact for the interface to be used by the cluster.
+* `SERVICE_API_IP`: the IP that the kubernetes service will be available on inside the cluster. Dependent on overlay network range.
 * `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
 The kubetool creates a `kubernetes.yaml` file. To view the file contents on
@@ -77,7 +78,7 @@ After your `kubernetes.yaml` file has been added to the Hiera directory on your 
 
 #### Bootstrap Controller
 
-A bootstrap controller is the node a cluster uses to add cluster addons (such as kube dns, cluster role bindings etc). After the cluster is bootstrapped, the bootstrap controller becomes a normal controller.
+A bootstrap controller is the node a cluster uses to add cluster addons (such as kube dns, cluster role bindings etc). *After the cluster is bootstrapped, the bootstrap controller should be changed to a normal controller.*
 
 To make a node a bootstrap controller, add the following code to the manifest:
 
@@ -425,6 +426,49 @@ Defaults to `true`
 Allows the user to override the label of a node.
 
 Defaults for hostname
+
+#### `docker_version`
+
+This is the version of the docker runtime that you want to install.
+
+Defaults to `1.12.6` on RedHat
+Defaults to `1.12.0-0~xenial` on Debian
+
+#### `kube_dns_version`
+
+The version of kube DNS you would like to install
+
+Defaults to `1.14.2`
+
+#### `kube_proxy_version`
+
+The version of kube-proxy you would like to install
+
+Defaults to match the `kubernetes_version`
+
+#### `cni_cluster_cidr`
+
+The overlay (internal) network range to use.
+
+Defaults to `10.96.0.0/16`. kube_tool sets this per cni provider.
+
+#### `cni_node_cidr`
+
+This triggers `allocate-node-cidrs=true` to be added to the controller-manager.
+
+Defaults to `false`.
+
+#### `kube_dns_ip`
+
+The cluster service IP to use for kube-dns.
+
+Defaults to `10.96.0.10`
+
+#### `kube_api_ip`
+
+The cluster service IP to use for the kube api.
+
+Defaults to `10.96.0.1`
 
 ## Limitations
 
