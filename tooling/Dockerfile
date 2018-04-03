@@ -13,10 +13,11 @@ RUN set -x && \
   go build ../cmd/cfssljson && \
   go build ../cmd/mkbundle && \
   go build ../cmd/multirootca && \
+  go get -u github.com/cloudflare/cfssl_trust/... && \
   echo "Build complete."
 
 FROM ruby:2.3.5-alpine
-COPY --from=0 /go/src/github.com/cloudflare/cfssl/vendor/github.com/cloudflare/cfssl_trust /etc/cfssl
+COPY --from=0 /go/src/github.com/cloudflare/cfssl_trust /etc/cfssl
 COPY --from=0 /go/src/github.com/cloudflare/cfssl/bin/ /usr/bin
 COPY . /etc/k8s
 
