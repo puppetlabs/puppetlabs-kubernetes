@@ -14,8 +14,8 @@ class OtherParams
       kubernetes_package_version = version
     end
 
-    cni_cluster_cidr = false
-    cni_node_cidr = false
+    cni_cluster_cidr = nil
+    cni_node_cidr = nil
     if cni_provider.match('weave')
        cni_network_provider = 'https://git.io/weave-kube-1.6'
     elsif

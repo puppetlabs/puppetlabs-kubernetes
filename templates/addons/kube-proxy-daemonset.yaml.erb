@@ -29,7 +29,9 @@ spec:
         command:
         - /usr/local/bin/kube-proxy
         - --kubeconfig=/var/lib/kube-proxy/kubeconfig.conf
+        <%- if (@cni_cluster_cidr and not @cni_cluster_cidr.empty?) -%>
         - --cluster-cidr=<%= @cni_cluster_cidr %>
+        <%- end -%>
         securityContext:
           privileged: true
         volumeMounts:

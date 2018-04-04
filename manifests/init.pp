@@ -208,7 +208,7 @@
 #
 # [*cni_cluster_cidr*]
 #   The overlay (internal) network range to use.
-#   Defaults to 10.96.0.0/16. kube_tool sets this per cni provider.
+#   Defaults to undef. kube_tool sets this per cni provider.
 #
 # [*cni_node_cidr*]
 #   This triggers 'allocate-node-cidrs=true' to be added to the controller-manager.

@@ -13,9 +13,15 @@ spec:
     - kube-apiserver
     - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
     - --allow-privileged=true
-    <% if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>- --enable-bootstrap-token-auth=true<% end %>
-    <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --experimental-bootstrap-token-auth=true<% end %>
+    <%- if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>
+    - --enable-bootstrap-token-auth=true
+    <%- end -%>
+    <%- if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>
+    - --experimental-bootstrap-token-auth=true
+    <%- end -%>
+    <%- if (@cni_cluster_cidr and not @cni_cluster_cidr.empty?) -%>
     - --service-cluster-ip-range=<%= @cni_cluster_cidr %>
+    <%- end -%>
     - --insecure-port=0
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
     - --client-ca-file=/etc/kubernetes/pki/ca.crt
@@ -31,8 +37,12 @@ spec:
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
     - --requestheader-username-headers=X-Remote-User
     - --requestheader-allowed-names=front-proxy-client
-    <% if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>- --authorization-mode=Node,RBAC<% end %>
-    <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --authorization-mode=RBAC<% end %>
+    <%- if @kubernetes_version =~ /1[.](8|9)[.]\d/ -%>
+    - --authorization-mode=Node,RBAC
+    <%- end -%>
+    <%- if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>
+    - --authorization-mode=RBAC
+    <%- end -%>
     - --advertise-address=<%= @kube_api_advertise_address  %>
     - --etcd-servers=http://127.0.0.1:2379
 <% @apiserver_extra_arguments.each do |arg| -%>
