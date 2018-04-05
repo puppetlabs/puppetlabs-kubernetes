@@ -5,6 +5,7 @@ class kubernetes::service (
   Boolean $controller                = $kubernetes::controller,
   Boolean $bootstrap_controller      = $kubernetes::bootstrap_controller,
   String $container_runtime          = $kubernetes::container_runtime,
+  String $kube_dns_ip                = $kubernetes::kube_dns_ip,
   Optional[String] $etcd_ip          = $kubernetes::etcd_ip,
 ){
 

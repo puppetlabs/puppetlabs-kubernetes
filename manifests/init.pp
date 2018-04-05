@@ -20,6 +20,11 @@
 #   It can only be set to "cri_containerd" or "docker"
 #   Defaults to docker
 #
+# [*docker_version]
+#   This is the version of the docker runtime that you want to install.
+#   Defaults to 1.12.6 on RedHat
+#   Defaults to 1.12.0-0~xenial on Debian
+#
 # [*cni_version*]
 #   The version of the cni package you would like to install
 #   Defaults to 0.6.0
@@ -201,9 +206,29 @@
 #   We will support any networking provider that supports cni
 #   This defaults to https://git.io/weave-kube-1.6
 #
+# [*cni_cluster_cidr*]
+#   The overlay (internal) network range to use.
+#   Defaults to undef. kube_tool sets this per cni provider.
+#
+# [*cni_node_cidr*]
+#   This triggers 'allocate-node-cidrs=true' to be added to the controller-manager.
+#   Defaults to false.
+#
 # [*install_dashboard*]
 #   This is a bool that determines if the kubernetes dashboard is installed.
 #   Defaults to false
+#
+# [*kube_dns_ip*]
+#   The service IP to use for kube-dns.
+#   Defaults to 10.96.0.10
+#
+# [*kube_api_ip*]
+#   The service IP to use for the kube api.
+#   Defaults to 10.96.0.1
+#
+# [*kube_proxy_version*]
+#   The version of kube-proxy you would like to install
+#   Defaults to $kubernetes_version
 #
 #
 # Authors
@@ -213,15 +238,16 @@
 #
 #
 #
-
 class kubernetes (
   String $kubernetes_version                                       = $kubernetes::params::kubernetes_version,
   Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
   String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
   String $container_runtime                                        = $kubernetes::params::container_runtime,
+  Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
   Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
-  Optional[String] $cni_node_cidr                                  = $kubernetes::params::cni_node_cidr,
+  Optional[Boolean] $cni_node_cidr                                 = $kubernetes::params::cni_node_cidr,
+  Optional[String] $cluster_service_cidr                           = $kubernetes::params::cluster_service_cidr,
   String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,
   Boolean $controller                                              = $kubernetes::params::controller,
   Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
@@ -267,6 +293,9 @@ class kubernetes (
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
   String $node_label                                               = $kubernetes::params::node_label,
+  String $kube_dns_ip                                              = $kubernetes::params::kube_dns_ip,
+  String $kube_api_ip                                              = $kubernetes::params::kube_api_ip,
+  String $kube_proxy_version                                       = $kubernetes::params::kube_proxy_version,
 
   )  inherits kubernetes::params {
 

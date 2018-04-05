@@ -7,31 +7,43 @@ require_relative 'kube_tool/create_token.rb'
 require_relative 'kube_tool/clean_up.rb'
 require_relative 'kube_tool/other_params.rb'
 
-options = {:os => nil, :version => nil, :container_runtime => nil, :cni_provider=> nil, :fqdn => nil, :ip => nil, :bootstrap_controller_ip => nil, :etcd_initial_cluster => nil, :etcd_ip => nil, :kube_api_advertise_address => nil, :install_dashboard => nil}
+options = {:os                         => nil,
+           :version                    => nil,
+           :container_runtime          => nil,
+           :cni_provider               => nil,
+           :fqdn                       => nil,
+           :ip                         => nil,
+           :bootstrap_controller_ip    => nil,
+           :etcd_initial_cluster       => nil,
+           :etcd_ip                    => nil,
+           :kube_api_advertise_address => nil,
+           :kube_api_cluster_address   => nil,
+           :install_dashboard          => nil
+          }
 
 parser = OptionParser.new do|opts|
 
-   opts.on('-o', '--os-type os-type', 'the os that kubernetes will run on') do |os|
+  opts.on('-o', '--os-type os-type', 'the os that kubernetes will run on') do |os|
     options[:os] = os;
   end
 
-   opts.on('-v', '--version version', 'the kubernetes version to install') do |version|
+  opts.on('-v', '--version version', 'the kubernetes version to install') do |version|
     options[:version] = version;
   end
 
-   opts.on('-r', '--container_runtime container runtime', 'the container runtime to use. this can only be docker or cri_containerd') do |container_runtime|
+  opts.on('-r', '--container_runtime container runtime', 'the container runtime to use. this can only be docker or cri_containerd') do |container_runtime|
     options[:container_runtime] = container_runtime;
   end
 
   opts.on('-c', '--cni-provider cni-provider', 'the networking provider to use') do |cni_provider|
     options[:cni_provider] = cni_provider;
   end
-  
-  opts.on('-f', '--fqdn fqdn', 'fqdn') do |fqdn|
+
+  opts.on('-f', '--fqdn fqdn', 'the cluster fqdn. Should match ip.') do |fqdn|
     options[:fqdn] = fqdn;
   end
 
-  opts.on('-i', '--ip ip', 'ip') do |ip|
+  opts.on('-i', '--ip ip', 'the api ip to use. Loadbalance in production.') do |ip|
     options[:ip] = ip;
   end
 
@@ -43,12 +55,16 @@ parser = OptionParser.new do|opts|
     options[:etcd_initial_cluster] = etcd_initial_cluster;
   end
 
-  opts.on('-t', '--etcd-ip etcd_ip', 'ip address of etcd') do |etcd_ip|
+  opts.on('-t', '--etcd-ip etcd_ip', 'ip address etcd will listen on') do |etcd_ip|
     options[:etcd_ip] = etcd_ip;
   end
 
   opts.on('-a', '--api-address api_address', 'the ip address that kube api will listen on') do |api_address|
     options[:kube_api_advertise_address] = api_address;
+  end
+
+  opts.on('-s', '--cluster-api-address cluster_api_address', 'the ClusterIP address that kube api will listen on internally') do |cluster_api_address|
+    options[:kube_api_cluster_address] = cluster_api_address;
   end
 
   opts.on('-d', '--install-dashboard dashboard', 'install the kube dashboard') do |dashboard|
@@ -66,9 +82,10 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_api_cluster_address])
     PreChecks.checks
     CreateCerts.ca
-    CreateCerts.api_servers(hash[:fqdn], hash[:ip])
+    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_api_cluster_address])
     PreChecks.checks
     CreateCerts.sa
     CreateCerts.admin
@@ -80,12 +97,11 @@ class Kube_tool
     CreateCerts.kube_scheduler
     CreateCerts.kube_workers
     CreateToken.bootstrap
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     CleanUp.remove_files
+    CleanUp.clean_yaml
   end
 end
 
 generate = Kube_tool.new
 
 generate.build_hiera(options)
-
