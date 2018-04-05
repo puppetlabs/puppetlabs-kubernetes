@@ -19,7 +19,7 @@ spec:
     <%- if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>
     - --experimental-bootstrap-token-auth=true
     <%- end -%>
-    <%- if (@cni_cluster_cidr and not @cni_cluster_cidr.empty?) -%>
+    <%- if (@cluster_service_cidr and not @cluster_service_cidr.empty?) -%>
     - --service-cluster-ip-range=<%= @cni_cluster_cidr %>
     <%- end -%>
     - --insecure-port=0

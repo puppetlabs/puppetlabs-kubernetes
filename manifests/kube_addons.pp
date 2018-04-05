@@ -2,7 +2,7 @@
 class kubernetes::kube_addons (
 
   Boolean $bootstrap_controller          = $kubernetes::bootstrap_controller,
-  Optional[String]$cni_network_provider  = $kubernetes::cni_network_provider,
+  Optional[String] $cni_network_provider = $kubernetes::cni_network_provider,
   Boolean $install_dashboard             = $kubernetes::install_dashboard,
   String $kubernetes_version             = $kubernetes::kubernetes_version,
   Boolean $controller                    = $kubernetes::controller,

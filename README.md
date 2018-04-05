@@ -450,13 +450,19 @@ Defaults to match the `kubernetes_version`
 
 The overlay (internal) network range to use.
 
-Defaults to `10.96.0.0/16`. kube_tool sets this per cni provider.
+Defaults to `undef` (don't specify for kube-controller-manager). kube_tool sets this per cni provider.
 
 #### `cni_node_cidr`
 
 This triggers `allocate-node-cidrs=true` to be added to the controller-manager.
 
 Defaults to `false`.
+
+#### `cluster_service_cidr`
+
+The overlay (internal) network range to use for cluster services. This should be a subset of the `cni_cluster_cidr`. `kube_api_ip` and `kube_dns_ip` should be in this range.
+
+Defaults to `undef` (don't specify for kube-apiserver). kube_tool sets this per cni provider.
 
 #### `kube_dns_ip`
 
