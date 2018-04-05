@@ -44,6 +44,7 @@ class kubernetes::config (
   Optional[String] $apiserver_crt                                  = $kubernetes::apiserver_crt,
   Optional[String] $apiserver_key                                  = $kubernetes::apiserver_key,
   Array $apiserver_extra_arguments                                 = $kubernetes::apiserver_extra_arguments,
+  Array $apiserver_extra_volumes                                   = $kubernetes::apiserver_extra_volumes,
   Optional[String] $ca_crt                                         = $kubernetes::ca_crt,
   Optional[String] $ca_key                                         = $kubernetes::ca_key,
   Optional[String] $front_proxy_ca_crt                             = $kubernetes::front_proxy_ca_crt,

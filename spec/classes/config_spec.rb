@@ -57,6 +57,12 @@ describe 'kubernetes::config', :type => :class do
         'apiserver_crt' => 'foo',
         'apiserver_key' => 'foo',
         'apiserver_extra_arguments' => ['--some-extra-arg=foo'],
+        'apiserver_extra_volumes' => [{
+            'name' => 'customvolume',
+            'hostPath' => '/path/on/host',
+            'mountPath' => '/path/in/container',
+            'readOnly' => true,
+        }],
         'kubernetes_fqdn' => 'kube.foo.dev',
         'ca_crt' => 'foo',
         'ca_key' => 'foo',
@@ -109,6 +115,8 @@ describe 'kubernetes::config', :type => :class do
         should contain_file('/etc/kubernetes/manifests/kube-apiserver.yaml')
                    .with_content(/^\s*- --experimental-bootstrap-token-auth=true$/) # with kubernetes_version = 1.7.x
                    .with_content(/^\s*- --some-extra-arg=foo$/)
+                   .with_content(/^\s*- mountPath: \/path\/in\/container\n\s*name: customvolume\n\s*readOnly: true$/)
+                   .with_content(/^\s*- hostPath:\n\s*path: \/path\/on\/host\n\s*name: customvolume$/)
       }
     end
 
@@ -156,6 +164,12 @@ describe 'kubernetes::config', :type => :class do
       'apiserver_crt' => 'foo',
       'apiserver_key' => 'foo',
       'apiserver_extra_arguments' => ['--some-extra-arg=foo'],
+      'apiserver_extra_volumes' => [{
+          'name' => 'customvolume',
+          'hostPath' => '/path/on/host',
+          'mountPath' => '/path/in/container',
+          'readOnly' => true,
+      }],
       'kubernetes_fqdn' => 'kube.foo.dev',
       'ca_crt' => 'foo',
       'ca_key' => 'foo',
