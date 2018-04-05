@@ -20,7 +20,7 @@ spec:
     - --experimental-bootstrap-token-auth=true
     <%- end -%>
     <%- if (@cluster_service_cidr and not @cluster_service_cidr.empty?) -%>
-    - --service-cluster-ip-range=<%= @cni_cluster_cidr %>
+    - --service-cluster-ip-range=<%= @cluster_service_cidr %>
     <%- end -%>
     - --insecure-port=0
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
