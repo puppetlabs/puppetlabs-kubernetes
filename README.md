@@ -7,6 +7,7 @@
 #### Table of Contents
 
 1. [Description](#description)
+1. [Installing the Module](#install)
 1. [Setup - The basics of getting started with kubernetes](#setup)
     * [Setup requirements](#setup-requirements)
     * [Beginning with kubernetes](#beginning-with-kubernetes)
@@ -24,15 +25,26 @@ This module installs and configures [Kubernetes](https://kubernetes.io/). Kubern
 
 It groups containers that make up an application into logical units for easy management and discovery.
 
+## Install
+
+To use this module, add this declaration to your Puppetfile:
+```
+mod 'puppetlabs-kubernetes', '1.0.3'
+```
+To manually install this module with puppet module tool:
+```
+puppet module install puppetlabs-kubernetes --version 1.0.3
+```
+
 ## Setup
 
 ### Setup Requirements
 
-This module includes a configuration tool called `kubetool` to auto generate
-all the security parameters, the bootstrap token, and other configurations for
-your Kubernetes cluster into a Hiera file. The tool is available as a Docker
+This module includes a configuration tool called
+[kubetool](tooling/kube_tool.rb) to auto generate all the security
+parameters, the bootstrap token, and other configurations for your Kubernetes
+cluster into a Hiera file. The tool is available as a Docker
 image to simplify installation and use.
-
 
 #### Generate the module's configuration
 
@@ -40,7 +52,7 @@ If you do not already have Docker installed on your workstation, install it [her
 
 The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 ```
-docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e SERVICE_API_IP=10.96.0.1 -e INSTALL_DASHBOARD=true puppet/kubetool
 ```
 
 The parameters are:
@@ -49,10 +61,12 @@ The parameters are:
 * `VERSION`: the version of kubernetes you want to deploy
 * `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd`
 * `CNI_PROVIDER` : This is the CNI network to install. This can be set to `weave` or `flannel`
-* `FQDN`: the cluster fqdn.
+* `FQDN`: the cluster api fqdn. Should resolve to `IP`.
+* `IP`: the cluster api IP. When in production, should be load balanced between the controllers.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
-* `ETCD_IP` and `ETCD_IP KUBE_API_ADVERTISE_ADDRESS`: we recommend passing the fact for the interface to be used by the cluster.
+* `ETCD_IP` and `KUBE_API_ADVERTISE_ADDRESS`: the IP each etcd/apiserver instance will use on each controller. We recommend passing the fact for the interface to be used by the cluster.
+* `SERVICE_API_IP`: the IP that the kubernetes service will be available on inside the cluster. Dependent on overlay network range.
 * `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
 The kubetool creates a `kubernetes.yaml` file. To view the file contents on
@@ -64,9 +78,9 @@ values are re-generated, including the certificates and tokens.
 
 #### 2. Add the `kubernetes.yaml` file to Hiera
 
-The resuling `kubernetes.yaml` file should be added to your [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where you keep your [Hiera](https://docs.puppet.com/hiera/) data, usually the `data` directory. Each cluster can be given its own configuration by leveraging location facts such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts).
+The resulting `kubernetes.yaml` file should be added to your [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where you keep your [Hiera](https://docs.puppet.com/hiera/) data, usually the `data` directory. Each cluster can be given its own configuration by leveraging location facts such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts).
 
-### Begininning with kubernetes
+### Begininning with Kubernetes
 
 After your `kubernetes.yaml` file has been added to the Hiera directory on your Puppet server, configure your node with one of the following parameters:
 
@@ -76,7 +90,7 @@ After your `kubernetes.yaml` file has been added to the Hiera directory on your 
 
 #### Bootstrap Controller
 
-A bootstrap controller is the node a cluster uses to add cluster addons (such as kube dns, cluster role bindings etc). After the cluster is bootstrapped, the bootstrap controller becomes a normal controller.
+A bootstrap controller is the node a cluster uses to add cluster addons (such as kube dns, cluster role bindings etc). *After the cluster is bootstrapped, the bootstrap controller should be changed to a normal controller.*
 
 To make a node a bootstrap controller, add the following code to the manifest:
 
@@ -444,6 +458,61 @@ Specifies whether to add the NoSchedule taint to any controller nodes in the clu
 Valid values are `true, `false`.
 
 Defaults to `true`
+
+#### `node_label`
+
+Allows the user to override the label of a node.
+
+Defaults for hostname
+
+#### `docker_version`
+
+This is the version of the docker runtime that you want to install.
+
+Defaults to `1.12.6` on RedHat
+Defaults to `1.12.0-0~xenial` on Debian
+
+#### `kube_dns_version`
+
+The version of kube DNS you would like to install
+
+Defaults to `1.14.2`
+
+#### `kube_proxy_version`
+
+The version of kube-proxy you would like to install
+
+Defaults to match the `kubernetes_version`
+
+#### `cni_cluster_cidr`
+
+The overlay (internal) network range to use.
+
+Defaults to `undef` (don't specify for kube-controller-manager). kube_tool sets this per cni provider.
+
+#### `cni_node_cidr`
+
+This triggers `allocate-node-cidrs=true` to be added to the controller-manager.
+
+Defaults to `false`.
+
+#### `cluster_service_cidr`
+
+The overlay (internal) network range to use for cluster services. This should be a subset of the `cni_cluster_cidr`. `kube_api_ip` and `kube_dns_ip` should be in this range.
+
+Defaults to `undef` (don't specify for kube-apiserver). kube_tool sets this per cni provider.
+
+#### `kube_dns_ip`
+
+The cluster service IP to use for kube-dns.
+
+Defaults to `10.96.0.10`
+
+#### `kube_api_ip`
+
+The cluster service IP to use for the kube api.
+
+Defaults to `10.96.0.1`
 
 ## Limitations
 

@@ -6,6 +6,10 @@ metadata:
   name: kube-proxy
   namespace: kube-system
 spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   selector:
     matchLabels:
       k8s-app: kube-proxy
@@ -14,15 +18,20 @@ spec:
       labels:
         k8s-app: kube-proxy
     spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: kube-proxy
-        image: gcr.io/google_containers/kube-proxy-amd64:v1.6.6
+        image: gcr.io/google_containers/kube-proxy-amd64:v<%= @kube_proxy_version %>
         imagePullPolicy: IfNotPresent
         command:
         - /usr/local/bin/kube-proxy
         - --kubeconfig=/var/lib/kube-proxy/kubeconfig.conf
-        - --cluster-cidr=10.32.0.0/12
-        - --proxy-mode=userspace
+        <%- if (@cni_cluster_cidr and not @cni_cluster_cidr.empty?) -%>
+        - --cluster-cidr=<%= @cni_cluster_cidr %>
+        <%- end -%>
         securityContext:
           privileged: true
         volumeMounts:
@@ -34,5 +43,3 @@ spec:
       - name: kube-proxy
         configMap:
           name: kube-proxy
-
-

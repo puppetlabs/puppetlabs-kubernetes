@@ -4,8 +4,6 @@ class kubernetes::repos (
   String $container_runtime = $kubernetes::container_runtime,
 ){
 
-  $repo = downcase($::operatingsystem)
-
   case $::osfamily  {
     'Debian': {
       apt::source { 'kubernetes':
@@ -34,7 +32,7 @@ class kubernetes::repos (
       if $container_runtime == 'docker' {
         yumrepo { 'docker':
           descr    => 'docker',
-          baseurl  => "https://yum.dockerproject.org/repo/main/${repo}/7",
+          baseurl  => 'https://yum.dockerproject.org/repo/main/centos/7',
           gpgkey   => 'https://yum.dockerproject.org/gpg',
           gpgcheck => true,
         }

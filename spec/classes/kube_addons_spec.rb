@@ -16,8 +16,11 @@ describe 'kubernetes::kube_addons', :type => :class do
     kubernetes_version => "1.7.3",
     container_runtime => "docker",
     cni_cluster_cidr => "10.0.0.0/24",
-    cni_node_cidr => "10.0.1.0/24",
+    cni_node_cidr => true,
+    cluster_service_cidr => "10.0.0.0/24",
+    kube_dns_ip => "10.0.0.10",
     kube_dns_version => "1.14.2",
+    kube_proxy_version => "1.6.6",
     controller => true,
     bootstrap_controller => false,
     bootstrap_controller_ip => "127.0.0.1",
@@ -69,7 +72,8 @@ describe 'kubernetes::kube_addons', :type => :class do
       'install_dashboard' => false,
       'kubernetes_version' => '1.7.3',
       'controller' => true,
-      'taint_master' => true
+      'taint_master' => true,
+      'node_label' => 'foo',
       }
     end
 
@@ -92,7 +96,8 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
       'kubernetes_version' => '1.7.3',
-      'taint_master' => true
+      'taint_master' => true,
+      'node_label' => 'foo',
       }
     end
     it { should contain_exec('Checking for dns to be deployed') }
@@ -106,7 +111,8 @@ describe 'kubernetes::kube_addons', :type => :class do
       'install_dashboard' => true,
       'kubernetes_version' => '1.7.3',
       'controller' => true,
-      'taint_master' => false
+      'taint_master' => false,
+      'node_label' => 'foo',
       }
     end
 

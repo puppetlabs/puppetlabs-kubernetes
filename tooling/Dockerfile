@@ -13,10 +13,11 @@ RUN set -x && \
   go build ../cmd/cfssljson && \
   go build ../cmd/mkbundle && \
   go build ../cmd/multirootca && \
+  go get -u github.com/cloudflare/cfssl_trust/... && \
   echo "Build complete."
 
 FROM ruby:2.3.5-alpine
-COPY --from=0 /go/src/github.com/cloudflare/cfssl/vendor/github.com/cloudflare/cfssl_trust /etc/cfssl
+COPY --from=0 /go/src/github.com/cloudflare/cfssl_trust /etc/cfssl
 COPY --from=0 /go/src/github.com/cloudflare/cfssl/bin/ /usr/bin
 COPY . /etc/k8s
 
@@ -25,4 +26,4 @@ RUN set -x && \
 
 WORKDIR /mnt
 
-ENTRYPOINT ["sh", "-c", "/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER} -f ${FQDN} -i ${IP} -b ${BOOTSTRAP_CONTROLLER_IP} -e ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -d ${INSTALL_DASHBOARD}"]
+ENTRYPOINT ["sh", "-c", "/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER} -f ${FQDN} -i ${IP} -b ${BOOTSTRAP_CONTROLLER_IP} -e ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -s ${SERVICE_API_IP} -d ${INSTALL_DASHBOARD}"]

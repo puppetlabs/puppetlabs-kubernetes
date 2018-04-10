@@ -2,22 +2,23 @@
 
 class kubernetes::params {
 
+$kubernetes_version = '1.9.2'
 case $::osfamily {
   'Debian' : {
-    $kubernetes_package_version = '1.9.2-00'
+    $kubernetes_package_version = "${kubernetes_version}-00"
     $docker_package_version = '1.12.0-0~xenial'
     $cni_version = '0.6.0-00'
   }
   'RedHat' : {
-    $kubernetes_package_version = '1.9.2'
+    $kubernetes_package_version = $kubernetes_version
     $docker_package_version = '1.12.6'
     $cni_version = '0.6.0'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
 
-$kubernetes_version = '1.7.3'
 $kube_dns_version = '1.14.2'
+$kube_proxy_version = $kubernetes_version
 $container_runtime = 'docker'
 $docker_package_name = 'docker-engine'
 $package_pin = true
@@ -64,9 +65,13 @@ $front_proxy_client_key = undef
 $sa_key = undef
 $sa_pub = undef
 $cni_cluster_cidr = undef
-$cni_node_cidr = undef
+$cni_node_cidr = false
 $cni_network_provider = undef
 $install_dashboard = false
 $taint_master = true
+$node_label = $::hostname
+$cluster_service_cidr = undef
+$kube_api_ip = '10.96.0.1'
+$kube_dns_ip = '10.96.0.10'
 
 }

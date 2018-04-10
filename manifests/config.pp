@@ -5,8 +5,11 @@ class kubernetes::config (
   String $kubernetes_version                                       = $kubernetes::kubernetes_version,
   String $container_runtime                                        = $kubernetes::container_runtime,
   Optional[String] $cni_cluster_cidr                               = $kubernetes::cni_cluster_cidr,
-  Optional[String] $cni_node_cidr                                  = $kubernetes::cni_node_cidr,
+  Optional[Boolean] $cni_node_cidr                                 = $kubernetes::cni_node_cidr,
+  Optional[String] $cluster_service_cidr                           = $kubernetes::cluster_service_cidr,
+  String $kube_dns_ip                                              = $kubernetes::kube_dns_ip,
   String $kube_dns_version                                         = $kubernetes::kube_dns_version,
+  String $kube_proxy_version                                       = $kubernetes::kube_proxy_version,
   String $kubernetes_fqdn                                          = $kubernetes::kubernetes_fqdn,
   Boolean $controller                                              = $kubernetes::controller,
   Boolean $bootstrap_controller                                    = $kubernetes::bootstrap_controller,
@@ -107,24 +110,24 @@ class kubernetes::config (
 
   #TODO fix secuirty issue that the bootstarp token is left on the server.
 
-  file {'/etc/kubernetes/secrets/bootstraptoken.yaml':
-    ensure  => present,
-    content => template('kubernetes/secrets/bootstraptoken.yaml.erb'),
-    require => File['/etc/kubernetes/secrets/'],
-  }
-
-  $kube_addons_files.each | String $addons_file | {
-    file { "/etc/kubernetes/addons/${addons_file}":
+    file {'/etc/kubernetes/secrets/bootstraptoken.yaml':
       ensure  => present,
-      content => template("kubernetes/addons/${addons_file}.erb"),
-      require => File['/etc/kubernetes/addons'],
-      }
-  }
+      content => template('kubernetes/secrets/bootstraptoken.yaml.erb'),
+      require => File['/etc/kubernetes/secrets/'],
+    }
+
+    $kube_addons_files.each | String $addons_file | {
+      file { "/etc/kubernetes/addons/${addons_file}":
+        ensure  => present,
+        content => template("kubernetes/addons/${addons_file}.erb"),
+        require => File['/etc/kubernetes/addons'],
+        }
+    }
 
     file {'/root/admin.conf':
       ensure  => present,
       content => template('kubernetes/admin.conf.erb'),
-      }
+    }
 
     file { '/etc/profile.d/kubectl.sh':
       mode    => '0644',

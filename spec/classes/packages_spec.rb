@@ -17,8 +17,11 @@ describe 'kubernetes::packages', :type => :class do
     kubernetes_version => "1.7.3",
     container_runtime => "docker",
     cni_cluster_cidr => "10.0.0.0/24",
-    cni_node_cidr => "10.0.1.0/24",
+    cni_node_cidr => true,
+    cluster_service_cidr => "10.0.0.0/24",
+    kube_dns_ip => "10.0.0.10",
     kube_dns_version => "1.14.2",
+    kube_proxy_version => "1.6.6",
     controller => true,
     bootstrap_controller => false,
     bootstrap_controller_ip => "127.0.0.1",
@@ -72,6 +75,7 @@ describe 'kubernetes::packages', :type => :class do
       'package_pin' => true,
       'cni_package_name' => 'kubernetes-cni',
       'cni_version' => '0.6.0-00',
+      'docker_version' => '1.12.0-0~xenial',
     }
   end
 
