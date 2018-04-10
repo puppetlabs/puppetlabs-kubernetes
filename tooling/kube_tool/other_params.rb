@@ -18,6 +18,9 @@ class OtherParams
     cni_node_cidr = nil
     if cni_provider.match('weave')
        cni_network_provider = 'https://git.io/weave-kube-1.6'
+       cni_cluster_cidr = '10.96.0.0/12'  
+       cni_node_cidr = true
+       cluster_service_cidr = '10.96.0.0/12'         
     elsif
        cni_provider.match('flannel')
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
@@ -38,6 +41,7 @@ class OtherParams
     data['kubernetes::cni_network_provider'] = cni_network_provider
     data['kubernetes::cni_cluster_cidr'] = cni_cluster_cidr
     data['kubernetes::cni_node_cidr'] = cni_node_cidr
+    data['kubernetes::cluster_service_cidr'] = cluster_service_cidr
     data['kubernetes::kubernetes_fqdn'] = fqdn
     data['kubernetes::bootstrap_controller_ip'] = bootstrap_controller_ip
     data['kubernetes::etcd_initial_cluster'] = etcd_initial_cluster
