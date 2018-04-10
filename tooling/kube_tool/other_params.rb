@@ -21,10 +21,15 @@ class OtherParams
        cni_cluster_cidr = '10.96.0.0/12'  
        cni_node_cidr = true
        cluster_service_cidr = '10.96.0.0/12'         
+       cluster_api_address = 10.96.0.1 
+       kube_dns_ip = '10.96.0.10'  
     elsif
        cni_provider.match('flannel')
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
        cni_cluster_cidr = '10.244.0.0/16'
+       cluster_service_cidr = '10.96.0.0/12'
+       cluster_api_address = '10.96.0.1'
+       kube_dns_ip = '10.96.0.10'     
        cni_node_cidr = true
     elsif cni_provider.match('calico')
        cni_network_provider = 'https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml'
@@ -49,6 +54,7 @@ class OtherParams
     data['kubernetes::kube_api_advertise_address'] = kube_api_advertise_address
     data['kubernetes::install_dashboard'] = install
     data['kubernetes::kube_api_ip'] = cluster_api_address
+    data['kubernetes::kube_dns_ip'] = kube_dns_ip 
     File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
 
   end
