@@ -9,7 +9,6 @@ class kubernetes::packages (
   Boolean $package_pin                         = $kubernetes::package_pin,
   String $cni_package_name                     = $kubernetes::cni_package_name,
   String $cni_version                          = $kubernetes::cni_version,
-  String $docker_version                       = $kubernetes::docker_version,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl']

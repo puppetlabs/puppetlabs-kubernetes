@@ -38,11 +38,6 @@
 #   The name of the cni package you would like to install.
 #   Defaults to `kubernetes-cni`.
 #
-# [*docker_version]
-#   This is the version of the docker runtime that you want to install.
-#   Defaults to 1.12.6 on RedHat
-#   Defaults to 1.12.0-0~xenial on Debian
-#
 # [*cni_version*]
 #   The version of the cni package you would like to install.
 #   Defaults to `0.6.0`.

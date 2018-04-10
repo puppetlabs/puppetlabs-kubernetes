@@ -465,13 +465,6 @@ Allows the user to override the label of a node.
 
 Defaults for hostname
 
-#### `docker_version`
-
-This is the version of the docker runtime that you want to install.
-
-Defaults to `1.12.6` on RedHat
-Defaults to `1.12.0-0~xenial` on Debian
-
 #### `kube_dns_version`
 
 The version of kube DNS you would like to install
