@@ -17,7 +17,6 @@ options = {:os                         => nil,
            :etcd_initial_cluster       => nil,
            :etcd_ip                    => nil,
            :kube_api_advertise_address => nil,
-           :kube_api_cluster_address   => nil,
            :install_dashboard          => nil
           }
 
@@ -61,10 +60,6 @@ parser = OptionParser.new do|opts|
 
   opts.on('-a', '--api-address api_address', 'the ip address that kube api will listen on') do |api_address|
     options[:kube_api_advertise_address] = api_address;
-  end
-
-  opts.on('-s', '--cluster-api-address cluster_api_address', 'the ClusterIP address that kube api will listen on internally') do |cluster_api_address|
-    options[:kube_api_cluster_address] = cluster_api_address;
   end
 
   opts.on('-d', '--install-dashboard dashboard', 'install the kube dashboard') do |dashboard|

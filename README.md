@@ -52,7 +52,7 @@ If you do not already have Docker installed on your workstation, install it [her
 
 The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory:
 ```
-docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e SERVICE_API_IP=10.96.0.1 -e INSTALL_DASHBOARD=true puppet/kubetool
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool
 ```
 
 The parameters are:
@@ -66,7 +66,6 @@ The parameters are:
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
 * `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
 * `ETCD_IP` and `KUBE_API_ADVERTISE_ADDRESS`: the IP each etcd/apiserver instance will use on each controller. We recommend passing the fact for the interface to be used by the cluster.
-* `SERVICE_API_IP`: the IP that the kubernetes service will be available on inside the cluster. Dependent on overlay network range.
 * `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
 
 The kubetool creates a `kubernetes.yaml` file. To view the file contents on
