@@ -20,8 +20,7 @@ class OtherParams
        cni_network_provider = 'https://git.io/weave-kube-1.6' 
        cni_cluster_cidr = '10.32.0.0/12'  
        cni_node_cidr = true
-       cluster_service_cidr = '10.96.0.0/12'         
-       cluster_api_address = '10.96.0.1' 
+       cluster_service_cidr = '10.96.0.0/12'        
        kube_api_ip = '10.96.0.1' 
        kube_dns_ip = '10.96.0.10'  
     elsif
