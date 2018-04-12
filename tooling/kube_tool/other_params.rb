@@ -17,8 +17,8 @@ class OtherParams
     cni_cluster_cidr = nil
     cni_node_cidr = nil
     if cni_provider.match('weave')
-       cni_network_provider = 'https://git.io/weave-kube-1.6'
-       cni_cluster_cidr = '10.96.0.0/12'  
+       cni_network_provider = 'https://git.io/weave-kube-1.6' 
+       cni_cluster_cidr = '10.32.0.0/12'  
        cni_node_cidr = true
        cluster_service_cidr = '10.96.0.0/12'         
        cluster_api_address = '10.96.0.1' 
