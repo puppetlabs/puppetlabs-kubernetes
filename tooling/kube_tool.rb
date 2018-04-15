@@ -63,7 +63,7 @@ parser = OptionParser.new do|opts|
     options[:kube_api_advertise_address] = api_address;
   end
 
- opts.on('-s', '--cluster-service-api-address cluster_service_api_address', 'the ClusterIP address that kube api will listen on internally') do |kube__api_service_address|
+ opts.on('-s', '--cluster-service-api-address cluster_service_api_address', 'the ClusterIP address that kube api will listen on internally') do |kube_api_service_address|
     options[:kube_api_service_address] = kube__api_service_address;
   end
 
