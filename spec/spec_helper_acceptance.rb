@@ -119,7 +119,7 @@ EOS
         on(host, "tar -C /usr/local -xzf go.tar.gz", acceptable_exit_codes: [0]).stdout
         on(host, "export PATH=$PATH:/usr/local/go/bin;go get -u github.com/cloudflare/cfssl/cmd/...", acceptable_exit_codes: [0]).stdout
         # Creating certs
-        on(host, "source ~/.bash_profile;rbenv global 2.3.1;rbenv local 2.3.1;export PATH=$PATH:/usr/local/go/bin;export PATH=$PATH:/root/go/bin;cd  /etc/puppetlabs/code/modules/kubernetes/tooling;./kube_tool.rb -o #{os} -v 1.9.2 -r #{runtime} -c #{cni} -f kubernetes -i #{vmipaddr} -b #{vmipaddr} -s 100.32.0.1 -e \"etcd-#{vmhostname}=http://#{vmipaddr}:2380\" -t \"#{vmipaddr}\" -a \"#{vmipaddr}\" -d true", acceptable_exit_codes: [0]).stdout
+        on(host, "source ~/.bash_profile;rbenv global 2.3.1;rbenv local 2.3.1;export PATH=$PATH:/usr/local/go/bin;export PATH=$PATH:/root/go/bin;cd  /etc/puppetlabs/code/modules/kubernetes/tooling;./kube_tool.rb -o #{os} -v 1.9.2 -r #{runtime} -c #{cni} -f kubernetes -i #{vmipaddr} -b #{vmipaddr} -e \"etcd-#{vmhostname}=http://#{vmipaddr}:2380\" -t \"#{vmipaddr}\" -a \"#{vmipaddr}\" -d true", acceptable_exit_codes: [0]).stdout
         create_remote_file(host, "/etc/hosts", hosts_file)
         create_remote_file(host, "/tmp/nginx.yml", nginx)
         on(host, 'cp /etc/puppetlabs/code/modules/kubernetes/tooling/kubernetes.yaml /etc/puppetlabs/code/environments/production/hieradata/common.yaml', acceptable_exit_codes: [0]).stdout
