@@ -67,7 +67,7 @@ $install_dashboard = false
 $taint_master = true
 $node_label = $::hostname
 $cluster_service_cidr = undef
-$kube_api_ip = '10.96.0.1'
+$kube_api_service_ip = '10.96.0.1'
 $kube_dns_ip = '10.96.0.10'
 
 }

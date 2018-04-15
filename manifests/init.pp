@@ -294,7 +294,7 @@ class kubernetes (
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
   String $node_label                                               = $kubernetes::params::node_label,
   String $kube_dns_ip                                              = $kubernetes::params::kube_dns_ip,
-  String $kube_api_ip                                              = $kubernetes::params::kube_api_ip,
+  String $kube_api_service_ip                                              = $kubernetes::params::kube_api_ip,
   String $kube_proxy_version                                       = $kubernetes::params::kube_proxy_version,
 
   )  inherits kubernetes::params {
