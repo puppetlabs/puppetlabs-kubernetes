@@ -18,7 +18,7 @@ options = {:os                         => nil,
            :etcd_ip                    => nil,
            :kube_api_advertise_address => nil,
       	   :install_dashboard          => nil,
-           :kube_service_api_ip        => '10.96.0.1'
+           :kube_api_service_ip        => '10.96.0.1'
           }
 
 parser = OptionParser.new do|opts|
@@ -78,10 +78,10 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip],  hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_service_api_ip])
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip],  hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_api_service_ip])
     PreChecks.checks
     CreateCerts.ca
-    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_service_api_ip])
+    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_api_service_ip])
     PreChecks.checks
     CreateCerts.sa
     CreateCerts.admin

@@ -2,7 +2,7 @@ require 'yaml'
 
 class OtherParams
 
-  def OtherParams.create(os, version, container_runtime, cni_provider, bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard, kube_service_api_ip)
+  def OtherParams.create(os, version, container_runtime, cni_provider, bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard, kube_api_service_ip)
     if install_dashboard.match('true')
        install = true
     else
@@ -46,7 +46,7 @@ class OtherParams
     data['kubernetes::etcd_ip'] = etcd_ip
     data['kubernetes::kube_api_advertise_address'] = kube_api_advertise_address
     data['kubernetes::install_dashboard'] = install
-    data['kubernetes::kube_api_service_ip'] = kube_service_api_ip
+    data['kubernetes::kube_api_service_ip'] = kube_api_service_ip
     data['kubernetes::kube_dns_ip'] = kube_dns_ip
     File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
 

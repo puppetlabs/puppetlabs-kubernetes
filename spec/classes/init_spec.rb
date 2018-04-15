@@ -16,7 +16,9 @@ describe 'kubernetes', :type => :class do
   context 'with controller => true and worker => true' do
     let(:params) do
       { 'controller' => true,
-        'worker' => true
+        'worker' => true,
+        'kube_api_service_ip' => '10.96.0.1',
+        'kube_dns_ip' => '10.96.0.10',
       }
     end
 
@@ -25,7 +27,10 @@ describe 'kubernetes', :type => :class do
 
   context 'with controller => true' do
     let(:params) do
-      { 'controller' => true }
+      { 'controller' => true,
+        'kube_api_service_ip' => '10.96.0.1',
+        'kube_dns_ip' => '10.96.0.10'
+      }
     end
 
     it { should contain_class('kubernetes') }
@@ -39,7 +44,10 @@ describe 'kubernetes', :type => :class do
 
   context 'with worker => true' do
     let(:params) do
-      { 'worker' => true}
+      { 'worker' => true,
+        'kube_api_service_ip' => '10.96.0.1',
+        'kube_dns_ip' => '10.96.0.10'
+      }
     end
 
     it { should contain_class('kubernetes') }
