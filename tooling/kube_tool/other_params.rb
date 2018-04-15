@@ -2,7 +2,7 @@ require 'yaml'
 
 class OtherParams
 
-  def OtherParams.create(os, version, container_runtime, cni_provider, bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, kube_service_api_ip, install_dashboard)
+  def OtherParams.create(os, version, container_runtime, cni_provider, bootstrap_controller_ip, fqdn, etcd_initial_cluster, etcd_ip, kube_api_advertise_address, install_dashboard, kube_service_api_ip)
     if install_dashboard.match('true')
        install = true
     else
@@ -16,28 +16,20 @@ class OtherParams
 
     cni_cluster_cidr = nil
     cni_node_cidr = nil
+    cni_node_cidr = true
+    cluster_service_cidr = '10.96.0.0/12'
+    kube_dns_ip = '10.96.0.10'
+
     if cni_provider.match('weave')
        cni_network_provider = 'https://git.io/weave-kube-1.6'
        cni_cluster_cidr = '10.32.0.0/12'
-       cni_node_cidr = true
-       cluster_service_cidr = '10.96.0.0/12'
-       kube_service_api_ip = '10.96.0.1'
-       kube_dns_ip = '10.96.0.10'
     elsif
        cni_provider.match('flannel')
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
        cni_cluster_cidr = '10.244.0.0/16'
-       cluster_service_cidr = '10.96.0.0/12'
-       kube_service_api_ip = '10.96.0.1'
-       kube_dns_ip = '10.96.0.10'
-       cni_node_cidr = true
     elsif cni_provider.match('calico')
 	    cni_network_provider = 'https://docs.projectcalico.org/v3.0/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml'
        cni_cluster_cidr = '192.168.0.0/16'
-       cluster_service_cidr = '10.96.0.0/12'
-       kube_service_api_ip = '10.96.0.1'
-       kube_dns_ip = '10.96.0.10'
-       cni_node_cidr = true
     end
 
     data = Hash.new
