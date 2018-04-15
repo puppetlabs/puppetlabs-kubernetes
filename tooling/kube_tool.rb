@@ -17,8 +17,8 @@ options = {:os                         => nil,
            :etcd_initial_cluster       => nil,
            :etcd_ip                    => nil,
            :kube_api_advertise_address => nil,
-           :kube_api_cluster_address   => nil,
-           :install_dashboard          => nil
+      	   :install_dashboard          => nil,
+           :kube_api_service_ip        => '10.96.0.1'
           }
 
 parser = OptionParser.new do|opts|
@@ -63,10 +63,6 @@ parser = OptionParser.new do|opts|
     options[:kube_api_advertise_address] = api_address;
   end
 
-  opts.on('-s', '--cluster-api-address cluster_api_address', 'the ClusterIP address that kube api will listen on internally') do |cluster_api_address|
-    options[:kube_api_cluster_address] = cluster_api_address;
-  end
-
   opts.on('-d', '--install-dashboard dashboard', 'install the kube dashboard') do |dashboard|
     options[:install_dashboard] = dashboard;
   end
@@ -82,10 +78,10 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_api_cluster_address])
+    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip],  hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_api_service_ip])
     PreChecks.checks
     CreateCerts.ca
-    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_api_cluster_address])
+    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_api_service_ip])
     PreChecks.checks
     CreateCerts.sa
     CreateCerts.admin

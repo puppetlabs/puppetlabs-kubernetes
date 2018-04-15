@@ -222,7 +222,7 @@
 #   The service IP to use for kube-dns.
 #   Defaults to 10.96.0.10
 #
-# [*kube_api_ip*]
+# [*kube_api_service_ip*]
 #   The service IP to use for the kube api.
 #   Defaults to 10.96.0.1
 #
@@ -294,7 +294,7 @@ class kubernetes (
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
   String $node_label                                               = $kubernetes::params::node_label,
   String $kube_dns_ip                                              = $kubernetes::params::kube_dns_ip,
-  String $kube_api_ip                                              = $kubernetes::params::kube_api_ip,
+  String $kube_api_service_ip                                      = $kubernetes::params::kube_api_service_ip,
   String $kube_proxy_version                                       = $kubernetes::params::kube_proxy_version,
 
   )  inherits kubernetes::params {
