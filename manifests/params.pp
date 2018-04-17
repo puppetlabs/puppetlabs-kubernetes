@@ -56,6 +56,7 @@ $apiserver_kubelet_client_key = undef
 $apiserver_crt = undef
 $apiserver_key = undef
 $apiserver_extra_arguments = []
+$apiserver_extra_volumes = []
 $ca_crt = undef
 $ca_key = undef
 $front_proxy_ca_crt = undef
@@ -71,7 +72,7 @@ $install_dashboard = false
 $taint_master = true
 $node_label = $::hostname
 $cluster_service_cidr = undef
-$kube_api_ip = '10.96.0.1'
-$kube_dns_ip = '10.96.0.10'
+$kube_api_service_ip = undef
+$kube_dns_ip = undef
 
 }

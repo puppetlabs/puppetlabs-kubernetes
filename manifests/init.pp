@@ -184,6 +184,11 @@
 #   A string array of extra arguments to be passed to the api server.
 #   Defaults to `[]`.
 #
+# [*apiserver_extra_volumes*]
+#   An array of objects describing additional volumes and volumeMounts to be configured in the api server pod. Each
+#   value should be a hash with `name`, `hostPath`, `mountPath`, and `readOnly` properties.
+#   Defaults to []
+#
 # [*ca_crt*]
 #   The clusters ca certificate. Must be passed as cert not a file.
 #   Defaults to `undef`.
@@ -238,7 +243,7 @@
 #   The service IP to use for kube-dns.
 #   Defaults to 10.96.0.10
 #
-# [*kube_api_ip*]
+# [*kube_api_service_ip*]
 #   The service IP to use for the kube api.
 #   Defaults to 10.96.0.1
 #
@@ -300,6 +305,7 @@ class kubernetes (
   Optional[String] $apiserver_crt                                  = $kubernetes::params::apiserver_crt,
   Optional[String] $apiserver_key                                  = $kubernetes::params::apiserver_key,
   Array $apiserver_extra_arguments                                 = $kubernetes::params::apiserver_extra_arguments,
+  Array $apiserver_extra_volumes                                   = $kubernetes::params::apiserver_extra_volumes,
   Optional[String] $ca_crt                                         = $kubernetes::params::ca_crt,
   Optional[String] $ca_key                                         = $kubernetes::params::ca_key,
   Optional[String] $front_proxy_ca_crt                             = $kubernetes::params::front_proxy_ca_crt,
@@ -313,7 +319,7 @@ class kubernetes (
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
   String $node_label                                               = $kubernetes::params::node_label,
   String $kube_dns_ip                                              = $kubernetes::params::kube_dns_ip,
-  String $kube_api_ip                                              = $kubernetes::params::kube_api_ip,
+  String $kube_api_service_ip                                      = $kubernetes::params::kube_api_service_ip,
   String $kube_proxy_version                                       = $kubernetes::params::kube_proxy_version,
 
   )  inherits kubernetes::params {

@@ -1,3 +1,12 @@
+# Version 1.1.0
+
+Add parameters for networking
+
+Minor bug fixes
+
+Full list of PR's available at [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/1?closed=1)
+
+
 # Version 1.0.3
 
 Change exec path for controller PR #57
