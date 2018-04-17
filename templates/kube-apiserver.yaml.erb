@@ -68,6 +68,13 @@ spec:
       readOnly: true
     - mountPath: /etc/ssl/certs
       name: certs
+<% @apiserver_extra_volumes.each do |vol| -%>
+    - mountPath: <%= vol['mountPath'] %>
+      name: <%= vol['name'] %>
+      <%- if vol['readOnly'] -%>
+      readOnly: true
+      <%- end -%>
+<% end -%>
   hostNetwork: true
   volumes:
   - hostPath:
@@ -76,4 +83,9 @@ spec:
   - hostPath:
       path: /etc/ssl/certs
     name: certs
+<% @apiserver_extra_volumes.each do |vol| -%>
+  - hostPath:
+      path: <%= vol['hostPath'] %>
+    name: <%= vol['name'] %>
+<% end -%>
 status: {}

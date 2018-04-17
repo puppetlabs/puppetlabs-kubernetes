@@ -52,6 +52,7 @@ $apiserver_kubelet_client_key = undef
 $apiserver_crt = undef
 $apiserver_key = undef
 $apiserver_extra_arguments = []
+$apiserver_extra_volumes = []
 $ca_crt = undef
 $ca_key = undef
 $front_proxy_ca_crt = undef

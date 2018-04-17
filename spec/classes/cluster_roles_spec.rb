@@ -42,6 +42,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
         apiserver_crt => "foo",
         apiserver_key => "foo",
         apiserver_extra_arguments => ["--some-extra-arg=foo"],
+        apiserver_extra_volumes => [],
         kubernetes_fqdn => "kube.foo.dev",
         ca_crt => "foo",
         ca_key => "foo",

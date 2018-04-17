@@ -59,10 +59,6 @@
 #   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
 #   defaults to undef
 #
-# [*$apiserver_extra_arguments*]
-#   This is an array to pass extra configuration to the Kubernetes api.
-#   Defaults to []
-#
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
 #   Defaults to 3.0.17
@@ -167,6 +163,11 @@
 #
 # [*apiserver_extra_arguments*]
 #   A string array of extra arguments to be passed to the api server.
+#   Defaults to []
+#
+# [*apiserver_extra_volumes*]
+#   An array of objects describing additional volumes and volumeMounts to be configured in the api server pod. Each
+#   value should be a hash with `name`, `hostPath`, `mountPath`, and `readOnly` properties.
 #   Defaults to []
 #
 # [*ca_crt*]
@@ -281,6 +282,7 @@ class kubernetes (
   Optional[String] $apiserver_crt                                  = $kubernetes::params::apiserver_crt,
   Optional[String] $apiserver_key                                  = $kubernetes::params::apiserver_key,
   Array $apiserver_extra_arguments                                 = $kubernetes::params::apiserver_extra_arguments,
+  Array $apiserver_extra_volumes                                   = $kubernetes::params::apiserver_extra_volumes,
   Optional[String] $ca_crt                                         = $kubernetes::params::ca_crt,
   Optional[String] $ca_key                                         = $kubernetes::params::ca_key,
   Optional[String] $front_proxy_ca_crt                             = $kubernetes::params::front_proxy_ca_crt,
