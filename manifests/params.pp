@@ -6,19 +6,23 @@ $kubernetes_version = '1.9.2'
 case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = "${kubernetes_version}-00"
+    $docker_package_version = '1.12.0-0~xenial'
     $cni_version = '0.6.0-00'
-    $docker_version = '1.12.0-0~xenial'
   }
   'RedHat' : {
     $kubernetes_package_version = $kubernetes_version
+    $docker_package_version = '1.12.6'
     $cni_version = '0.6.0'
-    $docker_version = '1.12.6'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
+
 $kube_dns_version = '1.14.2'
 $kube_proxy_version = $kubernetes_version
 $container_runtime = 'docker'
+$docker_package_name = 'docker-engine'
+$package_pin = true
+$cni_package_name = 'kubernetes-cni'
 $kubernetes_fqdn = 'kubernetes'
 $controller = false
 $bootstrap_controller = false

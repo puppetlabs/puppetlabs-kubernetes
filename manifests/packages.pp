@@ -4,8 +4,11 @@ class kubernetes::packages (
 
   Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
+  String $docker_package_name                  = $kubernetes::docker_package_name,
+  String $docker_package_version               = $kubernetes::docker_package_version,
+  Boolean $package_pin                         = $kubernetes::package_pin,
+  String $cni_package_name                     = $kubernetes::cni_package_name,
   String $cni_version                          = $kubernetes::cni_version,
-  String $docker_version                       = $kubernetes::docker_version,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl']
@@ -22,17 +25,35 @@ class kubernetes::packages (
   }
 
   if $container_runtime == 'docker' {
-    case $::osfamily {
-      'Debian','RedHat' : {
-        package { 'docker-engine':
-          ensure => $docker_version,
+    if $package_pin {
+      if $::osfamily == 'Debian' {
+        include apt
+
+        apt::pin { 'docker-engine':
+          packages => $docker_package_name,
+          version  => $docker_package_version,
+          priority => '550',
+        }
+
+        apt::pin { 'kube':
+          packages => $kube_packages,
+          version  => $kubernetes_package_version,
+          priority => '550',
+        }
+
+        apt::pin { 'kubernetes-cni':
+          packages => $cni_package_name,
+          version  => $cni_version,
+          priority => '550',
         }
       }
-
-    default: { notify {"The OS family ${::os_family} is not supported by this module":} }
     }
 
-    package { 'kubernetes-cni':
+    package { $docker_package_name:
+      ensure => $docker_package_version,
+    }
+
+    package { $cni_package_name:
       ensure => $cni_version,
     }
   }
@@ -53,10 +74,10 @@ class kubernetes::packages (
       extract_path    => '/',
       cleanup         => true,
       creates         => '/usr/local/bin/cri-containerd'
-      }
+    }
   }
 
   package { $kube_packages:
     ensure => $kubernetes_package_version,
-    }
+  }
 }

@@ -1,8 +1,19 @@
 require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
-  let(:facts) { { :osfamily => 'Debian' } }
+  let(:facts) do
+    {
+      :osfamily         => 'Debian',
+      :operatingsystem  => 'Ubuntu',
+      :os               => {
+        :name    => 'Ubuntu',
+        :release => {
+          :full => '16.04',
+        },
+      },
+    }
+  end
 
- let(:pre_condition) { 'class {"kubernetes::config":
+  let(:pre_condition) { 'class {"kubernetes::config":
     kubernetes_version => "1.7.3",
     container_runtime => "docker",
     cni_cluster_cidr => "10.0.0.0/24",
@@ -58,14 +69,23 @@ describe 'kubernetes::packages', :type => :class do
 
   let(:params) do
     {
-      'container_runtime' => 'docker',
       'kubernetes_package_version' => '1.9.2-00',
+      'container_runtime' => 'docker',
+      'docker_package_name' => 'docker-engine',
+      'docker_package_version' => '1.12.0-0~xenial',
+      'package_pin' => true,
+      'cni_package_name' => 'kubernetes-cni',
       'cni_version' => '0.6.0-00',
-      'docker_version' => '1.12.0-0~xenial',
     }
   end
 
   context 'with defaults for params and osfamily => Debian' do
+    it { should contain_file('/etc/apt/preferences.d/docker-engine.pref').with('content' => %r{Package: docker-engine}) }
+    it { should contain_file('/etc/apt/preferences.d/docker-engine.pref').with('content' => %r{Pin: version 1.12.0-0~xenial}) }
+    it { should contain_file('/etc/apt/preferences.d/kube.pref').with('content' => %r{Package: kubelet kubectl}) }
+    it { should contain_file('/etc/apt/preferences.d/kube.pref').with('content' => %r{Pin: version 1.9.2-00}) }
+    it { should contain_file('/etc/apt/preferences.d/kubernetes-cni.pref').with('content' => %r{Package: kubernetes-cni}) }
+    it { should contain_file('/etc/apt/preferences.d/kubernetes-cni.pref').with('content' => %r{Pin: version 0.6.0-00}) }
 
     it { should contain_package('docker-engine').with_ensure('1.12.0-0~xenial')}
     it { should contain_package('kubelet').with_ensure('1.9.2-00')}

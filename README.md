@@ -142,6 +142,32 @@ The version the Kubernetes OS packages to install, such as kubectl and kubelet.
 
 Defaults to `1.9.2`.
 
+#### `docker_package_name`
+
+The name of the docker package you would like to install.
+
+Defaults to `docker-engine`.
+
+#### `docker_package_version`
+
+The version of the docker package you would like to install.
+
+Defaults depends on operating system.
+  - Red Hat: `1.12.6`
+  - Debian: `1.12.0`
+
+#### `package_pin`
+
+If you would like to pin versions of Docker and Kubernetes packages. Works only for Debian/Ubuntu.
+
+Defaults to `true`.
+
+#### `cni_package_name`
+
+The name of the cni package you would like to install.
+
+Defaults to `kubernetes-cni`.
+
 #### `cni_version`
 
 The version of the cni package to install.
@@ -437,13 +463,6 @@ Defaults to `true`
 Allows the user to override the label of a node.
 
 Defaults for hostname
-
-#### `docker_version`
-
-This is the version of the docker runtime that you want to install.
-
-Defaults to `1.12.6` on RedHat
-Defaults to `1.12.0-0~xenial` on Debian
 
 #### `kube_dns_version`
 
