@@ -6,7 +6,7 @@ $kubernetes_version = '1.9.2'
 case $::osfamily {
   'Debian' : {
     $kubernetes_package_version = "${kubernetes_version}-00"
-    $docker_package_version = '1.12.0-0'
+    $docker_package_version = '1.12.0-00'
     $cni_version = '0.6.0-00'
   }
   'RedHat' : {
