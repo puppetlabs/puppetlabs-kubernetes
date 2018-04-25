@@ -508,7 +508,7 @@ Defaults to `undef`
 
 ## Limitations
 
-This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) and above.
+This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) to 1.9.x.
 
 This module supports only Puppet 4 and above.
 
