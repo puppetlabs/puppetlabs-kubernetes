@@ -60,7 +60,7 @@ The parameters are:
 * `OS`: the os kubernetes will run on.
 * `VERSION`: the version of kubernetes you want to deploy
 * `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd`
-* `CNI_PROVIDER` : This is the CNI network to install. This can be set to `weave` or `flannel`
+* `CNI_PROVIDER` : This is the CNI network to install. This can be set to `weave`, `flannel` or `calico`.
 * `FQDN`: the cluster api fqdn. Should resolve to `IP`.
 * `IP`: the cluster api IP. When in production, should be load balanced between the controllers.
 * `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
