@@ -29,11 +29,11 @@ It groups containers that make up an application into logical units for easy man
 
 To use this module, add this declaration to your Puppetfile:
 ```
-mod 'puppetlabs-kubernetes', '1.0.3'
+mod 'puppetlabs-kubernetes', '1.1.0'
 ```
 To manually install this module with puppet module tool:
 ```
-puppet module install puppetlabs-kubernetes --version 1.0.3
+puppet module install puppetlabs-kubernetes --version 1.1.0
 ```
 
 ## Setup
