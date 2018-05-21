@@ -18,11 +18,19 @@
 # [*container_runtime*]
 #   This is the runtime that the Kubernetes cluster will use.
 #   It can only be set to "cri_containerd" or "docker"
-#   Defaults to cri_containerd
+#   Defaults to `docker`.
 #
 # [*containerd_version*]
 #   This is the version of the containerd runtime the module will install.
 #   Defaults to 1.1.0
+#
+# [*docker_repo_name*]
+#   The name of the docker repo.
+#   Defaults to `docker`.
+#
+# [*docker_package_name*]
+#   The name of the docker package you would like to install.
+#   Defaults to `docker-engine`.
 #
 # [*docker_version*]
 #   This is the version of the docker runtime that you want to install.
@@ -176,6 +184,8 @@ class kubernetes (
   Optional[String] $containerd_version                             = $kubernetes::params::containerd_version,
   Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
   Optional[String] $cni_pod_cidr                                   = $kubernetes::params::cni_pod_cidr,
+  Optional[String] $docker_repo_name                               = $kubernetes::params::docker_repo_name,
+  Optional[String] $docker_package_name                            = $kubernetes::params::docker_package_name,
   Boolean $controller                                              = $kubernetes::params::controller,
   Boolean $worker                                                  = $kubernetes::params::worker,
   Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,

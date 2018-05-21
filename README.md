@@ -348,6 +348,18 @@ Allows the user to override the label of a node.
 
 Defaults to `hostname`.
 
+#### `docker_repo_name`
+
+Name for the docker repo.
+
+Defaults to `docker`.
+
+#### `docker_package_name`
+
+Name for the docker package.
+
+Defaults to `docker-engine`.
+
 #### `docker_version`
 
 Specifies the version of the docker runtime you want to install.
