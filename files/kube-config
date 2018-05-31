@@ -1,0 +1,25 @@
+# TODO TODO TODO THIS IS WHERE THE MAGIC HAPPENS
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: <SSLKEYDATA>
+    server: https://10.245.1.2
+  name: vagrant
+contexts:
+- context:
+    cluster: vagrant
+    user: vagrant
+  name: vagrant
+current-context: vagrant
+kind: Config
+preferences: {}
+users:
+- name: vagrant
+  user:
+    client-certificate-data: <SSLKEYDATA>
+    client-key-data: <SSLKEYDATA>
+    token: sometoken
+- name: vagrant-basic-auth
+  user:
+    password: somepassword
+    username: admin

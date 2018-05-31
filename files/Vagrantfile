@@ -1,0 +1,16 @@
+# TODO should this be a dockerfile?
+# It was more difficult to find those examples online and I'm not sure why
+Vagrant.configure("2") do |config|
+
+  config.vm.define :node1 do |node1_config|
+    node1_config.vm.box = "puppetlabs/centos-7.0-64-nocm"
+    node1_config.vm.network :private_network, ip: "10.10.10.10"
+    node1_config.vm.network :public_network
+  end
+      
+   config.vm.define :node2 do |node2_config|
+    node2_config.vm.box = "puppetlabs/centos-7.0-64-nocm"
+    node2_config.vm.network :private_network, ip: "10.10.10.11"
+    node2_config.vm.network :public_network
+  end
+end
