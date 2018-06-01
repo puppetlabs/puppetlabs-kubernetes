@@ -169,7 +169,7 @@ Specifies the runtime that the Kubernetes cluster uses.
 
 Valid values are `cri_containerd` or `docker`.
 
-Defaults to `cri_containerd`.
+Defaults to `docker`.
 
 #### `controller`
 
@@ -182,7 +182,7 @@ Defaults to `false`.
 #### `worker`
 
 Defaults to `false`.
-=======
+
 Specifies whether to set the node as a Kubernetes worker.
 
 Valid values are true, false.
