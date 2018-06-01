@@ -1,3 +1,7 @@
+# Version 2.0.1
+
+Changes default runtime to docker
+
 # Version 2.0.0
 
 Architectural change to use kubeadm project to bootstrap kubernetes clusters.
