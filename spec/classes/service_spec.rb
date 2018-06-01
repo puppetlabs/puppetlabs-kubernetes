@@ -12,88 +12,90 @@ describe 'kubernetes::service', :type => :class do
       },
     }
   end
- let(:pre_condition) { 'class {"kubernetes::config":
-    kubernetes_version => "1.7.3",
-    container_runtime => "docker",
-    cni_cluster_cidr => "10.0.0.0/24",
-    cni_node_cidr => true,
-    cluster_service_cidr => "10.0.0.0/24",
-    kube_dns_ip => "10.0.0.10",
-    kube_dns_version => "1.14.2",
-    kube_proxy_version => "1.6.6",
-    controller => true,
-    bootstrap_controller => false,
-    bootstrap_controller_ip => "127.0.0.1",
-    worker => false,
-    node_name => "kube_host",
-    kube_api_advertise_address => "127.0.0.1",
-    etcd_version => "3.0.17",
-    etcd_ip => "127.0.01",
-    etcd_initial_cluster => "foo",
-    bootstrap_token => "foo",
-    bootstrap_token_name => "foo",
-    bootstrap_token_description => "foo",
-    bootstrap_token_id => "foo",
-    bootstrap_token_secret => "foo",
-    bootstrap_token_usage_bootstrap_authentication => "foo",
-    bootstrap_token_usage_bootstrap_signing => "foo",
-    bootstrap_token_expiration => "foo",
-    certificate_authority_data => "foo",
-    client_certificate_data_controller => "foo",
-    client_certificate_data_controller_manager => "foo",
-    client_certificate_data_scheduler => "foo",
-    client_certificate_data_worker => "foo",
-    client_certificate_data_admin => "foo",
-    client_key_data_controller => "foo",
-    client_key_data_controller_manager => "foo",
-    client_key_data_scheduler => "foo",
-    client_key_data_worker => "foo",
-    client_key_data_admin => "foo",
-    apiserver_kubelet_client_crt => "foo",
-    apiserver_kubelet_client_key => "foo",
-    apiserver_crt => "foo",
-    apiserver_key => "foo",
-    apiserver_extra_arguments => ["--some-extra-arg=foo"],
-    apiserver_extra_volumes => [],
-    kubernetes_fqdn => "kube.foo.dev",
-    ca_crt => "foo",
-    ca_key => "foo",
-    front_proxy_ca_crt => "foo",
-    front_proxy_ca_key => "foo",
-    front_proxy_client_crt => "foo",
-    front_proxy_client_key => "foo",
-    sa_key => "foo",
-    sa_pub => "foo" }
-    ' }
-  context 'with defaults for all params' do
+
+  context 'with controller => true and container_runtime => cri_containerd' do
+    let(:pre_condition) { 'class {"kubernetes::config":
+        kubernetes_version => "1.10.2",
+        container_runtime => "cri_containerd",
+        etcd_version => "3.1.12",
+        etcd_ca_key => "foo",
+        etcd_ca_crt => "foo", 
+        etcdclient_key => "foo",
+        etcdclient_crt => "foo",
+        api_server_count => 3,
+        kubernetes_ca_crt => "foo",
+        kubernetes_ca_key => "foo",
+        discovery_token_hash => "foo",
+        sa_pub => "foo",
+        sa_key => "foo",
+        kube_api_advertise_address => "foo",
+        cni_pod_cidr => "10.0.0.0/24",
+        etcdserver_crt => "foo", 
+        etcdserver_key => "foo", 
+        etcdpeer_crt => "foo", 
+        etcdpeer_key => "foo", 
+        etcd_peers => ["foo"], 
+        etcd_ip => "foo", 
+        etcd_initial_cluster => "foo",  
+        token => "foo",     
+        apiserver_cert_extra_sans => ["foo"],
+        apiserver_extra_arguments => ["foo"],
+        service_cidr => "10.96.0.0/12",
+        node_label => "foo",
+        cloud_provider => ":undef",} 
+    ' }    
     let(:params) do
       {
-        'container_runtime' => 'docker',
-	      'controller' => false,
-        'bootstrap_controller' => false,
-        'etcd_ip' => '127.0.0.1',
-        'kube_dns_ip' => '10.0.0.10',
+        'container_runtime' => 'cri_containerd',
+	    'controller' => true,
       }
     end
-
-   it { should contain_service('docker') }
-   it { should contain_file('/etc/systemd/system/kubelet.service.d') }
-   it { should contain_file('/etc/systemd/system/kubelet.service.d/kubernetes.conf') }
-   it { should contain_exec('Reload systemd') }
-   it { should contain_service('kubelet') }
+   it { should contain_file('/etc/systemd/system/kubelet.service.d')}
+   it { should contain_file('/etc/systemd/system/kubelet.service.d/0-containerd.conf')}
+   it { should contain_file('/etc/systemd/system/containerd.service')}   
+   it { should contain_exec('Reload systemd')}
+   it { should contain_service('containerd')}
+   it { should contain_service('etcd')}
   end
 
-  context 'with bootstrap_controller => yes' do
+  context 'with controller => true and container_runtime => docker' do
+    let(:pre_condition) { 'class {"kubernetes::config":
+        kubernetes_version => "1.10.2",
+        container_runtime => "docker",
+        etcd_version => "3.1.12",
+        etcd_ca_key => "foo",
+        etcd_ca_crt => "foo", 
+        etcdclient_key => "foo",
+        etcdclient_crt => "foo",
+        api_server_count => 3,
+        kubernetes_ca_crt => "foo",
+        kubernetes_ca_key => "foo",
+        discovery_token_hash => "foo",
+        sa_pub => "foo",
+        sa_key => "foo",
+        kube_api_advertise_address => "foo",
+        cni_pod_cidr => "10.0.0.0/24",
+        etcdserver_crt => "foo", 
+        etcdserver_key => "foo", 
+        etcdpeer_crt => "foo", 
+        etcdpeer_key => "foo", 
+        etcd_peers => ["foo"], 
+        etcd_ip => "foo", 
+        etcd_initial_cluster => "foo",  
+        token => "foo",     
+        apiserver_cert_extra_sans => ["foo"],
+        apiserver_extra_arguments => ["foo"],
+        service_cidr => "10.96.0.0/12",
+        node_label => "foo",
+        cloud_provider => ":undef",}         
+    ' }    
     let(:params) do
-      {
-        'container_runtime' => 'docker',
-	      'bootstrap_controller' => true,
-        'controller' => true,
-        'etcd_ip' => '127.0.0.1',
-        'kube_dns_ip' => '10.0.0.10',
-      }
+        {
+            'container_runtime' => 'docker',
+            'controller' => true,
+        }
     end
-
-    it { should contain_exec('Checking for the Kubernetes cluster to be ready')}
+    it { should contain_service('docker')}
+    it { should contain_service('etcd')}
   end
 end

@@ -1,216 +1,57 @@
 require 'spec_helper'
 describe 'kubernetes::config', :type => :class do
-  let(:facts) do
-    {
-      :osfamily         => 'Debian',
-      :operatingsystem  => 'Ubuntu',
-      :os               => {
-        :name    => 'Ubuntu',
-        :release => {
-          :full => '16.04',
-        },
-      },
-    }
-  end
-
-    context 'with controller => true' do
-    let(:params) do
-     {
-        'kubernetes_version' => '1.7.3',
+  context 'with controller => true' do
+    let(:params) do 
+        {
+        'kubernetes_version' => '1.10.2',
         'container_runtime' => 'docker',
-        'cni_cluster_cidr' => '10.0.0.0/24',
-        'cni_node_cidr' => true,
-        'cluster_service_cidr' => '10.0.0.0/24',
-        'kube_dns_ip' => "10.0.0.10",
-        'kube_dns_version' => "1.14.2",
-        'kube_proxy_version' => "1.6.6",
-        'controller' => true,
-        'bootstrap_controller' => false,
-        'bootstrap_controller_ip' => '127.0.0.1',
-        'worker' => false,
-        'node_name' => 'kube_host',
-        'kube_api_advertise_address' => '127.0.0.1',
-        'etcd_version' => '3.0.17',
-        'etcd_ip' => '127.0.01',
-        'etcd_initial_cluster' => 'foo',
-        'bootstrap_token' => 'foo',
-        'bootstrap_token_name' => 'foo',
-        'bootstrap_token_description' => 'foo',
-        'bootstrap_token_id' => 'foo',
-        'bootstrap_token_secret' => 'foo',
-        'bootstrap_token_usage_bootstrap_authentication' => 'foo',
-        'bootstrap_token_usage_bootstrap_signing' => 'foo',
-        'bootstrap_token_expiration' => 'foo',
-        'certificate_authority_data' => 'foo',
-        'client_certificate_data_controller' => 'foo',
-        'client_certificate_data_controller_manager' => 'foo',
-        'client_certificate_data_scheduler' => 'foo',
-        'client_certificate_data_worker' => 'foo',
-        'client_certificate_data_admin' => 'foo',
-        'client_key_data_controller' => 'foo',
-        'client_key_data_controller_manager' => 'foo',
-        'client_key_data_scheduler' => 'foo',
-        'client_key_data_worker' => 'foo',
-        'client_key_data_admin' => 'foo',
-        'apiserver_kubelet_client_crt' => 'foo',
-        'apiserver_kubelet_client_key' => 'foo',
-        'apiserver_crt' => 'foo',
-        'apiserver_key' => 'foo',
-        'apiserver_extra_arguments' => ['--some-extra-arg=foo'],
-        'apiserver_extra_volumes' => [{
-            'name' => 'customvolume',
-            'hostPath' => '/path/on/host',
-            'mountPath' => '/path/in/container',
-            'readOnly' => true,
-        }],
-        'kubernetes_fqdn' => 'kube.foo.dev',
-        'ca_crt' => 'foo',
-        'ca_key' => 'foo',
-        'front_proxy_ca_crt' => 'foo',
-        'front_proxy_ca_key' => 'foo',
-        'front_proxy_client_crt' => 'foo',
-        'front_proxy_client_key' => 'foo',
-        'sa_key' => 'foo',
+        'etcd_version' => '3.1.12',
+        'etcd_ca_key' => 'foo',
+        'etcd_ca_crt' => 'foo', 
+        'etcdclient_key' => 'foo',
+        'etcdclient_crt' => 'foo',
+        'api_server_count' => 3,
+        'kubernetes_ca_crt' => 'foo',
+        'kubernetes_ca_key' => 'foo',
+        'discovery_token_hash' => 'foo',
         'sa_pub' => 'foo',
-      }
-      end
-
-      kube_dirs = ['/etc/kubernetes/', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/addons', '/etc/kubernetes/secrets/']
-      kube_cni_dirs = [ '/etc/cni', '/etc/cni/net.d']
-      kube_etc_files = ['admin.conf', 'controller-manager.conf', 'kubelet.conf', 'scheduler.conf']
-      kube_manifest_files = ['etcd.yaml', 'kube-apiserver.yaml', 'kube-controller-manager.yaml', 'kube-scheduler.yaml', 'clusterRoleBinding.yaml']
-      kube_addons_files = ['kube-dns-sa.yaml','kube-dns-deployment.yaml', 'kube-dns-service.yaml', 'kube-proxy-sa.yaml', 'kube-proxy-daemonset.yaml', 'kube-proxy.yaml']
-      kube_pki_files = ['apiserver.crt', 'apiserver-kubelet-client.crt', 'ca.crt', 'front-proxy-ca.crt', 'front-proxy-client.crt', 'sa.key','apiserver.key',  'apiserver-kubelet-client.key', 'ca.key', 'front-proxy-ca.key', 'front-proxy-client.key', 'sa.pub']
-
-      for d in kube_dirs do
-        it { should contain_file("#{d}") }
-      end
-
-      for d in kube_cni_dirs do
-        it { should contain_file("#{d}") }
-      end
-
-      for kube_etc_file in kube_etc_files do
-        it { should contain_file("/etc/kubernetes/#{kube_etc_file}") }
-      end
-
-      for kube_manifest_file in kube_manifest_files do
-        it { should contain_file("/etc/kubernetes/manifests/#{kube_manifest_file}") }
-      end
-
-      for file in kube_addons_files do
-        it { should contain_file("/etc/kubernetes/addons/#{file}") }
-      end
-
-      for kube_pki_file in kube_pki_files do
-        it { should contain_file("/etc/kubernetes/pki/#{kube_pki_file}") }
-      end
-
-      it { should contain_file('/etc/kubernetes/secrets/bootstraptoken.yaml') }
-      it { should contain_file('/root/admin.conf') }
-      it { should contain_file('/etc/profile.d/kubectl.sh') }
-
-      # Check API server config
-      it {
-        should contain_file('/etc/kubernetes/manifests/kube-apiserver.yaml')
-                   .with_content(/^\s*- --experimental-bootstrap-token-auth=true$/) # with kubernetes_version = 1.7.x
-                   .with_content(/^\s*- --some-extra-arg=foo$/)
-                   .with_content(/^\s*- mountPath: \/path\/in\/container\n\s*name: customvolume\n\s*readOnly: true$/)
-                   .with_content(/^\s*- hostPath:\n\s*path: \/path\/on\/host\n\s*name: customvolume$/)
-      }
+        'sa_key' => 'foo',
+        'kube_api_advertise_address' => 'foo',
+        'cni_pod_cidr' => '10.0.0.0/24',
+        'etcdserver_crt' => 'foo', 
+        'etcdserver_key' => 'foo', 
+        'etcdpeer_crt' => 'foo', 
+        'etcdpeer_key' => 'foo', 
+        'etcd_peers' => ['foo'], 
+        'etcd_ip' => 'foo', 
+        'etcd_initial_cluster' => 'foo',  
+        'token' => 'foo',     
+        'apiserver_cert_extra_sans' => ['foo'],
+        'apiserver_extra_arguments' => ['foo'],
+        'service_cidr' => '10.96.0.0/12',
+        'node_label' => 'foo',
+        'cloud_provider' => 'undef',
+        }
     end
 
-  context 'with worker => true' do
-  let(:params) do
-    {
-      'kubernetes_version' => '1.7.3',
-      'container_runtime' => 'docker',
-      'cni_cluster_cidr' => '10.0.0.0/24',
-      'cni_node_cidr' => true,
-      'cluster_service_cidr' => '10.0.0.0/24',
-      'kube_dns_ip' => "10.0.0.10",
-      'kube_proxy_version' => "1.6.6",
-      'kube_dns_version' => '1.14.2',
-      'controller' => true,
-      'bootstrap_controller' => false,
-      'bootstrap_controller_ip' => '127.0.0.1',
-      'worker' => false,
-      'node_name' => 'kube_host',
-      'kube_api_advertise_address' => '127.0.0.1',
-      'etcd_version' => '3.0.17',
-      'etcd_ip' => '127.0.01',
-      'etcd_initial_cluster' => 'foo',
-      'bootstrap_token' => 'foo',
-      'bootstrap_token_name' => 'foo',
-      'bootstrap_token_description' => 'foo',
-      'bootstrap_token_id' => 'foo',
-      'bootstrap_token_secret' => 'foo',
-      'bootstrap_token_usage_bootstrap_authentication' => 'foo',
-      'bootstrap_token_usage_bootstrap_signing' => 'foo',
-      'bootstrap_token_expiration' => 'foo',
-      'certificate_authority_data' => 'foo',
-      'client_certificate_data_controller' => 'foo',
-      'client_certificate_data_controller_manager' => 'foo',
-      'client_certificate_data_scheduler' => 'foo',
-      'client_certificate_data_worker' => 'foo',
-      'client_certificate_data_admin' => 'foo',
-      'client_key_data_controller' => 'foo',
-      'client_key_data_controller_manager' => 'foo',
-      'client_key_data_scheduler' => 'foo',
-      'client_key_data_worker' => 'foo',
-      'client_key_data_admin' => 'foo',
-      'apiserver_kubelet_client_crt' => 'foo',
-      'apiserver_kubelet_client_key' => 'foo',
-      'apiserver_crt' => 'foo',
-      'apiserver_key' => 'foo',
-      'apiserver_extra_arguments' => ['--some-extra-arg=foo'],
-      'apiserver_extra_volumes' => [{
-          'name' => 'customvolume',
-          'hostPath' => '/path/on/host',
-          'mountPath' => '/path/in/container',
-          'readOnly' => true,
-      }],
-      'kubernetes_fqdn' => 'kube.foo.dev',
-      'ca_crt' => 'foo',
-      'ca_key' => 'foo',
-      'front_proxy_ca_crt' => 'foo',
-      'front_proxy_ca_key' => 'foo',
-      'front_proxy_client_crt' => 'foo',
-      'front_proxy_client_key' => 'foo',
-      'sa_key' => 'foo',
-      'sa_pub' => 'foo',
-    }
-    end
-
-    kube_dirs = ['/etc/kubernetes/', '/etc/kubernetes/manifests', '/etc/kubernetes/pki']
-    kube_cni_dirs = [ '/etc/cni', '/etc/cni/net.d']
-    kube_etc_files = ['kubelet.conf']
-    kube_pki_files = ['ca.crt']
-    kube_addons_files = []
-    kube_manifest_files = []
+    kube_dirs = ['/etc/kubernetes/', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/pki/etcd']
+    etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key','peer.crt', 'peer.key', 'server.crt', 'server.key']
+    pki = ['ca.crt', 'ca.key','sa.pub','sa.key']
 
     for d in kube_dirs do
-      it { should contain_file("#{d}") }
+    it { should contain_file("#{d}") }
     end
 
-    for d in kube_cni_dirs do
-      it { should contain_file("#{d}") }
+    for f in etcd do
+    it { should contain_file("/etc/kubernetes/pki/etcd/#{f}") }
     end
 
-    for kube_etc_file in kube_etc_files do
-      it { should contain_file("/etc/kubernetes/#{kube_etc_file}") }
+    for cert in pki do
+    it { should contain_file("/etc/kubernetes/pki/#{cert}") }
     end
 
-    for kube_manifest_file in kube_manifest_files do
-      it { should contain_file("/etc/kubernetes/manifests/#{kube_manifest_file}") }
-    end
 
-    for file in kube_addons_files do
-      it { should contain_file("/etc/kubernetes/addons/#{file}") }
-    end
-
-    for kube_pki_file in kube_pki_files do
-      it { should contain_file("/etc/kubernetes/pki/#{kube_pki_file}") }
-    end
+    it { should contain_file('/etc/systemd/system/etcd.service') }
+    it { should contain_file('/etc/kubernetes/config.yaml') }
   end
 end

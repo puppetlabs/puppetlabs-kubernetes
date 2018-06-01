@@ -1,3 +1,9 @@
+# Version 2.0.0
+
+Architectural change to use kubeadm project to bootstrap kubernetes clusters.
+
+Updates to kubetool and params to reflect this change. See the README.md in this repo and consult the official kubeadm documenation [here](https://kubernetes.io/docs/setup/independent/)
+
 # Version 1.1.0
 
 Add parameters for networking

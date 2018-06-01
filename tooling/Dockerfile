@@ -22,8 +22,8 @@ COPY --from=0 /go/src/github.com/cloudflare/cfssl/bin/ /usr/bin
 COPY . /etc/k8s
 
 RUN set -x && \
-  apk --no-cache add git
+  apk --no-cache add git openssl
 
 WORKDIR /mnt
 
-ENTRYPOINT ["sh", "-c", "/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER} -f ${FQDN} -i ${IP} -b ${BOOTSTRAP_CONTROLLER_IP} -e ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -d ${INSTALL_DASHBOARD}"]
+ENTRYPOINT ["sh", "-c", "/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER}  -i ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -d ${INSTALL_DASHBOARD}"]
