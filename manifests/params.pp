@@ -14,7 +14,7 @@ case $::osfamily {
   }
   default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
 }
-$container_runtime = 'cri_containerd'
+$container_runtime = 'docker'
 $containerd_version = '1.1.0'
 $etcd_version = '3.1.12'
 $kubernetes_fqdn = 'kubernetes'
