@@ -2,82 +2,91 @@
 
 class kubernetes::packages (
 
-  Optional[String] $kubernetes_package_version = $kubernetes::kubernetes_package_version,
+  String $kubernetes_version                   = $kubernetes::kubernetes_version,
   String $container_runtime                    = $kubernetes::container_runtime,
-  String $docker_package_name                  = $kubernetes::docker_package_name,
-  String $docker_package_version               = $kubernetes::docker_package_version,
-  Boolean $package_pin                         = $kubernetes::package_pin,
-  String $cni_package_name                     = $kubernetes::cni_package_name,
-  String $cni_version                          = $kubernetes::cni_version,
+  Optional[String] $docker_version             = $kubernetes::docker_version,
+  String $etcd_version                         = $kubernetes::etcd_version,
+  Optional[String] $containerd_version         = $kubernetes::containerd_version,
+  Boolean $controller                          = $kubernetes::controller,
+
 ) {
 
-  $kube_packages = ['kubelet', 'kubectl']
+  $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
+  $containerd_archive = "containerd-${containerd_version}.linux-amd64.tar.gz"
+  $containerd_source = "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"
+  $etcd_archive = "etcd-v${etcd_version}-linux-amd64.tar.gz"
+  $etcd_source = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}"
 
-  case $kubernetes_package_version {
-    /1[.]9[.]\d/: {
-      $cri_source = 'https://github.com/containerd/cri-containerd/releases/download/v1.0.0-beta.1/cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz'
-      $cri_archive = 'cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz'
+  if $::osfamily == 'RedHat' {
+    exec { 'set up bridge-nf-call-iptables':
+      path    => ['/usr/sbin/', '/usr/bin', '/bin'],
+      command => 'modprobe br_netfilter',
+      creates => '/proc/sys/net/bridge/bridge-nf-call-iptables',
+      before  => File_line['set 1 /proc/sys/net/bridge/bridge-nf-call-iptables'],
     }
-    default: {
-      $cri_source = 'https://github.com/containerd/cri-containerd/releases/download/v1.0.0-alpha.1/cri-containerd-1.0.0-alpha.1.tar.gz'
-      $cri_archive = 'cri-containerd-1.0.0-alpha.1.tar.gz'
+
+    file_line { 'set 1 /proc/sys/net/bridge/bridge-nf-call-iptables':
+      path    => '/proc/sys/net/bridge/bridge-nf-call-iptables',
+      replace => true,
+      line    => '1',
+      match   => '0',
+      require => Exec['set up bridge-nf-call-iptables'],
     }
   }
 
+
   if $container_runtime == 'docker' {
-    if $package_pin {
-      if $::osfamily == 'Debian' {
-        include apt
-
-        apt::pin { 'docker-engine':
-          packages => $docker_package_name,
-          version  => $docker_package_version,
-          priority => '550',
-        }
-
-        apt::pin { 'kube':
-          packages => $kube_packages,
-          version  => $kubernetes_package_version,
-          priority => '550',
-        }
-
-        apt::pin { 'kubernetes-cni':
-          packages => $cni_package_name,
-          version  => $cni_version,
-          priority => '550',
+    case $::osfamily {
+      'Debian','RedHat' : {
+        package { 'docker-engine':
+          ensure => $docker_version,
         }
       }
-    }
 
-    package { $docker_package_name:
-      ensure => $docker_package_version,
-    }
-
-    package { $cni_package_name:
-      ensure => $cni_version,
+    default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
     }
   }
 
   elsif $container_runtime == 'cri_containerd' {
-    wget::fetch { 'wget cri-containerd':
-      source      => $cri_source,
-      destination => '/',
+
+    wget::fetch { 'download runc binary':
+      source      => 'https://github.com/opencontainers/runc/releases/download/v1.0.0-rc5/runc.amd64',
+      destination => '/usr/bin/runc',
       timeout     => 0,
       verbose     => false,
+      unless      => "test $(ls -A /usr/bin/runc 2>/dev/null)",
+      before      => File['/usr/bin/runc'],
     }
 
-  -> archive { $cri_archive:
-      ensure          => present,
-      path            => "/${cri_archive}",
+    file {'/usr/bin/runc':
+      mode => '0700'
+    }
+
+    archive { $containerd_archive:
+      path            => "/${containerd_archive}",
+      source          => $containerd_source,
       extract         => true,
-      extract_command => 'tar xfz %s --strip-components=1',
+      extract_command => 'tar xfz %s --strip-components=1 -C /usr/bin/',
       extract_path    => '/',
       cleanup         => true,
-      creates         => '/usr/local/bin/cri-containerd'
+      creates         => '/usr/bin/containerd'
+    }
+  }
+
+  if $controller {
+    archive { $etcd_archive:
+      path            => "/${etcd_archive}",
+      source          => $etcd_source,
+      extract         => true,
+      extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
+      extract_path    => '/usr/local/bin',
+      cleanup         => true,
+      creates         => ['/usr/local/bin/etcd','/usr/local/bin/etcdctl']
     }
   }
 
   package { $kube_packages:
-    ensure => $kubernetes_package_version,
+    ensure => $kubernetes_version,
   }
+
 }

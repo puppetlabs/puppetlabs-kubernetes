@@ -3,7 +3,6 @@
 require 'optparse'
 require_relative 'kube_tool/pre_checks.rb'
 require_relative 'kube_tool/create_certs.rb'
-require_relative 'kube_tool/create_token.rb'
 require_relative 'kube_tool/clean_up.rb'
 require_relative 'kube_tool/other_params.rb'
 
@@ -11,14 +10,9 @@ options = {:os                         => nil,
            :version                    => nil,
            :container_runtime          => nil,
            :cni_provider               => nil,
-           :fqdn                       => nil,
-           :ip                         => nil,
-           :bootstrap_controller_ip    => nil,
            :etcd_initial_cluster       => nil,
-           :etcd_ip                    => nil,
            :kube_api_advertise_address => nil,
       	   :install_dashboard          => nil,
-           :kube_api_service_ip        => '10.96.0.1'
           }
 
 parser = OptionParser.new do|opts|
@@ -39,20 +33,8 @@ parser = OptionParser.new do|opts|
     options[:cni_provider] = cni_provider;
   end
 
-  opts.on('-f', '--fqdn fqdn', 'the cluster fqdn. Should match ip.') do |fqdn|
-    options[:fqdn] = fqdn;
-  end
-
-  opts.on('-i', '--ip ip', 'the api ip to use. Loadbalance in production.') do |ip|
-    options[:ip] = ip;
-  end
-
-  opts.on('-b', '--bootstrap-controller-ip bootstrap', 'the bootstrap controller ip address') do |bootstrap|
-    options[:bootstrap_controller_ip] = bootstrap;
-  end
-
-  opts.on('-e', '--etcd-initial-cluster etcd_initial_cluster', 'members of the initial etcd cluster') do |etcd_initial_cluster|
-    options[:etcd_initial_cluster] = etcd_initial_cluster;
+  opts.on('-i', '--etcd-initial-cluster etcd-initial-cluster', 'the list of servers in the etcd cluster') do | etcd_initial_cluster |
+    options[:etcd_initial_cluster] = etcd_initial_cluster
   end
 
   opts.on('-t', '--etcd-ip etcd_ip', 'ip address etcd will listen on') do |etcd_ip|
@@ -78,23 +60,15 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
-    OtherParams.create(hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:bootstrap_controller_ip], hash[:fqdn], hash[:etcd_initial_cluster], hash[:etcd_ip],  hash[:kube_api_advertise_address], hash[:install_dashboard], hash[:kube_api_service_ip])
+    OtherParams.create( hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     PreChecks.checks
-    CreateCerts.ca
-    CreateCerts.api_servers(hash[:fqdn], hash[:ip], hash[:bootstrap_controller_ip], hash[:kube_api_service_ip])
-    PreChecks.checks
-    CreateCerts.sa
-    CreateCerts.admin
-    CreateCerts.apiserver_kubelet_client
-    CreateCerts.front_proxy_ca
-    CreateCerts.front_proxy_client
-    CreateCerts.system_node
-    CreateCerts.kube_controller_manager
-    CreateCerts.kube_scheduler
-    CreateCerts.kube_workers
-    CreateToken.bootstrap
+    CreateCerts.etcd_ca
+    CreateCerts.etcd_clients
+    CreateCerts.etcd_server( hash[:etcd_initial_cluster])
+    CreateCerts.kube_ca
+    CreateCerts.sa    
     CleanUp.remove_files
-    CleanUp.clean_yaml
+    CleanUp.clean_yaml( hash[:os])
   end
 end
 
