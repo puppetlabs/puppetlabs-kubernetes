@@ -18,10 +18,20 @@ class kubernetes::cluster_roles (
   String $cni_pod_cidr = $kubernetes::cni_pod_cidr,
   String $token = $kubernetes::token,
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
-
+  String $container_runtime = $kubernetes::container_runtime,
+  
 ){
   $path = ['/usr/bin','/bin','/sbin','/usr/local/bin']
   $env = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf']
+
+  if $container_runtime == 'cri_containerd' {
+    $preflight_errors = ['Service-Docker']
+    $cri_socket = '/run/containerd/containerd.sock'
+  } else {
+    $preflight_errors = undef
+    $cri_socket = undef
+  }
+  
 
   if $controller {
     kubernetes::kubeadm_init { $node_label:
@@ -29,6 +39,7 @@ class kubernetes::cluster_roles (
       path       => $path,
       env        => $env,
       node_label => $node_label,
+      ignore_preflight_errors => $preflight_errors,
       }
     }
 
@@ -39,8 +50,9 @@ class kubernetes::cluster_roles (
       controller_address => $controller_address,
       token              => $token,
       ca_cert_hash       => $discovery_token_hash,
-      cri_socket         => '/run/containerd/containerd.sock',
+      cri_socket         => $cri_socket,
       node_label         => $node_label,
+      ignore_preflight_errors => $preflight_errors,    
       }
     }
 }
