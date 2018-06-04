@@ -47,11 +47,11 @@ class kubernetes::packages (
           ensure => $docker_version,
         }
         file_line { 'set systemd cgroup docker':
-          path => '/usr/lib/systemd/system/docker.service',
-          line => 'ExecStart=/usr/bin/dockerd --exec-opt native.cgroupdriver=systemd',
-          match => 'ExecStart',
+          path    => '/usr/lib/systemd/system/docker.service',
+          line    => 'ExecStart=/usr/bin/dockerd --exec-opt native.cgroupdriver=systemd',
+          match   => 'ExecStart',
           require => Package['docker-engine'],
-        }        
+        }
       }
     default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
     }

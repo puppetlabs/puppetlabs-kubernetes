@@ -33,7 +33,8 @@ describe 'kubernetes::cluster_roles', :type => :class do
           'token' => 'foo',
           'etcd_initial_cluster' => 'foo',
           'controller_address' => '172.17.10.101',  
-          'node_label' => 'foo',         
+          'node_label' => 'foo',    
+          'container_runtime' => 'docker',     
         } 
     end
 
@@ -58,7 +59,9 @@ describe 'kubernetes::cluster_roles', :type => :class do
           'token' => 'foo',
           'etcd_initial_cluster' => 'foo',   
           'controller_address' => '172.17.10.101',  
-          'node_label' => 'foo',                                           
+          'node_label' => 'foo',   
+          'container_runtime' => 'docker',     
+                                                 
         } 
     end
 
