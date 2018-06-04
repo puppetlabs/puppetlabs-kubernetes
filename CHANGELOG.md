@@ -1,3 +1,9 @@
+# Version 2.0.2
+
+Fixes issue with cgroup mismatch on docker PR #109
+
+ignores docker warning ine prelifght checks when using containerd PR #109
+
 # Version 2.0.1
 
 Changes default runtime to docker
