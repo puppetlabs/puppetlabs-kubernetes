@@ -25,11 +25,12 @@ class kubernetes::packages (
       before  => File_line['set 1 /proc/sys/net/bridge/bridge-nf-call-iptables'],
     }
 
-    file_line { 'set 1 /proc/sys/net/bridge/bridge-nf-call-iptables':
-      path    => '/proc/sys/net/bridge/bridge-nf-call-iptables',
-      replace => true,
-      line    => '1',
-      match   => '0',
+    file { '/proc/sys/net/bridge/bridge-nf-call-iptables':
+      # path    => '/proc/sys/net/bridge/bridge-nf-call-iptables',
+      # replace => true,
+      # line    => '1',
+      # match   => '0',
+      contents => '1',
       require => Exec['set up bridge-nf-call-iptables'],
     }
   }
