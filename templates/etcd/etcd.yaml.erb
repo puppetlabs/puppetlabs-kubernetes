@@ -24,7 +24,7 @@ containers:
     - --peer-client-cert-auth \
     - --peer-trusted-ca-file=/certs/ca.crt \
     - --initial-cluster <%= @etcd_initial_cluster %>  \
-    - --initial-cluster-token <%= @token %> \
+    - --initial-cluster-token my-etcd-token \
     - --initial-cluster-state new
     image: k8s.gcr.io/etcd-amd64:3.1.10
     livenessProbe:
