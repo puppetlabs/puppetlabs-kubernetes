@@ -26,7 +26,7 @@ ExecStart=/usr/local/bin/etcd --name <%= @hostname %> \
     --peer-client-cert-auth \
     --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt \
     --initial-cluster <%= @etcd_initial_cluster %> \
-    --initial-cluster-token <%= @token %> \
+    --initial-cluster-token my-etcd-token \
     --initial-cluster-state new
 
 [Install]
