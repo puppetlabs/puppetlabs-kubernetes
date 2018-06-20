@@ -5,13 +5,24 @@ class kubernetes::params {
 $kubernetes_version = '1.10.2'
 case $::osfamily {
   'Debian' : {
-    $kubernetes_package_version = "${kubernetes_version}-00"
-    $docker_version = '17.03.0~ce-0~ubuntu-xenial'
+
+    case $::operatingsystem {
+      'Ubuntu': {
+        $kubernetes_package_version = "${kubernetes_version}-00"
+        $docker_version = '17.03.0~ce-0~ubuntu-xenial'
+      }
+      'Debian': {
+        $kubernetes_package_version = "${kubernetes_version}-00"
+        $docker_version = '17.03.0~ce-0~debian-stretch'
+      }
+      default: { notify {"The ${::operatingsystem} variant of Debian is not supported by this module":} }
+    }
   }
-  'RedHat' : {
+  'RedHat': {
     $kubernetes_package_version = $kubernetes_version
     $docker_version = '17.03.1.ce-1.el7.centos'
   }
+
   default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
 }
 $container_runtime = 'docker'

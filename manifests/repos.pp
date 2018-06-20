@@ -6,6 +6,7 @@ class kubernetes::repos (
 
   case $::osfamily  {
     'Debian': {
+
       apt::source { 'kubernetes':
         location => 'http://apt.kubernetes.io',
         repos    => 'main',
@@ -13,18 +14,34 @@ class kubernetes::repos (
         key      => {
           'id'     => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
           'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
-          },
-        }
+        },
+      }
 
-        if $container_runtime == 'docker' {
-          apt::source { 'docker':
-            location => 'https://apt.dockerproject.org/repo',
-            repos    => 'main',
-            release  => 'ubuntu-xenial',
-            key      => {
-              'id'     => '58118E89F3A912897C070ADBF76221572C52609D',
-              'source' => 'https://apt.dockerproject.org/gpg',
-          },
+      if $container_runtime == 'docker' {
+        case $::operatingsystem {
+          'Ubuntu': {
+            apt::source { 'docker':
+              location => 'https://apt.dockerproject.org/repo',
+              repos    => 'main',
+              release  => 'ubuntu-xenial',
+              key      => {
+                'id'     => '58118E89F3A912897C070ADBF76221572C52609D',
+                'source' => 'https://apt.dockerproject.org/gpg',
+              },
+            }
+          }
+          'Debian': {
+            apt::source { 'docker':
+              location => 'https://apt.dockerproject.org/repo',
+              repos    => 'main',
+              release  => 'debian-stretch',
+              key      => {
+                'id'     => '58118E89F3A912897C070ADBF76221572C52609D',
+                'source' => 'https://apt.dockerproject.org/gpg',
+              },
+            }
+          }
+          default: { notify {"The ${::operatingsystem} variant of Debian is not supported by this module":} }
         }
       }
     }
