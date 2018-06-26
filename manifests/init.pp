@@ -176,6 +176,8 @@ class kubernetes (
   Optional[String] $containerd_version                             = $kubernetes::params::containerd_version,
   Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
   Optional[String] $cni_pod_cidr                                   = $kubernetes::params::cni_pod_cidr,
+  Optional[Boolean] $cni_pod_cidr_allocate                         = $kubernetes::params::cni_pod_cidr_allocate,
+  Optional[Integer[1, 32]] $cni_pod_cidr_mask                      = $kubernetes::params::cni_pod_cidr_mask,
   Boolean $controller                                              = $kubernetes::params::controller,
   Boolean $worker                                                  = $kubernetes::params::worker,
   Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,
@@ -192,6 +194,8 @@ class kubernetes (
   Optional[String] $etcdpeer_crt                                   = $kubernetes::params::etcdpeer_crt,
   Optional[String] $etcdpeer_key                                   = $kubernetes::params::etcdpeer_key,
   Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
+  Optional[String] $cni_network_provider_rbac                      = $kubernetes::params::cni_network_provider_rbac,
+  Optional[String] $calicoctl                                      = $kubernetes::params::calicoctl,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $schedule_on_controller                                  = $kubernetes::params::schedule_on_controller,
   Integer $api_server_count                                        = $kubernetes::params::api_server_count,
@@ -217,21 +221,18 @@ class kubernetes (
   }
 
   if $controller {
-    include kubernetes::repos
     include kubernetes::packages
     include kubernetes::config
     include kubernetes::service
     include kubernetes::cluster_roles
     include kubernetes::kube_addons
-    contain kubernetes::repos
     contain kubernetes::packages
     contain kubernetes::config
     contain kubernetes::service
     contain kubernetes::cluster_roles
     contain kubernetes::kube_addons
 
-    Class['kubernetes::repos']
-      -> Class['kubernetes::packages']
+    Class['kubernetes::packages']
       -> Class['kubernetes::config']
       -> Class['kubernetes::service']
       -> Class['kubernetes::cluster_roles']
@@ -239,17 +240,14 @@ class kubernetes (
   }
 
   if $worker {
-    include kubernetes::repos
     include kubernetes::packages
     include kubernetes::service
     include kubernetes::cluster_roles
-    contain kubernetes::repos
     contain kubernetes::packages
     contain kubernetes::service
     contain kubernetes::cluster_roles
 
-    Class['kubernetes::repos']
-      -> Class['kubernetes::packages']
+    Class['kubernetes::packages']
       -> Class['kubernetes::service']
       -> Class['kubernetes::cluster_roles']
   }

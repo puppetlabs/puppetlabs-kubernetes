@@ -13,6 +13,8 @@ class kubernetes::config (
   Array $etcd_peers = $kubernetes::etcd_peers,
   String $etcd_ip = $kubernetes::etcd_ip,
   String $cni_pod_cidr = $kubernetes::cni_pod_cidr,
+  Optional[Boolean] $cni_pod_cidr_allocate = $kubernetes::cni_pod_cidr_allocate,
+  Optional[Integer[1, 32]] $cni_pod_cidr_mask = $kubernetes::cni_pod_cidr_mask,
   String $kube_api_advertise_address = $kubernetes::kube_api_advertise_address,
   String $etcd_initial_cluster = $kubernetes::etcd_initial_cluster,
   Integer $api_server_count = $kubernetes::api_server_count,
