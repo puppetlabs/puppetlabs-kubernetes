@@ -34,9 +34,10 @@ Optional[String] $token                  = undef
     token                    => $token
   })
 
-
   $exec_join = "kubeadm join ${kubeadm_join_flags}"
-  $unless_join = "kubectl get nodes | grep ${node_label}"
+  #$unless_join = "kubectl get nodes | grep ${node_label}"
+  # TODO
+  $unless_join = 'test -s /etc/kubernetes/kubelet.conf'
 
   exec { 'kubeadm join':
     command     => $exec_join,

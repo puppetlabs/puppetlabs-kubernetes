@@ -1,12 +1,14 @@
 # Class kubernetes kube_addons
 class kubernetes::kube_addons (
 
-  Optional[String] $cni_network_provider     = $kubernetes::cni_network_provider,
-  Boolean $install_dashboard                 = $kubernetes::install_dashboard,
-  String $kubernetes_version                 = $kubernetes::kubernetes_version,
-  Boolean $controller                        = $kubernetes::controller,
-  Optional[Boolean] $schedule_on_controller  = $kubernetes::schedule_on_controller,
-  String $node_label                         = $kubernetes::node_label,
+  Optional[String] $cni_network_provider_rbac = $kubernetes::cni_network_provider_rbac,
+  Optional[String] $cni_network_provider      = $kubernetes::cni_network_provider,
+  Optional[String] $calicoctl                 = $kubernetes::calicoctl,
+  Boolean $install_dashboard                  = $kubernetes::install_dashboard,
+  String $kubernetes_version                  = $kubernetes::kubernetes_version,
+  Boolean $controller                         = $kubernetes::controller,
+  Optional[Boolean] $schedule_on_controller   = $kubernetes::schedule_on_controller,
+  String $node_label                          = $kubernetes::node_label,
 ){
 
   Exec {
@@ -17,11 +19,26 @@ class kubernetes::kube_addons (
     try_sleep   => 30,
     }
 
+  Exec['Install cni network provider rbac']
+    -> Exec['Install cni network provider']
+    -> Exec['Install calicoctl pod for datastore']
+
+  exec { 'Install cni network provider rbac':
+    command => "kubectl apply -f ${cni_network_provider_rbac}",
+    onlyif  => 'kubectl get nodes',
+    unless  => 'kubectl get clusterroles | grep calico-node',
+  }
+
   exec { 'Install cni network provider':
     command => "kubectl apply -f ${cni_network_provider}",
     onlyif  => 'kubectl get nodes',
     creates => '/etc/cni/net.d'
-    }
+  }
+
+  exec { 'Install calicoctl pod for datastore':
+    command => "kubectl apply -f ${calicoctl}",
+    unless  => 'kubectl get pods -n kube-system | grep calicoctl',
+  }
 
   if $schedule_on_controller {
 

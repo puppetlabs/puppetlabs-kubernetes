@@ -38,7 +38,15 @@ class kubernetes::packages (
   if $container_runtime == 'docker' {
     case $::osfamily {
       'Debian': {
-        package { 'docker-engine':
+        case $::lsbdistcodename {
+          'bionic': {
+            $docker_package_name = 'docker.io'
+          }
+          default: {
+            $docker_package_name = 'docker-engine'
+          }
+        }
+        package { $docker_package_name:
           ensure => $docker_version,
         }
       }
