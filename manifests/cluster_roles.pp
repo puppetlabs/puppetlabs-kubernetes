@@ -22,7 +22,9 @@ class kubernetes::cluster_roles (
 
 ){
   $path = ['/usr/bin','/bin','/sbin','/usr/local/bin']
-  $env = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf']
+  $env_controller = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf']
+  #Worker nodes do not have admin.conf present
+  $env_worker = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf']
 
   if $container_runtime == 'cri_containerd' {
     $preflight_errors = ['Service-Docker']
@@ -37,7 +39,7 @@ class kubernetes::cluster_roles (
     kubernetes::kubeadm_init { $node_label:
       config                  => '/etc/kubernetes/config.yaml',
       path                    => $path,
-      env                     => $env,
+      env                     => $env_controller,
       node_label              => $node_label,
       ignore_preflight_errors => $preflight_errors,
       }
@@ -46,7 +48,7 @@ class kubernetes::cluster_roles (
   if $worker {
     kubernetes::kubeadm_join { $node_label:
       path                    => $path,
-      env                     => $env,
+      env                     => $env_worker,
       controller_address      => $controller_address,
       token                   => $token,
       ca_cert_hash            => $discovery_token_hash,
