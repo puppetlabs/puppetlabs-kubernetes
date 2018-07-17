@@ -7,13 +7,17 @@
 #### Table of Contents
 
 1. [Description](#description)
-1. [Installing the Module](#install)
-1. [Setup - The basics of getting started with kubernetes](#setup)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with kubernetes](#beginning-with-kubernetes)
-1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Development - Guide for contributing to the module](#development)
+2. [Installing the Module](#install)
+3. [Setup - The basics of getting started with kubernetes](#setup)
+   * [Generate the module configuration](#generate-the-module-configuration)
+   * [Add the OS and hostname yaml files to Hiera](#add-the-`{$OS}.yaml`-and-`{$hostname}.yaml`-files-to-Hiera)
+   * [Configure your node](#configure-your-node)
+4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+   * [Classes](#classes)
+   * [Defined types](#definedtypes)
+   * [Parameters](#parameters)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
 
 ## Overview
 
@@ -21,88 +25,82 @@ The Puppet kubernetes module installs and configures the [Kubernetes](https://Ku
 
 ## Description
 
-This module installs and configures [Kubernetes](https://kubernetes.io/). Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
+This module installs and configures [Kubernetes](https://kubernetes.io/). Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. For efficient management and discovery, containers that make up an application are grouped into logical units.
 
-It groups containers that make up an application into logical units for easy management and discovery.
+To bootstrap a kubernetes cluster in a secure and extensible way, this module uses the [kubeadm](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/) toolkit.
+
 
 ## Install
 
 To use this module, add this declaration to your Puppetfile:
+
 ```
-mod 'puppetlabs-kubernetes', '1.0.3'
+mod 'puppetlabs-kubernetes', '2.0.0'
 ```
-To manually install this module with puppet module tool:
+
+To manually install this module using the Puppet module tool, run:
+
 ```
-puppet module install puppetlabs-kubernetes --version 1.0.3
+puppet module install puppetlabs-kubernetes --version 2.0.0
 ```
 
 ## Setup
 
-### Setup Requirements
+Included in this module is [kubetool](tooling/kube_tool.rb), a configuration tool which auto generates the security
+parameters, the discovery token hash, and other configurations for your Kubernetes
+cluster into a Hiera file. To simplify installation and use, the tool is available as a Docker
+image.
 
-This module includes a configuration tool called
-[kubetool](tooling/kube_tool.rb) to auto generate all the security
-parameters, the bootstrap token, and other configurations for your Kubernetes
-cluster into a Hiera file. The tool is available as a Docker
-image to simplify installation and use.
+### Generate the module configuration
 
-#### Generate the module's configuration
+If Docker is not installed on your workstation, install it from [here](https://www.docker.com/community-edition).
 
-If you do not already have Docker installed on your workstation, install it [here](https://www.docker.com/community-edition)
+The kubetool docker image takes each parameter as an environment variable. 
 
-The kubetool docker image takes each of the parameters as environment variables. When run as follows it will output a `kubernetes.yaml` file in your current working directory. Please note the version of kubetool you use is tied to the version of the module on the Puppet Forge. So if you are using the module version 1.0.0 you would use `puppet/kubetool:1.0.0`:
+**Note**: The version of kubetool you use must match the version of the module on the Puppet Forge. For example, if using the module version 1.0.0, use `puppet/kubetool:1.0.0`. 
+
+To output a yaml file into your working directory that corresponds to the operating system you want Kubernetes to run on, and for each controller node, run either of these `docker run` commands:
+
 ```
-docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.9.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e FQDN=kubernetes -e IP=172.17.10.101 -e BOOTSTRAP_CONTROLLER_IP=172.17.10.101 -e ETCD_INITIAL_CLUSTER="etcd-kube-master=http://172.17.10.101:2380" -e ETCD_IP="%{::ipaddress_enp0s8}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_enp0s8}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
+docker run --rm -v $(pwd):/mnt --env-file .env puppet/kubetool:{$module_version}
+```
+
+The docker run command above includes a .env file included in the tooling folder of this repo.
+
+```
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e ETCD_INITIAL_CLUSTER=kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220 -e ETCD_IP="%{::ipaddress_eth1}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_eth1}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
 ```
 
 The parameters are:
 
-* `OS`: the os kubernetes will run on.
-* `VERSION`: the version of kubernetes you want to deploy
-* `CONTAINER_RUNTIME`: the container runtime kubernetes will use, this can only be set to `docker` or `cri_containerd`
-* `CNI_PROVIDER` : This is the CNI network to install. This can be set to `weave`, `flannel` or `calico`.
-* `FQDN`: the cluster api fqdn. Should resolve to `IP`.
-* `IP`: the cluster api IP. When in production, should be load balanced between the controllers.
-* `BOOTSTRAP_CONTROLLER_IP`: the ip address of the controller puppet will use to create things like cluster role bindings, kube dns, and the Kubernetes dashboard.
-* `ETCD_INITIAL_CLUSTER`: the server addresses. When in production, include three, five, or seven nodes for etcd.
-* `ETCD_IP` and `KUBE_API_ADVERTISE_ADDRESS`: the IP each etcd/apiserver instance will use on each controller. We recommend passing the fact for the interface to be used by the cluster.
-* `INSTALL_DASHBOARD`: a boolean to install the dashboard or not.
+* `OS`: The operating system kubernetes runs on.
+* `VERSION`: The version of kubernetes to deploy.
+* `CONTAINER_RUNTIME`: The container runtime kubernetes uses. Set this value to `docker` or `cri_containerd`.
+* `CNI_PROVIDER` : The CNI network to install. Set this value to `weave` or `flannel`.
+* `ETCD_INITIAL_CLUSTER`: The server hostnames and IPs in the form of `hostname:ip`. When in production, include three, five, or seven nodes for etcd.
+* `ETCD_IP`: The IP each etcd member listens on. We recommend passing the fact for the interface to be used by the cluster.
+* `KUBE_API_ADVERTISE_ADDRESS`: The IP each etcd/apiserver instance uses on each controller. We recommend passing the fact for the interface to be used by the cluster.
+* `INSTALL_DASHBOARD`: A boolean which specifies whether to install the dashboard.
 
-The kubetool creates a `kubernetes.yaml` file. To view the file contents on
-screen, run the `cat kubernetes.yaml` command.
+The kubetool creates:
 
-The tool also creates a bootstrap token and base64 encodes any values that need
-to be encoded for Kubernetes. If you run the `kubetool` command again, all the
-values are re-generated, including the certificates and tokens.
+* A yaml file that corresponds to the operating system specified by the `OS` paramater. To view the file contents, run `cat Debian.yaml` for a Debian system, or run `cat RedHat.yaml` for RedHat. 
 
-#### 2. Add the `kubernetes.yaml` file to Hiera
+The yaml files produced for each member of the etcd cluster contain certificate information to bootstrap an initial etcd cluster. Ensure these are also placed in your hieradata directory at the node level. 
 
-The resulting `kubernetes.yaml` file should be added to your [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where you keep your [Hiera](https://docs.puppet.com/hiera/) data, usually the `data` directory. Each cluster can be given its own configuration by leveraging location facts such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts).
+* A discovery token hash and encoded values required by Kubernetes. To regenerate the values, including certificates and tokens, run the `kubetool` command again.
 
-### Begininning with Kubernetes
+### Add the `{$OS}.yaml` and `{$hostname}.yaml` files to Hiera
 
-After your `kubernetes.yaml` file has been added to the Hiera directory on your Puppet server, configure your node with one of the following parameters:
+Add the `{$OS}.yaml` file to the same [control repo](https://puppet.com/docs/pe/2017.3/code_management/control_repo.html) where your [Hiera](https://docs.puppet.com/hiera/) data is, usually the `data` directory. By leveraging location facts, such as the [pp_datacenter](https://puppet.com/docs/puppet/5.0/ssl_attributes_extensions.html#puppet-specific-registered-ids) [trusted fact](https://puppet.com/docs/puppet/5.0/lang_facts_and_builtin_vars.html#trusted-facts), each cluster can be allocated its own configuration.
 
-* [bootstrap controller](###bootstrap-controller)
-* [controller](###controller)
-* [worker](###worker)
+### Configure your node
 
-#### Bootstrap Controller
+After the `{$OS}.yaml` and `{$hostname}.yaml` files have been added to the Hiera directory on your Puppet server, configure your node as the controller or worker. 
 
-A bootstrap controller is the node a cluster uses to add cluster addons (such as kube dns, cluster role bindings etc). *After the cluster is bootstrapped, the bootstrap controller should be changed to a normal controller.*
+A controller node contains the control plane and `etcd`. In a production cluster you should have three, five, or seven controllers. A worker node runs your applications. You can add as many worker nodes as Kubernetes can handle. For information about nodes in Kubernetes, see the [Kubernetes docs](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node).
 
-To make a node a bootstrap controller, add the following code to the manifest:
-
-```puppet
-class {'kubernetes':
-  controller           => true,
-  bootstrap_controller => true,
-}
-```
-
-#### Controller
-
-A controller in Kubernetes contains the control plane and `etcd`. In a production cluster you should have three, five, or seven controllers.
+**Note**: A node can not be a controller and a worker. It must be one or the other.
 
 To make a node a controller, add the following code to the manifest:
 
@@ -112,11 +110,7 @@ class {'kubernetes':
 }
 ```
 
-#### Worker
-
-A worker node runs your applications. You can add as many of these as Kubernetes can handle. For information about nodes in Kubernetes, see the [Kubernetes docs](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node).
-
-To make a node a worker node, add the following code to the manifest:
+To make a node a worker, add the following code to the manifest:
 
 ```puppet
 class {'kubernetes':
@@ -124,72 +118,58 @@ class {'kubernetes':
 }
 ```
 
-Please note that a node can not be a controller and a worker. It must be one or the other.
-
 ## Reference
 
+### Classes
+
+#### Public classes
+
+* kubernetes
+* kubernetes::params
+
+#### Private classes
+
+* kubernetes::cluster_nodes
+* kubernetes::config
+* kubernetes::kube_addons
+* kubernetes::packages
+* kubernetes::repos
+* kubernetes::service
+
+### Defined types
+
+* kubernetes::kubeadm_init
+* kubernetes::kubeadm_join
+
 ### Parameters
+
+The following parameters are available in the `kubernetes` class.
 
 #### `kubernetes_version`
 
 The version of the Kubernetes containers to install.
 
-Defaults to  `1.9.2`.
+Defaults to  `1.10.2`.
 
 #### `kubernetes_package_version`
 
-The version the Kubernetes OS packages to install, such as kubectl and kubelet.
+The version the Kubernetes OS packages to install, such as `kubectl` and `kubelet`.
 
-Defaults to `1.9.2`.
+Defaults to `1.10.2`.
 
-#### `docker_package_name`
+#### `cni_network_provider`
 
-The name of the docker package you would like to install.
+The URL to get the cni providers yaml file. 
 
-Defaults to `docker-engine`.
-
-#### `docker_package_version`
-
-The version of the docker package you would like to install.
-
-Defaults depends on operating system.
-  - Red Hat: `1.12.6`
-  - Debian: `1.12.0`
-
-#### `package_pin`
-
-If you would like to pin versions of Docker and Kubernetes packages. Works only for Debian/Ubuntu.
-
-Defaults to `true`.
-
-#### `cni_package_name`
-
-The name of the cni package you would like to install.
-
-Defaults to `kubernetes-cni`.
-
-#### `cni_version`
-
-The version of the cni package to install.
-
-Defaults to `0.6.0`.
-
-#### `cni_provider`
-
-The url to get the cni providers yaml file. This can only be weave or flannel
-defaults to `undef`
-
-#### `kube_dns_version`
-
-The version of kube DNS to install.
-
-Defaults to `1.14.2`.
+Defaults to `undef`. `kube_tool` sets this value.
 
 #### `container_runtime`
 
-Choose between docker or cri_containerd
+Specifies the runtime that the Kubernetes cluster uses.
 
-Defaults to docker
+Valid values are `cri_containerd` or `docker`.
+
+Defaults to `docker`.
 
 #### `controller`
 
@@ -199,248 +179,152 @@ Valid values are `true`, `false`.
 
 Defaults to `false`.
 
-#### `bootstrap_controller`
-
-Specifies whether to set the node as the bootstrap controller.
-
-The bootstrap controller is used only for creating the initial cluster.
-
-Valid values are `true`, `false`.
+#### `worker`
 
 Defaults to `false`.
 
-#### `bootstrap_controller_ip`
+Specifies whether to set the node as a Kubernetes worker.
 
-The IP address of the bootstrap controller.
+Valid values are true, false.
 
-Defaults to `undef`.
-
-#### `worker`
-
-Specifies whether to set a node as a worker.
-
-Defaults to `undef`.
+Defaults to false.
 
 #### `kube_api_advertise_address`
 
 The IP address you want exposed by the API server.
 
-An example with hiera would be `kubernetes::kube_api_advertise_address:"%{::ipaddress_enp0s8}"`.
+A hiera example is `kubernetes::kube_api_advertise_address:"%{::ipaddress_enp0s8}"`.
 
 Defaults to `undef`.
 
 #### `apiserver_extra_arguments`
-An array of extra configuration you can pass to the Kubernetes api container
-defaults to []
+
+A string array of extra arguments passed to the api server.
+
+Defaults to `[]`.
+
+#### `apiserver_cert_extra_sans`
+
+A string array of Subhect Alternative Names for the api server certificates.
+
+Defaults to `[]`.
+
 #### `etcd_version`
 
 The version of etcd to use.
 
-Defaults to `3.0.17`.
+Defaults to `3.1.12`.
 
 #### `etcd_ip`
 
 The IP address you want etcd to use for communications.
 
-An example with hiera would be `kubernetes::etcd_ip:"%{::ipaddress_enp0s8}"`.
+A hiera is `kubernetes::etcd_ip:"%{::ipaddress_enp0s8}"`.
 
 Defaults to `undef`.
 
 #### `etcd_initial_cluster`
 
-This will tell etcd how many nodes will be in the cluster and is passed as a string.
+A string to inform etcd how many nodes are in the cluster.
 
-A Hiera example is `kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380`.
-
-Defaults to `undef`.
-
-#### `bootstrap_token `
-
-The token Kubernetes uses to start components.
-
-For information on bootstrap tokens, see https://kubernetes.io/docs/admin/bootstrap-tokens/
+A hiera example is `kubernetes::etcd_initial_cluster: kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220`.
 
 Defaults to `undef`.
 
-#### `bootstrap_token_name`
+#### `etcd_peers`
 
-The name of the bootstrap token.
+Specifies how etcd lists the peers to connect to into the cluster.
 
-An example with hiera would be `kubernetes::bootstrap_token_name: bootstrap-token-95e1e0`.
+A hiera example is `kubernetes::etcd_peers`: 
+* 172.17.10.101
+* 172.17.10.102
+* 172.17.10.103   
 
-Defaults to `undef`.
+Defaults to `undef`
 
-#### `bootstrap_token_description`
+#### `etcd_ca_key`
 
-The base64 encoded description of the bootstrap token.
-
-A Hiera example is `kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg== # lint:ignore:140chars`.
-
-#### `bootstrap_token_id`
-
-The base64 encoded ID the cluster uses to point to the token.
-
-A Hiera example is `kubernetes::bootstrap_token_id: OTVlMWUwDQo=`.
+The ca certificate key data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `bootstrap_token_secret`
+#### `etcd_ca_crt`
 
-The base64 encoded secret which validates the bootstrap token.
-
-An example with hiera would be `kubernetes::bootstrap_token_secret: OTVlMWUwLmFlMmUzYjkwYTdmYjlkMzYNCg==`.
+The ca certificate data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `bootstrap_token_usage_bootstrap_authentication`
+#### `etcdclient_key`
 
-The base64 encoded bool which uses the bootstrap token. (true = dHJ1ZQ==)
-
-An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==`.
+The client certificate key data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `bootstrap_token_usage_bootstrap_signing`
+#### `etcdclient_crt`
 
-The base64 encoded bool which uses the bootstrap signing. (true = dHJ1ZQ==)
-
-An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==`.
+The client certificate data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `certificate_authority_data`
+#### `etcdserver_key`
 
-The string value for the cluster ca certificate data.
-
-Defaults to `undef`.
-
-#### `client_certificate_data_controller`
-
-The client certificate for the controller. Must be a string value.
+The server certificate key data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `client_certificate_data_controller_manager`
+#### `etcdserver_crt`
 
-The client certificate for the controller manager. Must be a string value.
-
-Defaults to `undef`.
-
-#### `client_certificate_data_scheduler`
-
-The client certificate for the scheduler. Must be a string value.
+The server certificate data for the etcd cluster . This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `client_certificate_data_worker`
+#### `etcdpeer_crt`
 
-The client certificate for the kubernetes worker. Must be a string value.
-
-Defaults to `undef`.
-
-#### `client_key_data_controller`
-
-The client certificate key for the controller. Must be a string value.
+The peer certificate data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `client_key_data_controller_manager`
+#### `etcdpeer_key`
 
-The client certificate key for the controller manager. Must be a string value.
-
-Defaults to `undef`.
-
-#### `client_key_data_scheduler`
-
-The client certificate key for the scheduler. Must be a string value.
+The peer certificate key data for the etcd cluster. This value must be passed as string not as a file.
 
 Defaults to `undef`.
 
-#### `client_key_data_worker`
+#### `kubernetes_ca_crt`
 
-The client certificate key for the kubernetes worker. Must be a string value.
+The clusters ca certificate. Must be passed as a string not a file.
 
-Defaults to `undef`.
+Defaults to undef
 
-#### `apiserver_kubelet_client_crt`
+#### `kubernetes_ca_key`
 
-The certificate for the kubelet api server. Must be a certificate value and not a file.
+The clusters ca key. Must be passed as a string not a file.
 
-Defaults to `undef`.
-
-#### `apiserver_kubelet_client_key`
-
-The client key for the kubelet api server. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `apiserver_crt`
-
-The certificate for the api server. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `apiserver_key`
-
-The key for the api server. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `ca_crt`
-
-The ca certificate for the cluster. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `ca_key`
-
-The ca key for the cluster. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `front_proxy_ca_crt`
-
-The ca certificate for the front proxy. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `front_proxy_ca_key`
-
-The ca key for the front proxy. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `front_proxy_client_crt`
-
-The client certificate for the front proxy. Must be a certificate value and not a file.
-
-Defaults to `undef`.
-
-#### `front_proxy_client_key`
-
-The client key for front proxy. Must be a certificate value and not a file.
-
-Defaults to `undef`.
+Defaults to undef
 
 #### `sa_key`
 
-The key for the service account. Must be a certificate value and not a file.
+The key for the service account. This value must be a certificate value and not a file.
 
 Defaults to `undef`.
 
 #### `sa_pub`
 
-The public key for the service account. Must be a certificate value and not a file.
+The public key for the service account. This value must be a certificate value and not a file.
 
 Defaults to `undef`.
 
-#### `cni_network_provider`
+#### `token`
 
-The network deployment URL that kubectl can locate.
+The string used to join nodes to the cluster. This value must be in the form of `[a-z0-9]{6}.[a-z0-9]{16}`.
 
-We support networking providers that supports cni.
+Defaults to `undef`.
 
-This defaults to `https://git.io/weave-kube-1.6`.
+#### `discovery_token_hash`
+
+The string used to validate to the root CA public key when joining a cluster. This value is created by `kubetool`.
+
+Defaults to `undef`
 
 #### `install_dashboard`
 
@@ -450,65 +334,67 @@ Valid values are `true`, `false`.
 
 Defaults to `false`.
 
-#### `taint_master`
+#### `schedule_on_controller`
 
-Specifies whether to add the NoSchedule taint to any controller nodes in the cluster.
+Specifies whether to remove the master role and allow pod scheduling on controllers.
 
-Valid values are `true, `false`.
+Valid values are `true`, `false`.
 
-Defaults to `true`
+Defaults to `false`.
 
 #### `node_label`
 
 Allows the user to override the label of a node.
 
-Defaults for hostname
+Defaults to `hostname`.
 
-#### `kube_dns_version`
+#### `docker_version`
 
-The version of kube DNS you would like to install
+Specifies the version of the docker runtime you want to install.
 
-Defaults to `1.14.2`
+Defaults to `17.03.0.ce-1.el7.centos` on RedHat.
+Defaults to `17.03.0~ce-0~ubuntu-xenial` on Debian.
 
-#### `kube_proxy_version`
+#### `containerd_version`
 
-The version of kube-proxy you would like to install
+Specifies the version of the containerd runtime the module installs.
 
-Defaults to match the `kubernetes_version`
+Defaults to `1.1.0`.
 
-#### `cni_cluster_cidr`
+#### `cni_pod_cidr`
 
-The overlay (internal) network range to use.
+Specifies the overlay (internal) network range to use. This value is set by `kube_tool` per cni provider.
 
-Defaults to `undef` (don't specify for kube-controller-manager). kube_tool sets this per cni provider.
+Defaults to `undef`.
 
-#### `cni_node_cidr`
+#### `service_cidr`
 
-This triggers `allocate-node-cidrs=true` to be added to the controller-manager.
+The IP address range for service VIPs.
 
-Defaults to `false`.
+Defaults to `10.96.0.0/12`.
 
-#### `cluster_service_cidr`
+#### `controller_address`
 
-The overlay (internal) network range to use for cluster services. This should be a subset of the `cni_cluster_cidr`. `kube_api_ip` and `kube_dns_ip` should be in this range.
+The IP address and port for the controller the worker node joins. For example, `172.17.10.101:6443`. 
 
-Defaults to `undef` (don't specify for kube-apiserver). kube_tool sets this per cni provider.
+Defaults to `undef`. This value is set by `kube_tool`. 
 
-#### `kube_dns_ip`
+#### `cloud_provider`
 
-The cluster service IP to use for kube-dns.
+The name of the cloud provider configured in `/etc/kubernetes/cloud-config`.
 
-Defaults to `undef`
+**Note**: This file is not managed within this module and must be present before bootstrapping the kubernetes controller.
 
-#### `kube_api_service_ip`
+Defaults to `undef`.
 
-The cluster service IP to use for the kube api.
-
-Defaults to `undef`
 
 ## Limitations
 
-This module supports [Kubernetes 1.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) to 1.9.x.
+This module supports [Kubernetes 1.10.x](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md#v160) and above.
+
+The default container runtime for this module is [Docker]. This is considered stable, and the only officially supported runtime. Advanced [Kubernetes] users can use cri_containerd, however this requires a greater knowledge of [Kubernetes], spefically when running applications in a HA cluster. 
+
+In order to run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module, and it's recommended that users consult the [Kubernetes] documentation on load balancing in front of a cluster [here](https://kubernetes-v1-4.github.io/docs/user-guide/load-balancer/).
 
 This module supports only Puppet 4 and above.
 

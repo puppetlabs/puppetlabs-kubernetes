@@ -7,6 +7,6 @@ class PreChecks
     puts "Please follow the instructions here https://github.com/cloudflare/cfssl"
     puts "Make sure the CFSSL binary is in your $PATH"
     exit 1
-    end 
+    end
   end
-end 
+end

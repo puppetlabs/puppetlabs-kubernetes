@@ -3,7 +3,7 @@ Gemfile.lock
 coverage/
 .bundle/
 vendor/
-tooling/kubernetes.yaml
+tooling/*.yaml
 log/
 .vagrant/
 

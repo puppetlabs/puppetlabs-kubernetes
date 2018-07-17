@@ -1,3 +1,19 @@
+# Version 2.0.2
+
+Fixes issue with cgroup mismatch on docker PR #109
+
+ignores docker warning ine prelifght checks when using containerd PR #109
+
+# Version 2.0.1
+
+Changes default runtime to docker
+
+# Version 2.0.0
+
+Architectural change to use kubeadm project to bootstrap kubernetes clusters.
+
+Updates to kubetool and params to reflect this change. See the README.md in this repo and consult the official kubeadm documenation [here](https://kubernetes.io/docs/setup/independent/)
+
 # Version 1.1.0
 
 Add parameters for networking

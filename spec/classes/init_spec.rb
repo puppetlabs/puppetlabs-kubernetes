@@ -2,6 +2,7 @@ require 'spec_helper'
 describe 'kubernetes', :type => :class do
   let(:facts) do
     {
+      :kernel           => 'Linux',
       :osfamily         => 'Debian',
       :operatingsystem  => 'Ubuntu',
       :os               => {
@@ -15,10 +16,32 @@ describe 'kubernetes', :type => :class do
 
   context 'with controller => true and worker => true' do
     let(:params) do
-      { 'controller' => true,
+      { 
+        'controller' => true,
         'worker' => true,
-        'kube_api_service_ip' => '10.96.0.1',
-        'kube_dns_ip' => '10.96.0.10',
+        'etcd_ca_key' => 'foo',
+        'etcd_ca_crt' => 'foo', 
+        'etcdclient_key' => 'foo',
+        'etcdclient_crt' => 'foo',
+        'api_server_count' => 3,
+        'kubernetes_ca_crt' => 'foo',
+        'kubernetes_ca_key' => 'foo',
+        'discovery_token_hash' => 'foo',
+        'sa_pub' => 'foo',
+        'sa_key' => 'foo',
+        'kube_api_advertise_address' => 'foo',
+        'cni_pod_cidr' => '10.0.0.0/24',
+        'etcdserver_crt' => 'foo', 
+        'etcdserver_key' => 'foo', 
+        'etcdpeer_crt' => 'foo', 
+        'etcdpeer_key' => 'foo', 
+        'etcd_peers' => ['foo'], 
+        'etcd_ip' => 'foo', 
+        'etcd_initial_cluster' => 'foo', 
+        'controller_address' => '172.17.10.101:6443',
+        'cloud_provider' => :undef,
+        'token' => 'foo',
+        
       }
     end
 
@@ -27,9 +50,31 @@ describe 'kubernetes', :type => :class do
 
   context 'with controller => true' do
     let(:params) do
-      { 'controller' => true,
-        'kube_api_service_ip' => '10.96.0.1',
-        'kube_dns_ip' => '10.96.0.10'
+      { 
+        'controller' => true,
+        'etcd_ca_key' => 'foo',
+        'etcd_ca_crt' => 'foo', 
+        'etcdclient_key' => 'foo',
+        'etcdclient_crt' => 'foo',
+        'api_server_count' => 3,
+        'kubernetes_ca_crt' => 'foo',
+        'kubernetes_ca_key' => 'foo',
+        'discovery_token_hash' => 'foo',
+        'sa_pub' => 'foo',
+        'sa_key' => 'foo',
+        'kube_api_advertise_address' => 'foo',
+        'cni_pod_cidr' => '10.0.0.0/24',
+        'etcdserver_crt' => 'foo', 
+        'etcdserver_key' => 'foo', 
+        'etcdpeer_crt' => 'foo', 
+        'etcdpeer_key' => 'foo', 
+        'etcd_peers' => ['foo'], 
+        'etcd_ip' => 'foo', 
+        'etcd_initial_cluster' => 'foo',  
+        'controller_address' => '172.17.10.101:6443',  
+        'cloud_provider' => :undef,  
+        'token' => 'foo',
+                         
       }
     end
 
@@ -44,16 +89,37 @@ describe 'kubernetes', :type => :class do
 
   context 'with worker => true' do
     let(:params) do
-      { 'worker' => true,
-        'kube_api_service_ip' => '10.96.0.1',
-        'kube_dns_ip' => '10.96.0.10'
+      { 
+        'worker' => true,
+        'etcd_ca_key' => 'foo',
+        'etcd_ca_crt' => 'foo', 
+        'etcdclient_key' => 'foo',
+        'etcdclient_crt' => 'foo',
+        'api_server_count' => 3,
+        'kubernetes_ca_crt' => 'foo',
+        'kubernetes_ca_key' => 'foo',
+        'discovery_token_hash' => 'foo',
+        'sa_pub' => 'foo',
+        'sa_key' => 'foo',
+        'kube_api_advertise_address' => 'foo',
+        'cni_pod_cidr' => '10.0.0.0/24',
+        'etcdserver_crt' => 'foo', 
+        'etcdserver_key' => 'foo', 
+        'etcdpeer_crt' => 'foo', 
+        'etcdpeer_key' => 'foo', 
+        'etcd_peers' => ['foo'], 
+        'etcd_ip' => 'foo', 
+        'etcd_initial_cluster' => 'foo',  
+        'controller_address' => '172.17.10.101:6443',   
+        'cloud_provider' => :undef,
+        'token' => 'foo',
+                
       }
     end
 
     it { should contain_class('kubernetes') }
     it { should contain_class('kubernetes::repos') }
     it { should contain_class('kubernetes::packages')}
-    it { should contain_class('kubernetes::config')}
     it { should contain_class('kubernetes::service')}
   end
 end

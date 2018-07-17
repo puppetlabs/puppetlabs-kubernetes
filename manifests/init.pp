@@ -6,251 +6,161 @@
 # Parameters
 # ----------
 # [*kubernetes_version*]
-#   The version of Kubernetes containers you want to install - i.e. API server.
-#   Defaults to `1.9.2`.
+#   The version of Kubernetes containers you want to install.
+#   ie api server,
+#   Defaults to  1.10.2
 #
 # [*kubernetes_package_version*]
-#   The version of the packages the Kubernetes os packages to install - i.e.
-#   `kubectl` and `kubelet`.
-#   Defaults to `1.9.2`.
+#   The version of the packages the Kubernetes os packages to install
+#   ie kubectl and kubelet
+#   Defaults to 1.10.2
 #
 # [*container_runtime*]
 #   This is the runtime that the Kubernetes cluster will use.
-#   It can only be set to `cri_containerd` or `docker`.
-#   Defaults to `docker`.
+#   It can only be set to "cri_containerd" or "docker"
+#   Defaults to cri_containerd
 #
-# [*docker_package_name*]
-#   The name of the docker package you would like to install.
-#   Defaults to `docker-engine`.
+# [*containerd_version*]
+#   This is the version of the containerd runtime the module will install.
+#   Defaults to 1.1.0
 #
-# [*docker_package_version*]
-#   The version of the docker package you would like to install.
-#   Defaults depends on operating system.
-#     - Red Hat: `1.12.6`
-#     - Debian: `1.12.0`
+# [*docker_version*]
+#   This is the version of the docker runtime that you want to install.
+#   Defaults to 17.03.0.ce-1.el7.centos on RedHat
+#   Defaults to 17.03.0~ce-0~ubuntu-xenial on Debian
 #
-# [*package_pin*]
-#   If you would like to pin versions of Docker and Kubernetes packages.
-#   Works only for Debian/Ubuntu.
-#   Defaults to `true`.
-#
-# [*cni_package_name*]
-#   The name of the cni package you would like to install.
-#   Defaults to `kubernetes-cni`.
-#
-# [*cni_version*]
-#   The version of the cni package you would like to install.
-#   Defaults to `0.6.0`.
-#
-# [*cni_provider*]
-#   The url location for the cni providers yaml. This can only be set to `weave`
-#   or `flannel`.
-#   Defaults to `undef`.
-#
-# [*kube_dns_version*]
-#   The version of kube DNS you would like to install.
-#   Defaults to `1.14.2`.
-#
-# [*controller*]
-#   This is a bool that sets the node as a Kubernetes controller.
-#   Defaults to `false`.
-#
-# [*bootstrap_controller*]
-#   This sets the node to use as the bootstrap controller.
-#   The bootstrap controller is only used for initial cluster creation.
-#   Defaults to `false`.
-#
-# [*bootstrap_controller_ip*]
-#   The ip address of the bootstrap controller.
-#   Defaults to `undef`.
-#
-# [*worker*]
-#   This is a bool that sets a node to a worker.
-#   Defaults to `undef`.
-#
-# [*kube_api_advertise_address*]
-#   This is the ip address that the want to api server to expose.
-#   An example with hiera would be `kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"`.
-#   Defaults to `undef`.
-#
-# [*$apiserver_extra_arguments*]
-#   This is an array to pass extra configuration to the Kubernetes API.
-#   Defaults to `[]`.
-#
-# [*etcd_version*]
-#   The version of `etcd` that you would like to use.
-#   Defaults to `3.0.17`.
-#
-# [*etcd_ip*]
-#   The ip address that you want `etcd` to use for communications.
-#   An example with hiera would be `kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"`.
-#   Defaults to `undef`.
-#
-# [*etcd_initial_cluster*]
-#   This will tell `etcd` how many nodes will be in the cluster and is passed as a string.
-#   An example with hiera would be `kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380`.
-#   Defaults to `undef`.
-#
-# [*bootstrap_token*]
-#   This is the token Kubernetes will use to start components.
-#   For more information around bootstrap tokens please see https://kubernetes.io/docs/admin/bootstrap-tokens/.
-#   Defaults to `undef`.
-#
-# [*bootstrap_token_name*]
-#   This is the name of the bootstrap token.
-#   An example with hiera would be `kubernetes::bootstrap_token_name: bootstrap-token-95e1e0`.
-#   Defaults to `undef`.
-#
-# [*bootstrap_token_description*]
-#   The boot strap token description, this must be base64 encoded.
-# lint:ignore:140chars
-#   An example with hierawould be `kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg==`.
-# lint:endignore
-#   Defaults to `undef`.
-#
-# [*bootstrap_token_id*]
-#   This is the id the cluster will use to point to the token, this must be base64 encoded.
-#   An example with hiera would be `kubernetes::bootstrap_token_id: OTVlMWUwDQo=`.
-#   Defaults to `undef`.
-#
-# [*bootstrap_token_secret*]
-#   This is the secret to validate the boot strap token, this must be base64 encoded.
-#   An example with hiera would be `kubernetes::bootstrap_token_secret: OTVlMWUwLmFlMmUzYjkwYTdmYjlkMzYNCg==`.
-#   Defaults to `undef`.
-#
-# [*bootstrap_token_usage_bootstrap_authentication*]
-#   This is the bool to use the boot strap token, this must be base64 encoded. (`true` = `dHJ1ZQ==`)
-#   An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_authentication: dHJ1ZQ==`.
-#   Defaults to `undef`.
-#
-# [*bootstrap_token_usage_bootstrap_signing*]
-#   This is a bool to use boot trap signing, this must be base64 encoded. (`true` = `dHJ1ZQ==`)
-#   An example with hiera would be `kubernetes::bootstrap_token_usage_bootstrap_signing: dHJ1ZQ==`.
-#   Defaults to `undef`.
-#
-# [*certificate_authority_data*]
-#   This is the ca certificate data for the cluster. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_certificate_data_controller*]
-#   This is the client certificate data for the controllers. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_certificate_data_controller_manager*]
-#   This is the client certificate data for the controller manager. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_certificate_data_scheduler*]
-#   This is the client certificate data for the scheduler. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_certificate_data_worker*]
-#   This is the client certificate data for the kubernetes workers. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_key_data_controller*]
-#   This is the client certificate key for the controllers. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_key_data_controller_manager*]
-#   This is the client certificate key for the controller manager. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_key_data_scheduler*]
-#   This is the client certificate key for the scheduler. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*client_key_data_worker*]
-#   This is the client certificate key for the kubernetes workers. This must be passed as string not as a file.
-#   Defaults to `undef`.
-#
-# [*apiserver_kubelet_client_crt*]
-#   The kubelet api server certificate. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*apiserver_kubelet_client_key*]
-#   The kubelet api server key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*apiserver_crt*]
-#   The api server certificate. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*apiserver_key*]
-#   The api server key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*apiserver_extra_arguments*]
-#   A string array of extra arguments to be passed to the api server.
-#   Defaults to `[]`.
-#
-# [*apiserver_extra_volumes*]
-#   An array of objects describing additional volumes and volumeMounts to be configured in the api server pod. Each
-#   value should be a hash with `name`, `hostPath`, `mountPath`, and `readOnly` properties.
-#   Defaults to []
-#
-# [*ca_crt*]
-#   The clusters ca certificate. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*ca_key*]
-#   The clusters ca key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*front_proxy_ca_crt*]
-#   The front proxy ca certificate. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*front_proxy_ca_key*]
-#   The front proxy ca key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*front_proxy_client_crt*]
-#   The front proxy client certificate. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*front_proxy_client_key*]
-#   The front proxy client key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*sa_key*]
-#   The service account key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*sa_pub*]
-#   The service account public key. Must be passed as cert not a file.
-#   Defaults to `undef`.
-#
-# [*cni_network_provider*]
-#   This is the url that `kubectl` can find the networking deployment - i.e.
-#   `https://git.io/weave-kube-1.6`.
-#   We will support any networking provider that supports cni.
-#   Defaults to `undef`.
-#
-# [*cni_cluster_cidr*]
+# [*cni_pod_cidr*]
 #   The overlay (internal) network range to use.
 #   Defaults to undef. kube_tool sets this per cni provider.
 #
-# [*cni_node_cidr*]
-#   This triggers 'allocate-node-cidrs=true' to be added to the controller-manager.
-#   Defaults to false.
+# [*cni_network_provider*]
+#
+#  The URL to get the cni providers yaml file. 
+#  Defaults to `undef`. `kube_tool` sets this value.
+#
+# [*controller*]
+#   This is a bool that sets the node as a Kubernetes controller
+#   Defaults to false
+#
+# [*worker*]
+#   This is a bool that sets a node to a worker.
+#   defaults to false 
+#
+# [*kube_api_advertise_address*]
+#   This is the ip address that the want to api server to expose.
+#   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
+#   defaults to undef
+#
+# [*etcd_version*]
+#   The version of etcd that you would like to use.
+#   Defaults to 3.1.12
+#
+# [*etcd_ip*]
+#   The ip address that you want etcd to use for communications.
+#   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
+#   Defaults to undef
+#
+# [*etcd_peers*]
+#   This will tell etcd how the list of peers to connect to into the cluster.
+#   An example with hiera would be kubernetes::etcd_peers: 
+#                                  - 172.17.10.101
+#                                  - 172.17.10.102
+#                                  - 172.17.10.103    
+#   Defaults to undef
+#
+# [*etcd_initial_cluster*]
+#    This will tell etcd how many nodes will be in the cluster and is passed as a string.
+#   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
+#   Defaults to undef
+#
+# [*etcd_ca_key*]
+#   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcd_ca_crt*]
+#   This is the ca certificate data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcdclient_key*]
+#   This is the client certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcdclient_crt*]
+#   This is the client certificate data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcdserver_key*]
+#   This is the server certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcdserver_crt*]
+#   This is the server certificate data for the etcd cluster . This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcdpeer_crt*]
+#   This is the peer certificate data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*etcdpeer_key*]
+#   This is the peer certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+#
+# [*apiserver_extra_arguments*]
+#   A string array of extra arguments to be passed to the api server.
+#   Defaults to []
+#
+# [*apiserver_cert_extra_sans*]
+#   A string array of Subhect Alternative Names for the api server certificates.
+#   Defaults to []
+#
+# [*kubernetes_ca_crt*]
+#   The clusters ca certificate. Must be passed as a string not a file.
+#   Defaults to undef
+#
+# [*kubernetes_ca_key*]
+#   The clusters ca key. Must be passed as a string not a file.
+#   Defaults to undef
+#
+# [*sa_key*]
+#   The service account key. Must be passed as string not a file.
+#   Defaults to undef
+#
+# [*sa_pub*]
+#   The service account public key. Must be passed as cert not a file.
+#   Defaults to undef
+#
+# [*node_label*]
+#  The name to assign the node in the cluster. 
+#  Defaults to hostname
+#
+# [*token*]
+#   A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
+#   Defaults to undef
+#
+# [*discovery_token_hash*]
+#   A string to validate to the root CA public key when joining a cluster. Created by kubetool
+#   Defaults to undef
 #
 # [*install_dashboard*]
 #   This is a bool that determines if the kubernetes dashboard is installed.
-#   Defaults to `false`.
+#   Defaults to false
 #
-# [*kube_dns_ip*]
-#   The service IP to use for kube-dns.
-#   Defaults to 10.96.0.10
+# [*schedule_on_controller*]
+#   A flag to remove the master role and allow pod scheduling on controllers
+#   Defaults to true
 #
-# [*kube_api_service_ip*]
-#   The service IP to use for the kube api.
-#   Defaults to 10.96.0.1
+# [*service_cidr*]
+#   The IP assdress range for service VIPs
+#   Defaults to 10.96.0.0/12
 #
-# [*kube_proxy_version*]
-#   The version of kube-proxy you would like to install
-#   Defaults to $kubernetes_version
+# [*controller_address*]
+#  The IP address and Port of the controller that worker node will join. eg 172.17.10.101:6443
+#  Defaults to undef
 #
+# [*cloud_provider*]
+#  The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
+#  Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+#  Defaults to undef
 #
 # Authors
 # -------
@@ -261,72 +171,48 @@
 #
 class kubernetes (
   String $kubernetes_version                                       = $kubernetes::params::kubernetes_version,
-  Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
-  String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
+  String $kubernetes_package_version                               = $kubernetes::params::kubernetes_package_version,
   String $container_runtime                                        = $kubernetes::params::container_runtime,
-  Optional[String] $docker_package_name                            = $kubernetes::params::docker_package_name,
-  Optional[String] $docker_package_version                         = $kubernetes::params::docker_package_version,
-  Optional[Boolean] $package_pin                                   = $kubernetes::params::package_pin,
-  Optional[String] $cni_package_name                               = $kubernetes::params::cni_package_name,
-  Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
-  Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
-  Optional[Boolean] $cni_node_cidr                                 = $kubernetes::params::cni_node_cidr,
-  Optional[String] $cluster_service_cidr                           = $kubernetes::params::cluster_service_cidr,
-  String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,
+  Optional[String] $containerd_version                             = $kubernetes::params::containerd_version,
+  Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
+  Optional[String] $cni_pod_cidr                                   = $kubernetes::params::cni_pod_cidr,
   Boolean $controller                                              = $kubernetes::params::controller,
-  Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
-  Optional[String] $bootstrap_controller_ip                        = $kubernetes::params::bootstrap_controller_ip,
   Boolean $worker                                                  = $kubernetes::params::worker,
   Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,
-  String $etcd_version                                             = $kubernetes::params::etcd_version,
+  Optional[String] $etcd_version                                   = $kubernetes::params::etcd_version,
   Optional[String] $etcd_ip                                        = $kubernetes::params::etcd_ip,
+  Optional[Array] $etcd_peers                                      = $kubernetes::params::etcd_peers,
   Optional[String] $etcd_initial_cluster                           = $kubernetes::params::etcd_initial_cluster,
-  Optional[String] $bootstrap_token                                = $kubernetes::params::bootstrap_token,
-  Optional[String] $bootstrap_token_name                           = $kubernetes::params::bootstrap_token_name,
-  Optional[String] $bootstrap_token_description                    = $kubernetes::params::bootstrap_token_description,
-  Optional[String] $bootstrap_token_id                             = $kubernetes::params::bootstrap_token_id,
-  Optional[String] $bootstrap_token_secret                         = $kubernetes::params::bootstrap_token_secret,
-  Optional[String] $bootstrap_token_usage_bootstrap_authentication = $kubernetes::params::bootstrap_token_usage_bootstrap_authentication,
-  Optional[String] $bootstrap_token_expiration                     = $kubernetes::params::bootstrap_token_expiration,
-  Optional[String] $bootstrap_token_usage_bootstrap_signing        = $kubernetes::params::bootstrap_token_usage_bootstrap_signing,
-  Optional[String] $certificate_authority_data                     = $kubernetes::params::certificate_authority_data,
-  Optional[String] $client_certificate_data_controller             = $kubernetes::params::client_certificate_data_controller,
-  Optional[String] $client_certificate_data_controller_manager     = $kubernetes::params::client_certificate_data_controller_manager,
-  Optional[String] $client_certificate_data_scheduler              = $kubernetes::params::client_certificate_data_scheduler,
-  Optional[String] $client_certificate_data_worker                 = $kubernetes::params::client_certificate_data_worker,
-  Optional[String] $client_certificate_data_admin                  = $kubernetes::params::client_certificate_data_admin,
-  Optional[String] $client_key_data_controller                     = $kubernetes::params::client_key_data_controller,
-  Optional[String] $client_key_data_controller_manager             = $kubernetes::params::client_key_data_controller_manager,
-  Optional[String] $client_key_data_scheduler                      = $kubernetes::params::client_key_data_scheduler,
-  Optional[String] $client_key_data_worker                         = $kubernetes::params::client_key_data_worker,
-  Optional[String] $client_key_data_admin                          = $kubernetes::params::client_key_data_admin,
-  Optional[String] $apiserver_kubelet_client_crt                   = $kubernetes::params::apiserver_kubelet_client_crt,
-  Optional[String] $apiserver_kubelet_client_key                   = $kubernetes::params::apiserver_kubelet_client_key,
-  Optional[String] $apiserver_crt                                  = $kubernetes::params::apiserver_crt,
-  Optional[String] $apiserver_key                                  = $kubernetes::params::apiserver_key,
-  Array $apiserver_extra_arguments                                 = $kubernetes::params::apiserver_extra_arguments,
-  Array $apiserver_extra_volumes                                   = $kubernetes::params::apiserver_extra_volumes,
-  Optional[String] $ca_crt                                         = $kubernetes::params::ca_crt,
-  Optional[String] $ca_key                                         = $kubernetes::params::ca_key,
-  Optional[String] $front_proxy_ca_crt                             = $kubernetes::params::front_proxy_ca_crt,
-  Optional[String] $front_proxy_ca_key                             = $kubernetes::params::front_proxy_ca_key,
-  Optional[String] $front_proxy_client_crt                         = $kubernetes::params::front_proxy_client_crt,
-  Optional[String] $front_proxy_client_key                         = $kubernetes::params::front_proxy_client_key,
-  Optional[String] $sa_key                                         = $kubernetes::params::sa_key,
-  Optional[String] $sa_pub                                         = $kubernetes::params::sa_pub,
+  String $etcd_ca_key                                              = $kubernetes::params::etcd_ca_key,
+  String $etcd_ca_crt                                              = $kubernetes::params::etcd_ca_crt,
+  String $etcdclient_key                                           = $kubernetes::params::etcdclient_key,
+  String $etcdclient_crt                                           = $kubernetes::params::etcdclient_crt,
+  Optional[String] $etcdserver_crt                                 = $kubernetes::params::etcdserver_crt,
+  Optional[String] $etcdserver_key                                 = $kubernetes::params::etcdserver_key,
+  Optional[String] $etcdpeer_crt                                   = $kubernetes::params::etcdpeer_crt,
+  Optional[String] $etcdpeer_key                                   = $kubernetes::params::etcdpeer_key,
   Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
-  Boolean $taint_master                                            = $kubernetes::params::taint_master,
+  Boolean $schedule_on_controller                                  = $kubernetes::params::schedule_on_controller,
+  Integer $api_server_count                                        = $kubernetes::params::api_server_count,
+  String $kubernetes_ca_crt                                        = $kubernetes::params::kubernetes_ca_crt,
+  String $kubernetes_ca_key                                        = $kubernetes::params::kubernetes_ca_key,
+  String $token                                                    = $kubernetes::params::token,
+  String $discovery_token_hash                                     = $kubernetes::params::discovery_token_hash,
+  String $sa_pub                                                   = $kubernetes::params::sa_pub,
+  String $sa_key                                                   = $kubernetes::params::sa_key,
+  Optional[Array] $apiserver_cert_extra_sans                       = $kubernetes::params::apiserver_cert_extra_sans,
+  Optional[Array] $apiserver_extra_arguments                       = $kubernetes::params::apiserver_extra_arguments,
+  String $service_cidr                                             = $kubernetes::params::service_cidr,
   String $node_label                                               = $kubernetes::params::node_label,
-  String $kube_dns_ip                                              = $kubernetes::params::kube_dns_ip,
-  String $kube_api_service_ip                                      = $kubernetes::params::kube_api_service_ip,
-  String $kube_proxy_version                                       = $kubernetes::params::kube_proxy_version,
+  Optional[String] $controller_address                             = $kubernetes::params::controller_address,
+  Optional[String] $cloud_provider                                 = $kubernetes::params::cloud_provider,
 
   )  inherits kubernetes::params {
 
   if $controller {
     if $worker {
-      fail translate(('A node can not be both a controller and a node'))
+      fail(translate('A node can not be both a controller and a node'))
     }
   }
 
@@ -355,16 +241,16 @@ class kubernetes (
   if $worker {
     include kubernetes::repos
     include kubernetes::packages
-    include kubernetes::config
     include kubernetes::service
+    include kubernetes::cluster_roles
     contain kubernetes::repos
     contain kubernetes::packages
-    contain kubernetes::config
     contain kubernetes::service
+    contain kubernetes::cluster_roles
 
     Class['kubernetes::repos']
       -> Class['kubernetes::packages']
-      -> Class['kubernetes::config']
       -> Class['kubernetes::service']
+      -> Class['kubernetes::cluster_roles']
   }
 }

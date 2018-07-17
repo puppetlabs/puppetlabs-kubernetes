@@ -1,64 +1,70 @@
 require 'spec_helper'
 describe 'kubernetes::cluster_roles', :type => :class do
-    let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_version => "1.7.3",
-        container_runtime => "docker",
-        cni_cluster_cidr => "10.0.0.0/24",
-        cni_node_cidr => true,
-        cluster_service_cidr => "10.0.0.0/24",
-        kube_dns_ip => "10.0.0.10",
-        kube_dns_version => "1.14.2",
-        kube_proxy_version => "1.6.6",
-        controller => true,
-        bootstrap_controller => false,
-        bootstrap_controller_ip => "127.0.0.1",
-        worker => false,
-        node_name => "kube_host",
-        kube_api_advertise_address => "127.0.0.1",
-        etcd_version => "3.0.17",
-        etcd_ip => "127.0.01",
-        etcd_initial_cluster => "foo",
-        bootstrap_token => "foo",
-        bootstrap_token_name => "foo",
-        bootstrap_token_description => "foo",
-        bootstrap_token_id => "foo",
-        bootstrap_token_secret => "foo",
-        bootstrap_token_usage_bootstrap_authentication => "foo",
-        bootstrap_token_usage_bootstrap_signing => "foo",
-        bootstrap_token_expiration => "foo",
-        certificate_authority_data => "foo",
-        client_certificate_data_controller => "foo",
-        client_certificate_data_controller_manager => "foo",
-        client_certificate_data_scheduler => "foo",
-        client_certificate_data_worker => "foo",
-        client_certificate_data_admin => "foo",
-        client_key_data_controller => "foo",
-        client_key_data_controller_manager => "foo",
-        client_key_data_scheduler => "foo",
-        client_key_data_worker => "foo",
-        client_key_data_admin => "foo",
-        apiserver_kubelet_client_crt => "foo",
-        apiserver_kubelet_client_key => "foo",
-        apiserver_crt => "foo",
-        apiserver_key => "foo",
-        apiserver_extra_arguments => ["--some-extra-arg=foo"],
-        apiserver_extra_volumes => [],
-        kubernetes_fqdn => "kube.foo.dev",
-        ca_crt => "foo",
-        ca_key => "foo",
-        front_proxy_ca_crt => "foo",
-        front_proxy_ca_key => "foo",
-        front_proxy_client_crt => "foo",
-        front_proxy_client_key => "foo",
-        sa_key => "foo",
-        sa_pub => "foo" }
-        ' }
+    let(:facts) do
+        {
+          :hostname         => 'foo',
+          :kernel           => 'Linux',
+          :osfamily         => 'Debian',
+          :operatingsystem  => 'Ubuntu',
+          :os               => {
+            :name    => 'Ubuntu',
+            :release => {
+              :full => '16.04',
+            },
+          },
+        }
+      end
 
-  context 'with bootstrap_controller => true' do
+  context 'with controller => true' do
+    let(:params) do 
+        { 
+          'controller' => true, 
+          'kubernetes_version' => '1.10.2',
+          'worker' => false,
+          'etcd_ip' => 'foo',           
+          'etcd_ca_key' => 'foo',
+          'etcd_ca_crt' => 'foo', 
+          'etcdclient_key' => 'foo',
+          'etcdclient_crt' => 'foo',
+          'api_server_count' => 3,
+          'discovery_token_hash' => 'foo',
+          'kube_api_advertise_address' => 'foo',
+          'cni_pod_cidr' => '10.0.0.0/24',
+          'token' => 'foo',
+          'etcd_initial_cluster' => 'foo',
+          'controller_address' => '172.17.10.101',  
+          'node_label' => 'foo',    
+          'container_runtime' => 'docker',     
+        } 
+    end
 
-	  let(:params) { { 'bootstrap_controller' => true, 'kubernetes_version' => '1.7.3' } }
+    it { should contain_kubernetes__kubeadm_init('foo') }
+  end
 
-      it { should contain_exec('Create kube bootstrap token') }
-      it { should contain_exec('Create kube proxy cluster bindings') }
+  context 'with worker => true' do
+    let(:params) do 
+        { 
+          'controller' => false, 
+          'kubernetes_version' => '1.10.2',
+          'worker' => true,
+          'etcd_ip' => 'foo',           
+          'etcd_ca_key' => 'foo',
+          'etcd_ca_crt' => 'foo', 
+          'etcdclient_key' => 'foo',
+          'etcdclient_crt' => 'foo',
+          'api_server_count' => 3,
+          'discovery_token_hash' => 'foo',
+          'kube_api_advertise_address' => 'foo',
+          'cni_pod_cidr' => '10.0.0.0/24',
+          'token' => 'foo',
+          'etcd_initial_cluster' => 'foo',   
+          'controller_address' => '172.17.10.101',  
+          'node_label' => 'foo',   
+          'container_runtime' => 'docker',     
+                                                 
+        } 
+    end
+
+    it { should contain_kubernetes__kubeadm_join('foo') }
   end
 end

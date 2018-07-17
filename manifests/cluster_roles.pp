@@ -1,43 +1,60 @@
-# This class configures the RBAC roles fro Kubernetes 1.6
+# This class configures the RBAC roles for Kubernetes 1.10.x
 
 class kubernetes::cluster_roles (
 
-  Boolean $bootstrap_controller = $kubernetes::bootstrap_controller,
-  String $kubernetes_version    = $kubernetes::kubernetes_version,
+  String $kubernetes_version  = $kubernetes::kubernetes_version,
+  Optional[String] $controller_address = $kubernetes::controller_address,
+  Optional[Boolean] $controller = $kubernetes::controller,
+  Optional[Boolean] $worker = $kubernetes::worker,
+  Optional[String] $etcd_ip = $kubernetes::etcd_ip,
+  Optional[String] $etcd_initial_cluster = $kubernetes::etcd_initial_cluster,
+  String $node_label = $kubernetes::node_label,
+  String $etcd_ca_key = $kubernetes::etcd_ca_key,
+  String $etcd_ca_crt = $kubernetes::etcd_ca_crt,
+  String $etcdclient_key = $kubernetes::etcdclient_key,
+  String $etcdclient_crt = $kubernetes::etcdclient_crt,
+  String $kube_api_advertise_address = $kubernetes::kube_api_advertise_address,
+  Integer $api_server_count = $kubernetes::api_server_count,
+  String $cni_pod_cidr = $kubernetes::cni_pod_cidr,
+  String $token = $kubernetes::token,
+  String $discovery_token_hash = $kubernetes::discovery_token_hash,
+  String $container_runtime = $kubernetes::container_runtime,
+
 ){
+  $path = ['/usr/bin','/bin','/sbin','/usr/local/bin']
+  $env_controller = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf']
+  #Worker nodes do not have admin.conf present
+  $env_worker = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf']
 
-  if $bootstrap_controller {
-
-  Exec {
-    path        => ['/usr/bin', '/bin'],
-    environment => [ 'HOME=/root', 'KUBECONFIG=/root/admin.conf'],
-    logoutput   => true,
-    tries       => 5,
-    try_sleep   => 5,
-    }
-
-  exec { 'Create kube bootstrap token':
-    command     => 'kubectl create -f bootstraptoken.yaml',
-    cwd         => '/etc/kubernetes/secrets',
-    subscribe   => File['/etc/kubernetes/secrets/bootstraptoken.yaml'],
-    refreshonly => true,
-    require     => File['/etc/kubernetes/secrets/bootstraptoken.yaml'],
+  if $container_runtime == 'cri_containerd' {
+    $preflight_errors = ['Service-Docker']
+    $cri_socket = '/run/containerd/containerd.sock'
+  } else {
+    $preflight_errors = undef
+    $cri_socket = undef
   }
 
-  exec { 'Create kube proxy cluster bindings':
-    command     => 'kubectl create -f clusterRoleBinding.yaml',
-    cwd         => '/etc/kubernetes/manifests',
-    subscribe   => File['/etc/kubernetes/manifests/clusterRoleBinding.yaml'],
-    refreshonly => true,
-    require     => File['/etc/kubernetes/manifests/clusterRoleBinding.yaml'],
-    }
 
-  if $kubernetes_version =~ /1[.](8|9)[.]\d/ {
-
-    exec { 'Create role binding for system nodes':
-      command => 'kubectl set subject clusterrolebinding system:node --group=system:nodes',
-      unless  => 'kubectl describe clusterrolebinding system:node | tr -s \' \' | grep \'Group system:nodes\'',
+  if $controller {
+    kubernetes::kubeadm_init { $node_label:
+      config                  => '/etc/kubernetes/config.yaml',
+      path                    => $path,
+      env                     => $env_controller,
+      node_label              => $node_label,
+      ignore_preflight_errors => $preflight_errors,
       }
     }
-  }
+
+  if $worker {
+    kubernetes::kubeadm_join { $node_label:
+      path                    => $path,
+      env                     => $env_worker,
+      controller_address      => $controller_address,
+      token                   => $token,
+      ca_cert_hash            => $discovery_token_hash,
+      cri_socket              => $cri_socket,
+      node_label              => $node_label,
+      ignore_preflight_errors => $preflight_errors,
+      }
+    }
 }
