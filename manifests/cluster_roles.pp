@@ -30,7 +30,7 @@ class kubernetes::cluster_roles (
     $preflight_errors = ['Service-Docker']
     $cri_socket = '/run/containerd/containerd.sock'
   } else {
-    $preflight_errors = undef
+    $preflight_errors = ['cri']
     $cri_socket = undef
   }
 

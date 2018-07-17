@@ -35,13 +35,13 @@ To bootstrap a kubernetes cluster in a secure and extensible way, this module us
 To use this module, add this declaration to your Puppetfile:
 
 ```
-mod 'puppetlabs-kubernetes', '2.0.0'
+mod 'puppetlabs-kubernetes', '2.0.2'
 ```
 
 To manually install this module using the Puppet module tool, run:
 
 ```
-puppet module install puppetlabs-kubernetes --version 2.0.0
+puppet module install puppetlabs-kubernetes --version 2.0.2
 ```
 
 ## Setup
