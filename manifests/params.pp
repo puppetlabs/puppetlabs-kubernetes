@@ -17,6 +17,8 @@ case $::osfamily {
 $container_runtime = 'docker'
 $containerd_version = '1.1.0'
 $etcd_version = '3.1.12'
+$docker_repo_name = 'docker'
+$docker_package_name = 'docker-engine'
 $kubernetes_fqdn = 'kubernetes'
 $controller = false
 $bootstrap_controller = false
