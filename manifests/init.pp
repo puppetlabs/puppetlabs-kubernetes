@@ -27,7 +27,8 @@
 # [*docker_version*]
 #   This is the version of the docker runtime that you want to install.
 #   Defaults to 17.03.0.ce-1.el7.centos on RedHat
-#   Defaults to 17.03.0~ce-0~ubuntu-xenial on Debian
+#   Defaults to 17.03.0~ce-0~ubuntu-xenial on Ubuntu
+#   Defaults to 17.03.0~ce-0~debian-stretch on Debian
 #
 # [*cni_pod_cidr*]
 #   The overlay (internal) network range to use.

@@ -67,4 +67,36 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     
   end
+
+  context 'with operatingsystem => Debian and container_runtime => docker' do
+    let(:facts) do
+        {
+          :kernel           => 'Linux',
+          :osfamily         => 'Debian',
+          :operatingsystem  => 'Debian',
+          :os               => {
+            :name    => 'Debian',
+            :release => {
+              :major => '9',
+            },
+          },
+        }
+    end
+    let(:params) do
+        {
+        'container_runtime' => 'docker',
+        'kubernetes_version' => '1.10.2',
+        'docker_version' => '17.03.0~ce-0~debian-stretch',
+        'etcd_version' => '3.1.12',
+        'containerd_version' => '1.1.0',
+        'controller' => true,        
+        }
+    end
+    
+    it { should contain_package('docker-engine').with_ensure('17.03.0~ce-0~debian-stretch')}
+    it { should contain_package('kubelet').with_ensure('1.10.2')}
+    it { should contain_package('kubectl').with_ensure('1.10.2')}
+    it { should contain_package('kubeadm').with_ensure('1.10.2')}
+
+  end
 end
