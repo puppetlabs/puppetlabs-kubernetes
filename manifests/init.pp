@@ -207,6 +207,11 @@ class kubernetes (
   String $node_label                                               = $kubernetes::params::node_label,
   Optional[String] $controller_address                             = $kubernetes::params::controller_address,
   Optional[String] $cloud_provider                                 = $kubernetes::params::cloud_provider,
+  Optional[String] $runc_source                                    = $kubernetes::params::runc_source,
+  Optional[String] $containerd_archive                             = $kubernetes::params::containerd_archive,
+  Optional[String] $containerd_source                              = $kubernetes::params::containerd_source,
+  String $etcd_archive                                             = $kubernetes::params::etcd_archive,
+  String $etcd_source                                              = $kubernetes::params::etcd_source,
 
   )  inherits kubernetes::params {
 
