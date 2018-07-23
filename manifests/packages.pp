@@ -10,7 +10,7 @@ class kubernetes::packages (
   Optional[String] $containerd_source          = $kubernetes::containerd_source,
   String $etcd_archive                         = $kubernetes::etcd_archive,
   String $etcd_source                          = $kubernetes::etcd_source,
-  String $runc_source                          = $kubernetes::runc_source,
+  Optional[String]                             = $kubernetes::runc_source,
 
 
 ) {
