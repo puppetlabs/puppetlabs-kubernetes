@@ -10,7 +10,7 @@ class kubernetes::packages (
   Optional[String] $containerd_source          = $kubernetes::containerd_source,
   String $etcd_archive                         = $kubernetes::etcd_archive,
   String $etcd_source                          = $kubernetes::etcd_source,
-  Optional[String]                             = $kubernetes::runc_source,
+  Optional[String] $runc_source                = $kubernetes::runc_source,
 
 
 ) {
@@ -59,7 +59,7 @@ class kubernetes::packages (
   elsif $container_runtime == 'cri_containerd' {
 
     wget::fetch { 'download runc binary':
-      source      => "${runc_source}",
+      source      => $runc_source,
       destination => '/usr/bin/runc',
       timeout     => 0,
       verbose     => false,
