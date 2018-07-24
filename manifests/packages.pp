@@ -2,7 +2,7 @@
 
 class kubernetes::packages (
 
-  String $kubernetes_version                   = $kubernetes::kubernetes_version,
+  String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
   Optional[String] $docker_version             = $kubernetes::docker_version,
   Boolean $controller                          = $kubernetes::controller,
@@ -95,7 +95,7 @@ class kubernetes::packages (
   }
 
   package { $kube_packages:
-    ensure => $kubernetes_version,
+    ensure => $kubernetes_package_version,
   }
 
 }
