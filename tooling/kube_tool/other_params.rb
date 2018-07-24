@@ -56,7 +56,8 @@ class OtherParams
 
 
     data = Hash.new
-    data['kubernetes::kubernetes_version'] = kubernetes_package_version
+    data['kubernetes::kubernetes_version'] = version
+    data['kubernetes::kubernetes_package_version'] = kubernetes_package_version
     data['kubernetes::container_runtime'] = container_runtime
     data['kubernetes::cni_network_provider'] = cni_network_provider
     data['kubernetes::cni_pod_cidr'] = cni_pod_cidr

@@ -2,20 +2,20 @@
 
 class kubernetes::packages (
 
-  String $kubernetes_version                   = $kubernetes::kubernetes_version,
+  String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
   Optional[String] $docker_version             = $kubernetes::docker_version,
-  String $etcd_version                         = $kubernetes::etcd_version,
-  Optional[String] $containerd_version         = $kubernetes::containerd_version,
   Boolean $controller                          = $kubernetes::controller,
+  Optional[String] $containerd_archive         = $kubernetes::containerd_archive,
+  Optional[String] $containerd_source          = $kubernetes::containerd_source,
+  String $etcd_archive                         = $kubernetes::etcd_archive,
+  String $etcd_source                          = $kubernetes::etcd_source,
+  Optional[String] $runc_source                = $kubernetes::runc_source,
+
 
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
-  $containerd_archive = "containerd-${containerd_version}.linux-amd64.tar.gz"
-  $containerd_source = "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"
-  $etcd_archive = "etcd-v${etcd_version}-linux-amd64.tar.gz"
-  $etcd_source = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}"
 
   if $::osfamily == 'RedHat' {
     exec { 'set up bridge-nf-call-iptables':
@@ -33,7 +33,6 @@ class kubernetes::packages (
       require => Exec['set up bridge-nf-call-iptables'],
     }
   }
-
 
   if $container_runtime == 'docker' {
     case $::osfamily {
@@ -60,7 +59,7 @@ class kubernetes::packages (
   elsif $container_runtime == 'cri_containerd' {
 
     wget::fetch { 'download runc binary':
-      source      => 'https://github.com/opencontainers/runc/releases/download/v1.0.0-rc5/runc.amd64',
+      source      => $runc_source,
       destination => '/usr/bin/runc',
       timeout     => 0,
       verbose     => false,
@@ -96,7 +95,7 @@ class kubernetes::packages (
   }
 
   package { $kube_packages:
-    ensure => $kubernetes_version,
+    ensure => $kubernetes_package_version,
   }
 
 }

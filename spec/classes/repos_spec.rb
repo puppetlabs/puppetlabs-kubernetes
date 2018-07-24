@@ -12,11 +12,31 @@ describe 'kubernetes::repos', :type => :class do
           :release => {
             :full => '16.04',
           },
+          :distro => {
+            :codename => 'xenial',
+          },          
         },
       }
     end
 
-    let(:params) { { 'container_runtime' => 'docker' } }
+    let(:params) do
+       { 
+         'container_runtime' => 'docker',
+         'kubernetes_apt_location' => 'http://apt.kubernetes.io',
+         'kubernetes_apt_release' => 'kubernetes-xenial',
+         'kubernetes_key_id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
+         'kubernetes_key_source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
+         'kubernetes_yum_baseurl' => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
+         'kubernetes_yum_gpgkey' => 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
+         'docker_apt_location' => 'https://apt.dockerproject.org/repo',
+         'docker_apt_release' => "ubuntu-xenial",
+         'docker_yum_baseurl' => 'https://yum.dockerproject.org/repo/main/centos/7',
+         'docker_yum_gpgkey' => 'https://yum.dockerproject.org/gpg',
+         'docker_key_id' => '58118E89F3A912897C070ADBF76221572C52609D',
+         'docker_key_source' => 'https://apt.dockerproject.org/gpg',
+         'create_repos' => true,         
+        }
+    end    
 
     it { should contain_apt__source('kubernetes').with(
       :ensure   => 'present',
@@ -45,7 +65,24 @@ describe 'kubernetes::repos', :type => :class do
       }
     end
 
-    let(:params) { { 'container_runtime' => 'docker' } }
+    let(:params) do
+      { 
+        'container_runtime' => 'docker',
+        'kubernetes_apt_location' => 'http://apt.kubernetes.io',
+        'kubernetes_apt_release' => 'kubernetes-xenial',
+        'kubernetes_key_id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
+        'kubernetes_key_source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
+        'kubernetes_yum_baseurl' => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
+        'kubernetes_yum_gpgkey' => 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
+        'docker_apt_location' => 'https://apt.dockerproject.org/repo',
+        'docker_apt_release' => "ubuntu-xenial",
+        'docker_yum_baseurl' => 'https://yum.dockerproject.org/repo/main/centos/7',
+        'docker_yum_gpgkey' => 'https://yum.dockerproject.org/gpg',
+        'docker_key_id' => '58118E89F3A912897C070ADBF76221572C52609D',
+        'docker_key_source' => 'https://apt.dockerproject.org/gpg',
+        'create_repos' => true,         
+       }
+   end 
 
     it { should contain_yumrepo('docker') }
     it { should contain_yumrepo('kubernetes') }

@@ -2,7 +2,6 @@
 
 class kubernetes::cluster_roles (
 
-  String $kubernetes_version  = $kubernetes::kubernetes_version,
   Optional[String] $controller_address = $kubernetes::controller_address,
   Optional[Boolean] $controller = $kubernetes::controller,
   Optional[Boolean] $worker = $kubernetes::worker,

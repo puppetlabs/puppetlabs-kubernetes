@@ -11,6 +11,9 @@ describe 'kubernetes::cluster_roles', :type => :class do
             :release => {
               :full => '16.04',
             },
+            :distro => {
+              :codename => 'xenial',
+            },
           },
         }
       end
@@ -19,7 +22,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
     let(:params) do 
         { 
           'controller' => true, 
-          'kubernetes_version' => '1.10.2',
+          # 'kubernetes_version' => '1.10.2',
           'worker' => false,
           'etcd_ip' => 'foo',           
           'etcd_ca_key' => 'foo',
@@ -45,7 +48,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
     let(:params) do 
         { 
           'controller' => false, 
-          'kubernetes_version' => '1.10.2',
+          # 'kubernetes_version' => '1.10.2',
           'worker' => true,
           'etcd_ip' => 'foo',           
           'etcd_ca_key' => 'foo',
