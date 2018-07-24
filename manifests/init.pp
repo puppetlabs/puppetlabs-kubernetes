@@ -212,6 +212,19 @@ class kubernetes (
   Optional[String] $containerd_source                              = $kubernetes::params::containerd_source,
   String $etcd_archive                                             = $kubernetes::params::etcd_archive,
   String $etcd_source                                              = $kubernetes::params::etcd_source,
+  Optional[String] $kubernetes_apt_location                        = $kubernetes::params::kubernetes_apt_location,
+  Optional[String] $kubernetes_apt_release                         = $kubernetes::params::kubernetes_apt_release,
+  Optional[String] $kubernetes_key_id                              = $kubernetes::params::kubernetes_key_id,
+  Optional[String] $kubernetes_key_source                          = $kubernetes::params::kubernetes_key_source,
+  Optional[String] $kubernetes_yum_baseurl                         = $kubernetes::params::kubernetes_yum_baseurl,
+  Optional[String] $kubernetes_yum_gpgkey                          = $kubernetes::params::kubernetes_yum_gpgkey,
+  Optional[String] $docker_apt_location                            = $kubernetes::params::docker_apt_location,
+  Optional[String] $docker_apt_release                             = $kubernetes::params::docker_apt_release,
+  Optional[String] $docker_yum_baseurl                             = $kubernetes::params::docker_yum_baseurl,
+  Optional[String] $docker_yum_gpgkey                              = $kubernetes::params::docker_yum_gpgkey,
+  Optional[String] $docker_key_id                                  = $kubernetes::params::docker_key_id,
+  Optional[String] $docker_key_source                              = $kubernetes::params::docker_key_source,
+  Boolean $create_repos                                            = $kubernetes::params::create_repos,
 
   )  inherits kubernetes::params {
 

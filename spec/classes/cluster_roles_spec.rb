@@ -11,6 +11,9 @@ describe 'kubernetes::cluster_roles', :type => :class do
             :release => {
               :full => '16.04',
             },
+            :distro => {
+              :codename => 'xenial',
+            },
           },
         }
       end
