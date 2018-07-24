@@ -1,0 +1,2 @@
+[Service]
+Environment="KUBELET_EXTRA_ARGS=--cloud-provider=<%= scope['kubernetes::cloud_provider'] %> --cloud-config=/etc/kubernetes/cloud-config"
