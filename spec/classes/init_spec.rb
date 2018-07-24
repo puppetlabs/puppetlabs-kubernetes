@@ -10,6 +10,9 @@ describe 'kubernetes', :type => :class do
         :release => {
           :full => '16.04',
         },
+        :distro => {
+          :codename => 'xenial',
+        },        
       },
     }
   end
@@ -41,6 +44,7 @@ describe 'kubernetes', :type => :class do
         'controller_address' => '172.17.10.101:6443',
         'cloud_provider' => :undef,
         'token' => 'foo',
+        'create_repos' => true,
         
       }
     end

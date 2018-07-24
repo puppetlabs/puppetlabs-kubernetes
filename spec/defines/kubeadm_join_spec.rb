@@ -11,6 +11,9 @@ describe 'kubernetes::kubeadm_join', :type => :define do
         :release => {
           :full => '16.04',
         },
+        :distro => {
+          :codename => 'xenial',
+        },        
       },
     }
   end  

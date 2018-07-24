@@ -11,6 +11,9 @@ describe 'kubernetes::kubeadm_init', :type => :define do
         :release => {
           :full => '16.04',
         },
+        :distro => {
+          :codename => 'xenial',
+        },        
       },
     }
   end  

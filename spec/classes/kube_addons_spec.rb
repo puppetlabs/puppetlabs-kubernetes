@@ -9,6 +9,9 @@ describe 'kubernetes::kube_addons', :type => :class do
         :release => {
           :full => '16.04',
         },
+        :distro => {
+          :codename => 'xenial',
+        },        
       },
     }
   end

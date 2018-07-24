@@ -1,52 +1,67 @@
 ## kubernetes repos
 
 class kubernetes::repos (
-  String $container_runtime = $kubernetes::container_runtime,
+  String $container_runtime                 = $kubernetes::container_runtime,
+  Optional[String] $kubernetes_apt_location = $kubernetes::kubernetes_apt_location,
+  Optional[String] $kubernetes_apt_release  = $kubernetes::kubernetes_apt_release,
+  Optional[String] $kubernetes_key_id       = $kubernetes::kubernetes_key_id,
+  Optional[String] $kubernetes_key_source   = $kubernetes::kubernetes_key_source,
+  Optional[String] $kubernetes_yum_baseurl  = $kubernetes::kubernetes_yum_baseurl,
+  Optional[String] $kubernetes_yum_gpgkey   = $kubernetes::kubernetes_yum_gpgkey,
+  Optional[String] $docker_apt_location     = $kubernetes::docker_apt_location,
+  Optional[String] $docker_apt_release      = $kubernetes::docker_apt_release,
+  Optional[String] $docker_yum_baseurl      = $kubernetes::docker_yum_baseurl,
+  Optional[String] $docker_yum_gpgkey       = $kubernetes::docker_yum_gpgkey,
+  Optional[String] $docker_key_id           = $kubernetes::docker_key_id,
+  Optional[String] $docker_key_source       = $kubernetes::docker_key_source,
+  Boolean $create_repos                     = $kubernetes::create_repos,
+
 ){
+  if $create_repos {
+    case $::osfamily  {
+      'Debian': {
+        apt::source { 'kubernetes':
+          location => $kubernetes_apt_location,
+          repos    => 'main',
+          release  => $kubernetes_apt_release,
+          key      => {
+            'id'     => $kubernetes_key_id,
+            'source' => $kubernetes_key_source,
+            },
+          }
 
-  case $::osfamily  {
-    'Debian': {
-      apt::source { 'kubernetes':
-        location => 'http://apt.kubernetes.io',
-        repos    => 'main',
-        release  => 'kubernetes-xenial',
-        key      => {
-          'id'     => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
-          'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
-          },
-        }
-
-        if $container_runtime == 'docker' {
-          apt::source { 'docker':
-            location => 'https://apt.dockerproject.org/repo',
-            repos    => 'main',
-            release  => 'ubuntu-xenial',
-            key      => {
-              'id'     => '58118E89F3A912897C070ADBF76221572C52609D',
-              'source' => 'https://apt.dockerproject.org/gpg',
-          },
+          if $container_runtime == 'docker' {
+            apt::source { 'docker':
+              location => $docker_apt_location,
+              repos    => 'main',
+              release  => $docker_apt_release,
+              key      => {
+                'id'     => $docker_key_id,
+                'source' => $docker_key_source,
+            },
+          }
         }
       }
-    }
-    'RedHat': {
-      if $container_runtime == 'docker' {
-        yumrepo { 'docker':
-          descr    => 'docker',
-          baseurl  => 'https://yum.dockerproject.org/repo/main/centos/7',
-          gpgkey   => 'https://yum.dockerproject.org/gpg',
+      'RedHat': {
+        if $container_runtime == 'docker' {
+          yumrepo { 'docker':
+            descr    => 'docker',
+            baseurl  => $docker_yum_baseurl,
+            gpgkey   => $docker_yum_gpgkey,
+            gpgcheck => true,
+          }
+        }
+
+        yumrepo { 'kubernetes':
+          descr    => 'Kubernetes',
+          baseurl  => $kubernetes_yum_baseurl,
+          gpgkey   => $kubernetes_yum_gpgkey,
           gpgcheck => true,
         }
       }
 
-      yumrepo { 'kubernetes':
-        descr    => 'Kubernetes',
-        baseurl  => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
-        gpgkey   => 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
-        gpgcheck => true,
-      }
+    default: { notify {"The OS family ${::os_family} is not supported by this module":} }
+
     }
-
-  default: { notify {"The OS family ${::os_family} is not supported by this module":} }
-
   }
 }
