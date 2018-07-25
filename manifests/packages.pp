@@ -22,7 +22,7 @@ class kubernetes::packages (
     exec {'disable swap':
       path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
       command => 'swapoff -a',
-      creates => '/proc/sys/net/bridge/bridge-nf-call-iptables',    
+      unless => "awk '{ if (NR > 1) exit 1}' /proc/swaps",    
     }
   }  
 
