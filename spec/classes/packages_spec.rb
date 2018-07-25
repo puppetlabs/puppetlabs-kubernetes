@@ -27,6 +27,7 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',   
+        'disable_swap' => true,
         }
     end
 
@@ -64,7 +65,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true, 
-        'docker_package_name' => 'docker-engine',   
+        'docker_package_name' => 'docker-engine',  
+        'disable_swap' => true,
         }
     end
 
@@ -77,4 +79,38 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2-00')}
     
   end
+
+  context 'with disable_swap => true' do
+    let(:facts) do
+      {
+        :kernel           => 'Linux',
+        :osfamily         => 'Debian',
+        :operatingsystem  => 'Ubuntu',
+        :os               => {
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '16.04',
+          },
+        },
+      }
+    end
+    let(:params) do
+        {
+        'container_runtime' => 'cri_containerd',
+        'kubernetes_package_version' => '1.10.2-00',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_archive' =>'containerd-1.1.0.linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd-1.1.0.linux-amd64.tar.gz',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true, 
+        'docker_package_name' => 'docker-engine',  
+        'disable_swap' => true,
+        
+        }
+    end
+
+    it { should contain_exec('disable swap')}  
+  end    
 end

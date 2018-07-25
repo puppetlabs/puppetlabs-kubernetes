@@ -72,5 +72,6 @@ $docker_yum_gpgkey = 'https://yum.dockerproject.org/gpg'
 $docker_key_id = '58118E89F3A912897C070ADBF76221572C52609D'
 $docker_key_source = 'https://apt.dockerproject.org/gpg'
 $create_repos = true
+$disable_swap = true
 }
 
