@@ -22,9 +22,9 @@ class kubernetes::packages (
     exec {'disable swap':
       path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
       command => 'swapoff -a',
-      unless => "awk '{ if (NR > 1) exit 1}' /proc/swaps",    
+      unless  => "awk '{ if (NR > 1) exit 1}' /proc/swaps",
     }
-  }  
+  }
 
   if $::osfamily == 'RedHat' {
     exec { 'set up bridge-nf-call-iptables':
