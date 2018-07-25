@@ -3,6 +3,7 @@ describe 'kubernetes', :type => :class do
   let(:facts) do
     {
       :kernel           => 'Linux',
+      :lsbdistcodename  => 'xenial',
       :osfamily         => 'Debian',
       :operatingsystem  => 'Ubuntu',
       :os               => {
@@ -10,9 +11,7 @@ describe 'kubernetes', :type => :class do
         :release => {
           :full => '16.04',
         },
-        :distro => {
-          :codename => 'xenial',
-        },        
+       
       },
     }
   end

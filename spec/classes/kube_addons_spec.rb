@@ -2,16 +2,14 @@ require 'spec_helper'
 describe 'kubernetes::kube_addons', :type => :class do
   let(:facts) do
     {
+      :lsbdistcodename  => 'xenial',
       :osfamily         => 'Debian',
       :operatingsystem  => 'Ubuntu',
       :os               => {
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
-        },
-        :distro => {
-          :codename => 'xenial',
-        },        
+        },    
       },
     }
   end
