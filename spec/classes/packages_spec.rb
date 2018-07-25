@@ -3,6 +3,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => RedHat and container_runtime => Docker' do
     let(:facts) do
         {
+          :lsbdistcodename  => 'xenial',
           :kernel           => 'Linux',
           :osfamily         => 'RedHat',
           :operatingsystem  => 'RedHat',
@@ -25,6 +26,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
+        'docker_package_name' => 'docker-engine',   
         }
     end
 
@@ -61,7 +63,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
-        'controller' => true,        
+        'controller' => true, 
+        'docker_package_name' => 'docker-engine',   
         }
     end
 

@@ -4,16 +4,14 @@ describe 'kubernetes::kubeadm_init', :type => :define do
   let(:title) { 'kubeadm init' }
   let(:facts) do
     {
+      :lsbdistcodename  => 'xenial',
       :osfamily         => 'Debian',
       :operatingsystem  => 'Ubuntu',
       :os               => {
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
-        },
-        :distro => {
-          :codename => 'xenial',
-        },        
+        },     
       },
     }
   end  

@@ -5,6 +5,7 @@ class kubernetes::packages (
   String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
   Optional[String] $docker_version             = $kubernetes::docker_version,
+  Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
   Boolean $controller                          = $kubernetes::controller,
   Optional[String] $containerd_archive         = $kubernetes::containerd_archive,
   Optional[String] $containerd_source          = $kubernetes::containerd_source,
@@ -37,19 +38,19 @@ class kubernetes::packages (
   if $container_runtime == 'docker' {
     case $::osfamily {
       'Debian': {
-        package { 'docker-engine':
+        package { $docker_package_name:
           ensure => $docker_version,
         }
       }
       'RedHat': {
-        package { 'docker-engine':
+        package { $docker_package_name:
           ensure => $docker_version,
         }
         file_line { 'set systemd cgroup docker':
           path    => '/usr/lib/systemd/system/docker.service',
           line    => 'ExecStart=/usr/bin/dockerd --exec-opt native.cgroupdriver=systemd',
           match   => 'ExecStart',
-          require => Package['docker-engine'],
+          require => Package[$docker_package_name],
         }
       }
     default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
