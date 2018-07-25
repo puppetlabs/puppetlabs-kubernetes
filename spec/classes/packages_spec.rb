@@ -28,7 +28,6 @@ describe 'kubernetes::packages', :type => :class do
         'controller' => true,
         'docker_package_name' => 'docker-engine',   
         'disable_swap' => true,
-
         }
     end
 
@@ -68,7 +67,6 @@ describe 'kubernetes::packages', :type => :class do
         'controller' => true, 
         'docker_package_name' => 'docker-engine',  
         'disable_swap' => true,
-         
         }
     end
 

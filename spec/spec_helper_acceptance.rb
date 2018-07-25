@@ -43,7 +43,7 @@ RSpec.configure do |c|
       on host, puppet('module', 'install', 'stahnma-epel'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'puppetlabs-translate', '--version', '1.0.0' ), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'puppet-archive'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module', 'install', 'maestrodev-wget'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module', 'install', 'puppet-wget'), { :acceptable_exit_codes => [0,1] }
 
       # shell('echo "#{vmhostname}" > /etc/hostname')
       # shell("hostname #{vmhostname}")
