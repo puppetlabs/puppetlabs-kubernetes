@@ -227,6 +227,7 @@ class kubernetes (
   Optional[String] $docker_yum_gpgkey                              = $kubernetes::params::docker_yum_gpgkey,
   Optional[String] $docker_key_id                                  = $kubernetes::params::docker_key_id,
   Optional[String] $docker_key_source                              = $kubernetes::params::docker_key_source,
+  Boolean $disable_swap                                            = $kubernetes::params::disable_swap,
   Boolean $create_repos                                            = $kubernetes::params::create_repos,
 
   )  inherits kubernetes::params {

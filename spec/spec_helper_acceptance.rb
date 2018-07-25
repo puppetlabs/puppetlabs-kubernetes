@@ -144,8 +144,8 @@ EOS
           on(host, 'echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=\$(kubectl version | base64 | tr -d \"\n\")\&env.IPALLOC_RANGE=100.32.0.0/12" >> /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml', acceptable_exit_codes: [0]).stdout
         end
 
-        # Disable swap
-        on(host, 'swapoff -a')
+        # # Disable swap
+        # on(host, 'swapoff -a')
     end
   end
 end

@@ -12,11 +12,19 @@ class kubernetes::packages (
   String $etcd_archive                         = $kubernetes::etcd_archive,
   String $etcd_source                          = $kubernetes::etcd_source,
   Optional[String] $runc_source                = $kubernetes::runc_source,
-
+  Boolean $disable_swap                        = $kubernetes::disable_swap,
 
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
+
+  if $disable_swap {
+    exec {'disable swap':
+      path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
+      command => 'swapoff -a',
+      creates => '/proc/sys/net/bridge/bridge-nf-call-iptables',    
+    }
+  }  
 
   if $::osfamily == 'RedHat' {
     exec { 'set up bridge-nf-call-iptables':

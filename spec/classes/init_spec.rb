@@ -44,6 +44,7 @@ describe 'kubernetes', :type => :class do
         'cloud_provider' => :undef,
         'token' => 'foo',
         'create_repos' => true,
+        'disable_swap' => true,
         
       }
     end
@@ -77,6 +78,7 @@ describe 'kubernetes', :type => :class do
         'controller_address' => '172.17.10.101:6443',  
         'cloud_provider' => :undef,  
         'token' => 'foo',
+        'disable_swap' => true,
                          
       }
     end
@@ -116,6 +118,7 @@ describe 'kubernetes', :type => :class do
         'controller_address' => '172.17.10.101:6443',   
         'cloud_provider' => :undef,
         'token' => 'foo',
+        'disable_swap' => true,
                 
       }
     end
