@@ -19,7 +19,7 @@ class kubernetes::kube_addons (
     }
 
   if $cni_rbac_binding {
-    exec { 'Install calico rbac bidnings':
+    exec { 'Install calico rbac bindings':
     command => "kubectl apply -f ${cni_rbac_binding}",
     onlyif  => 'kubectl get nodes',
     unless  => 'kubectl get clusterrole | grep calico'

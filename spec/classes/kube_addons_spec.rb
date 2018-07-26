@@ -26,7 +26,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       }
     end
 
-    it { should contain_exec('Install calico rbac bidnings')}
+    it { should contain_exec('Install calico rbac bindings')}
     it { should contain_exec('Install cni network provider')}
     it { should contain_exec('schedule on controller')}
   end
