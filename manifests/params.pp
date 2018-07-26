@@ -37,6 +37,7 @@ $etcdclient_key = undef
 $etcdclient_crt = undef
 $cni_network_provider = undef
 $cni_pod_cidr = undef
+$cni_rbac_binding = undef
 $install_dashboard = false
 $schedule_on_controller = false
 $node_label = $::hostname

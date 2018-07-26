@@ -193,6 +193,7 @@ class kubernetes (
   Optional[String] $etcdpeer_crt                                   = $kubernetes::params::etcdpeer_crt,
   Optional[String] $etcdpeer_key                                   = $kubernetes::params::etcdpeer_key,
   Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
+  Optional[String] $cni_rbac_binding                               = $kubernetes::params::cni_rbac_binding,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $schedule_on_controller                                  = $kubernetes::params::schedule_on_controller,
   Integer $api_server_count                                        = $kubernetes::params::api_server_count,

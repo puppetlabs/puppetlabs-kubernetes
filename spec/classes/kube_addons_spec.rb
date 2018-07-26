@@ -17,6 +17,7 @@ describe 'kubernetes::kube_addons', :type => :class do
   context 'with controller => true and schedule_on_controller => true' do
     let(:params) do {
       'controller' => true,
+      'cni_rbac_binding' => 'foo',
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
       'kubernetes_version' => '1.10.2',
@@ -25,6 +26,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       }
     end
 
+    it { should contain_exec('Install calico rbac bidnings')}
     it { should contain_exec('Install cni network provider')}
     it { should contain_exec('schedule on controller')}
   end
@@ -32,6 +34,7 @@ describe 'kubernetes::kube_addons', :type => :class do
   context 'with install_dashboard => true' do
     let(:params) do {
       'controller' => true,
+      'cni_rbac_binding' => nil,
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => true,
       'kubernetes_version' => '1.10.2',
