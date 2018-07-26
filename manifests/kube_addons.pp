@@ -2,6 +2,7 @@
 class kubernetes::kube_addons (
 
   Optional[String] $cni_network_provider     = $kubernetes::cni_network_provider,
+  Optional[String] $cni_rbac_binding         = $kubernetes::cni_rbac_binding,
   Boolean $install_dashboard                 = $kubernetes::install_dashboard,
   String $kubernetes_version                 = $kubernetes::kubernetes_version,
   Boolean $controller                        = $kubernetes::controller,
@@ -16,6 +17,14 @@ class kubernetes::kube_addons (
     tries       => 10,
     try_sleep   => 30,
     }
+
+  if $cni_rbac_binding {
+    exec { 'Install calico rbac bindings':
+    command => "kubectl apply -f ${cni_rbac_binding}",
+    onlyif  => 'kubectl get nodes',
+    unless  => 'kubectl get clusterrole | grep calico'
+    }
+  }
 
   exec { 'Install cni network provider':
     command => "kubectl apply -f ${cni_network_provider}",
