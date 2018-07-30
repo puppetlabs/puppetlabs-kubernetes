@@ -1,10 +1,19 @@
 # Puppet class that controls the Kubelet service
 
 class kubernetes::service (
-
-  String $container_runtime = $kubernetes::container_runtime,
-  Boolean $controller = $kubernetes::controller,
+  String $container_runtime         = $kubernetes::container_runtime,
+  Boolean $controller               = $kubernetes::controller,
+  Optional[String] $cloud_provider  = $kubernetes::cloud_provider,
 ){
+  file { '/etc/systemd/system/kubelet.service.d':
+    ensure => directory,
+  }
+
+  exec { 'kubernetes-systemd-reload':
+    path        => '/bin',
+    command     => 'systemctl daemon-reload',
+    refreshonly => true,
+  }
 
   case $container_runtime {
     'docker': {
@@ -12,44 +21,32 @@ class kubernetes::service (
         ensure => running,
         enable => true,
       }
-
     }
 
-  'cri_containerd': {
-    file {'/etc/systemd/system/kubelet.service.d':
-      ensure => directory,
-      before => File['/etc/systemd/system/kubelet.service.d/0-containerd.conf'],
-    }
-
-    file {'/etc/systemd/system/kubelet.service.d/0-containerd.conf':
-      ensure  => file,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      content => template('kubernetes/0-containerd.conf.erb'),
-      require => File['/etc/systemd/system/kubelet.service.d'],
-      notify  => Exec['Reload systemd'],
-    }
-
-    file {'/etc/systemd/system/containerd.service':
-      ensure  => file,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      content => template('kubernetes/containerd.service.erb'),
-      notify  => Exec['Reload systemd'],
-    }
-
-    exec { 'Reload systemd':
-      path        => '/bin',
-      command     => 'systemctl daemon-reload',
-      refreshonly => true,
+    'cri_containerd': {
+      file { '/etc/systemd/system/kubelet.service.d/0-containerd.conf':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template('kubernetes/0-containerd.conf.erb'),
+        require => File['/etc/systemd/system/kubelet.service.d'],
+        notify  => Exec['kubernetes-systemd-reload'],
       }
 
-    service {'containerd':
-      ensure  => running,
-      enable  => true,
-      require => File['/etc/systemd/system/kubelet.service.d/0-containerd.conf']
+      file { '/etc/systemd/system/containerd.service':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template('kubernetes/containerd.service.erb'),
+        notify  => Exec['kubernetes-systemd-reload'],
+      }
+
+      service { 'containerd':
+        ensure  => running,
+        enable  => true,
+        require => File['/etc/systemd/system/kubelet.service.d/0-containerd.conf'],
       }
     }
 
@@ -63,6 +60,18 @@ class kubernetes::service (
       ensure  => running,
       enable  => true,
       require => File['/etc/systemd/system/etcd.service']
+    }
+  }
+
+  if $cloud_provider {
+    file { '/etc/systemd/system/kubelet.service.d/20-cloud.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template('kubernetes/20-cloud.conf.erb'),
+      require => File['/etc/systemd/system/kubelet.service.d'],
+      notify  => Exec['kubernetes-systemd-reload'],
     }
   }
 }
