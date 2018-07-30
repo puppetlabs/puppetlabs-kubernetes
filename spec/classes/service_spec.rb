@@ -47,13 +47,15 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-	    'controller' => true,
+      'controller' => true,
+      'cloud_provider' => ':undef',
+      
       }
     end
    it { should contain_file('/etc/systemd/system/kubelet.service.d')}
    it { should contain_file('/etc/systemd/system/kubelet.service.d/0-containerd.conf')}
    it { should contain_file('/etc/systemd/system/containerd.service')}   
-   it { should contain_exec('Reload systemd')}
+   it { should contain_exec('kubernetes-systemd-reload')}
    it { should contain_service('containerd')}
    it { should contain_service('etcd')}
   end
@@ -93,6 +95,7 @@ describe 'kubernetes::service', :type => :class do
         {
             'container_runtime' => 'docker',
             'controller' => true,
+            'cloud_provider' => ':undef',
         }
     end
     it { should contain_service('docker')}
