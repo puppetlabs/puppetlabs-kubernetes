@@ -31,6 +31,7 @@ describe 'kubernetes::config', :type => :class do
         'service_cidr' => '10.96.0.0/12',
         'node_label' => 'foo',
         'cloud_provider' => 'undef',
+        'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         }
     end
 
@@ -53,5 +54,6 @@ describe 'kubernetes::config', :type => :class do
 
     it { should contain_file('/etc/systemd/system/etcd.service') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
+    it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
   end
 end

@@ -430,6 +430,12 @@ The name of the cloud provider configured in `/etc/kubernetes/cloud-config`.
 
 Defaults to `undef`.
 
+#### `kubeadm_extra_config`
+
+A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
+
+Defaults to `{}`.
+
 #### `kubernetes_apt_location`
 The APT repo URL for the Kubernetes packages.
 
