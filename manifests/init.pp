@@ -23,11 +23,23 @@
 # [*containerd_version*]
 #   This is the version of the containerd runtime the module will install.
 #   Defaults to 1.1.0
+# 
+# [*containerd_archive*]
+#  The name of the containerd archive
+#  Defaults to containerd-${containerd_version}.linux-amd64.tar.gz
+#
+# [*containerd_source*]
+#  The URL to download the containerd archive
+#  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 #
 # [*docker_version*]
 #   This is the version of the docker runtime that you want to install.
 #   Defaults to 17.03.0.ce-1.el7.centos on RedHat
-#   Defaults to 17.03.0~ce-0~ubuntu-xenial on Debian
+#   Defaults to 17.03.0~ce-0~ubuntu-xenial on Ubuntu
+#
+# [*docker_package_name*]
+#  The docker package name to download from an upstream repo
+#  Defaults to docker-engine
 #
 # [*cni_pod_cidr*]
 #   The overlay (internal) network range to use.
@@ -37,6 +49,10 @@
 #
 #  The URL to get the cni providers yaml file. 
 #  Defaults to `undef`. `kube_tool` sets this value.
+#
+# [*cni_rbac_binding*]
+#  The URL get the cni providers rbac rules. This is for use with Calico only.
+#  Defaults to `undef`.  
 #
 # [*controller*]
 #   This is a bool that sets the node as a Kubernetes controller
@@ -55,6 +71,22 @@
 #   The version of etcd that you would like to use.
 #   Defaults to 3.1.12
 #
+# [*etcd_archive*]
+#  The name of the etcd archive
+#  Defaults to etcd-v${etcd_version}-linux-amd64.tar.gz
+#
+# [*etcd_source*]
+#  The URL to download the etcd archive
+#  Defaults to https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}
+#
+# [*runc_version*]
+#  The version of runc to install
+#  Defaults to 1.0.0-rc5
+#
+# [*runc_source*]
+#  The URL to download runc
+#  Defaults to https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64
+#  
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
 #   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
@@ -161,6 +193,70 @@
 #  The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
 #  Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
 #  Defaults to undef
+#
+# [*kubernetes_apt_location*]
+#  The APT repo URL for the Kubernetes packages.
+#  Defaults to https://apt.kubernetes.io
+#
+# [*kubernetes_apt_release*]
+#  The release name for the APT repo for the Kubernetes packages.
+#  Defaults to 'kubernetes-${::lsbdistcodename}'
+#
+# [*kubernetes_apt_repos*]
+#  The repos to install from the Kubernetes APT url
+#  Defaults to main
+#
+# [*kubernetes_key_id*]
+#  The gpg key for the Kubernetes APT repo
+#  Defaults to '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
+#
+# [*kubernetes_key_source*]
+#  The URL for the APT repo gpg key
+#  Defaults to https://packages.cloud.google.com/apt/doc/apt-key.gpg
+#
+# [*kubernetes_yum_baseurl*]
+#  The YUM repo URL for the Kubernetes packages.
+#  Defaults to https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+#
+# [*kubernetes_yum_gpgkey*]
+#  The URL for the Kubernetes yum repo gpg key
+#  Defaults to https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+#
+# [*docker_apt_location*]
+#  The APT repo URL for the Docker packages
+#  Defaults to https://apt.dockerproject.org/repo
+#
+# [*docker_apt_release*]
+#  The release name for the APT repo for the Docker packages.
+#  Defaults to 'ubuntu-${::lsbdistcodename}'
+#
+# [*docker_apt_repos*]
+#  The repos to install from the Docker APT url
+#  Defaults to main
+#
+# [*docker_key_id*]
+#  The gpg key for the Docker APT repo
+#  Defaults to '58118E89F3A912897C070ADBF76221572C52609D'
+#
+# [*docker_key_source*]
+#  The URL for the Docker APT repo gpg key
+#  Defaults to https://apt.dockerproject.org/gpg
+#
+# [*docker_yum_baseurl*]
+#  The YUM repo URL for the Docker packages.
+#  Defaults to https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+#
+# [*docker_yum_gpgkey*]
+#  The URL for the Docker yum repo gpg key
+#  Defaults to https://yum.dockerproject.org/gpg
+# 
+# [*create_repos*]
+#  A flag to install the upstream Kubernetes and Docker repos
+#  Defaults to true
+#
+# [*disable_swap*]
+#  A flag to turn off the swap setting. This is required for kubeadm.
+#  Defaults to true
 #
 # Authors
 # -------
