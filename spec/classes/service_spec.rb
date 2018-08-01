@@ -42,8 +42,9 @@ describe 'kubernetes::service', :type => :class do
         apiserver_extra_arguments => ["foo"],
         service_cidr => "10.96.0.0/12",
         node_label => "foo",
-        cloud_provider => ":undef",} 
-    ' }    
+        cloud_provider => ":undef",
+        kubeadm_extra_config => {"foo" => ["bar", "baz"]},
+      }' }
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
@@ -89,8 +90,9 @@ describe 'kubernetes::service', :type => :class do
         apiserver_extra_arguments => ["foo"],
         service_cidr => "10.96.0.0/12",
         node_label => "foo",
-        cloud_provider => ":undef",}         
-    ' }    
+        cloud_provider => ":undef",
+        kubeadm_extra_config => {"foo" => ["bar", "baz"]},
+      }' }
     let(:params) do
         {
             'container_runtime' => 'docker',
