@@ -16,10 +16,10 @@ networking:
   podSubnet: <%= @cni_pod_cidr %>
   serviceSubnet: <%= @service_cidr %>
 apiServerExtraArgs:
-  endpoint-reconciler-type: lease  
-  <% @apiserver_extra_arguments.each do |arg| -%>
- - <%= arg %>
-  <% end -%>        
+  endpoint-reconciler-type: lease
+  <%- @apiserver_extra_arguments.each do |arg| -%>
+  <%= arg %>
+  <%- end -%>
 token: <%= @token %>
 <%- if @container_runtime == "cri_containerd" -%>
 CRISocket: /run/containerd/containerd.sock
