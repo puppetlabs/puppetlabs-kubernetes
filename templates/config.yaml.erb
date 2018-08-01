@@ -26,7 +26,7 @@ CRISocket: /run/containerd/containerd.sock
 <%- end -%>
 <%- if @apiserver_cert_extra_sans -%>
 apiServerCertSANs:
-  <% @apiserver_cert_extra_sans.each do |san| -%>
+<% @apiserver_cert_extra_sans.each do |san| -%>
 - <%= san %>
 <% end -%>
 <% end -%>
