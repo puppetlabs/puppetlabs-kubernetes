@@ -27,7 +27,7 @@ class kubernetes::cluster_roles (
   $env_worker = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf']
 
   if $container_runtime == 'cri_containerd' {
-    $preflight_errors = flatten(['Service-Docker'], $ignore_preflight_errors)
+    $preflight_errors = flatten(['Service-Docker',$ignore_preflight_errors])
     $cri_socket = '/run/containerd/containerd.sock'
   } else {
     $preflight_errors = $ignore_preflight_errors
