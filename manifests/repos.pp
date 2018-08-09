@@ -16,6 +16,7 @@ class kubernetes::repos (
   Optional[String] $docker_yum_gpgkey       = $kubernetes::docker_yum_gpgkey,
   Optional[String] $docker_key_id           = $kubernetes::docker_key_id,
   Optional[String] $docker_key_source       = $kubernetes::docker_key_source,
+  Boolean $manage_docker                    = $kubernetes::manage_docker,
   Boolean $create_repos                     = $kubernetes::create_repos,
 
 
@@ -33,7 +34,7 @@ class kubernetes::repos (
             },
           }
 
-          if $container_runtime == 'docker' {
+          if $container_runtime == 'docker' and $manage_docker == true {
             apt::source { 'docker':
               location => $docker_apt_location,
               repos    => $docker_apt_repos,
@@ -46,7 +47,7 @@ class kubernetes::repos (
         }
       }
       'RedHat': {
-        if $container_runtime == 'docker' {
+        if $container_runtime == 'docker' and $manage_docker == true {
           yumrepo { 'docker':
             descr    => 'docker',
             baseurl  => $docker_yum_baseurl,

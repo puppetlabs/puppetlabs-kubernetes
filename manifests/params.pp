@@ -28,6 +28,7 @@ $kubernetes_fqdn = 'kubernetes'
 $controller = false
 $bootstrap_controller = false
 $worker =  false
+$manage_docker = true
 $kube_api_advertise_address = undef
 $etcd_ip = undef
 $etcd_initial_cluster = undef
