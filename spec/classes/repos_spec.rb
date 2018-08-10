@@ -2,7 +2,7 @@ require 'spec_helper'
 describe 'kubernetes::repos', :type => :class do
 
   
-  context 'with osfamily => Ubuntu' do
+  context 'with osfamily => Ubuntu and manage_docker => true' do
     let(:facts) do
       {
         :lsbdistcodename  => 'xenial',
@@ -35,7 +35,8 @@ describe 'kubernetes::repos', :type => :class do
          'docker_key_id' => '58118E89F3A912897C070ADBF76221572C52609D',
          'docker_key_source' => 'https://apt.dockerproject.org/gpg',
          'create_repos' => true,         
-        }
+         'manage_docker' => true, 
+       }
     end    
 
     it { should contain_apt__source('kubernetes').with(
@@ -56,7 +57,7 @@ describe 'kubernetes::repos', :type => :class do
 
   end
 
-  context 'with osfamily => RedHat and manage_epel => true' do
+  context 'with osfamily => RedHat and manage_epel => true and manage_docker => false' do
     let(:facts) do
       {
         :operatingsystem => 'RedHat',
@@ -82,11 +83,12 @@ describe 'kubernetes::repos', :type => :class do
         'docker_yum_gpgkey' => 'https://yum.dockerproject.org/gpg',
         'docker_key_id' => '58118E89F3A912897C070ADBF76221572C52609D',
         'docker_key_source' => 'https://apt.dockerproject.org/gpg',
-        'create_repos' => true,         
+        'create_repos' => true,
+        'manage_docker' => false,
        }
    end 
 
-    it { should contain_yumrepo('docker') }
+    it { should_not contain_yumrepo('docker') }
     it { should contain_yumrepo('kubernetes') }
   end
 end

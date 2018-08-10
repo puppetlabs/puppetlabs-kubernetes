@@ -62,6 +62,10 @@
 #   This is a bool that sets a node to a worker.
 #   defaults to false 
 #
+# [*manage_docker*]
+#   Whether or not to install Docker repositories and packages via this module.
+#   Defaults to true.
+#
 # [*kube_api_advertise_address*]
 #   This is the ip address that the want to api server to expose.
 #   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
@@ -279,6 +283,7 @@ class kubernetes (
   Optional[String] $cni_pod_cidr                                   = $kubernetes::params::cni_pod_cidr,
   Boolean $controller                                              = $kubernetes::params::controller,
   Boolean $worker                                                  = $kubernetes::params::worker,
+  Boolean $manage_docker                                           = $kubernetes::params::manage_docker,
   Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,
   Optional[String] $etcd_version                                   = $kubernetes::params::etcd_version,
   Optional[String] $etcd_ip                                        = $kubernetes::params::etcd_ip,

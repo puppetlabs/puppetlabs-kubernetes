@@ -4,6 +4,7 @@ class kubernetes::packages (
 
   String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
+  Boolean $manage_docker                       = $kubernetes::manage_docker,
   Optional[String] $docker_version             = $kubernetes::docker_version,
   Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
   Boolean $controller                          = $kubernetes::controller,
@@ -43,7 +44,7 @@ class kubernetes::packages (
     }
   }
 
-  if $container_runtime == 'docker' {
+  if $container_runtime == 'docker' and $manage_docker == true {
     case $::osfamily {
       'Debian': {
         package { $docker_package_name:

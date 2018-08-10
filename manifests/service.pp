@@ -3,6 +3,7 @@
 class kubernetes::service (
   String $container_runtime         = $kubernetes::container_runtime,
   Boolean $controller               = $kubernetes::controller,
+  Boolean $manage_docker            = $kubernetes::manage_docker,
   Optional[String] $cloud_provider  = $kubernetes::cloud_provider,
 ){
   file { '/etc/systemd/system/kubelet.service.d':
@@ -17,10 +18,14 @@ class kubernetes::service (
 
   case $container_runtime {
     'docker': {
-      service { 'docker':
-        ensure => running,
-        enable => true,
+
+      if $manage_docker == true {
+        service { 'docker':
+          ensure => running,
+          enable => true,
+        }
       }
+
     }
 
     'cri_containerd': {
