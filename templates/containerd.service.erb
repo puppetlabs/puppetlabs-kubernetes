@@ -4,7 +4,9 @@ Documentation=https://containerd.io
 After=network.target
 
 [Service]
+<%- unless @is_virtual -%>
 ExecStartPre=/sbin/modprobe overlay
+<%- end -%>
 ExecStart=/usr/bin/containerd
 Delegate=yes
 KillMode=process
