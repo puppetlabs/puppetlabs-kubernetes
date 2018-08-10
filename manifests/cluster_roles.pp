@@ -18,7 +18,7 @@ class kubernetes::cluster_roles (
   String $token = $kubernetes::token,
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
   String $container_runtime = $kubernetes::container_runtime,
-  Optional[Array] $ignore_preflight_errors = []
+  Optional[Array] $ignore_preflight_errors = ['dave']
 
 ){
   $path = ['/usr/bin','/bin','/sbin','/usr/local/bin']
@@ -27,7 +27,7 @@ class kubernetes::cluster_roles (
   $env_worker = ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf']
 
   if $container_runtime == 'cri_containerd' {
-    $preflight_errors = flatten(['Service-Docker'], $ignore_preflight_errors)
+    $preflight_errors = flatten(['Service-Docker',$ignore_preflight_errors])
     $cri_socket = '/run/containerd/containerd.sock'
   } else {
     $preflight_errors = $ignore_preflight_errors
