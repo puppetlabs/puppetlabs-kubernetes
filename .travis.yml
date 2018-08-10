@@ -1,16 +1,45 @@
 ---
-language: ruby
-bundler_args: --without development system_tests
-before_install: rm Gemfile.lock || true
 sudo: false
-rvm:
-  - 2.3.3
+dist: trusty
+language: ruby
+cache: bundler
+before_install:
+  - bundle -v
+  - rm -f Gemfile.lock
+  - gem update --system
+  - gem --version
+  - bundle -v
 script:
-  - bundle exec rake test
-  - bundle exec rubocop lib
-  - bundle exec puppet-lint --no-autoloader_layout-check manifests
+  - 'bundle exec rake $CHECK'
+bundler_args:  
+rvm:
+  - 2.4.4
 env:
-  - PUPPET_GEM_VERSION="~> 4.0"
-  - PUPPET_GEM_VERSION="~> 5.0"
+  global:
+    - BEAKER_PUPPET_COLLECTION=puppet5 PUPPET_GEM_VERSION="~> 5.0"
 matrix:
   fast_finish: true
+  include:
+    -
+      env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
+    -
+      env: CHECK=parallel_spec
+    -
+      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec
+      rvm: 2.3.3
+branches:
+  only:
+    - master 
+    - /^v\d/ 
+    - release 
+notifications:
+  email: false
+deploy:
+  provider: puppetforge
+  user: puppet
+  password:
+    secure: ""
+  on:
+    tags: true
+    all_branches: true
+    condition: "$DEPLOY_TO_FORGE = yes"

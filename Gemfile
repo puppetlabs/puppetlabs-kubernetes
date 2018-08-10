@@ -1,34 +1,72 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-if puppet_gem_version = ENV['PUPPET_GEM_VERSION']
-  gem "puppet", puppet_gem_version
+def location_for(place_or_version, fake_version = nil)
+  if place_or_version =~ %r{\A(git[:@][^#]*)#(.*)}
+    [fake_version, { git: Regexp.last_match(1), branch: Regexp.last_match(2), require: false }].compact
+  elsif place_or_version =~ %r{\Afile:\/\/(.*)}
+    ['>= 0', { path: File.expand_path(Regexp.last_match(1)), require: false }]
+  else
+    [place_or_version, { require: false }]
+  end
+end
+
+def gem_type(place_or_version)
+  if place_or_version =~ %r{\Agit[:@]}
+    :git
+  elsif !place_or_version.nil? && place_or_version.start_with?('file:')
+    :file
+  else
+    :gem
+  end
+end
+
+ruby_version_segments = Gem::Version.new(RUBY_VERSION.dup).segments
+minor_version = ruby_version_segments[0..1].join('.')
+puppet_version = ENV['PUPPET_GEM_VERSION']
+puppet_type = gem_type(puppet_version)
+facter_version = ENV['FACTER_GEM_VERSION']
+hiera_version = ENV['HIERA_GEM_VERSION']
+puppet_git_url = ENV['PUPPET_GIT_URL']
+
+if puppet_version = ENV['PUPPET_GEM_VERSION']
+  gem "puppet", puppet_version
 elsif puppet_git_url = ENV['PUPPET_GIT_URL']
   gem "puppet", :git => puppet_git_url
 else
   gem "puppet"
 end
 
-gem 'metadata-json-lint'
-gem 'puppetlabs_spec_helper', '>= 1.0.0'
-gem 'puppet-lint', '>= 1.0.0'
-gem 'facter', '>= 1.7.0'
-gem 'rspec-puppet'
-gem "rspec-retry"
-gem 'thor'
-gem 'semantic_puppet'
-gem 'simplecov'
-gem 'simplecov-json'
-gem 'simplecov-rcov'
-gem "beaker-puppet_install_helper", :require => false
-gem "beaker-rspec"
-gem "parallel_tests"
-gem "beaker", "~> 2.0"
-gem 'rspec_junit_formatter'
-gem "puppet-lint-i18n"
-gem "puppet_pot_generator"
-gem 'rubocop-i18n'
-gem 'gettext-setup'
-gem 'rubocop-rspec'
+group :development do
+  gem "fast_gettext", '1.1.0',                                   require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.1.0')
+  gem "fast_gettext",                                            require: false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1.0')
+  gem "json_pure", '<= 2.0.1',                                   require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
+  gem "json", '= 1.8.1',                                         require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.1.9')
+  gem "json", '<= 2.0.4',                                        require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.4.4')
+  gem "puppet-module-posix-default-r#{minor_version}",           require: false, platforms: [:ruby]
+  gem "puppet-module-posix-dev-r#{minor_version}",               require: false, platforms: [:ruby]
+  gem "puppet-module-win-default-r#{minor_version}",             require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet-module-win-dev-r#{minor_version}",                 require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "nokogiri", '1.8.4',                                       require: false
+  gem "net-telnet",                                              require: false
+  gem "facter", '>= 1.7.0',                                      require: false
+  gem "rspec-puppet",                                            require: false
+  gem "rspec-retry",                                             require: false
+  gem "thor",                                                    require: false
+  gem "semantic_puppet",                                         require: false
+  gem "simplecov",                                               require: false
+  gem "simplecov-json",                                          require: false
+  gem "simplecov-rcov",                                          require: false
+  gem "beaker-puppet_install_helper",                            require: false
+  gem "beaker-rspec"
+  gem "parallel_tests",                                          require: false
+  gem "beaker", *location_for(ENV['BEAKER_VERSION'] || '~> 2.0')
+  gem "rspec_junit_formatter",                                   require: false
+  gem "puppet-lint-i18n",                                        require: false
+  gem "puppet_pot_generator",                                    require: false
+  gem "rubocop-i18n",                                            require: false
+  gem "gettext-setup",                                           require: false
+  gem "rubocop-rspec",                                           require: false
+end
 
 # rspec must be v2 for ruby 1.8.7
 if RUBY_VERSION >= '1.8.7' && RUBY_VERSION < '1.9'
@@ -38,3 +76,40 @@ else
   # rubocop requires ruby >= 1.9
   gem 'rubocop'
 end
+
+gems = {}
+
+gems['puppet'] = location_for(puppet_version)
+
+# If facter or hiera versions have been specified via the environment
+# variables
+
+gems['facter'] = location_for(facter_version) if facter_version
+gems['hiera'] = location_for(hiera_version) if hiera_version
+
+if Gem.win_platform? && puppet_version =~ %r{^(file:///|git://)}
+  # If we're using a Puppet gem on Windows which handles its own win32-xxx gem
+  # dependencies (>= 3.5.0), set the maximum versions (see PUP-6445).
+  gems['win32-dir'] =      ['<= 0.4.9', require: false]
+  gems['win32-eventlog'] = ['<= 0.6.5', require: false]
+  gems['win32-process'] =  ['<= 0.7.5', require: false]
+  gems['win32-security'] = ['<= 0.2.5', require: false]
+  gems['win32-service'] =  ['0.8.8', require: false]
+end
+
+gems.each do |gem_name, gem_params|
+  gem gem_name, *gem_params
+end
+
+# Evaluate Gemfile.local and ~/.gemfile if they exist
+extra_gemfiles = [
+  "#{__FILE__}.local",
+  File.join(Dir.home, '.gemfile'),
+]
+
+extra_gemfiles.each do |gemfile|
+  if File.file?(gemfile) && File.readable?(gemfile)
+    eval(File.read(gemfile), binding)
+  end
+end
+# vim: syntax=ruby

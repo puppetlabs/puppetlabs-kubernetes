@@ -8,13 +8,27 @@
   "project_page": "https://github.com/puppetlabs/puppetlabs-kubernetes",
   "issues_url": "https://github.com/puppetlabs/puppetlabs-kubernetes/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 4.19.0 < 5.0.0"},
-    {"name":"puppetlabs-apt","version_requirement":">= 4.1.0 < 4.5.1"},
-    {"name":"puppet-archive","version_requirement":">= 2.0.0 < 3.1.0"},
-    {"name":"puppet-wget","version_requirement":"2.0.0"},
-    {"name":"puppetlabs/translate","version_requirement":">= 0.0.1 < 1.1.0"}
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 4.19.0 < 5.0.0"
+    },
+    {
+      "name": "puppetlabs-apt",
+      "version_requirement": ">= 4.1.0 < 4.5.1"
+    },
+    {
+      "name": "puppet-archive",
+      "version_requirement": ">= 2.0.0 < 3.1.0"
+    },
+    {
+      "name": "puppet-wget",
+      "version_requirement": "2.0.0"
+    },
+    {
+      "name": "puppetlabs/translate",
+      "version_requirement": ">= 0.0.1 < 1.1.0"
+    }
   ],
-  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -40,5 +54,8 @@
       "name": "puppet",
       "version_requirement": ">= 4.2.1 < 5.0.0"
     }
-  ]
+  ],
+  "pdk-version": "1.6.1",
+  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
+  "template-ref": "1.6.1-0-g6b0d497"
 }
