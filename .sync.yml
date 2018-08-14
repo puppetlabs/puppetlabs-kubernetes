@@ -1,0 +1,46 @@
+---
+.travis.yml:
+  bundler_args: ' '
+  branches:
+    - release
+
+Gemfile:
+  required:
+    ':development':
+      - gem: 'nokogiri'
+        version: '1.8.4'
+      - gem: 'net-telnet'
+      - gem: 'facter'
+        version: '>= 1.7.0'
+      - gem: 'rspec-puppet'
+      - gem: "rspec-retry"
+      - gem: 'thor'
+      - gem: 'semantic_puppet'
+      - gem: 'simplecov'
+      - gem: 'simplecov-json'
+      - gem: 'simplecov-rcov'
+      - gem: 'beaker-puppet_install_helper'
+      - gem: 'beaker-rspec'
+        from_env: BEAKER_RSPEC_VERSION  
+      - gem: 'parallel_tests'
+      - gem: "beaker"
+        version: '~> 2.0'
+        from_env: BEAKER_VERSION
+      - gem: 'rspec_junit_formatter'
+      - gem: "puppet-lint-i18n"
+      - gem: "puppet_pot_generator"
+      - gem: 'rubocop-i18n'
+      - gem: 'gettext-setup'
+      - gem: 'rubocop-rspec'
+
+Rakefile:
+  requires:
+    - puppet-lint/tasks/puppet-lint
+    - puppetlabs_spec_helper/rake_tasks
+    - metadata-json-lint/rake_task
+    - rspec_junit_formatter
+    - puppet_pot_generator/rake_tasks
+
+.rubocop.yml:
+  include_todos:
+    inherit_from: '.rubocop_todo.yml'
