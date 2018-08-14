@@ -27,7 +27,7 @@ To bootstrap a Kubernetes cluster in a secure and extensible way, this module us
 
 ## Setup
 
-[Install](https://puppet.com/docs/puppet/5.5/modules_installing.html) this module, [generate the configuration](#generating-the-module-configuration), [add the OS and hostname yaml files to Hiera](#adding-the-`{$OS}.yaml`-and-`{$hostname}.yaml`-files-to-Hiera), and [configure your node](#configuring-your-node). 
+[Install](https://puppet.com/docs/puppet/5.5/modules_installing.html) this module, [generate the configuration](#generating-the-module-configuration), [add the OS and hostname yaml files to Hiera](#adding-the-`{$OS}.yaml`-and-`{$hostname}.yaml`-files-to-Hiera), and [configure your node](#configuring-your-node).
 
 Included in this module is [Kubetool](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/tooling/kube_tool.rb), a configuration tool that auto-generates the Hiera security parameters, the discovery token hash, and other configurations for your Kubernetes cluster. To simplify installation and use, the tool is available as a Docker image.
 
@@ -53,14 +53,14 @@ docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.10.2 -e CONTAINER_RUNTI
 
 The above parameters are:
 
-* `OS`: The operating system Kubernetes runs on. 
-* `VERSION`: The version of Kubernetes to deploy. 
+* `OS`: The operating system Kubernetes runs on.
+* `VERSION`: The version of Kubernetes to deploy.
 * `CONTAINER_RUNTIME`: The container runtime Kubernetes uses. Set this value to `docker` (officially supported) or `cri_containerd`. Advanced Kubernetes users can use `cri_containerd`, however this requires an increased understanding of Kubernetes, specifically when running applications in a HA cluster. To run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module. For more information, see the Kubernetes [documentation](https://kubernetes-v1-4.github.io/docs/user-guide/load-balancer/).
-* `CNI_PROVIDER`: The CNI network to install. Set this value to `weave` or `flannel`. 
-* `ETCD_INITIAL_CLUSTER`: The server hostnames and IPs in the form of `hostname:ip`. When in production, include three, five, or seven nodes for etcd. 
-* `ETCD_IP`: The IP each etcd member listens on. We recommend passing the fact for the interface to be used by the cluster. 
-* `KUBE_API_ADVERTISE_ADDRESS`: The IP each etcd/apiserver instance uses on each controller. We recommend passing the fact for the interface to be used by the cluster. 
-* `INSTALL_DASHBOARD`: A boolean which specifies whether to install the dashboard. 
+* `CNI_PROVIDER`: The CNI network to install. Set this value to `weave` or `flannel`.
+* `ETCD_INITIAL_CLUSTER`: The server hostnames and IPs in the form of `hostname:ip`. When in production, include three, five, or seven nodes for etcd.
+* `ETCD_IP`: The IP each etcd member listens on. We recommend passing the fact for the interface to be used by the cluster.
+* `KUBE_API_ADVERTISE_ADDRESS`: The IP each etcd/apiserver instance uses on each controller. We recommend passing the fact for the interface to be used by the cluster.
+* `INSTALL_DASHBOARD`: A boolean which specifies whether to install the dashboard.
 
 Kubetool creates:
 
@@ -98,34 +98,34 @@ class {'kubernetes':
 
 ### Validating and unit testing the module
 
-This module is compliant with the Puppet Development Kit [(PDK)](https://puppet.com/docs/pdk/1.x/pdk.html), which provides tools to help run unit tests on the module and validate the modules's metadata, syntax, and style. 
+This module is compliant with the Puppet Development Kit [(PDK)](https://puppet.com/docs/pdk/1.x/pdk.html), which provides tools to help run unit tests on the module and validate the modules's metadata, syntax, and style.
 
 *Note:* To run static validations and
 unit tests against this module using the [`pdk validate`](https://puppet.com/docs/pdk/1.x/pdk_reference.html#pdk-validate-command) and [`pdk test unit`](https://puppet.com/docs/pdk/1.x/pdk_reference.html#pdk-test-unit-command) commands, you must have Puppet 5 or higher installed. In the following examples we have specified Puppet 5.3.6.
 
 To validate the metadata.json file, run the following command:
 
-```puppet
+```
 pdk validate metadata --puppet-version='5.3.6'
 ```
 
 To validate the Puppet code and syntax, run the following command:
 
-```puppet
+```
 pdk validate puppet --puppet-version='5.3.6'
 ```
 
-**Note:** The `pdk validate ruby` command ignores the excluded directories specified in the .rubocop.yml file. Therefore, to validate the Ruby code style and syntax you must specify the directory the code exists in. 
+**Note:** The `pdk validate ruby` command ignores the excluded directories specified in the .rubocop.yml file. Therefore, to validate the Ruby code style and syntax you must specify the directory the code exists in.
 
 In the following example we validate the Ruby code contained in the lib directory:
 
-```puppet
+```
 pdk validate ruby lib --puppet-version='5.3.6'
 ```
 
 To unit test the module, run the following command:
 
-```puppet
+```
 pdk test unit --puppet-version='5.3.6'
 ```
 
@@ -573,7 +573,7 @@ This module has been tested on the following operating systems:
 * CentOS 7.x.
 * Ubuntu 18.04.
 
-Docker is the supported container runtime for this module. 
+Docker is the supported container runtime for this module.
 
 ## Development
 
