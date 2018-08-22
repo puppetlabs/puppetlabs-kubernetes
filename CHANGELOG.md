@@ -1,3 +1,9 @@
+# Version 3.0.0
+
+Exposes a significant numner of new params to allow the use of internal repos in restristed or airgapped systems.
+
+A full list of PRs and issues closed can be found [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/2?closed=1)
+
 # Version 2.0.2
 
 Fixes issue with cgroup mismatch on docker PR #109
