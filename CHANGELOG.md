@@ -1,6 +1,6 @@
 # Version 3.0.0
 
-Exposes a significant number of new params to allow the use of internal repos in restristed or airgapped systems.
+Exposes a significant number of new params to allow the use of internal repos in restricted or airgapped systems.
 
 A full list of PRs and issues closed can be found [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/2?closed=1)
 
