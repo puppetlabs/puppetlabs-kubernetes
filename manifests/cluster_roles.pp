@@ -18,7 +18,7 @@ class kubernetes::cluster_roles (
   String $token = $kubernetes::token,
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
   String $container_runtime = $kubernetes::container_runtime,
-  Optional[Array] $ignore_preflight_errors = ['dave']
+  Optional[Array] $ignore_preflight_errors = []
 
 ){
   $path = ['/usr/bin','/bin','/sbin','/usr/local/bin']
