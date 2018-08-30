@@ -1,6 +1,6 @@
 require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
-  context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true' do
+  context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
         {
           :lsbdistcodename  => 'xenial',
@@ -29,6 +29,7 @@ describe 'kubernetes::packages', :type => :class do
         'docker_package_name' => 'docker-engine',   
         'disable_swap' => true,
         'manage_docker' => true,
+        'manage_etcd' => true,
         }
     end
 
@@ -41,7 +42,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
   end
 
-  context 'with osfamily => Debian and container_runtime => cri_containerd' do
+  context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
     let(:facts) do
         {
           :kernel           => 'Linux',
@@ -69,20 +70,21 @@ describe 'kubernetes::packages', :type => :class do
         'docker_package_name' => 'docker-engine',  
         'disable_swap' => true,
         'manage_docker' => true,
+        'manage_etcd' => false,
         }
     end
 
     it { should contain_wget__fetch("download runc binary")}
     it { should contain_file('/usr/bin/runc')}
     it { should contain_archive('containerd-1.1.0.linux-amd64.tar.gz')}
-    it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
+    it { should_not contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2-00')}
     it { should contain_package('kubectl').with_ensure('1.10.2-00')}
     it { should contain_package('kubeadm').with_ensure('1.10.2-00')}
     
   end
   
-  context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false' do
+  context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
     let(:facts) do
         {
           :lsbdistcodename  => 'xenial',
@@ -111,6 +113,7 @@ describe 'kubernetes::packages', :type => :class do
         'docker_package_name' => 'docker-engine',   
         'disable_swap' => true,
         'manage_docker' => false,
+        'manage_etcd' => true,
         }
     end
 
@@ -148,7 +151,8 @@ describe 'kubernetes::packages', :type => :class do
         'controller' => true, 
         'docker_package_name' => 'docker-engine',  
         'disable_swap' => true,
-        'manage_docker' => true, 
+        'manage_docker' => true,
+        'manage_etcd' => true,
         }
     end
 

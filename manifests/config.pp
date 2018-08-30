@@ -1,6 +1,7 @@
 #Calss kubernetes config, populates config files with params to bootstrap cluster
 class kubernetes::config (
 
+  Boolean $manage_etcd = $kubernetes::manage_etcd,
   String $kubernetes_version  = $kubernetes::kubernetes_version,
   String $etcd_ca_key = $kubernetes::etcd_ca_key,
   String $etcd_ca_crt = $kubernetes::etcd_ca_crt,
@@ -42,11 +43,13 @@ class kubernetes::config (
     }
   }
 
-  $etcd.each | String $etcd_files | {
-    file { "/etc/kubernetes/pki/etcd/${etcd_files}":
-      ensure  => present,
-      mode    => '0644',
-      content => template("kubernetes/etcd/${etcd_files}.erb"),
+  if $manage_etcd {
+    $etcd.each | String $etcd_files | {
+      file { "/etc/kubernetes/pki/etcd/${etcd_files}":
+        ensure  => present,
+        mode    => '0644',
+        content => template("kubernetes/etcd/${etcd_files}.erb"),
+      }
     }
   }
 
@@ -58,9 +61,11 @@ class kubernetes::config (
     }
   }
 
-  file { '/etc/systemd/system/etcd.service':
-    ensure  => present,
-    content => template('kubernetes/etcd/etcd.service.erb'),
+  if $manage_etcd {
+    file { '/etc/systemd/system/etcd.service':
+      ensure  => present,
+      content => template('kubernetes/etcd/etcd.service.erb'),
+    }
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
