@@ -1,3 +1,7 @@
+# Version 3.0.1
+
+Fixes an incorrect default value for ignore_preflight_errors in the cluster_roles class
+
 # Version 3.0.0
 
 Exposes a significant number of new params to allow the use of internal repos in restricted or airgapped systems.
