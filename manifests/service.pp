@@ -4,6 +4,7 @@ class kubernetes::service (
   String $container_runtime         = $kubernetes::container_runtime,
   Boolean $controller               = $kubernetes::controller,
   Boolean $manage_docker            = $kubernetes::manage_docker,
+  Boolean $manage_etcd              = $kubernetes::manage_etcd,
   Optional[String] $cloud_provider  = $kubernetes::cloud_provider,
 ){
   file { '/etc/systemd/system/kubelet.service.d':
@@ -60,7 +61,7 @@ class kubernetes::service (
     }
   }
 
-  if $controller {
+  if $controller and $manage_etcd {
     service { 'etcd':
       ensure  => running,
       enable  => true,

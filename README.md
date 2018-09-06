@@ -501,6 +501,14 @@ Valid values are `true`, `false`.
 
 Defaults to `true`.
 
+#### `manage_etcd`
+
+Specifies whether to install an external Etcd via this module.
+
+Valid values are `true`, `false`.
+
+Defaults to `true`.
+
 #### `node_label`
 
 An override to the label of a node.
