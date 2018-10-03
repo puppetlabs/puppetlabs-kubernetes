@@ -319,7 +319,7 @@ class kubernetes (
   String $node_label                                               = $kubernetes::params::node_label,
   Optional[String] $controller_address                             = $kubernetes::params::controller_address,
   Optional[String] $cloud_provider                                 = $kubernetes::params::cloud_provider,
-  Hash $kubeadm_extra_config                                       = $kubernetes::params::kubeadm_extra_config,
+  Optional[Hash] $kubeadm_extra_config                             = $kubernetes::params::kubeadm_extra_config,
   Optional[String] $runc_source                                    = $kubernetes::params::runc_source,
   Optional[String] $containerd_archive                             = $kubernetes::params::containerd_archive,
   Optional[String] $containerd_source                              = $kubernetes::params::containerd_source,

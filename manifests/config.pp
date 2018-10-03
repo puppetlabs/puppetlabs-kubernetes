@@ -30,7 +30,7 @@ class kubernetes::config (
   String $service_cidr = $kubernetes::service_cidr,
   String $node_label = $kubernetes::node_label,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
-  Hash $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
+  Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
 ) {
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
@@ -51,6 +51,10 @@ class kubernetes::config (
         content => template("kubernetes/etcd/${etcd_files}.erb"),
       }
     }
+    file { '/etc/systemd/system/etcd.service':
+      ensure  => present,
+      content => template('kubernetes/etcd/etcd.service.erb'),
+    }   
   }
 
   $pki.each | String $pki_files | {
@@ -58,13 +62,6 @@ class kubernetes::config (
       ensure  => present,
       mode    => '0644',
       content => template("kubernetes/pki/${pki_files}.erb"),
-    }
-  }
-
-  if $manage_etcd {
-    file { '/etc/systemd/system/etcd.service':
-      ensure  => present,
-      content => template('kubernetes/etcd/etcd.service.erb'),
     }
   }
 

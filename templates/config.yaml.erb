@@ -2,6 +2,7 @@ apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
 api:
   advertiseAddress: <%= @kube_api_advertise_address %>
+<%- if @manage_etcd  -%>
 etcd:
   endpoints:
   <% @etcd_peers.each do |peer| -%>
@@ -10,6 +11,7 @@ etcd:
 caFile: /etc/kubernetes/pki/etcd/ca.crt
   certFile: /etc/kubernetes/pki/etcd/client.crt
   keyFile: /etc/kubernetes/pki/etcd/client.key
+<% end -%>  
 CertificatesDir: /etc/kubernetes/pki
 nodeName: <%= @node_label %>
 networking:
@@ -33,4 +35,6 @@ apiServerCertSANs:
 <%- if @cloud_provider  -%>
 cloudProvider: <%= @cloud_provider %>
 <%- end -%>
+<%- if @kubeadm_extra_config  -%>
 <%= @kubeadm_extra_config_yaml %>
+<%- end -%>
