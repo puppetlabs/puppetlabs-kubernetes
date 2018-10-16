@@ -270,6 +270,10 @@
 #  A flag to turn off the swap setting. This is required for kubeadm.
 #  Defaults to true
 #
+# [*ignore_preflight_errors*]
+#  A flag to turn off the swap setting. This is required for kubeadm.
+#  Defaults to true
+#
 # Authors
 # -------
 #
@@ -341,6 +345,7 @@ class kubernetes (
   Optional[String] $docker_key_source                              = $kubernetes::params::docker_key_source,
   Boolean $disable_swap                                            = $kubernetes::params::disable_swap,
   Boolean $create_repos                                            = $kubernetes::params::create_repos,
+  Optional[Array] $ignore_preflight_errors                         = $kubernetes::params::ignore_preflight_errors,
 
   )  inherits kubernetes::params {
 

@@ -567,6 +567,12 @@ Valid values are `true`, `false`.
 
 Defaults to `false`.
 
+#### `ignore_preflight_errors`
+
+An array containing preflight errors options.
+
+Defaults to `[]`.
+
 ## Limitations
 
 This module supports:
