@@ -45,6 +45,7 @@ describe 'kubernetes', :type => :class do
         'token' => 'foo',
         'create_repos' => true,
         'disable_swap' => true,
+        'ignore_preflight_errors' => '',
         
       }
     end
@@ -79,6 +80,7 @@ describe 'kubernetes', :type => :class do
         'cloud_provider' => :undef,  
         'token' => 'foo',
         'disable_swap' => true,
+        'ignore_preflight_errors' => '',
                          
       }
     end
@@ -119,6 +121,7 @@ describe 'kubernetes', :type => :class do
         'cloud_provider' => :undef,
         'token' => 'foo',
         'disable_swap' => true,
+        'ignore_preflight_errors' => 'cri',
                 
       }
     end
