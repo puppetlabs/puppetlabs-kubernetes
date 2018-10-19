@@ -31,6 +31,7 @@ class kubernetes::config (
   String $node_label = $kubernetes::node_label,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
   Hash $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
+  Optional[Array] $ignore_preflight_errors = $kubernetes::ignore_preflight_errors,
 ) {
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
