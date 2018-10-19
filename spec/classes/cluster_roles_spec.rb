@@ -34,7 +34,8 @@ describe 'kubernetes::cluster_roles', :type => :class do
           'etcd_initial_cluster' => 'foo',
           'controller_address' => '172.17.10.101',  
           'node_label' => 'foo',    
-          'container_runtime' => 'docker',     
+          'container_runtime' => 'docker',
+          'ignore_preflight_errors' => '',   
         } 
     end
 
@@ -60,6 +61,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
           'controller_address' => '172.17.10.101',  
           'node_label' => 'foo',   
           'container_runtime' => 'docker',  
+          'ignore_preflight_errors' => '',  
           # 'docker_package_name' => 'docker-engine',   
         } 
     end

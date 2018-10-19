@@ -79,4 +79,3 @@ $create_repos = true
 $disable_swap = true
 $ignore_preflight_errors = undef
 }
-
