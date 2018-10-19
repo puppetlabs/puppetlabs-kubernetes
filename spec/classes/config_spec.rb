@@ -33,7 +33,7 @@ describe 'kubernetes::config', :type => :class do
         'node_label' => 'foo',
         'cloud_provider' => 'undef',
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
-        'ignore_preflight_errors' => 'undef',
+        'ignore_preflight_errors' => :undef,
         }
     end
 
@@ -92,7 +92,7 @@ describe 'kubernetes::config', :type => :class do
         'node_label' => 'foo',
         'cloud_provider' => 'undef',
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
-        'ignore_preflight_errors' => 'undef',
+        'ignore_preflight_errors' => :undef,
         }
     end
 
