@@ -272,7 +272,7 @@
 #
 # [*ignore_preflight_errors*]
 #  A flag to turn off the swap setting. This is required for kubeadm.
-#  Defaults to true
+#  Defaults to undef
 #
 # Authors
 # -------

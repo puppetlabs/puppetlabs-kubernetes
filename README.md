@@ -571,7 +571,7 @@ Defaults to `false`.
 
 An array containing preflight errors options.
 
-Defaults to `[]`.
+Defaults to `undef`.
 
 ## Limitations
 
