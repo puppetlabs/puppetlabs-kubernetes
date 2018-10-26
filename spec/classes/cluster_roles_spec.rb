@@ -35,7 +35,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
           'controller_address' => '172.17.10.101',  
           'node_label' => 'foo',    
           'container_runtime' => 'docker',
-          'ignore_preflight_errors' => '',   
+          'ignore_preflight_errors' => ['cri'],
         } 
     end
 
@@ -61,7 +61,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
           'controller_address' => '172.17.10.101',  
           'node_label' => 'foo',   
           'container_runtime' => 'docker',  
-          'ignore_preflight_errors' => '',  
+          'ignore_preflight_errors' => ['cri'],
           # 'docker_package_name' => 'docker-engine',   
         } 
     end
