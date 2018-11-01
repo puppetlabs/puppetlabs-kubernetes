@@ -64,6 +64,7 @@ $kubeadm_extra_config = {}
 $kubernetes_apt_location = 'http://apt.kubernetes.io'
 $kubernetes_apt_release = "kubernetes-${::lsbdistcodename}"
 $kubernetes_apt_repos = 'main'
+$kubernetes_config_template = 'kubernetes/config.yaml.erb'
 $kubernetes_key_id = '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
 $kubernetes_key_source = 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
 $kubernetes_yum_baseurl = 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'

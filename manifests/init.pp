@@ -161,6 +161,10 @@
 #   The clusters ca key. Must be passed as a string not a file.
 #   Defaults to undef
 #
+# [*kubernetes_config_template*]
+#   Location of the template for kubernetes config, normally placed in /etc/kubernetes/config.yaml.
+#   Defaults to `kubernetes/config.yaml.erb`.
+#
 # [*sa_key*]
 #   The service account key. Must be passed as string not a file.
 #   Defaults to undef
@@ -309,6 +313,7 @@ class kubernetes (
   Integer $api_server_count                                        = $kubernetes::params::api_server_count,
   String $kubernetes_ca_crt                                        = $kubernetes::params::kubernetes_ca_crt,
   String $kubernetes_ca_key                                        = $kubernetes::params::kubernetes_ca_key,
+  String $kubernetes_config_template                               = $kubernetes::params::kubernetes_config_template,
   String $token                                                    = $kubernetes::params::token,
   String $discovery_token_hash                                     = $kubernetes::params::discovery_token_hash,
   String $sa_pub                                                   = $kubernetes::params::sa_pub,

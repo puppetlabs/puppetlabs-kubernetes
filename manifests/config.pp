@@ -22,6 +22,7 @@ class kubernetes::config (
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
   String $kubernetes_ca_crt = $kubernetes::kubernetes_ca_crt,
   String $kubernetes_ca_key = $kubernetes::kubernetes_ca_key,
+  String $kubernetes_config_template = $kubernetes::kubernetes_config_template,
   String $container_runtime = $kubernetes::container_runtime,
   String $sa_pub = $kubernetes::sa_pub,
   String $sa_key = $kubernetes::sa_key,
@@ -73,7 +74,7 @@ class kubernetes::config (
 
   file { '/etc/kubernetes/config.yaml':
     ensure  => present,
-    content => template('kubernetes/config.yaml.erb'),
+    content => template($kubernetes_config_template),
   }
 
 }

@@ -469,6 +469,12 @@ The repos to install using the Kubernetes APT URL.
 
 Defaults to `main`.
 
+#### `kubernetes_config_template`
+
+Location of the template for kubernetes config, normally placed in /etc/kubernetes/config.yaml.
+
+Defaults to `kubernetes/config.yaml.erb`.
+
 #### `kubernetes_key_id`
 
 The gpg key for the Kubernetes APT repo.
