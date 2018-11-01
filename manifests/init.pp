@@ -354,22 +354,22 @@ class kubernetes (
     include kubernetes::repos
     include kubernetes::packages
     include kubernetes::config
-    include kubernetes::service
-    include kubernetes::cluster_roles
-    include kubernetes::kube_addons
+    # include kubernetes::service
+    # include kubernetes::cluster_roles
+    # include kubernetes::kube_addons
     contain kubernetes::repos
     contain kubernetes::packages
     contain kubernetes::config
-    contain kubernetes::service
-    contain kubernetes::cluster_roles
-    contain kubernetes::kube_addons
+    # contain kubernetes::service
+    # contain kubernetes::cluster_roles
+    # contain kubernetes::kube_addons
 
     Class['kubernetes::repos']
       -> Class['kubernetes::packages']
       -> Class['kubernetes::config']
-      -> Class['kubernetes::service']
-      -> Class['kubernetes::cluster_roles']
-      -> Class['kubernetes::kube_addons']
+      # -> Class['kubernetes::service']
+      # -> Class['kubernetes::cluster_roles']
+      # -> Class['kubernetes::kube_addons']
   }
 
   if $worker {
