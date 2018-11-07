@@ -15,7 +15,7 @@ describe 'kubernetes::service', :type => :class do
 
   context 'with controller => true and container_runtime => cri_containerd and manage_etcd => true' do
     let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_version => "1.10.2",
+        kubernetes_package_version => "1.12.2-00",
         container_runtime => "cri_containerd",
         manage_etcd => true,
         etcd_version => "3.1.12",
@@ -44,15 +44,16 @@ describe 'kubernetes::service', :type => :class do
         service_cidr => "10.96.0.0/12",
         node_label => "foo",
         cloud_provider => ":undef",
+        cloud_config => ":undef",        
         kubeadm_extra_config => {"foo" => ["bar", "baz"]},
       }' }
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'controller' => true,
-      'cloud_provider' => ':undef',
-      'manage_docker' => true,
-      'manage_etcd' => true,
+        'controller' => true,
+        'cloud_provider' => ':undef',
+        'manage_docker' => true,
+        'manage_etcd' => true,
       }
     end
    it { should contain_file('/etc/systemd/system/kubelet.service.d')}
@@ -65,7 +66,7 @@ describe 'kubernetes::service', :type => :class do
 
   context 'with controller => true and container_runtime => docker and manage_docker => true and manage_etcd => false' do
     let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_version => "1.10.2",
+        kubernetes_package_version => "1.12.2-00",
         container_runtime => "docker",
         manage_etcd => false,
         etcd_version => "3.1.12",
@@ -94,16 +95,17 @@ describe 'kubernetes::service', :type => :class do
         service_cidr => "10.96.0.0/12",
         node_label => "foo",
         cloud_provider => ":undef",
+        cloud_config => ":undef",        
         kubeadm_extra_config => {"foo" => ["bar", "baz"]},
       }' }
     let(:params) do
-        {
-            'container_runtime' => 'docker',
-            'controller' => true,
-            'cloud_provider' => ':undef',
-            'manage_docker' => true,
-            'manage_etcd' => false,
-        }
+      {
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'cloud_provider' => ':undef',
+        'manage_docker' => true,
+        'manage_etcd' => false,
+      }
     end
     it { should contain_service('docker')}
     it { should_not contain_service('etcd')}
@@ -111,7 +113,7 @@ describe 'kubernetes::service', :type => :class do
   
   context 'with controller => true and container_runtime => docker and manage_docker => false and manage_etcd => true' do
     let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_version => "1.10.2",
+        kubernetes_package_version => "1.12.2-00",
         container_runtime => "docker",
         manage_etcd => true,
         etcd_version => "3.1.12",
@@ -140,6 +142,7 @@ describe 'kubernetes::service', :type => :class do
         service_cidr => "10.96.0.0/12",
         node_label => "foo",
         cloud_provider => ":undef",
+        cloud_config => ":undef",        
         kubeadm_extra_config => {"foo" => ["bar", "baz"]},
       }' }
     let(:params) do
