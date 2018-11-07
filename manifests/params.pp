@@ -15,7 +15,7 @@ case $::osfamily {
   default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
 }
 $container_runtime = 'docker'
-$containerd_version = '1.1.0'
+$containerd_version = '1.1.2'
 $containerd_archive = "containerd-${containerd_version}.linux-amd64.tar.gz"
 $containerd_source = "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"
 $docker_package_name = 'docker-engine'

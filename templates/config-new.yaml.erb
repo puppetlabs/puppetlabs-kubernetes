@@ -13,10 +13,14 @@ bootstrapTokens:
     - system:bootstrappers:kubeadm:default-node-token
 kind: InitConfiguration
 kubernetesVersion: stable
+nodeRegistration:
+  name: <%= @node_name %>
+  <%- if @container_runtime == "cri_containerd" -%>
+  criSocket: /run/containerd/containerd.sock
+  <%- end -%>
 ---
 apiVersion: kubeadm.k8s.io/v1alpha3
 CertificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
 etcd:
     external:
         endpoints:
@@ -37,9 +41,6 @@ apiServerExtraArgs:
   <%- @apiserver_extra_arguments.each do |arg| -%>
   <%= arg %>
   <%- end -%>
-<%- if @container_runtime == "cri_containerd" -%>
-CRISocket: /run/containerd/containerd.sock
-<%- end -%>
 <%- if @cloud_provider  -%>
 cloudProvider: <%= @cloud_provider %>
 <%- end -%>
@@ -52,4 +53,9 @@ apiServerCertSANs:
 ---
 apiVersion: kubeadm.k8s.io/v1alpha3
 kind: JoinConfiguration
+nodeRegistration:
+  name: <%= @node_name %>
+  <%- if @container_runtime == "cri_containerd" -%>
+  criSocket: /run/containerd/containerd.sock
+  <%- end -%>
 token: <%= @token %>
