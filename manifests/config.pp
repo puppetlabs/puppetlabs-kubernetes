@@ -30,6 +30,7 @@ class kubernetes::config (
   String $service_cidr = $kubernetes::service_cidr,
   String $node_label = $kubernetes::node_label,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
+  Optional[String] $cloud_config = $kubernetes::cloud_config, 
   Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
 ) {
 
@@ -66,7 +67,7 @@ class kubernetes::config (
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
-  # $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
+  $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
 
   if $kubernetes_package_version =~ /1.1(0|1)/ {
     $template = 'config-old'

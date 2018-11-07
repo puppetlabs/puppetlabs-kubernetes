@@ -18,6 +18,10 @@ nodeRegistration:
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
+  <%- if @cloud_provider  -%>
+  cloudProvider: <%= @cloud_provider %>
+  cloudConfig: <%= @cloud_config %>
+  <%- end -%>  
 ---
 apiVersion: kubeadm.k8s.io/v1alpha3
 CertificatesDir: /etc/kubernetes/pki
@@ -50,6 +54,9 @@ apiServerCertSANs:
 - <%= san %>
 <% end -%>
 <% end -%>
+<%- if @kubeadm_extra_config  -%>
+<%= @kubeadm_extra_config_yaml %>
+<%- end -%>
 ---
 apiVersion: kubeadm.k8s.io/v1alpha3
 kind: JoinConfiguration

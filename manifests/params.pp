@@ -60,6 +60,7 @@ $apiserver_extra_arguments = []
 $service_cidr = '10.96.0.0/12'
 $controller_address = undef
 $cloud_provider = undef
+$cloud_config = undef
 $kubeadm_extra_config = undef
 $kubernetes_apt_location = 'http://apt.kubernetes.io'
 $kubernetes_apt_release = "kubernetes-${::lsbdistcodename}"
