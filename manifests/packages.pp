@@ -48,7 +48,7 @@ class kubernetes::packages (
     command => 'sysctl -w net.ipv4.ip_forward=1',
     unless  => 'grep 1 /proc/sys/net/ipv4/ip_forward',
   }
-  
+
 
   if $container_runtime == 'docker' and $manage_docker == true {
     case $::osfamily {
