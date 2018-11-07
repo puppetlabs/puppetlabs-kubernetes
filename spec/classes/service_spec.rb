@@ -15,7 +15,7 @@ describe 'kubernetes::service', :type => :class do
 
   context 'with controller => true and container_runtime => cri_containerd and manage_etcd => true' do
     let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_package_version => "1.12.2-00",
+        kubernetes_version => "1.10.2",
         container_runtime => "cri_containerd",
         manage_etcd => true,
         etcd_version => "3.1.12",
@@ -66,7 +66,7 @@ describe 'kubernetes::service', :type => :class do
 
   context 'with controller => true and container_runtime => docker and manage_docker => true and manage_etcd => false' do
     let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_package_version => "1.12.2-00",
+        kubernetes_version => "1.10.2",
         container_runtime => "docker",
         manage_etcd => false,
         etcd_version => "3.1.12",
@@ -113,7 +113,7 @@ describe 'kubernetes::service', :type => :class do
   
   context 'with controller => true and container_runtime => docker and manage_docker => false and manage_etcd => true' do
     let(:pre_condition) { 'class {"kubernetes::config":
-        kubernetes_package_version => "1.12.2-00",
+        kubernetes_version => "1.10.2",
         container_runtime => "docker",
         manage_etcd => true,
         etcd_version => "3.1.12",

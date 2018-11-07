@@ -3,7 +3,7 @@ describe 'kubernetes::config', :type => :class do
   context 'with controller => true and manage_etcd => true' do
     let(:params) do 
         {
-        'kubernetes_package_version' => '1.12.2-00',        
+        'kubernetes_version' => '1.10.2',        
         'container_runtime' => 'docker',
         'manage_etcd' => true,
         'etcd_version' => '3.1.12',
@@ -62,7 +62,7 @@ describe 'kubernetes::config', :type => :class do
   context 'with controller => true and manage_etcd => false' do
     let(:params) do 
         {
-        'kubernetes_package_version' => '1.12.2-00',
+        'kubernetes_version' => '1.10.2',        
         'container_runtime' => 'docker',
         'manage_etcd' => false,
         'etcd_version' => '3.1.12',

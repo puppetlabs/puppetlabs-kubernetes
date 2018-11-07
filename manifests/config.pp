@@ -2,7 +2,7 @@
 class kubernetes::config (
 
   Boolean $manage_etcd = $kubernetes::manage_etcd,
-  String $kubernetes_package_version  = $kubernetes::kubernetes_package_version,
+  String $kubernetes_version  = $kubernetes::kubernetes_version,
   String $etcd_ca_key = $kubernetes::etcd_ca_key,
   String $etcd_ca_crt = $kubernetes::etcd_ca_crt,
   String $etcdclient_key = $kubernetes::etcdclient_key,
@@ -69,15 +69,15 @@ class kubernetes::config (
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
   $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
 
-  if $kubernetes_package_version =~ /1.1(0|1)/ {
-    $template = 'config-old'
+  if $kubernetes_version =~ /1.1(0|1)/ {
+    $template = 'alpha1'
   } else {
-    $template = 'config-new'
+    $template = 'alpha3'
   }
-  
+
   file { '/etc/kubernetes/config.yaml':
     ensure  => present,
-    content => template("kubernetes/${template}.yaml.erb"),
+    content => template("kubernetes/config-${template}.yaml.erb"),
   }
 
 }
