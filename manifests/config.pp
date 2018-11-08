@@ -30,7 +30,8 @@ class kubernetes::config (
   String $service_cidr = $kubernetes::service_cidr,
   String $node_label = $kubernetes::node_label,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
-  Hash $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
+  Optional[String] $cloud_config = $kubernetes::cloud_config,
+  Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
 ) {
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
@@ -51,6 +52,10 @@ class kubernetes::config (
         content => template("kubernetes/etcd/${etcd_files}.erb"),
       }
     }
+    file { '/etc/systemd/system/etcd.service':
+      ensure  => present,
+      content => template('kubernetes/etcd/etcd.service.erb'),
+    }
   }
 
   $pki.each | String $pki_files | {
@@ -61,19 +66,18 @@ class kubernetes::config (
     }
   }
 
-  if $manage_etcd {
-    file { '/etc/systemd/system/etcd.service':
-      ensure  => present,
-      content => template('kubernetes/etcd/etcd.service.erb'),
-    }
-  }
-
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
   $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
 
+  if $kubernetes_version =~ /1.1(0|1)/ {
+    $template = 'alpha1'
+  } else {
+    $template = 'alpha3'
+  }
+
   file { '/etc/kubernetes/config.yaml':
     ensure  => present,
-    content => template('kubernetes/config.yaml.erb'),
+    content => template("kubernetes/config-${template}.yaml.erb"),
   }
 
 }

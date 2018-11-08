@@ -3,7 +3,7 @@ describe 'kubernetes::config', :type => :class do
   context 'with controller => true and manage_etcd => true' do
     let(:params) do 
         {
-        'kubernetes_version' => '1.10.2',
+        'kubernetes_version' => '1.10.2',        
         'container_runtime' => 'docker',
         'manage_etcd' => true,
         'etcd_version' => '3.1.12',
@@ -32,6 +32,7 @@ describe 'kubernetes::config', :type => :class do
         'service_cidr' => '10.96.0.0/12',
         'node_label' => 'foo',
         'cloud_provider' => 'undef',
+        'cloud_config' => 'undef',        
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         }
     end
@@ -61,7 +62,7 @@ describe 'kubernetes::config', :type => :class do
   context 'with controller => true and manage_etcd => false' do
     let(:params) do 
         {
-        'kubernetes_version' => '1.10.2',
+        'kubernetes_version' => '1.10.2',        
         'container_runtime' => 'docker',
         'manage_etcd' => false,
         'etcd_version' => '3.1.12',
@@ -90,6 +91,7 @@ describe 'kubernetes::config', :type => :class do
         'service_cidr' => '10.96.0.0/12',
         'node_label' => 'foo',
         'cloud_provider' => 'undef',
+        'cloud_config' => 'undef',        
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         }
     end
