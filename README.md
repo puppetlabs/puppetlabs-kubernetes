@@ -579,7 +579,7 @@ This module has been tested on the following operating systems:
 
 * RedHat 7.x.
 * CentOS 7.x.
-* Ubuntu 18.04.
+* Ubuntu 16.04
 
 Docker is the supported container runtime for this module.
 
