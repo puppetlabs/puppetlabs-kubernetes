@@ -34,6 +34,7 @@ describe 'kubernetes::config', :type => :class do
         'cloud_provider' => 'undef',
         'cloud_config' => 'undef',        
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
+        'image_repository' => 'k8s.gcr.io',
         }
     end
 
@@ -93,6 +94,7 @@ describe 'kubernetes::config', :type => :class do
         'cloud_provider' => 'undef',
         'cloud_config' => 'undef',        
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
+        'image_repository' => 'k8s.gcr.io',
         }
     end
 

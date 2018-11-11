@@ -207,6 +207,10 @@
 #  Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
 #  Defaults to undef
 #
+# [*image_repository*]
+#  The container registry to pull control plane images from
+#  Defaults to k8s.gcr.io
+#
 # [*kubeadm_extra_config*]
 #  A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
 #  Defaults to {}
@@ -347,6 +351,7 @@ class kubernetes (
   Optional[String] $docker_key_source                              = $kubernetes::params::docker_key_source,
   Boolean $disable_swap                                            = $kubernetes::params::disable_swap,
   Boolean $create_repos                                            = $kubernetes::params::create_repos,
+  String $image_repository                                         = $kubernetes::params::image_repository,
 
   )  inherits kubernetes::params {
 

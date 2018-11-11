@@ -13,6 +13,7 @@ caFile: /etc/kubernetes/pki/etcd/ca.crt
   keyFile: /etc/kubernetes/pki/etcd/client.key
 <% end -%>  
 CertificatesDir: /etc/kubernetes/pki
+imageRepository: <%= @image_repository %>
 kubernetesVersion: v<%= @kubernetes_version %>
 nodeName: <%= @node_label %>
 networking:

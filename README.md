@@ -405,6 +405,12 @@ The peer certificate key data for the etcd cluster. This value must be passed as
 
 Defaults to `undef`.
 
+#### image_repository
+
+The container registry to pull control plane images from.
+
+Defaults to k8s.gcr.io
+
 #### `install_dashboard`
 
 Specifies whether the Kubernetes dashboard is installed.
