@@ -19,7 +19,7 @@ $containerd_version = '1.1.0'
 $containerd_archive = "containerd-${containerd_version}.linux-amd64.tar.gz"
 $containerd_source = "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"
 $docker_package_name = 'docker-engine'
-$etcd_version = '3.1.12'
+$etcd_version = '3.2.24'
 $etcd_archive = "etcd-v${etcd_version}-linux-amd64.tar.gz"
 $etcd_source = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}"
 $runc_version = '1.0.0-rc5'
@@ -78,5 +78,6 @@ $docker_key_id = '58118E89F3A912897C070ADBF76221572C52609D'
 $docker_key_source = 'https://apt.dockerproject.org/gpg'
 $create_repos = true
 $disable_swap = true
+$image_repository = 'k8s.gcr.io'
 }
 

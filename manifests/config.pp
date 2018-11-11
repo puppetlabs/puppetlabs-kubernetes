@@ -32,6 +32,7 @@ class kubernetes::config (
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
   Optional[String] $cloud_config = $kubernetes::cloud_config,
   Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
+  String $image_repository = $kubernetes::image_repository,
 ) {
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
