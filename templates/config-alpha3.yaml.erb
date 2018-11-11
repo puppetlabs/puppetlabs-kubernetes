@@ -12,7 +12,7 @@ bootstrapTokens:
     groups:
     - system:bootstrappers:kubeadm:default-node-token
 kind: InitConfiguration
-kubernetesVersion: stable
+kubernetesVersion: v<%= @kubernetes_version %>
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
