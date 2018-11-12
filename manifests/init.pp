@@ -215,6 +215,10 @@
 #  A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
 #  Defaults to {}
 #
+# [*kubelet_extra_config*]
+#  A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster. Requires DynamicKubeletConfig.
+#  Defaults to {}
+#
 # [*kubernetes_apt_location*]
 #  The APT repo URL for the Kubernetes packages.
 #  Defaults to https://apt.kubernetes.io
@@ -330,6 +334,7 @@ class kubernetes (
   Optional[String] $cloud_provider                                 = $kubernetes::params::cloud_provider,
   Optional[String] $cloud_config                                   = $kubernetes::params::cloud_config,
   Optional[Hash] $kubeadm_extra_config                             = $kubernetes::params::kubeadm_extra_config,
+  Optional[Hash] $kubelet_extra_config                             = $kubernetes::params::kubelet_extra_config,
   Optional[String] $runc_source                                    = $kubernetes::params::runc_source,
   Optional[String] $containerd_archive                             = $kubernetes::params::containerd_archive,
   Optional[String] $containerd_source                              = $kubernetes::params::containerd_source,

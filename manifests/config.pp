@@ -32,6 +32,7 @@ class kubernetes::config (
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
   Optional[String] $cloud_config = $kubernetes::cloud_config,
   Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
+  Optional[Hash] $kubelet_extra_config = $kubernetes::kubelet_extra_config,
   String $image_repository = $kubernetes::image_repository,
 ) {
 
@@ -67,8 +68,17 @@ class kubernetes::config (
     }
   }
 
+  # The alpha1 schema puts Kubelet configuration in a different place.
+  $kubelet_extra_config_alpha1 = {
+    'kubeletConfiguration' => {
+      'baseConfig' => $kubelet_extra_config,
+    },
+  }
+
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
   $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
+  $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')
+  $kubelet_extra_config_alpha1_yaml = regsubst(to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
 
   if $kubernetes_version =~ /1.1(0|1)/ {
     $template = 'alpha1'

@@ -40,3 +40,6 @@ cloudProvider: <%= @cloud_provider %>
 <%- if @kubeadm_extra_config  -%>
 <%= @kubeadm_extra_config_yaml %>
 <%- end -%>
+<%- if @kubelet_extra_config  -%>
+<%= @kubelet_extra_config_alpha1_yaml %>
+<%- end -%>

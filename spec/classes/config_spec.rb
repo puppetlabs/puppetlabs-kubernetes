@@ -34,6 +34,7 @@ describe 'kubernetes::config', :type => :class do
         'cloud_provider' => 'undef',
         'cloud_config' => 'undef',        
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
+        'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'image_repository' => 'k8s.gcr.io',
         }
     end
@@ -58,6 +59,7 @@ describe 'kubernetes::config', :type => :class do
     it { should contain_file('/etc/systemd/system/etcd.service') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
+    it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
   end
 
   context 'with controller => true and manage_etcd => false' do
@@ -94,6 +96,7 @@ describe 'kubernetes::config', :type => :class do
         'cloud_provider' => 'undef',
         'cloud_config' => 'undef',        
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
+        'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'image_repository' => 'k8s.gcr.io',
         }
     end
@@ -118,5 +121,6 @@ describe 'kubernetes::config', :type => :class do
     it { should_not contain_file('/etc/systemd/system/etcd.service') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
+    it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
   end
 end

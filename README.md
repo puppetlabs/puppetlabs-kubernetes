@@ -457,6 +457,12 @@ A hash containing extra configuration data to be serialised with `to_yaml` and a
 
 Defaults to `{}`.
 
+#### `kubelet_extra_config`
+
+A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster. Requires DynamicKubeletConfig.
+
+Defaults to `{}`.
+
 #### `kubernetes_apt_location`
 
 The APT repo URL for the Kubernetes packages.
