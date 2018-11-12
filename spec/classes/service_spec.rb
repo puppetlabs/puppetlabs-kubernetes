@@ -46,6 +46,7 @@ describe 'kubernetes::service', :type => :class do
         cloud_provider => ":undef",
         cloud_config => ":undef",        
         kubeadm_extra_config => {"foo" => ["bar", "baz"]},
+        kubelet_extra_config => {"foo" => ["bar", "baz"]},
         image_repository => "k8s.gcr.io",
       }' }
     let(:params) do
@@ -98,6 +99,7 @@ describe 'kubernetes::service', :type => :class do
         cloud_provider => ":undef",
         cloud_config => ":undef",        
         kubeadm_extra_config => {"foo" => ["bar", "baz"]},
+        kubelet_extra_config => {"foo" => ["bar", "baz"]},
         image_repository => "k8s.gcr.io",
       }' }
     let(:params) do
@@ -146,6 +148,7 @@ describe 'kubernetes::service', :type => :class do
         cloud_provider => ":undef",
         cloud_config => ":undef",        
         kubeadm_extra_config => {"foo" => ["bar", "baz"]},
+        kubelet_extra_config => {"foo" => ["bar", "baz"]},
         image_repository => "k8s.gcr.io",
       }' }
     let(:params) do

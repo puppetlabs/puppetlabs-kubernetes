@@ -62,6 +62,7 @@ $controller_address = undef
 $cloud_provider = undef
 $cloud_config = undef
 $kubeadm_extra_config = undef
+$kubelet_extra_config = undef
 $kubernetes_apt_location = 'http://apt.kubernetes.io'
 $kubernetes_apt_release = "kubernetes-${::lsbdistcodename}"
 $kubernetes_apt_repos = 'main'
