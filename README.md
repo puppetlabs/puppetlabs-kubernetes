@@ -172,7 +172,15 @@ Defaults to `[]`.
 
 The name of the cloud provider configured in `/etc/kubernetes/cloud-config`.
 
-**Note**: This file is not Fmd within this module and must be present before bootstrapping the Kubernetes controller.
+**Note**: This file is not managed within this module and must be present before bootstrapping the Kubernetes controller.
+
+Defaults to `undef`.
+
+#### `cloud_config`
+
+The location of the cloud config file used by `cloud_provider`. For use with v1.12 and above.
+
+**Note**: This file is not managed within this module and must be present before bootstrapping the Kubernetes controller.
 
 Defaults to `undef`.
 
