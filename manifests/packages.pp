@@ -15,6 +15,8 @@ class kubernetes::packages (
   String $etcd_source                          = $kubernetes::etcd_source,
   Optional[String] $runc_source                = $kubernetes::runc_source,
   Boolean $disable_swap                        = $kubernetes::disable_swap,
+  Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
+  Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
 
 ) {
 
@@ -28,27 +30,20 @@ class kubernetes::packages (
     }
   }
 
-  exec { 'set up bridge-nf-call-iptables':
-    path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
-    command => 'modprobe br_netfilter',
-    creates => '/proc/sys/net/bridge/bridge-nf-call-iptables',
-    before  => File_line['set 1 /proc/sys/net/bridge/bridge-nf-call-iptables'],
+  if $manage_kernel_modules {
+    kmod::load { 'br_netfilter': }
   }
 
-  file_line { 'set 1 /proc/sys/net/bridge/bridge-nf-call-iptables':
-    path    => '/proc/sys/net/bridge/bridge-nf-call-iptables',
-    replace => true,
-    line    => '1',
-    match   => '0',
-    require => Exec['set up bridge-nf-call-iptables'],
+  if $manage_sysctl_settings {
+    sysctl { "net.bridge.bridge-nf-call-iptables":
+      ensure => present,
+      value  => "1",
+    }
+    sysctl { "net.ipv4.ip_forward":
+      ensure => present,
+      value  => "1",
+    }
   }
-
-  exec { 'sysctl -w net.ipv4.ip_forward=1':
-    path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
-    command => 'sysctl -w net.ipv4.ip_forward=1',
-    unless  => 'grep 1 /proc/sys/net/ipv4/ip_forward',
-  }
-
 
   if $container_runtime == 'docker' and $manage_docker == true {
     case $::osfamily {

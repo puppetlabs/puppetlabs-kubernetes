@@ -287,6 +287,13 @@
 #  A flag to turn off the swap setting. This is required for kubeadm.
 #  Defaults to true
 #
+# [*manage_kernel_modules*]
+#  A flag to manage required Kernel modules.
+#  Defaults to true
+#
+# [*manage_sysctl_settings*]
+#  A flag to manage required sysctl settings.
+#  Defaults to true
 # Authors
 # -------
 #
@@ -369,10 +376,11 @@ class kubernetes (
   Optional[String] $docker_key_id              = '58118E89F3A912897C070ADBF76221572C52609D',
   Optional[String] $docker_key_source          = 'https://apt.dockerproject.org/gpg',
   Boolean $disable_swap                        = true,
+  Boolean $manage_kernel_modules               = true,
+  Boolean $manage_sysctl_settings              = true,
   Boolean $create_repos                        = true,
   String $image_repository                     = 'k8s.gcr.io',
 ){
-
   if ! $::osfamily in ['Debian','RedHat'] {
     notify {"The OS family ${::osfamily} is not supported by this module":}
   }
