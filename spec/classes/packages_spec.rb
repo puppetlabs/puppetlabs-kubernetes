@@ -32,9 +32,9 @@ describe 'kubernetes::packages', :type => :class do
         'manage_etcd' => true,
         }
     end
-
-    it { should contain_exec('set up bridge-nf-call-iptables')}
-    it { should contain_file_line('set 1 /proc/sys/net/bridge/bridge-nf-call-iptables')}
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_package('docker-engine').with_ensure('17.03.1.ce-1.el7.centos')}
     it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2')}
