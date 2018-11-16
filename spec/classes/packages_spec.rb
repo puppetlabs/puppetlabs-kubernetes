@@ -73,6 +73,8 @@ describe 'kubernetes::packages', :type => :class do
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => false,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
         }
     end
 
