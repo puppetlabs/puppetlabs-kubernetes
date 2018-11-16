@@ -22,8 +22,6 @@ define kubernetes::kubeadm_init (
   Optional[String] $token_ttl                   = undef,
 ) {
 
-  include kubernetes::params
-
   $kubeadm_init_flags = kubeadm_init_flags({
     apiserver_advertise_address => $apiserver_advertise_address,
     apiserver_bind_port         => $apiserver_bind_port,
