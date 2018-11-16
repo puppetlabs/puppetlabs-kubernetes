@@ -35,13 +35,13 @@ class kubernetes::packages (
   }
 
   if $manage_sysctl_settings {
-    sysctl { "net.bridge.bridge-nf-call-iptables":
+    sysctl { 'net.bridge.bridge-nf-call-iptables':
       ensure => present,
-      value  => "1",
+      value  => '1',
     }
-    sysctl { "net.ipv4.ip_forward":
+    sysctl { 'net.ipv4.ip_forward':
       ensure => present,
-      value  => "1",
+      value  => '1',
     }
   }
 
