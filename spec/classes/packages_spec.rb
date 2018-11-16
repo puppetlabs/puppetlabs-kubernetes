@@ -30,6 +30,8 @@ describe 'kubernetes::packages', :type => :class do
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
