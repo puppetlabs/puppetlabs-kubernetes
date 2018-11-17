@@ -61,6 +61,9 @@ class OtherParams
     data['kubernetes::container_runtime'] = container_runtime
     data['kubernetes::cni_network_provider'] = cni_network_provider
     data['kubernetes::cni_pod_cidr'] = cni_pod_cidr
+    if version.match('^1\.1[2-9]') # 1.12 and higher required etcd 3.3+
+      data['kubernetes::etcd_version'] = '3.3.10'
+    end
     data['kubernetes::etcd_initial_cluster'] = etcd_initial_cluster
     data['kubernetes::etcd_peers'] = etcd_peers
     data['kubernetes::etcd_ip'] = etcd_ip
