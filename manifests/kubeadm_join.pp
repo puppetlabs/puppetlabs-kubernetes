@@ -17,8 +17,6 @@ Optional[String] $tls_bootstrap_token    = undef,
 Optional[String] $token                  = undef
 ) {
 
-  include kubernetes::params
-
   $kubeadm_join_flags = kubeadm_join_flags({
     controller_address       => $controller_address,
     config                   => $config,
