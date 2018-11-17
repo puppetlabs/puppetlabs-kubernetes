@@ -77,7 +77,7 @@
 #
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
-#   Defaults to 3.1.12
+#   Defaults to 3.3.10
 #
 # [*etcd_archive*]
 #  The name of the etcd archive
@@ -338,8 +338,8 @@ class kubernetes (
   Optional[String] $runc_source                                    = $kubernetes::params::runc_source,
   Optional[String] $containerd_archive                             = $kubernetes::params::containerd_archive,
   Optional[String] $containerd_source                              = $kubernetes::params::containerd_source,
-  String $etcd_archive                                             = $kubernetes::params::etcd_archive,
-  String $etcd_source                                              = $kubernetes::params::etcd_source,
+  String $etcd_archive                                             = "etcd-v${etcd_version}-linux-amd64.tar.gz"
+  String $etcd_source                                              = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}"
   Optional[String] $kubernetes_apt_location                        = $kubernetes::params::kubernetes_apt_location,
   Optional[String] $kubernetes_apt_release                         = $kubernetes::params::kubernetes_apt_release,
   Optional[String] $kubernetes_apt_repos                           = $kubernetes::params::kubernetes_apt_repos,

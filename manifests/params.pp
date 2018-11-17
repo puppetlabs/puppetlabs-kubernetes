@@ -19,9 +19,8 @@ $containerd_version = '1.1.0'
 $containerd_archive = "containerd-${containerd_version}.linux-amd64.tar.gz"
 $containerd_source = "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"
 $docker_package_name = 'docker-engine'
-$etcd_version = '3.1.12'
-$etcd_archive = "etcd-v${etcd_version}-linux-amd64.tar.gz"
-$etcd_source = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}"
+$etcd_version = '3.3.10'
+# $etcd_archive and $etcd_source are set in init.pp to allow adjustment by the version
 $runc_version = '1.0.0-rc5'
 $runc_source = "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64"
 $kubernetes_fqdn = 'kubernetes'

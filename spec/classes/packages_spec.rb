@@ -22,8 +22,7 @@ describe 'kubernetes::packages', :type => :class do
         'docker_version' => '17.03.1.ce-1.el7.centos',
         'containerd_archive' =>'containerd-1.1.0.linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd-1.1.0.linux-amd64.tar.gz',
-        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'etcd_version' => 'v3.3.10',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',   
@@ -36,7 +35,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_exec('set up bridge-nf-call-iptables')}
     it { should contain_file_line('set 1 /proc/sys/net/bridge/bridge-nf-call-iptables')}
     it { should contain_package('docker-engine').with_ensure('17.03.1.ce-1.el7.centos')}
-    it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
+    it { should contain_archive('etcd-v3.3.10-linux-amd64.tar.gz')
+           .with_source('https://github.com/coreos/etcd/releases/download/v3.3.10/etcd-v3.3.10-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
@@ -106,8 +106,7 @@ describe 'kubernetes::packages', :type => :class do
         'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
         'containerd_archive' =>'containerd-1.1.0.linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd-1.1.0.linux-amd64.tar.gz',
-        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'etcd_version' => 'v3.3.1',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',   
@@ -117,7 +116,7 @@ describe 'kubernetes::packages', :type => :class do
         }
     end
 
-    it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
+    it { should contain_archive('etcd-v3.3.1-linux-amd64.tar.gz')} # based on etcd_version
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
