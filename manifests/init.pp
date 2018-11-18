@@ -219,6 +219,10 @@
 #  A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster. Requires DynamicKubeletConfig.
 #  Defaults to {}
 #
+# [*kubelet_extra_arguments*]
+#  A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration. It is applied to both masters and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config and DynamicKubeletConfig.
+#  Defaults to []
+#
 # [*kubernetes_apt_location*]
 #  The APT repo URL for the Kubernetes packages.
 #  Defaults to https://apt.kubernetes.io
@@ -341,6 +345,7 @@ class kubernetes (
   Optional[String] $cloud_config               = undef,
   Optional[Hash] $kubeadm_extra_config         = undef,
   Optional[Hash] $kubelet_extra_config         = undef,
+  Optional[Array] $kubelet_extra_arguments      = [],
   Optional[String] $runc_version               = '1.0.0-rc5',
   Optional[String] $runc_source                =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",

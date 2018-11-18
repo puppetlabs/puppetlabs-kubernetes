@@ -27,6 +27,7 @@ class kubernetes::config (
   String $sa_key = $kubernetes::sa_key,
   Optional[Array] $apiserver_cert_extra_sans = $kubernetes::apiserver_cert_extra_sans,
   Optional[Array] $apiserver_extra_arguments = $kubernetes::apiserver_extra_arguments,
+  Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
   String $service_cidr = $kubernetes::service_cidr,
   String $node_label = $kubernetes::node_label,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,

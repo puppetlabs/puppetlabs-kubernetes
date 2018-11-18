@@ -471,6 +471,12 @@ A hash containing extra configuration data to be serialised with `to_yaml` and a
 
 Defaults to `{}`.
 
+#### `kubelet_extra_arguments`
+
+A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration. It is applied to both masters and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config and DynamicKubeletConfig.
+
+Defaults to `[]`.
+
 #### `kubernetes_apt_location`
 
 The APT repo URL for the Kubernetes packages.
