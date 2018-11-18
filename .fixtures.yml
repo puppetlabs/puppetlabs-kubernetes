@@ -2,7 +2,7 @@ fixtures:
   forge_modules:
     stdlib: 'puppetlabs-stdlib'
     apt: 'puppetlabs-apt'
-    wget: 'maestrodev-wget'
+    wget: 'puppet-wget'
     archive: "puppet-archive"    
     translate: "puppetlabs-translate"
   symlinks:
