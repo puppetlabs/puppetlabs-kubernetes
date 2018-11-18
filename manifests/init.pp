@@ -345,7 +345,7 @@ class kubernetes (
   Optional[String] $cloud_config               = undef,
   Optional[Hash] $kubeadm_extra_config         = undef,
   Optional[Hash] $kubelet_extra_config         = undef,
-  Optional[Array] $kubelet_extra_arguments      = [],
+  Optional[Array] $kubelet_extra_arguments     = [],
   Optional[String] $runc_version               = '1.0.0-rc5',
   Optional[String] $runc_source                =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
@@ -372,6 +372,8 @@ class kubernetes (
   Boolean $create_repos                        = true,
   String $image_repository                     = 'k8s.gcr.io',
 ){
+
+  notify{ "this is my etcd_version ${etcd_version}": }
 
   if ! $::osfamily in ['Debian','RedHat'] {
     notify {"The OS family ${::osfamily} is not supported by this module":}
