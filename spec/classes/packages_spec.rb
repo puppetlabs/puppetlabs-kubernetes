@@ -30,11 +30,13 @@ describe 'kubernetes::packages', :type => :class do
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
         }
     end
-
-    it { should contain_exec('set up bridge-nf-call-iptables')}
-    it { should contain_file_line('set 1 /proc/sys/net/bridge/bridge-nf-call-iptables')}
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_package('docker-engine').with_ensure('17.03.1.ce-1.el7.centos')}
     it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2')}
@@ -71,9 +73,13 @@ describe 'kubernetes::packages', :type => :class do
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => false,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
         }
     end
-
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_wget__fetch("download runc binary")}
     it { should contain_file('/usr/bin/runc')}
     it { should contain_archive('containerd-1.1.0.linux-amd64.tar.gz')}
@@ -114,9 +120,13 @@ describe 'kubernetes::packages', :type => :class do
         'disable_swap' => true,
         'manage_docker' => false,
         'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
         }
     end
-
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
@@ -153,9 +163,13 @@ describe 'kubernetes::packages', :type => :class do
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
         }
     end
-
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_exec('disable swap')}  
   end    
 end
