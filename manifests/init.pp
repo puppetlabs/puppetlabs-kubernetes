@@ -373,8 +373,6 @@ class kubernetes (
   String $image_repository                     = 'k8s.gcr.io',
 ){
 
-  notify{ "this is my etcd_version ${etcd_version}": }
-
   if ! $::osfamily in ['Debian','RedHat'] {
     notify {"The OS family ${::osfamily} is not supported by this module":}
   }
