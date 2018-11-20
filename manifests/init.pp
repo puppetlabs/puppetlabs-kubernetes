@@ -294,6 +294,7 @@
 # [*manage_sysctl_settings*]
 #  A flag to manage required sysctl settings.
 #  Defaults to true
+#
 # Authors
 # -------
 #
