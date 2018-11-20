@@ -136,7 +136,6 @@ pdk test unit --puppet-version='5.3.6'
 #### Public classes
 
 * kubernetes
-* kubernetes::params
 
 #### Private classes
 
@@ -257,6 +256,22 @@ Specifies whether to turn off swap setting. This is required for kubeadm.
 Valid values are `true`, `false`.
 
 Defaults to `true`.
+
+#### `manage_kernel_modules`
+ 
+Specifies whether to manage the kernel modules needed for kubernetes
+
+Valid values are `true`, `false`.
+
+Defaults to `true`
+
+#### `manage_sysctl_settings`
+
+Specifies whether to manage the the sysctl settings needed for kubernetes
+
+Valid values are `true`, `false`.
+
+Defaults to `true`
 
 #### `discovery_token_hash`
 
