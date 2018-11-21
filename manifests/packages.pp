@@ -31,13 +31,16 @@ class kubernetes::packages (
   }
 
   if $manage_kernel_modules {
-    kmod::load { 'br_netfilter': }
+    kmod::load { 'br_netfilter': 
+      before => Sysctl['net.bridge.bridge-nf-call-iptables'],
+    }
   }
 
   if $manage_sysctl_settings {
     sysctl { 'net.bridge.bridge-nf-call-iptables':
       ensure => present,
       value  => '1',
+      before => Sysctl['net.ipv4.ip_forward'],
     }
     sysctl { 'net.ipv4.ip_forward':
       ensure => present,
