@@ -12,7 +12,6 @@ bootstrapTokens:
     groups:
     - system:bootstrappers:kubeadm:default-node-token
 kind: InitConfiguration
-kubernetesVersion: v<%= @kubernetes_version %>
 nodeRegistration:
   name: <%= @node_label %>
   <%- if @container_runtime == "cri_containerd" -%>
@@ -44,6 +43,7 @@ etcd:
 imageRepository: <%= @image_repository %>
 nodeName: <%= @node_label %>
 kind: ClusterConfiguration
+kubernetesVersion: v<%= @kubernetes_version %>
 networking:
   podSubnet: <%= @cni_pod_cidr %>
 <%- if @apiserver_extra_arguments -%>
