@@ -2,18 +2,17 @@ require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
-        {
-          :lsbdistcodename  => 'xenial',
-          :kernel           => 'Linux',
-          :osfamily         => 'RedHat',
-          :operatingsystem  => 'RedHat',
-          :os               => {
-            :name    => 'RedHat',
-            :release => {
-              :full => '7.4',
-            },
+      {
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "RedHat",
+          :name    => 'RedHat',
+          :release => {
+            :full => '7.4',
           },
-        }
+        },
+      }
     end
     let(:params) do
         {
@@ -46,17 +45,21 @@ describe 'kubernetes::packages', :type => :class do
 
   context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
     let(:facts) do
-        {
-          :kernel           => 'Linux',
-          :osfamily         => 'Debian',
-          :operatingsystem  => 'Ubuntu',
-          :os               => {
-            :name    => 'Ubuntu',
-            :release => {
-              :full => '16.04',
-            },
+      {
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :operatingsystem  => 'Ubuntu', #needed to run dependent tests from fixtures puppet-wget
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "Debian",
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '16.04',
           },
-        }
+          :distro => {
+            :codename => "xenial",
+          },
+        },
+      }
     end
     let(:params) do
         {
@@ -92,18 +95,20 @@ describe 'kubernetes::packages', :type => :class do
   
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
     let(:facts) do
-        {
-          :lsbdistcodename  => 'xenial',
-          :kernel           => 'Linux',
-          :osfamily         => 'Debian',
-          :operatingsystem  => 'Ubuntu',
-          :os               => {
-            :name    => 'Ubuntu',
-            :release => {
-              :full => '16.04',
-            },
+      {
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "Debian",
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '16.04',
           },
-        }
+          :distro => {
+            :codename => "xenial",
+          },
+        },
+      }
     end
     let(:params) do
         {
@@ -137,13 +142,17 @@ describe 'kubernetes::packages', :type => :class do
   context 'with disable_swap => true' do
     let(:facts) do
       {
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :operatingsystem  => 'Ubuntu', #needed to run dependent tests from fixtures puppet-wget
         :kernel           => 'Linux',
-        :osfamily         => 'Debian',
-        :operatingsystem  => 'Ubuntu',
         :os               => {
+          :family => "Debian",
           :name    => 'Ubuntu',
           :release => {
             :full => '16.04',
+          },
+          :distro => {
+            :codename => "xenial",
           },
         },
       }

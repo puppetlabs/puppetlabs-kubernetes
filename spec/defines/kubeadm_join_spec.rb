@@ -4,17 +4,19 @@ describe 'kubernetes::kubeadm_join', :type => :define do
   let(:title) { 'kubeadm join' }
   let(:facts) do
     {
-      :lsbdistcodename  => 'xenial',
-      :osfamily         => 'Debian',
-      :operatingsystem  => 'Ubuntu',
+      :kernel           => 'Linux',
       :os               => {
+        :family  => "Debian",
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
-        },     
+        },
+        :distro => {
+          :codename => "xenial",
+        },
       },
     }
-  end   
+  end
 
  context 'with controller_address => 10.0.0.1:6443' do
   let(:params) { {

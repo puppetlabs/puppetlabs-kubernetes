@@ -1,21 +1,23 @@
 require 'spec_helper'
 describe 'kubernetes::cluster_roles', :type => :class do
     let(:facts) do
-        {
-          :hostname         => 'foo',
-          :kernel           => 'Linux',
-          :lsbdistcodename  => 'xenial',
-          :osfamily         => 'Debian',
-          :operatingsystem  => 'Ubuntu',
-          :os               => {
-            :name    => 'Ubuntu',
-            :release => {
-              :full => '16.04',
-            },
+      {
+        :kernel           => 'Linux',
+        :networking       => {
+          :hostname => 'foo',
+        },
+        :os               => {
+          :family => "Debian",
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '16.04',
           },
-        }
-      end
-
+          :distro => {
+            :codename => "xenial",
+          },
+        },
+      }
+    end
   context 'with controller => true' do
     let(:params) do 
         { 

@@ -2,12 +2,15 @@ require 'spec_helper'
 describe 'kubernetes::service', :type => :class do
   let(:facts) do
     {
-      :osfamily         => 'Debian',
-      :operatingsystem  => 'Ubuntu',
+      :kernel           => 'Linux',
       :os               => {
+        :family => "Debian",
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
+        },
+        :distro => {
+          :codename => "xenial",
         },
       },
     }

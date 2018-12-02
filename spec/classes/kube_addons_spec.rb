@@ -2,18 +2,18 @@ require 'spec_helper'
 describe 'kubernetes::kube_addons', :type => :class do
   let(:facts) do
     {
-      :lsbdistcodename  => 'xenial',
-      :osfamily         => 'Debian',
-      :operatingsystem  => 'Ubuntu',
       :os               => {
+        :family => "Debian",
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
-        },    
+        },
+        :distro => {
+          :codename => "xenial",
+        },
       },
     }
   end
-
   context 'with controller => true and schedule_on_controller => true' do
     let(:params) do {
       'controller' => true,

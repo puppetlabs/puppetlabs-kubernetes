@@ -2,20 +2,20 @@ require 'spec_helper'
 describe 'kubernetes', :type => :class do
   let(:facts) do
     {
+      :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppetlabs-apt
       :kernel           => 'Linux',
-      :lsbdistcodename  => 'xenial',
-      :osfamily         => 'Debian',
-      :operatingsystem  => 'Ubuntu',
       :os               => {
+        :family => 'Debian',
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
         },
-       
+        :distro => {
+          :codename => "xenial",
+        },
       },
     }
   end
-
   context 'with controller => true and worker => true' do
     let(:params) do
       { 

@@ -4,19 +4,21 @@ describe 'kubernetes::kubeadm_init', :type => :define do
   let(:title) { 'kubeadm init' }
   let(:facts) do
     {
-      :lsbdistcodename  => 'xenial',
-      :osfamily         => 'Debian',
-      :operatingsystem  => 'Ubuntu',
+      :kernel           => 'Linux',
       :os               => {
+        :family => "Debian",
         :name    => 'Ubuntu',
         :release => {
           :full => '16.04',
-        },     
+        },
+        :distro => {
+          :codename => "xenial",
+        },
       },
     }
-  end  
+  end
 
- context 'with apiserver_advertise_address => 10.0.0.1' do
+  context 'with apiserver_advertise_address => 10.0.0.1' do
   let(:params) { {
                   'apiserver_advertise_address' => '10.0.0.1',
                   'node_name' => 'kube-master',
