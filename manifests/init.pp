@@ -304,14 +304,14 @@
 #
 class kubernetes (
   String $kubernetes_version                   = '1.10.2',
-  String $kubernetes_package_version           = $::osfamily ? {
+  String $kubernetes_package_version           = $facts['os']['family'] ? {
                                                     'Debian' => "${kubernetes_version}-00",
                                                     'RedHat' => $kubernetes::kubernetes_version,
                                                   },
   String $container_runtime                    = 'docker',
   Optional[String] $containerd_version         = '1.1.0',
   Optional[String] $docker_package_name        = 'docker-engine',
-  Optional[String] $docker_version             = $::osfamily ? {
+  Optional[String] $docker_version             = $facts['os']['family'] ? {
                                                     'Debian' => '17.03.0~ce-0~ubuntu-xenial',
                                                     'RedHat' => '17.03.1.ce-1.el7.centos',
                                                   },
@@ -347,7 +347,7 @@ class kubernetes (
   Optional[Array] $apiserver_cert_extra_sans   = [],
   Optional[Array] $apiserver_extra_arguments   = [],
   String $service_cidr                         = '10.96.0.0/12',
-  String $node_label                           = $::hostname,
+  String $node_label                           = $facts['networking']['hostname'],
   Optional[String] $controller_address         = undef,
   Optional[String] $cloud_provider             = undef,
   Optional[String] $cloud_config               = undef,
@@ -363,14 +363,14 @@ class kubernetes (
   String $etcd_archive                         = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   String $etcd_source                          = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
   Optional[String] $kubernetes_apt_location    = 'http://apt.kubernetes.io',
-  Optional[String] $kubernetes_apt_release     = "kubernetes-${::lsbdistcodename}",
+  Optional[String] $kubernetes_apt_release     = "kubernetes-${facts['os']['distro']['codename']}",
   Optional[String] $kubernetes_apt_repos       = 'main',
   Optional[String] $kubernetes_key_id          = '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
   Optional[String] $kubernetes_key_source      = 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
   Optional[String] $kubernetes_yum_baseurl     = 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
   Optional[String] $kubernetes_yum_gpgkey      = 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
   Optional[String] $docker_apt_location        = 'https://apt.dockerproject.org/repo',
-  Optional[String] $docker_apt_release         = "ubuntu-${::lsbdistcodename}",
+  Optional[String] $docker_apt_release         = "ubuntu-${facts['os']['distro']['codename']}",
   Optional[String] $docker_apt_repos           = 'main',
   Optional[String] $docker_yum_baseurl         = 'https://yum.dockerproject.org/repo/main/centos/7',
   Optional[String] $docker_yum_gpgkey          = 'https://yum.dockerproject.org/gpg',
@@ -382,8 +382,8 @@ class kubernetes (
   Boolean $create_repos                        = true,
   String $image_repository                     = 'k8s.gcr.io',
 ){
-  if ! $::osfamily in ['Debian','RedHat'] {
-    notify {"The OS family ${::osfamily} is not supported by this module":}
+  if ! $facts['os']['family'] in ['Debian','RedHat'] {
+    notify {"The OS family ${facts['os']['family']} is not supported by this module":}
   }
 
   if $controller {

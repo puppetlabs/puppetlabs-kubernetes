@@ -22,7 +22,7 @@ class kubernetes::repos (
 
 ){
   if $create_repos {
-    case $::osfamily  {
+    case $facts['os']['family']  {
       'Debian': {
         apt::source { 'kubernetes':
           location => $kubernetes_apt_location,
@@ -64,7 +64,7 @@ class kubernetes::repos (
         }
       }
 
-    default: { notify {"The OS family ${::os_family} is not supported by this module":} }
+    default: { notify {"The OS family ${facts['os']['family']} is not supported by this module":} }
 
     }
   }
