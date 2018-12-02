@@ -49,7 +49,7 @@ class kubernetes::packages (
   }
 
   if $container_runtime == 'docker' and $manage_docker == true {
-    case $::osfamily {
+    case $facts['os']['family'] {
       'Debian': {
         package { $docker_package_name:
           ensure => $docker_version,
@@ -66,7 +66,7 @@ class kubernetes::packages (
           require => Package[$docker_package_name],
         }
       }
-    default: { notify {"The OS family ${::osfamily} is not supported by this module":} }
+    default: { notify {"The OS family ${facts['os']['family']} is not supported by this module":} }
     }
   }
 

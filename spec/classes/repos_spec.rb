@@ -5,18 +5,20 @@ describe 'kubernetes::repos', :type => :class do
   context 'with osfamily => Ubuntu and manage_docker => true' do
     let(:facts) do
       {
-        :lsbdistcodename  => 'xenial',
-        :operatingsystem => 'Ubuntu',
-        :osfamily => 'Debian',
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppetlabs-apt
+        :kernel           => 'Linux',
         :os               => {
-          :name    => 'Ubuntu',
+          :family => 'Debian',
+          :name   => 'Ubuntu',
           :release => {
             :full => '16.04',
-          },        
+          },
+          :distro => {
+            :codename => 'xenial',
+          },
         },
       }
     end
-
     let(:params) do
        { 
          'container_runtime' => 'docker',
@@ -54,7 +56,6 @@ describe 'kubernetes::repos', :type => :class do
       :release  => 'ubuntu-xenial',
       :key      => { 'id' => '58118E89F3A912897C070ADBF76221572C52609D', 'source' => 'https://apt.dockerproject.org/gpg' }
     ) }
-
   end
 
   context 'with osfamily => RedHat and manage_epel => true and manage_docker => false' do
@@ -63,6 +64,18 @@ describe 'kubernetes::repos', :type => :class do
         :operatingsystem => 'RedHat',
         :osfamily => 'RedHat',
         :operatingsystemrelease => '7.0',
+      }
+    end
+    let(:facts) do
+      {
+        :kernel           => 'Linux',
+        :os               => {
+          :family  => 'RedHat',
+          :name    => 'RedHat',
+          :release => {
+            :full => '7.0',
+          },
+        },
       }
     end
 
