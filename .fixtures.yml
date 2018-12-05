@@ -3,10 +3,17 @@ fixtures:
     stdlib: 'puppetlabs-stdlib'
     apt: 'puppetlabs-apt'
     wget: 'puppet-wget'
-    archive: "puppet-archive"    
+    archive: "puppet-archive"
     translate: "puppetlabs-translate"
     augeasproviders_sysctl: "herculesteam-augeasproviders_sysctl"
     augeasproviders_core: "herculesteam-augeasproviders_core"
     kmod: "camptocamp-kmod"
+  repositories:
+    yumrepo_core:
+      repo: https://github.com/puppetlabs/puppetlabs-yumrepo_core.git
+      puppet_version: ">= 6.0.0"
+    augueas_core:
+      repo: https://github.com/puppetlabs/puppetlabs-augeas_core.git
+      puppet_version: ">= 6.0.0"
   symlinks:
     kubernetes: "#{source_dir}"
