@@ -44,10 +44,7 @@ group :development do
   gem "rake", '~> 10.0',                                         require: false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('1.8.7') && Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('1.9')
 end
 
-#Temporarily commenting out ENV variable for puppet_version and hardcoding puppet version to 5.5.6 until we add puppet 6 support this is to fix ci.
-#puppet_version = ENV['PUPPET_GEM_VERSION']
-
-puppet_version = '5.5.6'
+puppet_version = ENV['PUPPET_GEM_VERSION']
 puppet_type = gem_type(puppet_version)
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
