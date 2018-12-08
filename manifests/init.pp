@@ -87,6 +87,14 @@
 #  The URL to download the etcd archive
 #  Defaults to https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}
 #
+# [*etcd_install_method*]
+#  The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
+#  Defaults to wget
+# 
+# [*etcd_package_name*]
+#  The system package name for installing etcd
+#  Defaults to etcd-server
+#
 # [*runc_version*]
 #  The version of runc to install
 #  Defaults to 1.0.0-rc5
@@ -361,7 +369,9 @@ class kubernetes (
   Optional[String] $containerd_source          =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $etcd_archive                         = "etcd-v${etcd_version}-linux-amd64.tar.gz",
+  String $etcd_package_name                    = 'etcd-server',
   String $etcd_source                          = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
+  String $etcd_install_method                  = 'wget',
   Optional[String] $kubernetes_apt_location    = 'http://apt.kubernetes.io',
   Optional[String] $kubernetes_apt_release     = "kubernetes-${facts['os']['distro']['codename']}",
   Optional[String] $kubernetes_apt_repos       = 'main',

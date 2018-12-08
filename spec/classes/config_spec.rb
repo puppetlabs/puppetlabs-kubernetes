@@ -26,6 +26,7 @@ describe 'kubernetes::config', :type => :class do
         'etcd_peers' => ['foo'], 
         'etcd_ip' => 'foo', 
         'etcd_initial_cluster' => 'foo',  
+        'etcd_install_method' => 'wget',
         'token' => 'foo',     
         'apiserver_cert_extra_sans' => ['foo'],
         'apiserver_extra_arguments' => ['foo'],
@@ -58,6 +59,7 @@ describe 'kubernetes::config', :type => :class do
 
 
     it { should contain_file('/etc/systemd/system/etcd.service') }
+    it { should_not contain_file('/etc/default/etcd') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
@@ -89,6 +91,7 @@ describe 'kubernetes::config', :type => :class do
         'etcd_peers' => ['foo'], 
         'etcd_ip' => 'foo', 
         'etcd_initial_cluster' => 'foo',  
+        'etcd_install_method' => 'wget',
         'token' => 'foo',     
         'apiserver_cert_extra_sans' => ['foo'],
         'apiserver_extra_arguments' => ['foo'],
@@ -121,8 +124,54 @@ describe 'kubernetes::config', :type => :class do
 
 
     it { should_not contain_file('/etc/systemd/system/etcd.service') }
+    it { should_not contain_file('/etc/default/etcd') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
+  end
+
+  context 'with controller => true and manage_etcd => true and etcd_install_method => package' do
+    let(:params) do 
+        {
+        'kubernetes_version' => '1.10.2',        
+        'container_runtime' => 'docker',
+        'manage_etcd' => true,
+        'etcd_version' => '3.1.12',
+        'etcd_ca_key' => 'foo',
+        'etcd_ca_crt' => 'foo', 
+        'etcdclient_key' => 'foo',
+        'etcdclient_crt' => 'foo',
+        'api_server_count' => 3,
+        'kubernetes_ca_crt' => 'foo',
+        'kubernetes_ca_key' => 'foo',
+        'discovery_token_hash' => 'foo',
+        'sa_pub' => 'foo',
+        'sa_key' => 'foo',
+        'kube_api_advertise_address' => 'foo',
+        'cni_pod_cidr' => '10.0.0.0/24',
+        'etcdserver_crt' => 'foo', 
+        'etcdserver_key' => 'foo', 
+        'etcdpeer_crt' => 'foo', 
+        'etcdpeer_key' => 'foo', 
+        'etcd_peers' => ['foo'], 
+        'etcd_ip' => 'foo', 
+        'etcd_initial_cluster' => 'foo',  
+        'token' => 'foo',     
+        'apiserver_cert_extra_sans' => ['foo'],
+        'apiserver_extra_arguments' => ['foo'],
+        'service_cidr' => '10.96.0.0/12',
+        'node_label' => 'foo',
+        'cloud_provider' => 'undef',
+        'cloud_config' => 'undef',        
+        'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
+        'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
+        'kubelet_extra_arguments' => ['foo'],
+        'image_repository' => 'k8s.gcr.io',
+        'etcd_install_method' => 'package',
+        }
+    end
+
+    it { should_not contain_file('/etc/systemd/system/etcd.service') }
+    it { should contain_file('/etc/default/etcd') }
   end
 end

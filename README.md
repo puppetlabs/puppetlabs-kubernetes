@@ -353,6 +353,17 @@ The download URL for the etcd archive.
 
 Defaults to `https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}`.
 
+#### `etcd_install_method`
+The method on how to install etcd. Can be either `wget` (using etcd_source) or `package` (using $etcd_package_name)
+
+Defaults to `wget`.
+
+#### `etcd_package_name`
+
+The system package name for installing etcd
+
+Defaults to `etcd-server`.
+
 #### `etcd_ip`
 
 Specifies the IP address etcd uses for communications.

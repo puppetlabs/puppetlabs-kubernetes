@@ -45,7 +45,8 @@ describe 'kubernetes', :type => :class do
         'token' => 'foo',
         'create_repos' => true,
         'disable_swap' => true,
-        
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
       }
     end
 
@@ -79,7 +80,8 @@ describe 'kubernetes', :type => :class do
         'cloud_provider' => :undef,  
         'token' => 'foo',
         'disable_swap' => true,
-                         
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
       }
     end
 
@@ -119,7 +121,8 @@ describe 'kubernetes', :type => :class do
         'cloud_provider' => :undef,
         'token' => 'foo',
         'disable_swap' => true,
-                
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
       }
     end
 
