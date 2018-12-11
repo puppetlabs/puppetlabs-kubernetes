@@ -80,4 +80,8 @@ class kubernetes::service (
       notify  => Exec['kubernetes-systemd-reload'],
     }
   }
+
+  service { 'kubelet':
+    enable => true
+  }
 }
