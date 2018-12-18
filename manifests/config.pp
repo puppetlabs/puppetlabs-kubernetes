@@ -76,6 +76,20 @@ class kubernetes::config (
     },
   }
 
+  # Need to merge the cloud configuration parameters into extra_arguments
+  if $cloud_provider {
+    $cloud_args = $cloud_config ? {
+      undef   => ["cloud-provider: ${cloud_provider}"],
+      default => ["cloud-provider: ${cloud_provider}", "cloud-config: ${cloud_config}"],
+    }
+    $apiserver_merged_extra_arguments = concat($apiserver_extra_arguments, $cloud_args)
+    $kubelet_merged_extra_arguments = concat($kubelet_extra_arguments, $cloud_args)
+    $controllermanager_merged_extra_arguments = $cloud_args
+  }
+  else {
+    $controllermanager_merged_extra_arguments = []
+  }
+
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
   $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
   $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')

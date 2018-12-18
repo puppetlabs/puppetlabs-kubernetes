@@ -5,7 +5,9 @@ class kubernetes::service (
   Boolean $controller               = $kubernetes::controller,
   Boolean $manage_docker            = $kubernetes::manage_docker,
   Boolean $manage_etcd              = $kubernetes::manage_etcd,
+  String $kubernetes_version        = $kubernetes::kubernetes_version,
   Optional[String] $cloud_provider  = $kubernetes::cloud_provider,
+  Optional[String] $cloud_config    = $kubernetes::cloud_config,
 ){
   file { '/etc/systemd/system/kubelet.service.d':
     ensure => directory,
@@ -69,7 +71,14 @@ class kubernetes::service (
     }
   }
 
-  if $cloud_provider {
+  # v1.12 and up get the cloud config parameters from config file
+  if $kubernetes_version =~ /1.1(0|1)/ and !empty($cloud_provider) {
+    # Cloud config is not used by all providers, but will cause service startup fail if specified but missing
+    if empty($cloud_config) {
+      $kubelet_extra_args = "--cloud-provider=${cloud_provider}"
+    } else {
+      $kubelet_extra_args = "--cloud-provider=${cloud_provider} --cloud-config=${cloud_config}"
+    }
     file { '/etc/systemd/system/kubelet.service.d/20-cloud.conf':
       ensure  => file,
       owner   => 'root',
