@@ -41,6 +41,7 @@ class kubernetes::cluster_roles (
       path                    => $path,
       env                     => $env_controller,
       node_label              => $node_label,
+      node_name               => $node_label,
       ignore_preflight_errors => $preflight_errors,
       }
     }
@@ -54,6 +55,7 @@ class kubernetes::cluster_roles (
       ca_cert_hash            => $discovery_token_hash,
       cri_socket              => $cri_socket,
       node_label              => $node_label,
+      node_name               => $node_label,
       ignore_preflight_errors => $preflight_errors,
       }
     }
