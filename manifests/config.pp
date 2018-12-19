@@ -29,7 +29,7 @@ class kubernetes::config (
   Optional[Array] $apiserver_extra_arguments = $kubernetes::apiserver_extra_arguments,
   Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
   String $service_cidr = $kubernetes::service_cidr,
-  String $node_label = $kubernetes::node_label,
+  String $node_name = $kubernetes::node_name,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
   Optional[String] $cloud_config = $kubernetes::cloud_config,
   Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,

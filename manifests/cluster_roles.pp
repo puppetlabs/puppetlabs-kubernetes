@@ -7,7 +7,7 @@ class kubernetes::cluster_roles (
   Optional[Boolean] $worker = $kubernetes::worker,
   Optional[String] $etcd_ip = $kubernetes::etcd_ip,
   Optional[String] $etcd_initial_cluster = $kubernetes::etcd_initial_cluster,
-  String $node_label = $kubernetes::node_label,
+  String $node_name = $kubernetes::node_name,
   String $etcd_ca_key = $kubernetes::etcd_ca_key,
   String $etcd_ca_crt = $kubernetes::etcd_ca_crt,
   String $etcdclient_key = $kubernetes::etcdclient_key,
@@ -36,24 +36,24 @@ class kubernetes::cluster_roles (
 
 
   if $controller {
-    kubernetes::kubeadm_init { $node_label:
+    kubernetes::kubeadm_init { $node_name:
       config                  => '/etc/kubernetes/config.yaml',
       path                    => $path,
       env                     => $env_controller,
-      node_label              => $node_label,
+      node_name               => $node_name,
       ignore_preflight_errors => $preflight_errors,
       }
     }
 
   if $worker {
-    kubernetes::kubeadm_join { $node_label:
+    kubernetes::kubeadm_join { $node_name:
       path                    => $path,
       env                     => $env_worker,
       controller_address      => $controller_address,
       token                   => $token,
       ca_cert_hash            => $discovery_token_hash,
       cri_socket              => $cri_socket,
-      node_label              => $node_label,
+      node_name               => $node_name,
       ignore_preflight_errors => $preflight_errors,
       }
     }

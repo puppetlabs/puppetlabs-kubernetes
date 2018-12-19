@@ -15,7 +15,7 @@ caFile: /etc/kubernetes/pki/etcd/ca.crt
 CertificatesDir: /etc/kubernetes/pki
 imageRepository: <%= @image_repository %>
 kubernetesVersion: v<%= @kubernetes_version %>
-nodeName: <%= @node_label %>
+nodeName: <%= @node_name %>
 networking:
   podSubnet: <%= @cni_pod_cidr %>
   serviceSubnet: <%= @service_cidr %>

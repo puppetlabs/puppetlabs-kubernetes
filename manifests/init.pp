@@ -171,7 +171,8 @@
 #
 # [*node_label*]
 #  The name to assign the node in the cluster. 
-#  Defaults to hostname
+#  Defaults to hostname. 
+#   NOTE: Ignored when cloud_provider is AWS, until this lands fixed https://github.com/kubernetes/kubernetes/pull/61878
 #
 # [*token*]
 #   A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
@@ -347,7 +348,7 @@ class kubernetes (
   Optional[Array] $apiserver_cert_extra_sans   = [],
   Optional[Array] $apiserver_extra_arguments   = [],
   String $service_cidr                         = '10.96.0.0/12',
-  String $node_label                           = $facts['networking']['hostname'],
+  Optional[String] $node_label                 = undef,
   Optional[String] $controller_address         = undef,
   Optional[String] $cloud_provider             = undef,
   Optional[String] $cloud_config               = undef,
@@ -384,6 +385,20 @@ class kubernetes (
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}
+  }
+
+  # Some cloud providers override or fix the node name, so we can't override
+  case $cloud_provider {
+    # k8s controller in AWS with delete any nodes it can't query in the metadata
+    'aws': {
+      $node_name = $facts['ec2_metadata']['hostname']
+      if (!empty($node_label) and $node_label != $node_name) {
+        notify { 'aws_name_override':
+          message => "AWS provider requires node name to match AWS metadata: ${node_name}, ignoring node label ${node_label}",
+        }
+      }
+    }
+    default: { $node_name = pick($node_label, $facts['networking']['hostname']) }
   }
 
   if $controller {

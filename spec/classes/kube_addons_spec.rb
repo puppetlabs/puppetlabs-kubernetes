@@ -22,7 +22,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'install_dashboard' => false,
       'kubernetes_version' => '1.10.2',
       'schedule_on_controller' => true,
-      'node_label' => 'foo',
+      'node_name' => 'foo',
       }
     end
 
@@ -39,7 +39,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'install_dashboard' => true,
       'kubernetes_version' => '1.10.2',
       'schedule_on_controller' => false,
-      'node_label' => 'foo',
+      'node_name' => 'foo',
       }
     end
     it { should contain_exec('Install Kubernetes dashboard')}

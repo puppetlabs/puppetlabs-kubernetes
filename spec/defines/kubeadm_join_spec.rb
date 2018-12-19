@@ -26,7 +26,6 @@ describe 'kubernetes::kubeadm_join', :type => :define do
                   'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                   'token' => 'token',
                   'ca_cert_hash' => 'hash',
-                  'node_label' => 'kube-node',
                   
                } }
 
