@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_join
 define kubernetes::kubeadm_join (
-String $node_label                       = $node_label,
+  String $node_name                        = $kubernetes::node_name,
 String $controller_address               = undef,
 Optional[String] $ca_cert_hash           = undef,
 Optional[String] $config                 = undef,
@@ -10,7 +10,6 @@ Optional[String] $discovery_token        = undef,
 Optional[Array] $env                     = undef,
 Optional[String] $feature_gates          = undef,
 Optional[Array] $ignore_preflight_errors = undef,
-Optional[String] $node_name              = undef,
 Optional[Array] $path                    = undef,
 Boolean $skip_ca_verification            = false,
 Optional[String] $tls_bootstrap_token    = undef,
@@ -34,7 +33,7 @@ Optional[String] $token                  = undef
 
 
   $exec_join = "kubeadm join ${kubeadm_join_flags}"
-  $unless_join = "kubectl get nodes | grep ${node_label}"
+  $unless_join = "kubectl get nodes | grep ${node_name}"
 
   exec { 'kubeadm join':
     command     => $exec_join,

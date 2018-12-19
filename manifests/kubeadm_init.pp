@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_init
 define kubernetes::kubeadm_init (
-  String $node_label                            = $node_label,
+  String $node_name                             = $kubernetes::node_name,
   Optional[String] $apiserver_advertise_address = undef,
   Optional[Integer] $apiserver_bind_port        = undef,
   Optional[Array] $apiserver_cert_extra_sans    = undef,
@@ -12,7 +12,6 @@ define kubernetes::kubeadm_init (
   Optional[Array] $feature_gates                = undef,
   Optional[Array] $ignore_preflight_errors      = undef,
   Optional[String] $kubernetes_version          = undef,
-  Optional[String] $node_name                   = undef,
   Optional[String] $pod_network_cidr            = undef,
   Optional[String] $service_cidr                = undef,
   Optional[String] $service_dns_domain          = undef,
@@ -44,7 +43,7 @@ define kubernetes::kubeadm_init (
 
 
   $exec_init = "kubeadm init ${kubeadm_init_flags}"
-  $unless_init = "kubectl get nodes | grep ${node_label}"
+  $unless_init = "kubectl get nodes | grep ${node_name}"
 
   exec { 'kubeadm init':
     command     => $exec_init,

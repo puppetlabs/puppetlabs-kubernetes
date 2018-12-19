@@ -24,7 +24,6 @@ describe 'kubernetes::kubeadm_init', :type => :define do
                   'node_name' => 'kube-master',
                   'path' => [ '/bin','/usr/bin','/sbin'],
                   'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
-                  'node_label' => 'kube-master',
 
                } }
    it { should compile.with_all_deps }  

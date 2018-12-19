@@ -7,7 +7,7 @@ class kubernetes::kube_addons (
   String $kubernetes_version                 = $kubernetes::kubernetes_version,
   Boolean $controller                        = $kubernetes::controller,
   Optional[Boolean] $schedule_on_controller  = $kubernetes::schedule_on_controller,
-  String $node_label                         = $kubernetes::node_label,
+  String $node_name                          = $kubernetes::node_name,
 ){
 
   Exec {
@@ -35,8 +35,8 @@ class kubernetes::kube_addons (
   if $schedule_on_controller {
 
     exec { 'schedule on controller':
-      command => "kubectl taint nodes ${node_label} node-role.kubernetes.io/master-",
-      onlyif  => "kubectl describe nodes ${node_label} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'"
+      command => "kubectl taint nodes ${node_name} node-role.kubernetes.io/master-",
+      onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'"
     }
   }
 
