@@ -25,23 +25,23 @@ class kubernetes::repos (
     case $facts['os']['family']  {
       'Debian': {
         apt::source { 'kubernetes':
-          location => $kubernetes_apt_location,
-          repos    => $kubernetes_apt_repos,
-          release  => $kubernetes_apt_release,
+          location => pick($kubernetes_apt_location,'http://apt.kubernetes.io'),
+          repos    => pick($kubernetes_apt_repos,'main'),
+          release  => pick($kubernetes_apt_release,"kubernetes-${facts['os']['distro']['codename']}"),
           key      => {
-            'id'     => $kubernetes_key_id,
-            'source' => $kubernetes_key_source,
+            'id'     => pick($kubernetes_key_id,'54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'),
+            'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
             },
           }
 
           if $container_runtime == 'docker' and $manage_docker == true {
             apt::source { 'docker':
-              location => $docker_apt_location,
-              repos    => $docker_apt_repos,
-              release  => $docker_apt_release,
+              location => pick($docker_apt_location,'https://apt.dockerproject.org/repo'),
+              repos    => pick($docker_apt_repos,'main'),
+              release  => pick($docker_apt_release,"ubuntu-${facts['os']['distro']['codename']}"),
               key      => {
-                'id'     => $docker_key_id,
-                'source' => $docker_key_source,
+                'id'     => pick($docker_key_id,'58118E89F3A912897C070ADBF76221572C52609D'),
+                'source' => pick($docker_key_source,'https://apt.dockerproject.org/gpg'),
             },
           }
         }
@@ -50,16 +50,16 @@ class kubernetes::repos (
         if $container_runtime == 'docker' and $manage_docker == true {
           yumrepo { 'docker':
             descr    => 'docker',
-            baseurl  => $docker_yum_baseurl,
-            gpgkey   => $docker_yum_gpgkey,
+            baseurl  => pick($docker_yum_baseurl,'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
+            gpgkey   => pick($docker_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
             gpgcheck => true,
           }
         }
 
         yumrepo { 'kubernetes':
           descr    => 'Kubernetes',
-          baseurl  => $kubernetes_yum_baseurl,
-          gpgkey   => $kubernetes_yum_gpgkey,
+          baseurl  => pick($kubernetes_yum_baseurl,'https://yum.dockerproject.org/repo/main/centos/7'),
+          gpgkey   => pick($kubernetes_yum_gpgkey,'https://yum.dockerproject.org/gpg'),
           gpgcheck => true,
         }
       }

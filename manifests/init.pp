@@ -229,7 +229,7 @@
 #
 # [*kubernetes_apt_release*]
 #  The release name for the APT repo for the Kubernetes packages.
-#  Defaults to 'kubernetes-${::lsbdistcodename}'
+#  Defaults to 'kubernetes-${facts.os.distro.codename}'
 #
 # [*kubernetes_apt_repos*]
 #  The repos to install from the Kubernetes APT url
@@ -257,7 +257,7 @@
 #
 # [*docker_apt_release*]
 #  The release name for the APT repo for the Docker packages.
-#  Defaults to 'ubuntu-${::lsbdistcodename}'
+#  Defaults to 'ubuntu-${facts.os.distro.codename}'
 #
 # [*docker_apt_repos*]
 #  The repos to install from the Docker APT url
@@ -362,20 +362,20 @@ class kubernetes (
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $etcd_archive                         = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   String $etcd_source                          = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
-  Optional[String] $kubernetes_apt_location    = 'http://apt.kubernetes.io',
-  Optional[String] $kubernetes_apt_release     = "kubernetes-${facts['os']['distro']['codename']}",
-  Optional[String] $kubernetes_apt_repos       = 'main',
-  Optional[String] $kubernetes_key_id          = '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
-  Optional[String] $kubernetes_key_source      = 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
-  Optional[String] $kubernetes_yum_baseurl     = 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
-  Optional[String] $kubernetes_yum_gpgkey      = 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
-  Optional[String] $docker_apt_location        = 'https://apt.dockerproject.org/repo',
-  Optional[String] $docker_apt_release         = "ubuntu-${facts['os']['distro']['codename']}",
-  Optional[String] $docker_apt_repos           = 'main',
-  Optional[String] $docker_yum_baseurl         = 'https://yum.dockerproject.org/repo/main/centos/7',
-  Optional[String] $docker_yum_gpgkey          = 'https://yum.dockerproject.org/gpg',
-  Optional[String] $docker_key_id              = '58118E89F3A912897C070ADBF76221572C52609D',
-  Optional[String] $docker_key_source          = 'https://apt.dockerproject.org/gpg',
+  Optional[String] $kubernetes_apt_location    = undef,
+  Optional[String] $kubernetes_apt_release     = undef,
+  Optional[String] $kubernetes_apt_repos       = undef,
+  Optional[String] $kubernetes_key_id          = undef,
+  Optional[String] $kubernetes_key_source      = undef,
+  Optional[String] $kubernetes_yum_baseurl     = undef,
+  Optional[String] $kubernetes_yum_gpgkey      = undef,
+  Optional[String] $docker_apt_location        = undef,
+  Optional[String] $docker_apt_release         = undef,
+  Optional[String] $docker_apt_repos           = undef,
+  Optional[String] $docker_yum_baseurl         = undef,
+  Optional[String] $docker_yum_gpgkey          = undef,
+  Optional[String] $docker_key_id              = undef,
+  Optional[String] $docker_key_source          = undef,
   Boolean $disable_swap                        = true,
   Boolean $manage_kernel_modules               = true,
   Boolean $manage_sysctl_settings              = true,
