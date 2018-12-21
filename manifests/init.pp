@@ -412,6 +412,9 @@ class kubernetes (
     }
   }
 
+  # Not sure if should allow this to be changed
+  $config_file = '/etc/kubernetes/config.yaml'
+
   if $controller {
     include kubernetes::repos
     include kubernetes::packages
@@ -435,12 +438,13 @@ class kubernetes (
   }
 
   if $worker {
-    include kubernetes::repos
-    include kubernetes::packages
-    include kubernetes::service
-    include kubernetes::cluster_roles
     contain kubernetes::repos
     contain kubernetes::packages
+    # K8s 1.10/1.11 can't use config files
+    unless $kubernetes_version =~ /^1.1(0|1)/ {
+      contain kubernetes::config::worker
+      Class['kubernetes::config::worker'] -> Class['kubernetes::service']
+    }
     contain kubernetes::service
     contain kubernetes::cluster_roles
 

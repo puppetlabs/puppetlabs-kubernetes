@@ -1,6 +1,6 @@
 #Calss kubernetes config, populates config files with params to bootstrap cluster
 class kubernetes::config (
-
+  String $config_file = $kubernetes::config_file,
   Boolean $manage_etcd = $kubernetes::manage_etcd,
   String $kubernetes_version  = $kubernetes::kubernetes_version,
   String $etcd_ca_key = $kubernetes::etcd_ca_key,
@@ -115,7 +115,7 @@ class kubernetes::config (
     $template = 'alpha3'
   }
 
-  file { '/etc/kubernetes/config.yaml':
+  file { $config_file:
     ensure  => present,
     content => template("kubernetes/config-${template}.yaml.erb"),
   }
