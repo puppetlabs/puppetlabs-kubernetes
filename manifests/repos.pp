@@ -50,16 +50,16 @@ class kubernetes::repos (
         if $container_runtime == 'docker' and $manage_docker == true {
           yumrepo { 'docker':
             descr    => 'docker',
-            baseurl  => pick($docker_yum_baseurl,'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
-            gpgkey   => pick($docker_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
+            baseurl  => pick($docker_yum_baseurl,'https://yum.dockerproject.org/repo/main/centos/7'),
+            gpgkey   => pick($docker_yum_gpgkey,'https://yum.dockerproject.org/gpg'),
             gpgcheck => true,
           }
         }
 
         yumrepo { 'kubernetes':
           descr    => 'Kubernetes',
-          baseurl  => pick($kubernetes_yum_baseurl,'https://yum.dockerproject.org/repo/main/centos/7'),
-          gpgkey   => pick($kubernetes_yum_gpgkey,'https://yum.dockerproject.org/gpg'),
+          baseurl  => pick($kubernetes_yum_baseurl,'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
+          gpgkey   => pick($kubernetes_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
           gpgcheck => true,
         }
       }
