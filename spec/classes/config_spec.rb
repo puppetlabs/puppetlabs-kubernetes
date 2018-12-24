@@ -1,43 +1,38 @@
 require 'spec_helper'
 describe 'kubernetes::config', :type => :class do
-  context 'with controller => true and manage_etcd => true' do
+  let(:pre_condition) { 'include kubernetes' }
+  let(:facts) do {
+    :kernel => 'Linux',
+    :networking => {
+      :hostname => 'foo',
+    },
+    :os => {
+      :family => "Debian",
+      :name => 'Ubuntu',
+      :release => {
+        :full => '16.04',
+      },
+      :distro => {
+        :codename => "xenial",
+      },
+    },
+    :networking => {
+      :hostname => 'foo',
+    },
+    :ec2_metadata => {
+      :hostname => 'ip-10-10-10-1.ec2.internal',
+    },
+  } end
+
+  context 'with manage_etcd => true' do
+    let(:pre_condition) { 'include kubernetes' }
     let(:params) do 
-        {
-        'kubernetes_version' => '1.10.2',        
-        'container_runtime' => 'docker',
+      {
         'manage_etcd' => true,
-        'etcd_version' => '3.1.12',
-        'etcd_ca_key' => 'foo',
-        'etcd_ca_crt' => 'foo', 
-        'etcdclient_key' => 'foo',
-        'etcdclient_crt' => 'foo',
-        'api_server_count' => 3,
-        'kubernetes_ca_crt' => 'foo',
-        'kubernetes_ca_key' => 'foo',
-        'discovery_token_hash' => 'foo',
-        'sa_pub' => 'foo',
-        'sa_key' => 'foo',
-        'kube_api_advertise_address' => 'foo',
-        'cni_pod_cidr' => '10.0.0.0/24',
-        'etcdserver_crt' => 'foo', 
-        'etcdserver_key' => 'foo', 
-        'etcdpeer_crt' => 'foo', 
-        'etcdpeer_key' => 'foo', 
-        'etcd_peers' => ['foo'], 
-        'etcd_ip' => 'foo', 
-        'etcd_initial_cluster' => 'foo',  
-        'token' => 'foo',     
-        'apiserver_cert_extra_sans' => ['foo'],
-        'apiserver_extra_arguments' => ['foo'],
-        'service_cidr' => '10.96.0.0/12',
-        'node_name' => 'foo',
-        'cloud_provider' => '',
-        'cloud_config' => '',
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'kubelet_extra_arguments' => ['foo'],
-        'image_repository' => 'k8s.gcr.io',
-        }
+      }
     end
 
     kube_dirs = ['/etc/kubernetes/', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/pki/etcd']
@@ -63,43 +58,14 @@ describe 'kubernetes::config', :type => :class do
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
   end
 
-  context 'with controller => true and manage_etcd => false' do
+  context 'with manage_etcd => false' do
     let(:params) do 
         {
-        'kubernetes_version' => '1.10.2',        
-        'container_runtime' => 'docker',
         'manage_etcd' => false,
-        'etcd_version' => '3.1.12',
-        'etcd_ca_key' => 'foo',
-        'etcd_ca_crt' => 'foo', 
-        'etcdclient_key' => 'foo',
-        'etcdclient_crt' => 'foo',
-        'api_server_count' => 3,
-        'kubernetes_ca_crt' => 'foo',
-        'kubernetes_ca_key' => 'foo',
-        'discovery_token_hash' => 'foo',
-        'sa_pub' => 'foo',
-        'sa_key' => 'foo',
-        'kube_api_advertise_address' => 'foo',
-        'cni_pod_cidr' => '10.0.0.0/24',
-        'etcdserver_crt' => 'foo', 
-        'etcdserver_key' => 'foo', 
-        'etcdpeer_crt' => 'foo', 
-        'etcdpeer_key' => 'foo', 
-        'etcd_peers' => ['foo'], 
-        'etcd_ip' => 'foo', 
-        'etcd_initial_cluster' => 'foo',  
-        'token' => 'foo',     
-        'apiserver_cert_extra_sans' => ['foo'],
-        'apiserver_extra_arguments' => ['foo'],
-        'service_cidr' => '10.96.0.0/12',
-        'node_name' => 'foo',
-        'cloud_provider' => '',
         'cloud_config' => '',
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'kubelet_extra_arguments' => ['foo'],
-        'image_repository' => 'k8s.gcr.io',
         }
     end
 
@@ -130,39 +96,10 @@ describe 'kubernetes::config', :type => :class do
     let(:params) do
         {
         'kubernetes_version' => '1.12.2',
-        'container_runtime' => 'docker',
-        'manage_etcd' => true,
-        'etcd_version' => '3.3.10',
-        'etcd_ca_key' => 'foo',
-        'etcd_ca_crt' => 'foo',
-        'etcdclient_key' => 'foo',
-        'etcdclient_crt' => 'foo',
-        'api_server_count' => 3,
-        'kubernetes_ca_crt' => 'foo',
-        'kubernetes_ca_key' => 'foo',
-        'discovery_token_hash' => 'foo',
-        'sa_pub' => 'foo',
-        'sa_key' => 'foo',
-        'kube_api_advertise_address' => 'foo',
-        'cni_pod_cidr' => '10.0.0.0/24',
-        'etcdserver_crt' => 'foo',
-        'etcdserver_key' => 'foo',
-        'etcdpeer_crt' => 'foo',
-        'etcdpeer_key' => 'foo',
-        'etcd_peers' => ['foo'],
-        'etcd_ip' => 'foo',
-        'etcd_initial_cluster' => 'foo',
-        'token' => 'foo',
-        'apiserver_cert_extra_sans' => ['foo'],
-        'apiserver_extra_arguments' => ['foo'],
-        'service_cidr' => '10.96.0.0/12',
         'node_name' => 'foo',
         'cloud_provider' => 'aws',
         'cloud_config' => '',
-        'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
-        'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'kubelet_extra_arguments' => ['foo: bar'],
-        'image_repository' => 'k8s.gcr.io',
         }
     end
 
