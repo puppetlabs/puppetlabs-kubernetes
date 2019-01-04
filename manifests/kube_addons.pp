@@ -4,6 +4,7 @@ class kubernetes::kube_addons (
   Optional[String] $cni_network_provider     = $kubernetes::cni_network_provider,
   Optional[String] $cni_rbac_binding         = $kubernetes::cni_rbac_binding,
   Boolean $install_dashboard                 = $kubernetes::install_dashboard,
+  String $dashboard_version                  = $kubernetes::dashboard_version,
   String $kubernetes_version                 = $kubernetes::kubernetes_version,
   Boolean $controller                        = $kubernetes::controller,
   Optional[Boolean] $schedule_on_controller  = $kubernetes::schedule_on_controller,
@@ -42,7 +43,7 @@ class kubernetes::kube_addons (
 
   if $install_dashboard  {
     exec { 'Install Kubernetes dashboard':
-      command => 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml',
+      command => "kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml",
       onlyif  => 'kubectl get nodes',
       unless  => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
       }

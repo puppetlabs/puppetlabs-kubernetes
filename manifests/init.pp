@@ -186,6 +186,10 @@
 #   This is a bool that determines if the kubernetes dashboard is installed.
 #   Defaults to false
 #
+# [*dashboard_version*]
+#   The version of Kubernetes dashboard you want to install.
+#   Defaults to v1.10.1
+#
 # [*schedule_on_controller*]
 #   A flag to remove the master role and allow pod scheduling on controllers
 #   Defaults to true
@@ -337,6 +341,7 @@ class kubernetes (
   Optional[String] $cni_network_provider       = undef,
   Optional[String] $cni_rbac_binding           = undef,
   Boolean $install_dashboard                   = false,
+  String $dashboard_version                    = 'v1.10.1',
   Boolean $schedule_on_controller              = false,
   Integer $api_server_count                    = undef,
   String $kubernetes_ca_crt                    = undef,
