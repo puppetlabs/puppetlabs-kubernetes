@@ -78,6 +78,14 @@ describe 'kubernetes::service', :type => :class do
     it { should contain_service('kubelet')}
   end
 
+  context 'with os.family => RedHat' do
+    let(:facts) do
+      super().merge({ :os => { :family => 'RedHat' }})
+    end
+
+    it { is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/11-cgroups.conf') }
+  end
+
   context 'with version => 1.10 and cloud_provider => aws and cloud_config => undef' do
     let(:params) do
         {
