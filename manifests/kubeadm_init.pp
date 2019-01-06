@@ -32,7 +32,6 @@ define kubernetes::kubeadm_init (
     feature_gates               => $feature_gates,
     ignore_preflight_errors     => $ignore_preflight_errors,
     kubernetes_version          => $kubernetes_version,
-    node_name                   => $node_name,
     pod_network_cidr            => $pod_network_cidr,
     service_cidr                => $service_cidr,
     service_dns_domain          => $service_dns_domain,
