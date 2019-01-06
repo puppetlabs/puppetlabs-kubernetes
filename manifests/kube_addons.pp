@@ -28,7 +28,7 @@ class kubernetes::kube_addons (
   }
 
   exec { 'Install cni network provider':
-    command => "kubectl apply -f ${cni_network_provider}",
+    command => "kubectl apply -f \"${cni_network_provider}\"",
     onlyif  => 'kubectl get nodes',
     unless  => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node)'"
     }
