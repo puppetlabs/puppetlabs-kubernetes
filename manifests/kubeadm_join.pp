@@ -26,7 +26,6 @@ Optional[String] $token                  = undef
     skip_ca_verification     => $skip_ca_verification,
     feature_gates            => $feature_gates,
     ignore_preflight_errors  => $ignore_preflight_errors,
-    node_name                => $node_name,
     tls_bootstrap_token      => $tls_bootstrap_token,
     token                    => $token
   })
