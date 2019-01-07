@@ -24,10 +24,11 @@ class kubernetes::repos (
   if $create_repos {
     case $facts['os']['family']  {
       'Debian': {
+        $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
           location => pick($kubernetes_apt_location,'http://apt.kubernetes.io'),
           repos    => pick($kubernetes_apt_repos,'main'),
-          release  => pick($kubernetes_apt_release,"kubernetes-${facts['os']['distro']['codename']}"),
+          release  => pick($kubernetes_apt_release,"kubernetes-${codename}"),
           key      => {
             'id'     => pick($kubernetes_key_id,'54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'),
             'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
@@ -38,7 +39,7 @@ class kubernetes::repos (
             apt::source { 'docker':
               location => pick($docker_apt_location,'https://apt.dockerproject.org/repo'),
               repos    => pick($docker_apt_repos,'main'),
-              release  => pick($docker_apt_release,"ubuntu-${facts['os']['distro']['codename']}"),
+              release  => pick($docker_apt_release,"ubuntu-${codename}"),
               key      => {
                 'id'     => pick($docker_key_id,'58118E89F3A912897C070ADBF76221572C52609D'),
                 'source' => pick($docker_key_source,'https://apt.dockerproject.org/gpg'),
