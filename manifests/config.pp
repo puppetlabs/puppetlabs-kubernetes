@@ -85,9 +85,23 @@ class kubernetes::config (
     $apiserver_merged_extra_arguments = concat($apiserver_extra_arguments, $cloud_args)
     $kubelet_merged_extra_arguments = concat($kubelet_extra_arguments, $cloud_args)
     $controllermanager_merged_extra_arguments = $cloud_args
+
+    # could check against Kubernetes 1.10 here, but that uses alpha1 config which doesn't have these options
+    if $cloud_config {
+      # The cloud config must be mounted into the apiserver and controllermanager containers
+      $controllermanager_extra_volumes = $apiserver_extra_volumes = {
+        'cloud' => {
+          hostPath  => $cloud_config,
+          mountPath => $cloud_config,
+        }
+      }
+    }
   }
   else {
+    $apiserver_merged_extra_arguments = $apiserver_extra_arguments
+    $apiserver_extra_volumes = {}
     $controllermanager_merged_extra_arguments = []
+    $controllermanager_extra_volumes = {}
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'

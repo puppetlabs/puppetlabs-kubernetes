@@ -62,7 +62,6 @@ describe 'kubernetes::config', :type => :class do
     let(:params) do 
         {
         'manage_etcd' => false,
-        'cloud_config' => '',
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'kubelet_extra_arguments' => ['foo'],
@@ -95,16 +94,35 @@ describe 'kubernetes::config', :type => :class do
   context 'with version = 1.12 and cloud_provider => aws and cloud_config => undef' do
     let(:params) do
         {
-        'kubernetes_version' => '1.12.2',
+        'kubernetes_version' => '1.12.3',
         'node_name' => 'foo',
         'cloud_provider' => 'aws',
-        'cloud_config' => '',
+        'cloud_config' => :undef,
         'kubelet_extra_arguments' => ['foo: bar'],
         }
     end
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') \
        .with_content(/nodeRegistration:\n  name: foo\n  kubeletExtraArgs:\n    foo: bar\n    cloud-provider: aws\n/)
+    }
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+       .without_content(%r{apiServerExtraVolumes:\n  - name: cloud\n})
+    }
+  end
+
+  context 'with version = 1.12 and cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
+    let(:params) do
+        {
+        'kubernetes_version' => '1.12.3',
+        'node_name' => 'foo',
+        'cloud_provider' => 'aws',
+        'cloud_config' => '/etc/kubernetes/cloud.conf',
+        'kubelet_extra_arguments' => ['foo: bar'],
+        }
+    end
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+       .with_content(%r{apiServerExtraVolumes:\n  - name: cloud\n})
     }
   end
 end
