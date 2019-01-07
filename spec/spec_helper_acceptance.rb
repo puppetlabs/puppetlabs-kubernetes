@@ -132,7 +132,7 @@ EOS
 
         # Installing go, cfssl
         on(host, "cd  /etc/puppetlabs/code/modules/kubernetes;rm -rf Gemfile.lock;bundle install --path vendor/bundle", acceptable_exit_codes: [0]).stdout
-        on(host, "curl -o go.tar.gz https://storage.googleapis.com/golang/go1.9.2.linux-amd64.tar.gz", acceptable_exit_codes: [0]).stdout
+        on(host, "curl -o go.tar.gz https://storage.googleapis.com/golang/go1.10.2.linux-amd64.tar.gz", acceptable_exit_codes: [0]).stdout
         on(host, "tar -C /usr/local -xzf go.tar.gz", acceptable_exit_codes: [0]).stdout
         on(host, "export PATH=$PATH:/usr/local/go/bin;go get -u github.com/cloudflare/cfssl/cmd/...", acceptable_exit_codes: [0]).stdout
         # Creating certs
