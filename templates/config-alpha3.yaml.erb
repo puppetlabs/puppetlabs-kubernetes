@@ -48,10 +48,26 @@ apiServerExtraArgs:
   <%= arg %>
   <%- end -%>
 <%- end -%>
+<%- if @apiserver_extra_volumes -%>
+apiServerExtraVolumes:
+  <%- @apiserver_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+  <%- end -%>
+<%- end -%>
 <%- if @controllermanager_merged_extra_arguments -%>
 controllerManagerExtraArgs:
   <%- @controllermanager_merged_extra_arguments.each do |arg| -%>
   <%= arg %>
+  <%- end -%>
+<%- end -%>
+<%- if @controllermanager_extra_volumes -%>
+controllerManagerExtraVolumes:
+  <%- @controllermanager_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
   <%- end -%>
 <%- end -%>
 <% if @apiserver_cert_extra_sans -%>
