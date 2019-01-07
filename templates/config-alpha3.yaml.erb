@@ -41,6 +41,7 @@ kind: ClusterConfiguration
 kubernetesVersion: v<%= @kubernetes_version %>
 networking:
   podSubnet: <%= @cni_pod_cidr %>
+  serviceSubnet: <%= @service_cidr %>
 <%- if @apiserver_merged_extra_arguments -%>
 apiServerExtraArgs:
   <%- @apiserver_merged_extra_arguments.each do |arg| -%>
