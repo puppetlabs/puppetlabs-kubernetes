@@ -403,7 +403,7 @@ class kubernetes (
         }
       }
     }
-    default: { $node_name = pick($node_label, $facts['networking']['hostname']) }
+    default: { $node_name = pick($node_label, fact('networking.hostname')) }
   }
 
   if $controller {
