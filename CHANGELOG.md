@@ -1,3 +1,17 @@
+# Version 3.2.0
+
+Includes support for 1.13.x with the alpha3 config files
+
+Uses config file for join tasks
+
+Versions Dashboard
+
+Enables kubelet service on RHEL/Centos
+
+Removes params.pp in favor of data in init.pp
+
+A full list of PR's and issues closed can be found here [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/4)
+
 # Version 3.1.0
 
 Adds support for Kubernetes 1.12.x
