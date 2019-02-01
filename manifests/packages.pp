@@ -83,16 +83,13 @@ class kubernetes::packages (
 
   elsif $container_runtime == 'cri_containerd' {
 
-    wget::fetch { 'download runc binary':
-      source      => $runc_source,
-      destination => '/usr/bin/runc',
-      timeout     => 0,
-      verbose     => false,
-      unless      => "test $(ls -A /usr/bin/runc 2>/dev/null)",
-      before      => File['/usr/bin/runc'],
+    archive { '/usr/bin/runc':
+      source  => $runc_source,
+      extract => false,
+      cleanup => false,
+      creates => '/usr/bin/runc',
     }
-
-    file {'/usr/bin/runc':
+    -> file { '/usr/bin/runc':
       mode => '0700'
     }
 
