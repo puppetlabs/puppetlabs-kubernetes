@@ -9,10 +9,11 @@ class kubernetes::kube_addons (
   Boolean $controller                        = $kubernetes::controller,
   Optional[Boolean] $schedule_on_controller  = $kubernetes::schedule_on_controller,
   String $node_name                          = $kubernetes::node_name,
+  Array $path                                = $kubernetes::default_path,
 ){
 
   Exec {
-    path        => ['/usr/bin', '/bin'],
+    path        => $path,
     environment => [ 'HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
     logoutput   => true,
     tries       => 10,
