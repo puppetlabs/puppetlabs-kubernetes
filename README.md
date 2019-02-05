@@ -369,6 +369,12 @@ A Hiera example is `kubernetes::etcd_initial_cluster: kube-master:172.17.10.101,
 
 Defaults to `undef`.
 
+#### `etcd_initial_cluster_state`
+
+Informs etcd on the state of the cluster when starting. Useful for adding single nodes to a cluster. Allowed values are `new` or `existing`.
+
+Defaults to `new`
+
 #### `etcd_peers`
 
 Specifies how etcd lists the peers to connect to the cluster.

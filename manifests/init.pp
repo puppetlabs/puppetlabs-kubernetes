@@ -113,6 +113,11 @@
 #   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
 #   Defaults to undef
 #
+# [*etcd_initial_cluster_state*]
+#     This will tell etcd the initial state of the cluster. Useful for adding a node to the cluster. Allowed values are
+#   "new" or "existing"
+#   Defaults to "new"
+#
 # [*etcd_ca_key*]
 #   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
 #   Defaults to undef
@@ -330,6 +335,7 @@ class kubernetes (
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
   Optional[String] $etcd_initial_cluster       = undef,
+  Optional[Enum['new','existing']] $etcd_initial_cluster_state = 'new',
   String $etcd_ca_key                          = undef,
   String $etcd_ca_crt                          = undef,
   String $etcdclient_key                       = undef,
