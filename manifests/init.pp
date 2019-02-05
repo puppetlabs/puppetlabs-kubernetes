@@ -335,8 +335,7 @@ class kubernetes (
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
   Optional[String] $etcd_initial_cluster       = undef,
-  Optional[Enum['new','existing']]
-                   $etcd_initial_cluster_state = 'new',
+  Optional[Enum['new','existing']] $etcd_initial_cluster_state = 'new',
   String $etcd_ca_key                          = undef,
   String $etcd_ca_crt                          = undef,
   String $etcdclient_key                       = undef,
