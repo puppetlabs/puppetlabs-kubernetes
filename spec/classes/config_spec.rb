@@ -93,19 +93,16 @@ describe 'kubernetes::config', :type => :class do
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
   end
 
-  context 'with controller => true and manage_etcd => true and etcd_install_method => package' do
+  context 'manage_etcd => true and etcd_install_method => package' do
     let(:params) do 
         {
-        'controller' => true,
         'etcd_install_method' => 'package',          
         'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
         'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
-          
         }
     end
-
     it { should_not contain_file('/etc/systemd/system/etcd.service') }
     it { should contain_file('/etc/default/etcd') }
   end
