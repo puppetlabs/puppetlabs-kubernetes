@@ -43,8 +43,9 @@ class kubernetes::config (
   $pki = ['ca.crt', 'ca.key','sa.pub','sa.key']
   $kube_dirs.each | String $dir |  {
     file  { $dir :
-      ensure => directory,
-
+      ensure  => directory,
+      mode    => '0600',
+      recurse => true,
     }
   }
 
@@ -52,8 +53,8 @@ class kubernetes::config (
     $etcd.each | String $etcd_files | {
       file { "/etc/kubernetes/pki/etcd/${etcd_files}":
         ensure  => present,
-        mode    => '0644',
         content => template("kubernetes/etcd/${etcd_files}.erb"),
+        mode    => '0600',
       }
     }
     file { '/etc/systemd/system/etcd.service':
@@ -65,8 +66,8 @@ class kubernetes::config (
   $pki.each | String $pki_files | {
     file {"/etc/kubernetes/pki/${pki_files}":
       ensure  => present,
-      mode    => '0644',
       content => template("kubernetes/pki/${pki_files}.erb"),
+      mode    => '0600',
     }
   }
 
@@ -119,6 +120,7 @@ class kubernetes::config (
   file { $config_file:
     ensure  => present,
     content => template("kubernetes/config-${template}.yaml.erb"),
+    mode    => '0600',
   }
 
 }
