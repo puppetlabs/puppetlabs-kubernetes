@@ -1,0 +1,25 @@
+---
+kubernetes::etcd_ca_key: 'foo'
+kubernetes::etcd_ca_crt: 'foo'
+kubernetes::etcdclient_key: 'foo'
+kubernetes::etcdclient_crt: 'foo'
+kubernetes::api_server_count: 3
+kubernetes::kubernetes_ca_crt: 'foo'
+kubernetes::kubernetes_ca_key: 'foo'
+kubernetes::discovery_token_hash: 'foo'
+kubernetes::token: 'foo'
+kubernetes::sa_pub: 'foo'
+kubernetes::sa_key: 'foo'
+kubernetes::kube_api_advertise_address: 'foo'
+kubernetes::cni_pod_cidr: '10.0.0.0/24'
+kubernetes::etcdserver_crt: 'foo'
+kubernetes::etcdserver_key: 'foo'
+kubernetes::etcdpeer_crt: 'foo'
+kubernetes::etcdpeer_key: 'foo'
+kubernetes::etcd_peers: ['foo']
+kubernetes::etcd_ip: 'foo'
+kubernetes::etcd_initial_cluster: 'foo'
+kubernetes::controller_address: '172.17.10.101:6443'
+kubernetes::cloud_provider: :undef
+kubernetes::create_repos: true
+kubernetes::disable_swap: true

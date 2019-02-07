@@ -14,76 +14,26 @@ describe 'kubernetes', :type => :class do
           :codename => "xenial",
         },
       },
+      :ec2_metadata     => {
+        :hostname => 'ip-10-10-10-1.ec2.internal',
+      },
     }
   end
+
   context 'with controller => true and worker => true' do
-    let(:params) do
-      { 
-        'controller' => true,
-        'worker' => true,
-        'etcd_ca_key' => 'foo',
-        'etcd_ca_crt' => 'foo', 
-        'etcdclient_key' => 'foo',
-        'etcdclient_crt' => 'foo',
-        'api_server_count' => 3,
-        'kubernetes_ca_crt' => 'foo',
-        'kubernetes_ca_key' => 'foo',
-        'discovery_token_hash' => 'foo',
-        'sa_pub' => 'foo',
-        'sa_key' => 'foo',
-        'kube_api_advertise_address' => 'foo',
-        'cni_pod_cidr' => '10.0.0.0/24',
-        'etcdserver_crt' => 'foo', 
-        'etcdserver_key' => 'foo', 
-        'etcdpeer_crt' => 'foo', 
-        'etcdpeer_key' => 'foo', 
-        'etcd_peers' => ['foo'], 
-        'etcd_ip' => 'foo', 
-        'etcd_initial_cluster' => 'foo', 
-        'controller_address' => '172.17.10.101:6443',
-        'cloud_provider' => :undef,
-        'token' => 'foo',
-        'create_repos' => true,
-        'disable_swap' => true,
-        'etcd_install_method' => 'wget',
-        'etcd_package_name' => 'etcd-server',
-      }
-    end
+    let(:params) do {
+      :controller => true,
+      :worker => true,
+    } end
 
     it { should compile.and_raise_error(/A node can not be both a controller and a node/) }
    end
 
   context 'with controller => true' do
-    let(:params) do
-      { 
-        'controller' => true,
-        'etcd_ca_key' => 'foo',
-        'etcd_ca_crt' => 'foo', 
-        'etcdclient_key' => 'foo',
-        'etcdclient_crt' => 'foo',
-        'api_server_count' => 3,
-        'kubernetes_ca_crt' => 'foo',
-        'kubernetes_ca_key' => 'foo',
-        'discovery_token_hash' => 'foo',
-        'sa_pub' => 'foo',
-        'sa_key' => 'foo',
-        'kube_api_advertise_address' => 'foo',
-        'cni_pod_cidr' => '10.0.0.0/24',
-        'etcdserver_crt' => 'foo', 
-        'etcdserver_key' => 'foo', 
-        'etcdpeer_crt' => 'foo', 
-        'etcdpeer_key' => 'foo', 
-        'etcd_peers' => ['foo'], 
-        'etcd_ip' => 'foo', 
-        'etcd_initial_cluster' => 'foo',  
-        'controller_address' => '172.17.10.101:6443',  
-        'cloud_provider' => :undef,  
-        'token' => 'foo',
-        'disable_swap' => true,
-        'etcd_install_method' => 'wget',
-        'etcd_package_name' => 'etcd-server',
-      }
-    end
+
+    let(:params) do {
+      :controller => true,
+    } end
 
     it { should contain_class('kubernetes') }
     it { should contain_class('kubernetes::repos') }
@@ -94,41 +44,56 @@ describe 'kubernetes', :type => :class do
     it { should contain_class('kubernetes::kube_addons')}
   end
 
-  context 'with worker => true' do
-    let(:params) do
-      { 
-        'worker' => true,
-        'etcd_ca_key' => 'foo',
-        'etcd_ca_crt' => 'foo', 
-        'etcdclient_key' => 'foo',
-        'etcdclient_crt' => 'foo',
-        'api_server_count' => 3,
-        'kubernetes_ca_crt' => 'foo',
-        'kubernetes_ca_key' => 'foo',
-        'discovery_token_hash' => 'foo',
-        'sa_pub' => 'foo',
-        'sa_key' => 'foo',
-        'kube_api_advertise_address' => 'foo',
-        'cni_pod_cidr' => '10.0.0.0/24',
-        'etcdserver_crt' => 'foo', 
-        'etcdserver_key' => 'foo', 
-        'etcdpeer_crt' => 'foo', 
-        'etcdpeer_key' => 'foo', 
-        'etcd_peers' => ['foo'], 
-        'etcd_ip' => 'foo', 
-        'etcd_initial_cluster' => 'foo',  
-        'controller_address' => '172.17.10.101:6443',   
-        'cloud_provider' => :undef,
-        'token' => 'foo',
-        'disable_swap' => true,
-        'etcd_install_method' => 'wget',
-        'etcd_package_name' => 'etcd-server',
-      }
-    end
-
+  context 'with worker => true and version => 1.10.2' do
+    let(:params) do {
+      :worker => true,
+    } end
+                
     it { should contain_class('kubernetes') }
     it { should contain_class('kubernetes::repos') }
     it { should contain_class('kubernetes::packages')}
+    it { is_expected.to_not contain_class('kubernetes::config')}
+    it { is_expected.to_not contain_class('kubernetes::config::worker')}
     it { should contain_class('kubernetes::service')}
+  end
+
+  context 'with worker => true and version => 1.12.2' do
+    let(:params) do {
+      :worker => true,
+      :kubernetes_version => '1.12.2',
+    } end
+                
+    it { is_expected.to_not contain_class('kubernetes::config')}
+    it { is_expected.to contain_class('kubernetes::config::worker')}
+  end
+
+  context 'with node_label => foo and cloud_provider => undef' do
+    let(:params) do {
+      :worker => true,
+      :node_label => 'foo',
+      :cloud_provider => :undef,
+    } end
+                
+    it { is_expected.to_not contain_notify('aws_node_name') }
+  end
+
+  context 'with node_label => foo and cloud_provider => aws' do
+    let(:params) do {
+      :worker => true,
+      :node_label => 'foo',
+      :cloud_provider => 'aws',
+    } end
+
+    it { is_expected.to contain_notify('aws_name_override') }
+  end
+
+  context 'with node_label => undef and cloud_provider => aws' do
+    let(:params) do {
+      :worker => true,
+      :node_label => :undef,
+      :cloud_provider => 'aws',
+    } end
+
+    it { is_expected.to_not contain_notify('aws_name_override') }
   end
 end

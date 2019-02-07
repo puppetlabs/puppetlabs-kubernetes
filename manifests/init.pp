@@ -121,6 +121,11 @@
 #   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
 #   Defaults to undef
 #
+# [*etcd_initial_cluster_state*]
+#     This will tell etcd the initial state of the cluster. Useful for adding a node to the cluster. Allowed values are
+#   "new" or "existing"
+#   Defaults to "new"
+#
 # [*etcd_ca_key*]
 #   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
 #   Defaults to undef
@@ -179,7 +184,8 @@
 #
 # [*node_label*]
 #  The name to assign the node in the cluster. 
-#  Defaults to hostname
+#  Defaults to hostname. 
+#   NOTE: Ignored when cloud_provider is AWS, until this lands fixed https://github.com/kubernetes/kubernetes/pull/61878
 #
 # [*token*]
 #   A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
@@ -192,6 +198,10 @@
 # [*install_dashboard*]
 #   This is a bool that determines if the kubernetes dashboard is installed.
 #   Defaults to false
+#
+# [*dashboard_version*]
+#   The version of Kubernetes dashboard you want to install.
+#   Defaults to v1.10.1
 #
 # [*schedule_on_controller*]
 #   A flag to remove the master role and allow pod scheduling on controllers
@@ -237,7 +247,7 @@
 #
 # [*kubernetes_apt_release*]
 #  The release name for the APT repo for the Kubernetes packages.
-#  Defaults to 'kubernetes-${::lsbdistcodename}'
+#  Defaults to 'kubernetes-${facts.os.distro.codename}'
 #
 # [*kubernetes_apt_repos*]
 #  The repos to install from the Kubernetes APT url
@@ -265,7 +275,7 @@
 #
 # [*docker_apt_release*]
 #  The release name for the APT repo for the Docker packages.
-#  Defaults to 'ubuntu-${::lsbdistcodename}'
+#  Defaults to 'ubuntu-${facts.os.distro.codename}'
 #
 # [*docker_apt_repos*]
 #  The repos to install from the Docker APT url
@@ -333,6 +343,7 @@ class kubernetes (
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
   Optional[String] $etcd_initial_cluster       = undef,
+  Optional[Enum['new','existing']] $etcd_initial_cluster_state = 'new',
   String $etcd_ca_key                          = undef,
   String $etcd_ca_crt                          = undef,
   String $etcdclient_key                       = undef,
@@ -344,6 +355,7 @@ class kubernetes (
   Optional[String] $cni_network_provider       = undef,
   Optional[String] $cni_rbac_binding           = undef,
   Boolean $install_dashboard                   = false,
+  String $dashboard_version                    = 'v1.10.1',
   Boolean $schedule_on_controller              = false,
   Integer $api_server_count                    = undef,
   String $kubernetes_ca_crt                    = undef,
@@ -355,7 +367,7 @@ class kubernetes (
   Optional[Array] $apiserver_cert_extra_sans   = [],
   Optional[Array] $apiserver_extra_arguments   = [],
   String $service_cidr                         = '10.96.0.0/12',
-  String $node_label                           = $facts['networking']['hostname'],
+  Optional[String] $node_label                 = undef,
   Optional[String] $controller_address         = undef,
   Optional[String] $cloud_provider             = undef,
   Optional[String] $cloud_config               = undef,
@@ -372,20 +384,20 @@ class kubernetes (
   String $etcd_package_name                    = 'etcd-server',
   String $etcd_source                          = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
   String $etcd_install_method                  = 'wget',
-  Optional[String] $kubernetes_apt_location    = 'http://apt.kubernetes.io',
-  Optional[String] $kubernetes_apt_release     = "kubernetes-${facts['os']['distro']['codename']}",
-  Optional[String] $kubernetes_apt_repos       = 'main',
-  Optional[String] $kubernetes_key_id          = '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
-  Optional[String] $kubernetes_key_source      = 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
-  Optional[String] $kubernetes_yum_baseurl     = 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
-  Optional[String] $kubernetes_yum_gpgkey      = 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
-  Optional[String] $docker_apt_location        = 'https://apt.dockerproject.org/repo',
-  Optional[String] $docker_apt_release         = "ubuntu-${facts['os']['distro']['codename']}",
-  Optional[String] $docker_apt_repos           = 'main',
-  Optional[String] $docker_yum_baseurl         = 'https://yum.dockerproject.org/repo/main/centos/7',
-  Optional[String] $docker_yum_gpgkey          = 'https://yum.dockerproject.org/gpg',
-  Optional[String] $docker_key_id              = '58118E89F3A912897C070ADBF76221572C52609D',
-  Optional[String] $docker_key_source          = 'https://apt.dockerproject.org/gpg',
+  Optional[String] $kubernetes_apt_location    = undef,
+  Optional[String] $kubernetes_apt_release     = undef,
+  Optional[String] $kubernetes_apt_repos       = undef,
+  Optional[String] $kubernetes_key_id          = undef,
+  Optional[String] $kubernetes_key_source      = undef,
+  Optional[String] $kubernetes_yum_baseurl     = undef,
+  Optional[String] $kubernetes_yum_gpgkey      = undef,
+  Optional[String] $docker_apt_location        = undef,
+  Optional[String] $docker_apt_release         = undef,
+  Optional[String] $docker_apt_repos           = undef,
+  Optional[String] $docker_yum_baseurl         = undef,
+  Optional[String] $docker_yum_gpgkey          = undef,
+  Optional[String] $docker_key_id              = undef,
+  Optional[String] $docker_key_source          = undef,
   Boolean $disable_swap                        = true,
   Boolean $manage_kernel_modules               = true,
   Boolean $manage_sysctl_settings              = true,
@@ -396,11 +408,28 @@ class kubernetes (
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}
   }
 
+  # Some cloud providers override or fix the node name, so we can't override
+  case $cloud_provider {
+    # k8s controller in AWS with delete any nodes it can't query in the metadata
+    'aws': {
+      $node_name = $facts['ec2_metadata']['hostname']
+      if (!empty($node_label) and $node_label != $node_name) {
+        notify { 'aws_name_override':
+          message => "AWS provider requires node name to match AWS metadata: ${node_name}, ignoring node label ${node_label}",
+        }
+      }
+    }
+    default: { $node_name = pick($node_label, fact('networking.hostname')) }
+  }
+
   if $controller {
     if $worker {
       fail(translate('A node can not be both a controller and a node'))
     }
   }
+
+  # Not sure if should allow this to be changed
+  $config_file = '/etc/kubernetes/config.yaml'
 
   if $controller {
     include kubernetes::repos
@@ -425,12 +454,13 @@ class kubernetes (
   }
 
   if $worker {
-    include kubernetes::repos
-    include kubernetes::packages
-    include kubernetes::service
-    include kubernetes::cluster_roles
     contain kubernetes::repos
     contain kubernetes::packages
+    # K8s 1.10/1.11 can't use config files
+    unless $kubernetes_version =~ /^1.1(0|1)/ {
+      contain kubernetes::config::worker
+      Class['kubernetes::config::worker'] -> Class['kubernetes::service']
+    }
     contain kubernetes::service
     contain kubernetes::cluster_roles
 

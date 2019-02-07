@@ -26,7 +26,7 @@ class OtherParams
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
        cni_pod_cidr = '10.244.0.0/16'
     elsif cni_provider.match('calico')
-       cni_network_provider = 'https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml'
+       cni_network_provider = 'https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml'
        cni_pod_cidr = '192.168.0.0/16'
     end
 

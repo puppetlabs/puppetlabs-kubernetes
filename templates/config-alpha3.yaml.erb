@@ -13,17 +13,13 @@ bootstrapTokens:
     - system:bootstrappers:kubeadm:default-node-token
 kind: InitConfiguration
 nodeRegistration:
-  name: <%= @node_label %>
+  name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
-  <%- if @cloud_provider  -%>
-  cloudProvider: <%= @cloud_provider %>
-  cloudConfig: <%= @cloud_config %>
-  <%- end -%>
-  <%- if @kubelet_extra_arguments -%>
+  <%- if @kubelet_merged_extra_arguments -%>
   kubeletExtraArgs:
-    <%- @kubelet_extra_arguments.each do |arg| -%>
+    <%- @kubelet_merged_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end -%>
   <%- end -%>
@@ -41,23 +37,44 @@ etcd:
         certFile: /etc/kubernetes/pki/etcd/client.crt
         keyFile: /etc/kubernetes/pki/etcd/client.key
 imageRepository: <%= @image_repository %>
-nodeName: <%= @node_label %>
 kind: ClusterConfiguration
 kubernetesVersion: v<%= @kubernetes_version %>
 networking:
   podSubnet: <%= @cni_pod_cidr %>
-<%- if @apiserver_extra_arguments -%>
+  serviceSubnet: <%= @service_cidr %>
+<%- if @apiserver_merged_extra_arguments -%>
 apiServerExtraArgs:
-  <%- @apiserver_extra_arguments.each do |arg| -%>
+  <%- @apiserver_merged_extra_arguments.each do |arg| -%>
   <%= arg %>
   <%- end -%>
 <%- end -%>
-<%- if @cloud_provider  -%>
-cloudProvider: <%= @cloud_provider %>
+<%- if @apiserver_extra_volumes -%>
+apiServerExtraVolumes:
+  <%- @apiserver_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+  <%- end -%>
 <%- end -%>
+<%- if @controllermanager_merged_extra_arguments -%>
+controllerManagerExtraArgs:
+  <%- @controllermanager_merged_extra_arguments.each do |arg| -%>
+  <%= arg %>
+  <%- end -%>
+<%- end -%>
+<%- if @controllermanager_extra_volumes -%>
+controllerManagerExtraVolumes:
+  <%- @controllermanager_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+  <%- end -%>
+<%- end -%>
+<% if @apiserver_cert_extra_sans -%>
 apiServerCertSANs:
 <% @apiserver_cert_extra_sans.each do |san| -%>
 - <%= san %>
+<% end -%>
 <% end -%>
 <%- if @kubeadm_extra_config  -%>
 <%= @kubeadm_extra_config_yaml %>
@@ -70,9 +87,9 @@ nodeRegistration:
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
-  <%- if @kubelet_extra_arguments -%>
+  <%- if @kubelet_merged_extra_arguments -%>
   kubeletExtraArgs:
-    <%- @kubelet_extra_arguments.each do |arg| -%>
+    <%- @kubelet_merged_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end -%>
   <%- end -%>
