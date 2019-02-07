@@ -53,6 +53,7 @@ describe 'kubernetes::config', :type => :class do
 
 
     it { should contain_file('/etc/systemd/system/etcd.service') }
+    it { should_not contain_file('/etc/default/etcd') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
@@ -86,11 +87,26 @@ describe 'kubernetes::config', :type => :class do
 
 
     it { should_not contain_file('/etc/systemd/system/etcd.service') }
+    it { should_not contain_file('/etc/default/etcd') }
     it { should contain_file('/etc/kubernetes/config.yaml') }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/foo:\n- bar\n- baz/) }
     it { should contain_file('/etc/kubernetes/config.yaml').with_content(/kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo/) }
   end
 
+  context 'manage_etcd => true and etcd_install_method => package' do
+    let(:params) do 
+        {
+        'etcd_install_method' => 'package',          
+        'kubeadm_extra_config' => {'foo' => ['bar', 'baz']},
+        'kubelet_extra_config' => {'baz' => ['bar', 'foo']},
+        'kubelet_extra_arguments' => ['foo'],
+        'manage_etcd' => true,
+        }
+    end
+    it { should_not contain_file('/etc/systemd/system/etcd.service') }
+    it { should contain_file('/etc/default/etcd') }
+  end
+  
   context 'with version = 1.12 and cloud_provider => aws and cloud_config => undef' do
     let(:params) do
         {

@@ -2,6 +2,7 @@
 class kubernetes::config (
   String $config_file = $kubernetes::config_file,
   Boolean $manage_etcd = $kubernetes::manage_etcd,
+  String $etcd_install_method = $kubernetes::etcd_install_method,
   String $kubernetes_version  = $kubernetes::kubernetes_version,
   String $etcd_ca_key = $kubernetes::etcd_ca_key,
   String $etcd_ca_crt = $kubernetes::etcd_ca_crt,
@@ -57,9 +58,16 @@ class kubernetes::config (
         mode    => '0600',
       }
     }
-    file { '/etc/systemd/system/etcd.service':
-      ensure  => present,
-      content => template('kubernetes/etcd/etcd.service.erb'),
+    if $etcd_install_method == 'wget' {
+      file { '/etc/systemd/system/etcd.service':
+        ensure  => present,
+        content => template('kubernetes/etcd/etcd.service.erb'),
+      }
+    } else {
+      file { '/etc/default/etcd':
+        ensure  => present,
+        content => template('kubernetes/etcd/etcd.erb'),
+      }
     }
   }
 

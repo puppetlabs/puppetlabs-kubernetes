@@ -65,10 +65,10 @@ class kubernetes::service (
 
   if $controller and $manage_etcd {
     service { 'etcd':
-      ensure  => running,
-      enable  => true,
-      require => File['/etc/systemd/system/etcd.service']
+      ensure => running,
+      enable => true,
     }
+    File <| path == '/etc/systemd/system/kubelet.service.d' or path == '/etc/default/etcd' |> ~> Service['etcd']
   }
 
   # RedHat needs to have CPU and Memory accounting enabled to avoid systemd proc errors
