@@ -22,7 +22,6 @@ define kubernetes::kubeadm_join (
     /^1.1(0|1)/: {
       $kubeadm_join_flags = kubeadm_join_flags({
         controller_address       => $controller_address,
-        config                   => $config,
         cri_socket               => $cri_socket,
         discovery_file           => $discovery_file,
         discovery_token          => $discovery_token,
