@@ -1,3 +1,9 @@
+# Version 3.2.2
+
+Fixes bug where nodes in v1.10/11 could not join the cluster
+
+A full list of PR's and issues closed can be found here [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/6)
+
 # Version 3.2.1
 
 Fixes world readable PKI keys in /etc/kubernetes/config.yaml
