@@ -313,6 +313,10 @@
 #  A flag to manage required sysctl settings.
 #  Defaults to true
 #
+# [*default_path*]
+#  The path to be used when running kube* commands
+#  Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
+#
 # Authors
 # -------
 #
@@ -403,6 +407,7 @@ class kubernetes (
   Boolean $manage_sysctl_settings              = true,
   Boolean $create_repos                        = true,
   String $image_repository                     = 'k8s.gcr.io',
+  Array[String] $default_path                  = ['/usr/bin','/bin','/sbin','/usr/local/bin'],
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}

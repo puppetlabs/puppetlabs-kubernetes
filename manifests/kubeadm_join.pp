@@ -13,7 +13,7 @@ define kubernetes::kubeadm_join (
   Optional[String] $discovery_file         = undef,
   Optional[Array] $env                     = undef,
   Optional[Array] $ignore_preflight_errors = undef,
-  Optional[Array] $path                    = undef,
+  Array $path                              = $kubernetes::default_path,
   Boolean $skip_ca_verification            = false,
 ) {
 

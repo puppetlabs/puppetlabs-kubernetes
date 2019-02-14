@@ -3,8 +3,8 @@ define kubernetes::kubeadm_init (
   String $node_name                             = $kubernetes::node_name,
   Optional[String] $config                      = $kubernetes::config_file,
   Boolean $dry_run                              = false,
+  Array $path                                   = $kubernetes::default_path,
   Optional[Array] $env                          = undef,
-  Optional[Array] $path                         = undef,
   Optional[Array] $ignore_preflight_errors      = undef,
 ) {
   $kubeadm_init_flags = kubeadm_init_flags({
@@ -25,4 +25,6 @@ define kubernetes::kubeadm_init (
     unless      => $unless_init,
   }
 
+  # This prevents a known race condition https://github.com/kubernetes/kubernetes/issues/66689
+  kubernetes::wait_for_default_sa { 'default': }
 }
