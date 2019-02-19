@@ -142,4 +142,18 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         .with_content(%r{apiServerExtraVolumes:\n  - name: cloud\n})
     }
   end
+
+  context 'with version = 1.12 and kubernetes_cluster_name => my_own_name' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.12.3',
+        'kubernetes_cluster_name' => 'my_own_name',
+      }
+    end
+
+    it {
+      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+        .with_content(%r{clusterName: my_own_name\n})
+    }
+  end
 end
