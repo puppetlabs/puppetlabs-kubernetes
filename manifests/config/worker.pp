@@ -3,6 +3,7 @@ class kubernetes::config::worker (
   String $node_name                        = $kubernetes::node_name,
   String $config_file                      = $kubernetes::config_file,
   String $kubernetes_version               = $kubernetes::kubernetes_version,
+  String $kubernetes_cluster_name          = $kubernetes::kubernetes_cluster_name,
   String $controller_address               = $kubernetes::controller_address,
   String $discovery_token_hash             = $kubernetes::discovery_token_hash,
   String $container_runtime                = $kubernetes::container_runtime,

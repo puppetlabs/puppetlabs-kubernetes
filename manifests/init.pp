@@ -10,6 +10,11 @@
 #   ie api server,
 #   Defaults to  1.10.2
 #
+# [*kubernetes_cluster_name*]
+#   The name of the cluster, for use when multiple clusters are accessed from the same source
+#   Only used by Kubernetes 1.12+
+#   Defaults to "kubernetes"
+#
 # [*kubernetes_package_version*]
 #   The version of the packages the Kubernetes os packages to install
 #   ie kubectl and kubelet
@@ -328,6 +333,7 @@
 #
 class kubernetes (
   String $kubernetes_version                   = '1.10.2',
+  String $kubernetes_cluster_name              = 'kubernetes',
   String $kubernetes_package_version           = $facts['os']['family'] ? {
                                                     'Debian' => "${kubernetes_version}-00",
                                                     'RedHat' => $kubernetes::kubernetes_version,
