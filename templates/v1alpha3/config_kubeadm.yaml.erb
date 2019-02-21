@@ -39,9 +39,11 @@ etcd:
 imageRepository: <%= @image_repository %>
 kind: ClusterConfiguration
 kubernetesVersion: v<%= @kubernetes_version %>
+
 <%- if @kubernetes_cluster_name != "kubernetes"  -%>
 clusterName: <%= @kubernetes_cluster_name %>
 <%- end -%>
+
 networking:
   podSubnet: <%= @cni_pod_cidr %>
   serviceSubnet: <%= @service_cidr %>
@@ -88,6 +90,7 @@ kind: JoinConfiguration
 <%- if @kubernetes_cluster_name != "kubernetes"  -%>
 clusterName: <%= @kubernetes_cluster_name %>
 <%- end -%>
+
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>

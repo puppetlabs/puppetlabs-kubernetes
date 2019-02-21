@@ -4,6 +4,7 @@ class kubernetes::config::kubeadm (
   Boolean $manage_etcd = $kubernetes::manage_etcd,
   String $etcd_install_method = $kubernetes::etcd_install_method,
   String $kubernetes_version  = $kubernetes::kubernetes_version,
+
   String $kubernetes_cluster_name  = $kubernetes::kubernetes_cluster_name,
   String $etcd_ca_key = $kubernetes::etcd_ca_key,
   String $etcd_ca_crt = $kubernetes::etcd_ca_crt,
