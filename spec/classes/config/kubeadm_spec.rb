@@ -142,7 +142,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         .with_content(%r{apiServerExtraVolumes:\n  - name: cloud\n})
     }
   end
-  
+ 
   context 'with version = 1.12 and kubernetes_cluster_name => my_own_name' do
     let(:params) do
       {
