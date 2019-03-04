@@ -2,7 +2,6 @@ fixtures:
   forge_modules:
     stdlib: 'puppetlabs-stdlib'
     apt: 'puppetlabs-apt'
-    wget: 'puppet-wget'
     archive: "puppet-archive"
     translate: "puppetlabs-translate"
     augeasproviders_sysctl: "herculesteam-augeasproviders_sysctl"

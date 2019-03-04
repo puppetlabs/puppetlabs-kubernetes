@@ -10,6 +10,11 @@
 #   ie api server,
 #   Defaults to  1.10.2
 #
+# [*kubernetes_cluster_name*]
+#   The name of the cluster, for use when multiple clusters are accessed from the same source
+#   Only used by Kubernetes 1.12+
+#   Defaults to "kubernetes"
+#
 # [*kubernetes_package_version*]
 #   The version of the packages the Kubernetes os packages to install
 #   ie kubectl and kubelet
@@ -87,6 +92,14 @@
 #  The URL to download the etcd archive
 #  Defaults to https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}
 #
+# [*etcd_install_method*]
+#  The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
+#  Defaults to wget
+# 
+# [*etcd_package_name*]
+#  The system package name for installing etcd
+#  Defaults to etcd-server
+#
 # [*runc_version*]
 #  The version of runc to install
 #  Defaults to 1.0.0-rc5
@@ -112,6 +125,11 @@
 #    This will tell etcd how many nodes will be in the cluster and is passed as a string.
 #   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
 #   Defaults to undef
+#
+# [*etcd_initial_cluster_state*]
+#     This will tell etcd the initial state of the cluster. Useful for adding a node to the cluster. Allowed values are
+#   "new" or "existing"
+#   Defaults to "new"
 #
 # [*etcd_ca_key*]
 #   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
@@ -221,11 +239,13 @@
 #  Defaults to {}
 #
 # [*kubelet_extra_config*]
-#  A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster. Requires DynamicKubeletConfig.
+#  A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster.
+#  Requires DynamicKubeletConfig.
 #  Defaults to {}
 #
 # [*kubelet_extra_arguments*]
-#  A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration. It is applied to both masters and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config and DynamicKubeletConfig.
+#  A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both masters and nodes.
+#  Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
 #  Defaults to []
 #
 # [*kubernetes_apt_location*]
@@ -300,6 +320,10 @@
 #  A flag to manage required sysctl settings.
 #  Defaults to true
 #
+# [*default_path*]
+#  The path to be used when running kube* commands
+#  Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
+#
 # Authors
 # -------
 #
@@ -309,6 +333,7 @@
 #
 class kubernetes (
   String $kubernetes_version                   = '1.10.2',
+  String $kubernetes_cluster_name              = 'kubernetes',
   String $kubernetes_package_version           = $facts['os']['family'] ? {
                                                     'Debian' => "${kubernetes_version}-00",
                                                     'RedHat' => $kubernetes::kubernetes_version,
@@ -330,6 +355,7 @@ class kubernetes (
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
   Optional[String] $etcd_initial_cluster       = undef,
+  Optional[Enum['new','existing']] $etcd_initial_cluster_state = 'new',
   String $etcd_ca_key                          = undef,
   String $etcd_ca_crt                          = undef,
   String $etcdclient_key                       = undef,
@@ -367,7 +393,9 @@ class kubernetes (
   Optional[String] $containerd_source          =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $etcd_archive                         = "etcd-v${etcd_version}-linux-amd64.tar.gz",
+  String $etcd_package_name                    = 'etcd-server',
   String $etcd_source                          = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
+  String $etcd_install_method                  = 'wget',
   Optional[String] $kubernetes_apt_location    = undef,
   Optional[String] $kubernetes_apt_release     = undef,
   Optional[String] $kubernetes_apt_repos       = undef,
@@ -387,6 +415,7 @@ class kubernetes (
   Boolean $manage_sysctl_settings              = true,
   Boolean $create_repos                        = true,
   String $image_repository                     = 'k8s.gcr.io',
+  Array[String] $default_path                  = ['/usr/bin','/bin','/sbin','/usr/local/bin'],
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}
@@ -412,35 +441,39 @@ class kubernetes (
     }
   }
 
+  # Not sure if should allow this to be changed
+  $config_file = '/etc/kubernetes/config.yaml'
+
   if $controller {
     include kubernetes::repos
     include kubernetes::packages
-    include kubernetes::config
+    include kubernetes::config::kubeadm
     include kubernetes::service
     include kubernetes::cluster_roles
     include kubernetes::kube_addons
     contain kubernetes::repos
     contain kubernetes::packages
-    contain kubernetes::config
+    contain kubernetes::config::kubeadm
     contain kubernetes::service
     contain kubernetes::cluster_roles
     contain kubernetes::kube_addons
 
     Class['kubernetes::repos']
       -> Class['kubernetes::packages']
-      -> Class['kubernetes::config']
+      -> Class['kubernetes::config::kubeadm']
       -> Class['kubernetes::service']
       -> Class['kubernetes::cluster_roles']
       -> Class['kubernetes::kube_addons']
   }
 
   if $worker {
-    include kubernetes::repos
-    include kubernetes::packages
-    include kubernetes::service
-    include kubernetes::cluster_roles
     contain kubernetes::repos
     contain kubernetes::packages
+    # K8s 1.10/1.11 can't use config files
+    unless $kubernetes_version =~ /^1.1(0|1)/ {
+      contain kubernetes::config::worker
+      Class['kubernetes::config::worker'] -> Class['kubernetes::service']
+    }
     contain kubernetes::service
     contain kubernetes::cluster_roles
 

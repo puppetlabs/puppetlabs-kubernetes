@@ -25,12 +25,15 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
-        'docker_package_name' => 'docker-engine',   
+        'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
         'manage_kernel_modules' => true,
         'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -43,11 +46,57 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
   end
 
+  context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true and etcd_install_method => package' do
+    let(:facts) do
+      {
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "RedHat",
+          :name    => 'RedHat',
+          :release => {
+            :full => '7.4',
+          },
+        },
+      }
+    end
+    let(:params) do
+        {
+        'container_runtime' => 'docker',
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.1.ce-1.el7.centos',
+        'containerd_archive' =>'containerd-1.1.0.linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd-1.1.0.linux-amd64.tar.gz',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',   
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'package',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        }
+    end
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
+    it { should contain_package('docker-engine').with_ensure('17.03.1.ce-1.el7.centos')}
+    it { should_not contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
+    it { should contain_package('etcd-server').with_ensure('3.1.12')}
+    it { should contain_package('kubelet').with_ensure('1.10.2')}
+    it { should contain_package('kubectl').with_ensure('1.10.2')}
+    it { should contain_package('kubeadm').with_ensure('1.10.2')}
+  end
+
   context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
     let(:facts) do
       {
         :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
-        :operatingsystem  => 'Ubuntu', #needed to run dependent tests from fixtures puppet-wget
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",
@@ -71,28 +120,31 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
-        'controller' => true, 
-        'docker_package_name' => 'docker-engine',  
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => false,
         'manage_kernel_modules' => true,
         'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
-    it { should contain_wget__fetch("download runc binary")}
+    it { should contain_archive('/usr/bin/runc')}
     it { should contain_file('/usr/bin/runc')}
     it { should contain_archive('containerd-1.1.0.linux-amd64.tar.gz')}
     it { should_not contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2-00')}
     it { should contain_package('kubectl').with_ensure('1.10.2-00')}
     it { should contain_package('kubeadm').with_ensure('1.10.2-00')}
-    
+
   end
-  
+
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
     let(:facts) do
       {
@@ -121,12 +173,15 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
-        'docker_package_name' => 'docker-engine',   
+        'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
         'manage_docker' => false,
         'manage_etcd' => true,
         'manage_kernel_modules' => true,
         'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -143,7 +198,6 @@ describe 'kubernetes::packages', :type => :class do
     let(:facts) do
       {
         :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
-        :operatingsystem  => 'Ubuntu', #needed to run dependent tests from fixtures puppet-wget
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",
@@ -167,18 +221,21 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
-        'controller' => true, 
-        'docker_package_name' => 'docker-engine',  
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
         'manage_kernel_modules' => true,
         'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
-    it { should contain_exec('disable swap')}  
-  end    
+    it { should contain_exec('disable swap')}
+  end
 end

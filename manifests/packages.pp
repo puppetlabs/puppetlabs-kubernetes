@@ -12,12 +12,14 @@ class kubernetes::packages (
   Optional[String] $containerd_archive         = $kubernetes::containerd_archive,
   Optional[String] $containerd_source          = $kubernetes::containerd_source,
   String $etcd_archive                         = $kubernetes::etcd_archive,
+  String $etcd_version                         = $kubernetes::etcd_version,
   String $etcd_source                          = $kubernetes::etcd_source,
+  String $etcd_package_name                    = $kubernetes::etcd_package_name,
+  String $etcd_install_method                  = $kubernetes::etcd_install_method,
   Optional[String] $runc_source                = $kubernetes::runc_source,
   Boolean $disable_swap                        = $kubernetes::disable_swap,
   Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
   Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
-
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
@@ -83,16 +85,13 @@ class kubernetes::packages (
 
   elsif $container_runtime == 'cri_containerd' {
 
-    wget::fetch { 'download runc binary':
-      source      => $runc_source,
-      destination => '/usr/bin/runc',
-      timeout     => 0,
-      verbose     => false,
-      unless      => "test $(ls -A /usr/bin/runc 2>/dev/null)",
-      before      => File['/usr/bin/runc'],
+    archive { '/usr/bin/runc':
+      source  => $runc_source,
+      extract => false,
+      cleanup => false,
+      creates => '/usr/bin/runc',
     }
-
-    file {'/usr/bin/runc':
+    -> file { '/usr/bin/runc':
       mode => '0700'
     }
 
@@ -108,14 +107,20 @@ class kubernetes::packages (
   }
 
   if $controller and $manage_etcd {
-    archive { $etcd_archive:
-      path            => "/${etcd_archive}",
-      source          => $etcd_source,
-      extract         => true,
-      extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
-      extract_path    => '/usr/local/bin',
-      cleanup         => true,
-      creates         => ['/usr/local/bin/etcd','/usr/local/bin/etcdctl']
+    if $etcd_install_method == 'wget' {
+      archive { $etcd_archive:
+        path            => "/${etcd_archive}",
+        source          => $etcd_source,
+        extract         => true,
+        extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
+        extract_path    => '/usr/local/bin',
+        cleanup         => true,
+        creates         => ['/usr/local/bin/etcd','/usr/local/bin/etcdctl']
+      }
+    } else {
+      package { $etcd_package_name:
+        ensure => $etcd_version,
+      }
     }
   }
 

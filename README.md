@@ -353,6 +353,17 @@ The download URL for the etcd archive.
 
 Defaults to `https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}`.
 
+#### `etcd_install_method`
+The method on how to install etcd. Can be either `wget` (using etcd_source) or `package` (using $etcd_package_name)
+
+Defaults to `wget`.
+
+#### `etcd_package_name`
+
+The system package name for installing etcd
+
+Defaults to `etcd-server`.
+
 #### `etcd_ip`
 
 Specifies the IP address etcd uses for communications.
@@ -368,6 +379,12 @@ Informs etcd on how many nodes are in the cluster.
 A Hiera example is `kubernetes::etcd_initial_cluster: kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220`.
 
 Defaults to `undef`.
+
+#### `etcd_initial_cluster_state`
+
+Informs etcd on the state of the cluster when starting. Useful for adding single nodes to a cluster. Allowed values are `new` or `existing`.
+
+Defaults to `new`
 
 #### `etcd_peers`
 
