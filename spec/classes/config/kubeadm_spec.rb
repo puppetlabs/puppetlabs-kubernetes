@@ -105,7 +105,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd') }
   end
 
-  context 'with version = 1.12 and cloud_provider => aws and cloud_config => undef' do
+  context 'with version = 1.12 and node_name => foo and cloud_provider => aws' do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
@@ -116,31 +116,46 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       }
     end
 
-    it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
-        .with_content(%r{nodeRegistration:\n  name: foo\n  kubeletExtraArgs:\n    foo: bar\n    cloud-provider: aws\n})
-    }
-    it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
-        .without_content(%r{apiServerExtraVolumes:\n  - name: cloud\n})
-    }
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has node_name==foo in first YAML document (InitConfig)' do
+      expect(config_yaml[0]['nodeRegistration']).to include('name' => params['node_name'])
+    end
+    it 'has cgroup-driver==cgroupfs in first YAML document (InitConfig) NodeRegistration' do
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cgroup-driver' => 'cgroupfs')
+    end
+    it 'has cloud-provider==aws in first YAML document (InitConfig) NodeRegistration' do
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => params['cloud_provider'])
+    end
+    it 'does not have cloud-config in second YAML document (InitConfig) NodeRegistration' do
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-config')
+    end
+    it 'does not have API Server extra volumes in second YAML document (ClusterConfig)' do
+      expect(config_yaml[1]).not_to include('apiServerExtraVolumes')
+    end
   end
 
-  context 'with version = 1.12 and cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
+  context 'with version = 1.12 and cgroup_driver => systemd and cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
         'node_name' => 'foo',
+        'cgroup_driver' => 'systemd',
         'cloud_provider' => 'aws',
         'cloud_config' => '/etc/kubernetes/cloud.conf',
         'kubelet_extra_arguments' => ['foo: bar'],
       }
     end
 
-    it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
-        .with_content(%r{apiServerExtraVolumes:\n  - name: cloud\n})
-    }
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it 'has API Server extra volumes in YAML document' do
+      expect(config_yaml[1]).to include('apiServerExtraVolumes')
+    end
+    it 'has cgroup-driver==systemd in first YAML document (InitConfig) NodeRegistration' do
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cgroup-driver' => 'systemd')
+    end
   end
 
   context 'with version = 1.12 and kubernetes_cluster_name => my_own_name' do

@@ -17,12 +17,17 @@ nodeRegistration:
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
-  <%- if @kubelet_merged_extra_arguments -%>
   kubeletExtraArgs:
-    <%- @kubelet_merged_extra_arguments.each do |arg| -%>
+    cgroup-driver: <%= @cgroup_driver %>
+    <%- if @cloud_provider -%>
+    cloud-provider: <%= @cloud_provider %>
+    <%- end -%>
+    <%- if @cloud_config -%>
+    cloud-config: <%= @cloud_config %>
+    <%- end -%>
+    <%- @kubelet_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end -%>
-  <%- end -%>
 ---
 apiVersion: kubeadm.k8s.io/v1alpha3
 CertificatesDir: /etc/kubernetes/pki
@@ -96,12 +101,17 @@ nodeRegistration:
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
-  <%- if @kubelet_merged_extra_arguments -%>
   kubeletExtraArgs:
-    <%- @kubelet_merged_extra_arguments.each do |arg| -%>
+    cgroup-driver: <%= @cgroup_driver %>
+    <%- if @cloud_provider -%>
+    cloud-provider: <%= @cloud_provider %>
+    <%- end -%>
+    <%- if @cloud_config -%>
+    cloud-config: <%= @cloud_config %>
+    <%- end -%>
+    <%- @kubelet_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end -%>
-  <%- end -%>
 token: <%= @token %>
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1

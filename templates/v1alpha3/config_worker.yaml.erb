@@ -15,7 +15,9 @@ discoveryTokenUnsafeSkipCAVerification: <%= @skip_ca_verification %>
 discoveryTokenUnsafeSkipCAVerification: true
 <% end -%>
 discoveryTimeout: 5m0s
+<% if @feature_gates -%>
 featureGates: <%= @feature_gates %>
+<% end -%>
 tlsBootstrapToken: <%= @tls_bootstrap_token %>
 token: <%= @token %>
 nodeRegistration:
@@ -23,9 +25,14 @@ nodeRegistration:
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
-  <%- if @kubelet_merged_extra_arguments -%>
   kubeletExtraArgs:
-    <%- @kubelet_merged_extra_arguments.each do |arg| -%>
-    <%= arg %>
+    cgroup-driver: <%= @cgroup_driver %>
+    <%- if @cloud_provider -%>
+    cloud-provider: <%= @cloud_provider %>
+    <%- if @cloud_config -%>
+    cloud-config: <%= @cloud_config %>
     <%- end -%>
-  <%- end -%>
+    <%- end -%>
+    <%- @kubelet_extra_arguments.each do |arg| -%>
+    <%= arg %>
+    <%- end %>

@@ -324,6 +324,10 @@
 #  The path to be used when running kube* commands
 #  Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
 #
+# [*cgroup_driver*]
+#  The cgroup driver to be used.
+#  Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+#
 # Authors
 # -------
 #
@@ -416,6 +420,10 @@ class kubernetes (
   Boolean $create_repos                        = true,
   String $image_repository                     = 'k8s.gcr.io',
   Array[String] $default_path                  = ['/usr/bin','/bin','/sbin','/usr/local/bin'],
+  String $cgroup_driver                        = $facts['os']['family'] ? {
+                                                    'RedHat' => 'systemd',
+                                                    default  => 'cgroupfs',
+                                                  },
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}

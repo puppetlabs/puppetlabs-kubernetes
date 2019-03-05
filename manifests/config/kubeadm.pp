@@ -38,6 +38,7 @@ class kubernetes::config::kubeadm (
   Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
   Optional[Hash] $kubelet_extra_config = $kubernetes::kubelet_extra_config,
   String $image_repository = $kubernetes::image_repository,
+  String $cgroup_driver = $kubernetes::cgroup_driver,
 ) {
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
@@ -94,7 +95,6 @@ class kubernetes::config::kubeadm (
       default => ["cloud-provider: ${cloud_provider}", "cloud-config: ${cloud_config}"],
     }
     $apiserver_merged_extra_arguments = concat($apiserver_extra_arguments, $cloud_args)
-    $kubelet_merged_extra_arguments = concat($kubelet_extra_arguments, $cloud_args)
     $controllermanager_merged_extra_arguments = $cloud_args
 
     # could check against Kubernetes 1.10 here, but that uses alpha1 config which doesn't have these options
