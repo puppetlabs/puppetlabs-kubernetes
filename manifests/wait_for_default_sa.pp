@@ -5,6 +5,7 @@ define kubernetes::wait_for_default_sa (
   Optional[Integer] $timeout   = undef,
   Optional[Integer] $tries     = 5,
   Optional[Integer] $try_sleep = 6,
+  Optional[Array] $env         = undef,
 ) {
   $safe_namespace = shell_escape($namespace)
 

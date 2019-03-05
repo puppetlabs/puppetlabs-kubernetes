@@ -26,5 +26,7 @@ define kubernetes::kubeadm_init (
   }
 
   # This prevents a known race condition https://github.com/kubernetes/kubernetes/issues/66689
-  kubernetes::wait_for_default_sa { 'default': }
+  kubernetes::wait_for_default_sa { 'default':
+    env => $env,
+  }
 }
