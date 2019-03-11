@@ -328,6 +328,10 @@
 #  The cgroup driver to be used.
 #  Defaults to 'systemd' on EL and 'cgroupfs' otherwise
 #
+# [*environment*]
+# The environment passed to kubectl commands.
+# Defaults to setting HOME and KUBECONFIG variables
+#
 # Authors
 # -------
 #
@@ -423,6 +427,10 @@ class kubernetes (
   String $cgroup_driver                        = $facts['os']['family'] ? {
                                                     'RedHat' => 'systemd',
                                                     default  => 'cgroupfs',
+                                                  },
+  Array[String] $environment                   = $controller ? {
+                                                    true    => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+                                                    default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf'],
                                                   },
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
