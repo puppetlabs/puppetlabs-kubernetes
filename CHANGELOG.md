@@ -1,3 +1,17 @@
+# Version 3.3.0
+
+Moves env variable to init.pp
+
+Set cgroup driver in config file
+
+Ability to change cluster name
+
+Restrucuture config class
+
+New defined type for SA in new namespaces
+
+A full list of PR's and issues closed can be found here [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/7?closed=1)
+
 # Version 3.2.2
 
 Fixes bug where nodes in v1.10/11 could not join the cluster
