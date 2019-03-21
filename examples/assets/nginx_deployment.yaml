@@ -1,0 +1,22 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginxtest
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginxtest
+  template:
+    metadata:
+      labels:
+        app: nginxtest
+    spec:
+      containers:
+      - name: nginxtest
+        image: nginx:alpine
+        ports:
+        - containerPort: 80

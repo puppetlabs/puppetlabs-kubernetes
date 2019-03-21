@@ -1,0 +1,88 @@
+{
+	"description": "read the specified ValidatingWebhookConfiguration",
+	"input_method": "stdin",
+	"parameters":{
+		"kube_api":{
+			   "description": "Kubernetes API endpoint",
+			   "type": "String"
+		},
+		"ca_file":{
+			   "description": "Certificate file path",
+			   "type": "Optional[String[1]]"
+		},
+		"token":{
+			   "description": "Authentication token obtained from 'kubectl describe secret <secret_name>'",
+			   "type": "Optional[String[1]]"
+		},
+		
+		
+		
+		
+		    
+			"admissionreviewversions":{
+			   "description": "AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects. API server will try to use first version in the list which it supports. If none of the versions specified in this list supported by API server, validation will fail for this object. If a persisted webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail and be subject to the failure policy. Default to `['v1beta1']`.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"exact":{
+			   "description": "Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. Deprecated. Planned for removal in 1.18.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "The name of the admission webhook. Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where 'imagepolicy' is the name of the webhook, and kubernetes.io is the name of the organization. Required.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"timeoutseconds":{
+			   "description": "TimeoutSeconds specifies the timeout for this webhook. After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy. The timeout value must be between 1 and 30 seconds. Default to 30 seconds.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"rules":{
+			   "description": "Rules describes what operations on what resources/subresources the webhook cares about. The webhook cares about an operation if it matches _any_ Rule. However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"sideeffects":{
+			   "description": "SideEffects states whether this webhookk has side effects. Acceptable values are: Unknown, None, Some, NoneOnDryRun Webhooks with side effects MUST implement a reconciliation system, since a request may be rejected by a future step in the admission change and the side effects therefore need to be undone. Requests with the dryRun attribute will be auto-rejected if they match a webhook with sideEffects == Unknown or Some. Defaults to Unknown.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"clientconfig":{
+			   "description": "ClientConfig defines how to communicate with the hook. Required",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"failurepolicy":{
+			   "description": "FailurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail. Defaults to Ignore.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"export":{
+			   "description": "Should this value be exported.  Export strips fields that a user can not specify. Deprecated. Planned for removal in 1.18.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"namespaceselector":{
+			   "description": "NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the webhook.For example, to run the webhook on any objects whose namespace is not associated with 'runlevel' of '0' or '1';  you will set the selector as follows: 'namespaceSelector': {  'matchExpressions': [    {      'key': 'runlevel',      'operator': 'NotIn',      'values': [        '0',        '1'      ]    }  ]}If instead you want to only run the webhook on any objects whose namespace is associated with the 'environment' of 'prod' or 'staging'; you will set the selector as follows: 'namespaceSelector': {  'matchExpressions': [    {      'key': 'environment',      'operator': 'In',      'values': [        'prod',        'staging'      ]    }  ]}See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/ for more examples of label selectors.Default to the empty LabelSelector, which matches everything.",
+			   "type": "Optional[String[1]]"
+			}
+			
+	}
+}
