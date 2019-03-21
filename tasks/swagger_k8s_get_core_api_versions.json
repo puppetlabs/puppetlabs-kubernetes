@@ -1,0 +1,34 @@
+{
+	"description": "get available API versions",
+	"input_method": "stdin",
+	"parameters":{
+		"kube_api":{
+			   "description": "Kubernetes API endpoint",
+			   "type": "String"
+		},
+		"ca_file":{
+			   "description": "Certificate file path",
+			   "type": "Optional[String[1]]"
+		},
+		"token":{
+			   "description": "Authentication token obtained from 'kubectl describe secret <secret_name>'",
+			   "type": "Optional[String[1]]"
+		},
+		
+		
+		
+		
+		    
+			"clientcidr":{
+			   "description": "The CIDR with which clients can match their IP to figure out the server address that they should use.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"serveraddress":{
+			   "description": "Address of this server, suitable for a client that matches the above CIDR. This can be a hostname, hostname:port, IP or IP:port.",
+			   "type": "Optional[String[1]]"
+			}
+			
+	}
+}

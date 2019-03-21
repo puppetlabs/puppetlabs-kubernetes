@@ -1,0 +1,88 @@
+{
+	"description": "delete a RuntimeClass",
+	"input_method": "stdin",
+	"parameters":{
+		"kube_api":{
+			   "description": "Kubernetes API endpoint",
+			   "type": "String"
+		},
+		"ca_file":{
+			   "description": "Certificate file path",
+			   "type": "Optional[String[1]]"
+		},
+		"token":{
+			   "description": "Authentication token obtained from 'kubectl describe secret <secret_name>'",
+			   "type": "Optional[String[1]]"
+		},
+		
+		
+		
+		
+		    
+			"body":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"grace_period_seconds":{
+			   "description": "The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"orphan_dependents":{
+			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"metadata":{
+			   "description": "More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "Specification of the RuntimeClass More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"propagation_policy":{
+			   "description": "Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the RuntimeClass",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			   "type": "Optional[String[1]]"
+			}
+			
+	}
+}

@@ -1,3 +1,7 @@
+# Version 3.4.0
+
+Add Puppet Bolt tasks to interact with the Kubernetes API
+
 # Version 3.3.0
 
 Moves env variable to init.pp

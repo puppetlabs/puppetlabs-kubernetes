@@ -18,6 +18,7 @@
    * [Parameters](#parameters)
 4. [Limitations - OS compatibility, etc.](#limitations)
 5. [Development - Guide for contributing to the module](#development)
+6. [Examples - Puppet Bolt task examples](#examples)
 
 ## Description
 
@@ -644,3 +645,7 @@ Docker is the supported container runtime for this module.
 ## Development
 
 If you would like to contribute to this module, please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md).
+
+## Examples
+
+In the examples folder you will find a [bash script](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/examples/task_examples.sh) containg a few sample Puppet Bolt commands for the usage of the tasks. The example script is intended to be used with a Kubernetes API that requires the token authentication header, but the token parameter is optional by default.  

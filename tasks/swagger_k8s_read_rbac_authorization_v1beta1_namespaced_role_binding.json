@@ -1,0 +1,52 @@
+{
+	"description": "read the specified RoleBinding",
+	"input_method": "stdin",
+	"parameters":{
+		"kube_api":{
+			   "description": "Kubernetes API endpoint",
+			   "type": "String"
+		},
+		"ca_file":{
+			   "description": "Certificate file path",
+			   "type": "Optional[String[1]]"
+		},
+		"token":{
+			   "description": "Authentication token obtained from 'kubectl describe secret <secret_name>'",
+			   "type": "Optional[String[1]]"
+		},
+		
+		
+		
+		
+		    
+			"name":{
+			   "description": "Name of the object being referenced.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"namespace":{
+			   "description": "Namespace of the referenced object.  If the object kind is non-namespace, such as 'User' or 'Group', and this value is not empty the Authorizer should report an error.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apigroup":{
+			   "description": "APIGroup holds the API group of the referenced subject. Defaults to '' for ServiceAccount subjects. Defaults to 'rbac.authorization.k8s.io' for User and Group subjects.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"kind":{
+			   "description": "Kind of object being referenced. Values defined by this API group are 'User', 'Group', and 'ServiceAccount'. If the Authorizer does not recognized the kind value, the Authorizer should report an error.",
+			   "type": "Optional[String[1]]"
+			}
+			
+	}
+}
