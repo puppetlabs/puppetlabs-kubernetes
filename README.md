@@ -58,7 +58,7 @@ docker run --rm -v $(pwd):/mnt --env-file env puppet/kubetool:{$module_version}
 The `docker run` command above includes an `env` file which is included in the root folder of this repo.
 
 ```
-docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=weave -e ETCD_INITIAL_CLUSTER=kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220 -e ETCD_IP="%{::ipaddress_eth1}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_eth1}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
+docker run --rm -v $(pwd):/mnt -e OS=debian -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=cilium -e CNI_PROVIDER_VERSION=1.4.3 -e ETCD_INITIAL_CLUSTER=kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220 -e ETCD_IP="%{::ipaddress_eth1}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_eth1}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
 ```
 
 The above parameters are:
@@ -66,7 +66,8 @@ The above parameters are:
 * `OS`: The operating system Kubernetes runs on.
 * `VERSION`: The version of Kubernetes to deploy.
 * `CONTAINER_RUNTIME`: The container runtime Kubernetes uses. Set this value to `docker` (officially supported) or `cri_containerd`. Advanced Kubernetes users can use `cri_containerd`, however this requires an increased understanding of Kubernetes, specifically when running applications in a HA cluster. To run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module. For more information, see the Kubernetes [documentation](https://kubernetes-v1-4.github.io/docs/user-guide/load-balancer/).
-* `CNI_PROVIDER`: The CNI network to install. Set this value to `weave` or `flannel`.
+* `CNI_PROVIDER`: The CNI network to install. Set this value to `weave`, `flannel`, `calico` or `cilium`.
+* `CNI_PROVIDER_VERSION` The CNI version to use `calico` and `cilium` use this variable to reference the correct deployment file. Current version for `calico` is `3.6` and `cilium` is `1.4.3`
 * `ETCD_INITIAL_CLUSTER`: The server hostnames and IPs in the form of `hostname:ip`. When in production, include three, five, or seven nodes for etcd.
 * `ETCD_IP`: The IP each etcd member listens on. We recommend passing the fact for the interface to be used by the cluster.
 * `KUBE_API_ADVERTISE_ADDRESS`: The IP each etcd/apiserver instance uses on each controller. We recommend passing the fact for the interface to be used by the cluster.

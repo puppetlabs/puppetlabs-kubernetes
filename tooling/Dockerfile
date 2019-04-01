@@ -26,4 +26,4 @@ RUN set -x && \
 
 WORKDIR /mnt
 
-ENTRYPOINT ["sh", "-c", "/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER}  -i ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -d ${INSTALL_DASHBOARD}"]
+ENTRYPOINT ["sh", "-c", "/etc/k8s/start-kubetool.sh"]

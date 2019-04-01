@@ -1,0 +1,7 @@
+#!/bin/sh
+  
+if [[ -z "${CNI_PROVIDER_VERSION}" ]]; then
+/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER} -i ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -d ${INSTALL_DASHBOARD}
+else
+/etc/k8s/kube_tool.rb -o ${OS} -v ${VERSION} -r ${CONTAINER_RUNTIME} -c ${CNI_PROVIDER} -p ${CNI_PROVIDER_VERSION} -i ${ETCD_INITIAL_CLUSTER} -t ${ETCD_IP} -a ${KUBE_API_ADVERTISE_ADDRESS} -d ${INSTALL_DASHBOARD}
+fi

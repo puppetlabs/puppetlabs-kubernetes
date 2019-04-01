@@ -5,12 +5,14 @@ class OtherParams
 
 
 
-  def OtherParams.create(os, version, container_runtime, cni_provider, etcd_initial_cluster, etcd_ip, api_address, install_dashboard)
+  def OtherParams.create(os, version, container_runtime, cni_provider, cni_provider_version, etcd_initial_cluster, etcd_ip, api_address, install_dashboard)
     if install_dashboard.match('true')
        install = true
     else
        install = false
     end
+
+    kubernetes_minor_release = version.match(/(\d+\.)(\d+)/)[0]
 
     if os.downcase.match('debian')
       kubernetes_package_version = "#{version}-00"
@@ -26,8 +28,15 @@ class OtherParams
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
        cni_pod_cidr = '10.244.0.0/16'
     elsif cni_provider.match('calico')
-       cni_network_provider = 'https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml'
+       cni_network_provider = "https://docs.projectcalico.org/v#{cni_provider_version}/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml"
        cni_pod_cidr = '192.168.0.0/16'
+    elsif cni_provider.match('cilium')
+      cni_pod_cidr = '10.244.0.0/16'
+      if container_runtime.match('docker')
+        cni_network_provider = "https://raw.githubusercontent.com/cilium/cilium/#{cni_provider_version}/examples/kubernetes/#{kubernetes_minor_release}/cilium.yaml"
+      elsif container_runtime.match('crio')
+        cni_network_provider = "https://raw.githubusercontent.com/cilium/cilium/#{cni_provider_version}/examples/kubernetes/#{kubernetes_minor_release}/cilium-crio.yaml"
+      end
     end
 
 
