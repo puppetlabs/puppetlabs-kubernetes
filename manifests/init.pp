@@ -52,7 +52,7 @@
 #
 # [*cni_network_provider*]
 #
-#  The URL to get the cni providers yaml file. 
+#  The URL to get the cni providers yaml file.
 #  Defaults to `undef`. `kube_tool` sets this value.
 #
 # [*cni_rbac_binding*]
@@ -203,6 +203,10 @@
 # [*install_dashboard*]
 #   This is a bool that determines if the kubernetes dashboard is installed.
 #   Defaults to false
+#
+# [*kubernetes_dashboard_url*]
+#   The URL to get the Kubernetes Dashboard yaml file.
+#   Defaults to the upstream source. `kube_tool` sets this value.
 #
 # [*dashboard_version*]
 #   The version of Kubernetes dashboard you want to install.
@@ -375,6 +379,8 @@ class kubernetes (
   Optional[String] $cni_network_provider       = undef,
   Optional[String] $cni_rbac_binding           = undef,
   Boolean $install_dashboard                   = false,
+  String $kubernetes_dashboard_url             =
+    'https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml',
   String $dashboard_version                    = 'v1.10.1',
   Boolean $schedule_on_controller              = false,
   Integer $api_server_count                    = undef,
