@@ -1,0 +1,38 @@
+apiVersion: kubeadm.k8s.io/v1beta1
+caCertPath: /etc/kubernetes/pki/ca.crt
+kind: JoinConfiguration
+<%- if @kubernetes_cluster_name != "kubernetes"  -%>
+clusterName: @kubernetes_cluster_name
+<%- end -%>
+discoveryToken: <%= @discovery_token %>
+discoveryTokenAPIServers:
+  - '<%= @controller_address %>'
+<% if @discovery_token_hash -%>
+discoveryTokenCACertHashes: 
+  - 'sha256:<%= @discovery_token_hash %>'
+discoveryTokenUnsafeSkipCAVerification: <%= @skip_ca_verification %>
+<% else -%>
+discoveryTokenUnsafeSkipCAVerification: true
+<% end -%>
+discoveryTimeout: 5m0s
+<% if @feature_gates -%>
+featureGates: <%= @feature_gates %>
+<% end -%>
+tlsBootstrapToken: <%= @tls_bootstrap_token %>
+token: <%= @token %>
+nodeRegistration:
+  name: <%= @node_name %>
+  <%- if @container_runtime == "cri_containerd" -%>
+  criSocket: /run/containerd/containerd.sock
+  <%- end -%>
+  kubeletExtraArgs:
+    cgroup-driver: <%= @cgroup_driver %>
+    <%- if @cloud_provider -%>
+    cloud-provider: <%= @cloud_provider %>
+    <%- if @cloud_config -%>
+    cloud-config: <%= @cloud_config %>
+    <%- end -%>
+    <%- end -%>
+    <%- @kubelet_extra_arguments.each do |arg| -%>
+    <%= arg %>
+    <%- end %>
