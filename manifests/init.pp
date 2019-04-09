@@ -107,7 +107,12 @@
 # [*runc_source*]
 #  The URL to download runc
 #  Defaults to https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64
-#  
+#
+# [*etcd_hostname*]
+#   The name of the etcd instance.
+#   An example with hiera would be kubernetes::etcd_hostname: "%{::fqdn}"
+#   Defaults to hostname
+#
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
 #   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
