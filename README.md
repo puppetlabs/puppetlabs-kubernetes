@@ -365,6 +365,14 @@ The system package name for installing etcd
 
 Defaults to `etcd-server`.
 
+#### `etcd_hostname`
+
+Specifies the name of the etcd instance.
+
+A Hiera is `kubernetes::etcd_hostname:"%{::fqdn}"`.
+
+Defaults to `$hostname`.
+
 #### `etcd_ip`
 
 Specifies the IP address etcd uses for communications.
