@@ -28,9 +28,6 @@ nodeRegistration:
     <%- @kubelet_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end -%>
-  taints:
-  - effect: NoSchedule
-    key: node-role.kubernetes.io/master
 ---
 apiServer:
   timeoutForControlPlane: 4m0s
