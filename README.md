@@ -22,9 +22,18 @@
 
 ## Description
 
+[<img
+src="https://raw.githubusercontent.com/cncf/artwork/master/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
+align="right" width="150px" alt="certified kubernetes 1.13">][certified]
+
+[certified]: https://github.com/cncf/k8s-conformance/tree/master/v1.13/puppetlabs-kubernetes
+
 This module installs and configures [Kubernetes](https://kubernetes.io/) which is an open-source system for automating deployment, scaling, and management of containerized applications. For efficient management and discovery, containers that make up an application are grouped into logical units.
 
 To bootstrap a Kubernetes cluster in a secure and extensible way, this module uses the [kubeadm](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/) toolkit.
+
+
+
 
 ## Setup
 
