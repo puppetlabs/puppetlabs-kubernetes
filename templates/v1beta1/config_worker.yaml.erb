@@ -4,22 +4,17 @@ kind: JoinConfiguration
 <%- if @kubernetes_cluster_name != "kubernetes"  -%>
 clusterName: @kubernetes_cluster_name
 <%- end -%>
-discoveryToken: <%= @discovery_token %>
-discoveryTokenAPIServers:
-  - '<%= @controller_address %>'
-<% if @discovery_token_hash -%>
-discoveryTokenCACertHashes: 
-  - 'sha256:<%= @discovery_token_hash %>'
-discoveryTokenUnsafeSkipCAVerification: <%= @skip_ca_verification %>
-<% else -%>
-discoveryTokenUnsafeSkipCAVerification: true
-<% end -%>
-discoveryTimeout: 5m0s
-<% if @feature_gates -%>
-featureGates: <%= @feature_gates %>
-<% end -%>
+
+discovery:
+  timeout: 5m0s
+  bootstrapToken:
+    token: <%= @discovery_token %>
+    apiServerEndpoint: '<%= @controller_address %>'
+    unsafeSkipCAVerification: false
+    caCertHashes:
+    - 'sha256:<%= @discovery_token_hash %>'
 tlsBootstrapToken: <%= @tls_bootstrap_token %>
-token: <%= @token %>
+token: <%= @discovery_token %> 
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
@@ -36,3 +31,7 @@ nodeRegistration:
     <%- @kubelet_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end %>
+<% if @feature_gates -%>
+featureGates: <%= @feature_gates %>
+<% end -%>
+tlsBootstrapToken: <%= @tls_bootstrap_token %>
