@@ -379,9 +379,9 @@ class kubernetes (
   Optional[String] $cni_network_provider       = undef,
   Optional[String] $cni_rbac_binding           = undef,
   Boolean $install_dashboard                   = false,
-  String $kubernetes_dashboard_url             =
-    'https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml',
   String $dashboard_version                    = 'v1.10.1',
+  String $kubernetes_dashboard_url             =
+  "https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml",
   Boolean $schedule_on_controller              = false,
   Integer $api_server_count                    = undef,
   String $kubernetes_ca_crt                    = undef,
