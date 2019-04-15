@@ -365,7 +365,7 @@ class kubernetes (
   Boolean $manage_etcd                         = true,
   Optional[String] $kube_api_advertise_address = undef,
   Optional[String] $etcd_version               = '3.1.12',
-  Optional[String] $etcd_hostname              = $hostname,
+  Optional[String] $etcd_hostname              = $facts['hostname'],
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
   Optional[String] $etcd_initial_cluster       = undef,
