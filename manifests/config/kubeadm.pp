@@ -116,6 +116,7 @@ class kubernetes::config::kubeadm (
 
   $config_version = $kubernetes_version ? {
     /1.1(0|1)/ => 'v1alpha1',
+    /1.1(3|4)/  => 'v1beta1',
     default    => 'v1alpha3',
   }
 
