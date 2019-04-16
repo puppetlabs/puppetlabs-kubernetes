@@ -25,8 +25,8 @@
 			}
 			,
 		    
-			"field_manager":{
-			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -37,8 +37,8 @@
 			}
 			,
 		    
-			"status":{
-			   "description": "current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.",
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -49,14 +49,14 @@
 			}
 			,
 		    
-			"dry_run":{
-			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			"metadata":{
+			   "description": "Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
+			"field_manager":{
+			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -67,8 +67,8 @@
 			}
 			,
 		    
-			"spec":{
-			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.",
+			"status":{
+			   "description": "current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -79,8 +79,8 @@
 			}
 			,
 		    
-			"metadata":{
-			   "description": "Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.",
+			"spec":{
+			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.",
 			   "type": "Optional[String[1]]"
 			}
 			

@@ -114,11 +114,11 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
       op_param('body', 'body', 'body', 'body'),
       op_param('description', 'body', 'description', 'description'),
       op_param('dryRun', 'query', 'dry_run', 'dry_run'),
-      op_param('globaldefault', 'body', 'global_default', 'globaldefault'),
+      op_param('globaldefault', 'body', 'globaldefault', 'globaldefault'),
       op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
       op_param('kind', 'body', 'kind', 'kind'),
       op_param('metadata', 'body', 'metadata', 'metadata'),

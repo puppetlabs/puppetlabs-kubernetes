@@ -114,8 +114,8 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('aggregationrule', 'body', 'aggregationrule', 'aggregationrule'),
-      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
+      op_param('aggregationrule', 'body', 'aggregation_rule', 'aggregationrule'),
+      op_param('apiversion', 'body', 'api_version', 'apiversion'),
       op_param('continue', 'query', 'continue', 'continue'),
       op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
       op_param('kind', 'body', 'kind', 'kind'),

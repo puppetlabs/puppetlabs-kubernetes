@@ -31,14 +31,38 @@
 			}
 			,
 		    
-			"name":{
-			   "description": "name of the Scale",
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"body":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the Scale",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -55,32 +79,8 @@
 			}
 			,
 		    
-			"spec":{
-			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"status":{
 			   "description": "current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			

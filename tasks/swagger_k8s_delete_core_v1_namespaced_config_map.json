@@ -19,26 +19,8 @@
 		
 		
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"binarydata":{
-			   "description": "BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"data":{
-			   "description": "Data contains the configuration data. Each key must consist of alphanumeric characters, '-', '_' or '.'. Values with non-UTF-8 byte sequences must use the BinaryData field. The keys stored in Data must not overlap with the keys in the BinaryData field, this is enforced during validation process.",
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -49,8 +31,8 @@
 			}
 			,
 		    
-			"grace_period_seconds":{
-			   "description": "The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.",
+			"orphan_dependents":{
+			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -61,8 +43,8 @@
 			}
 			,
 		    
-			"name":{
-			   "description": "name of the ConfigMap",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -79,20 +61,38 @@
 			}
 			,
 		    
-			"body":{
-			   "description": "",
+			"binarydata":{
+			   "description": "BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"orphan_dependents":{
-			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
+			"grace_period_seconds":{
+			   "description": "The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the ConfigMap",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
 			"namespace":{
 			   "description": "object name and auth scope, such as for teams and projects",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"data":{
+			   "description": "Data contains the configuration data. Each key must consist of alphanumeric characters, '-', '_' or '.'. Values with non-UTF-8 byte sequences must use the BinaryData field. The keys stored in Data must not overlap with the keys in the BinaryData field, this is enforced during validation process.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			

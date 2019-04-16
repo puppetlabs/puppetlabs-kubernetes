@@ -114,7 +114,7 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
+      op_param('apiversion', 'body', 'api_version', 'apiversion'),
       op_param('continue', 'query', 'continue', 'continue'),
       op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
       op_param('kind', 'body', 'kind', 'kind'),
@@ -124,7 +124,7 @@ def format_params(key_values)
       op_param('namespace', 'path', 'namespace', 'namespace'),
       op_param('pretty', 'query', 'pretty', 'pretty'),
       op_param('resourceVersion', 'query', 'resource_version', 'resource_version'),
-      op_param('roleref', 'body', 'roleref', 'roleref'),
+      op_param('roleref', 'body', 'role_ref', 'roleref'),
       op_param('subjects', 'body', 'subjects', 'subjects'),
       op_param('timeoutSeconds', 'query', 'timeout_seconds', 'timeout_seconds'),
       op_param('watch', 'query', 'watch', 'watch'),

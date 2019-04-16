@@ -19,50 +19,14 @@
 		
 		
 		    
-			"action":{
-			   "description": "What action was taken/failed regarding to the Regarding object.",
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"source":{
-			   "description": "The component reporting this event. Should be a short machine understandable string.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"metadata":{
-			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"reason":{
-			   "description": "This should be a short, machine understandable string that gives the reason for the transition into the object's current status.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"reportinginstance":{
-			   "description": "ID of the controller instance, e.g. `kubelet-xyzf`.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"message":{
-			   "description": "A human-readable description of the status of this operation.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"type":{
-			   "description": "Type of this event (Normal, Warning), new types could be added in the future",
+			"name":{
+			   "description": "name of the Event",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -73,32 +37,50 @@
 			}
 			,
 		    
-			"firsttimestamp":{
-			   "description": "The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			"metadata":{
+			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"related":{
-			   "description": "Optional secondary object for more complex actions.",
+			"type":{
+			   "description": "Type of this event (Normal, Warning), new types could be added in the future",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"orphan_dependents":{
-			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"lasttimestamp":{
-			   "description": "The time at which the most recent occurrence of this event was recorded.",
+			"message":{
+			   "description": "A human-readable description of the status of this operation.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"reportinginstance":{
+			   "description": "ID of the controller instance, e.g. `kubelet-xyzf`.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"action":{
+			   "description": "What action was taken/failed regarding to the Regarding object.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"eventtime":{
+			   "description": "Time when this Event was first observed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -115,26 +97,26 @@
 			}
 			,
 		    
-			"name":{
-			   "description": "name of the Event",
+			"source":{
+			   "description": "The component reporting this event. Should be a short machine understandable string.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			"related":{
+			   "description": "Optional secondary object for more complex actions.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"eventtime":{
-			   "description": "Time when this Event was first observed.",
+			"firsttimestamp":{
+			   "description": "The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"reportingcomponent":{
-			   "description": "Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.",
+			"reason":{
+			   "description": "This should be a short, machine understandable string that gives the reason for the transition into the object's current status.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -145,8 +127,26 @@
 			}
 			,
 		    
-			"dry_run":{
-			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			"orphan_dependents":{
+			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"count":{
+			   "description": "The number of times this event has occurred.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"reportingcomponent":{
+			   "description": "Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -157,8 +157,8 @@
 			}
 			,
 		    
-			"count":{
-			   "description": "The number of times this event has occurred.",
+			"lasttimestamp":{
+			   "description": "The time at which the most recent occurrence of this event was recorded.",
 			   "type": "Optional[String[1]]"
 			}
 			,

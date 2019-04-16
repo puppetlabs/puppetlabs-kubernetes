@@ -19,8 +19,8 @@
 		
 		
 		    
-			"field_selector":{
-			   "description": "A selector to restrict the list of returned objects by their fields. Defaults to everything.",
+			"continue":{
+			   "description": "The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -31,8 +31,8 @@
 			}
 			,
 		    
-			"watch":{
-			   "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -43,38 +43,14 @@
 			}
 			,
 		    
-			"label_selector":{
-			   "description": "A selector to restrict the list of returned objects by their labels. Defaults to everything.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"description":{
 			   "description": "description is an arbitrary string that usually provides guidelines on when this priority class should be used.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"value":{
-			   "description": "The value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"continue":{
-			   "description": "The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.",
+			"label_selector":{
+			   "description": "A selector to restrict the list of returned objects by their labels. Defaults to everything.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -85,20 +61,44 @@
 			}
 			,
 		    
+			"globaldefault":{
+			   "description": "globalDefault specifies whether this PriorityClass should be considered as the default priority for pods that do not have any priority class. Only one PriorityClass can be marked as `globalDefault`. However, if more than one PriorityClasses exists with their `globalDefault` field set to true, the smallest value of such global default PriorityClasses will be used as the default priority.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"value":{
+			   "description": "The value of this priority class. This is the actual priority that pods receive when they have the name of this class in their pod spec.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"field_selector":{
+			   "description": "A selector to restrict the list of returned objects by their fields. Defaults to everything.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"watch":{
+			   "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"timeout_seconds":{
 			   "description": "Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"globaldefault":{
-			   "description": "globalDefault specifies whether this PriorityClass should be considered as the default priority for pods that do not have any priority class. Only one PriorityClass can be marked as `globalDefault`. However, if more than one PriorityClasses exists with their `globalDefault` field set to true, the smallest value of such global default PriorityClasses will be used as the default priority.",
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			

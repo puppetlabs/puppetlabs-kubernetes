@@ -19,6 +19,24 @@
 		
 		
 		    
+			"metadata":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "Spec defines the desired identities of pods in this set.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"body":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"field_manager":{
 			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
 			   "type": "Optional[String[1]]"
@@ -31,26 +49,8 @@
 			}
 			,
 		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"spec":{
-			   "description": "Spec defines the desired identities of pods in this set.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
+			"status":{
+			   "description": "Status is the current status of Pods in this StatefulSet. This data may be out of date by some window of time.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -67,14 +67,14 @@
 			}
 			,
 		    
-			"metadata":{
-			   "description": "",
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"status":{
-			   "description": "Status is the current status of Pods in this StatefulSet. This data may be out of date by some window of time.",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			

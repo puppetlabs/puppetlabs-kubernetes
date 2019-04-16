@@ -37,14 +37,20 @@
 			}
 			,
 		    
+			"spec":{
+			   "description": "Spec defines the behavior of a node. https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"kind":{
 			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"spec":{
-			   "description": "Spec defines the behavior of a node. https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			"metadata":{
+			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -57,12 +63,6 @@
 		    
 			"pretty":{
 			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"metadata":{
-			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 			   "type": "Optional[String[1]]"
 			}
 			,

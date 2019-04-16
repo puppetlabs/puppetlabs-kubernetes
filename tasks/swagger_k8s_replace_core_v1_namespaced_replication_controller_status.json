@@ -19,8 +19,14 @@
 		
 		
 		    
-			"body":{
-			   "description": "",
+			"status":{
+			   "description": "Status is the most recently observed status of the replication controller. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the ReplicationController",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -33,12 +39,6 @@
 		    
 			"pretty":{
 			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -61,6 +61,12 @@
 			}
 			,
 		    
+			"body":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"dry_run":{
 			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
@@ -73,14 +79,8 @@
 			}
 			,
 		    
-			"name":{
-			   "description": "name of the ReplicationController",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"status":{
-			   "description": "Status is the most recently observed status of the replication controller. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			

@@ -19,8 +19,8 @@
 		
 		
 		    
-			"subjects":{
-			   "description": "Subjects holds references to the objects the role applies to.",
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -31,14 +31,8 @@
 			}
 			,
 		    
-			"name":{
-			   "description": "name of the ClusterRoleBinding",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
+			"roleref":{
+			   "description": "RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -55,26 +49,32 @@
 			}
 			,
 		    
-			"roleref":{
-			   "description": "RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"body":{
 			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"dry_run":{
-			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"subjects":{
+			   "description": "Subjects holds references to the objects the role applies to.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
 			"metadata":{
 			   "description": "Standard object's metadata.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the ClusterRoleBinding",
 			   "type": "Optional[String[1]]"
 			}
 			

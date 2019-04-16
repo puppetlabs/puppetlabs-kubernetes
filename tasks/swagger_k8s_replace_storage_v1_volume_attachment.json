@@ -19,6 +19,24 @@
 		
 		
 		    
+			"status":{
+			   "description": "Status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "Specification of the desired attach/detach volume behavior. Populated by the Kubernetes system.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"body":{
 			   "description": "",
 			   "type": "Optional[String[1]]"
@@ -37,20 +55,8 @@
 			}
 			,
 		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"status":{
-			   "description": "Status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.",
+			"metadata":{
+			   "description": "Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -67,14 +73,8 @@
 			}
 			,
 		    
-			"metadata":{
-			   "description": "Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"spec":{
-			   "description": "Specification of the desired attach/detach volume behavior. Populated by the Kubernetes system.",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			

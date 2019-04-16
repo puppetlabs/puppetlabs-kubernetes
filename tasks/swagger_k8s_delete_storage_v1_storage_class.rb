@@ -114,23 +114,23 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('allowedtopologies', 'body', 'allowed_topologies', 'allowedtopologies'),
-      op_param('allowvolumeexpansion', 'body', 'allow_volume_expansion', 'allowvolumeexpansion'),
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
+      op_param('allowedtopologies', 'body', 'allowedtopologies', 'allowedtopologies'),
+      op_param('allowvolumeexpansion', 'body', 'allowvolumeexpansion', 'allowvolumeexpansion'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
       op_param('body', 'body', 'body', 'body'),
       op_param('dryRun', 'query', 'dry_run', 'dry_run'),
       op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
       op_param('kind', 'body', 'kind', 'kind'),
       op_param('metadata', 'body', 'metadata', 'metadata'),
-      op_param('mountoptions', 'body', 'mount_options', 'mountoptions'),
+      op_param('mountoptions', 'body', 'mountoptions', 'mountoptions'),
       op_param('name', 'path', 'name', 'name'),
       op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
       op_param('parameters', 'body', 'parameters', 'parameters'),
       op_param('pretty', 'query', 'pretty', 'pretty'),
       op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
       op_param('provisioner', 'body', 'provisioner', 'provisioner'),
-      op_param('reclaimpolicy', 'body', 'reclaim_policy', 'reclaimpolicy'),
-      op_param('volumebindingmode', 'body', 'volume_binding_mode', 'volumebindingmode'),
+      op_param('reclaimpolicy', 'body', 'reclaimpolicy', 'reclaimpolicy'),
+      op_param('volumebindingmode', 'body', 'volumebindingmode', 'volumebindingmode'),
     ]
   op_params.each do |i|
     location = i[:location]

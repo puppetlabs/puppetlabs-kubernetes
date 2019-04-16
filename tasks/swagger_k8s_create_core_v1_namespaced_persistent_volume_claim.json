@@ -19,20 +19,20 @@
 		
 		
 		    
+			"metadata":{
+			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"field_manager":{
 			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -49,8 +49,8 @@
 			}
 			,
 		    
-			"status":{
-			   "description": "Status represents the current information/status of a persistent volume claim. Read-only. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims",
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -61,20 +61,20 @@
 			}
 			,
 		    
-			"metadata":{
-			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"spec":{
 			   "description": "Spec defines the desired characteristics of a volume requested by a pod author. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"dry_run":{
-			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			"status":{
+			   "description": "Status represents the current information/status of a persistent volume claim. Read-only. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			

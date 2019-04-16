@@ -114,8 +114,8 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('clientcidr', 'body', 'client_cidr', 'clientcidr'),
-      op_param('serveraddress', 'body', 'server_address', 'serveraddress'),
+      op_param('groupversion', 'body', 'groupversion', 'groupversion'),
+      op_param('version', 'body', 'version', 'version'),
     ]
   op_params.each do |i|
     location = i[:location]

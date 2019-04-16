@@ -119,9 +119,9 @@ def format_params(key_values)
       op_param('kind', 'body', 'kind', 'kind'),
       op_param('name', 'body', 'name', 'name'),
       op_param('namespaced', 'body', 'namespaced', 'namespaced'),
-      op_param('shortnames', 'body', 'shortnames', 'shortnames'),
-      op_param('singularname', 'body', 'singularname', 'singularname'),
-      op_param('storageversionhash', 'body', 'storageversionhash', 'storageversionhash'),
+      op_param('shortnames', 'body', 'short_names', 'shortnames'),
+      op_param('singularname', 'body', 'singular_name', 'singularname'),
+      op_param('storageversionhash', 'body', 'storage_version_hash', 'storageversionhash'),
       op_param('verbs', 'body', 'verbs', 'verbs'),
       op_param('version', 'body', 'version', 'version'),
     ]

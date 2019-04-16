@@ -19,14 +19,8 @@
 		
 		
 		    
-			"status":{
-			   "description": "Most recently observed status of the PodDisruptionBudget.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -43,8 +37,20 @@
 			}
 			,
 		    
-			"name":{
-			   "description": "name of the PodDisruptionBudget",
+			"status":{
+			   "description": "Most recently observed status of the PodDisruptionBudget.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "Specification of the desired behavior of the PodDisruptionBudget.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -55,8 +61,14 @@
 			}
 			,
 		    
-			"spec":{
-			   "description": "Specification of the desired behavior of the PodDisruptionBudget.",
+			"body":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the PodDisruptionBudget",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -69,18 +81,6 @@
 		    
 			"pretty":{
 			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			

@@ -19,8 +19,20 @@
 		
 		
 		    
+			"spec":{
+			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"body":{
 			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -31,8 +43,8 @@
 			}
 			,
 		    
-			"spec":{
-			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -43,26 +55,8 @@
 			}
 			,
 		    
-			"status":{
-			   "description": "current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"metadata":{
 			   "description": "Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"dry_run":{
-			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -79,8 +73,14 @@
 			}
 			,
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"status":{
+			   "description": "current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.",
 			   "type": "Optional[String[1]]"
 			}
 			

@@ -19,30 +19,6 @@
 		
 		
 		    
-			"status":{
-			   "description": "Most recently observed status of the Deployment.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"grace_period_seconds":{
-			   "description": "The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"orphan_dependents":{
-			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"name":{
 			   "description": "name of the Deployment",
 			   "type": "Optional[String[1]]"
@@ -55,8 +31,14 @@
 			}
 			,
 		    
-			"spec":{
-			   "description": "Specification of the desired behavior of the Deployment.",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -73,8 +55,20 @@
 			}
 			,
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
+			"metadata":{
+			   "description": "Standard object metadata.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "Specification of the desired behavior of the Deployment.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"status":{
+			   "description": "Most recently observed status of the Deployment.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -85,14 +79,20 @@
 			}
 			,
 		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			"grace_period_seconds":{
+			   "description": "The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"metadata":{
-			   "description": "Standard object metadata.",
+			"orphan_dependents":{
+			   "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			
