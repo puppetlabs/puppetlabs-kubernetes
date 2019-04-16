@@ -107,7 +107,12 @@
 # [*runc_source*]
 #  The URL to download runc
 #  Defaults to https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64
-#  
+#
+# [*etcd_hostname*]
+#   The name of the etcd instance.
+#   An example with hiera would be kubernetes::etcd_hostname: "%{::fqdn}"
+#   Defaults to hostname
+#
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
 #   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
@@ -364,6 +369,7 @@ class kubernetes (
   Boolean $manage_etcd                         = true,
   Optional[String] $kube_api_advertise_address = undef,
   Optional[String] $etcd_version               = '3.1.12',
+  Optional[String] $etcd_hostname              = $facts['hostname'],
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
   Optional[String] $etcd_initial_cluster       = undef,
