@@ -114,8 +114,8 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('aggregationrule', 'body', 'aggregation_rule', 'aggregationrule'),
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
+      op_param('aggregationrule', 'body', 'aggregationrule', 'aggregationrule'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
       op_param('body', 'body', 'body', 'body'),
       op_param('dryRun', 'query', 'dry_run', 'dry_run'),
       op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),

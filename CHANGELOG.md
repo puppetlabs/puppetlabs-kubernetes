@@ -1,3 +1,15 @@
+# Version 4.0.0
+
+Upgrade tasks for version v1beta1
+
+Upgrade kubeadmn templates for v1beta1 (kubernetes versions 1.13.+)
+
+Ability to change etcd hostname
+
+Ability to change Kubernetes dashboard url
+
+A full list of PR's and issues closed can be found here [here](https://github.com/puppetlabs/puppetlabs-kubernetes/milestone/7)
+
 # Version 3.4.0
 
 Add Puppet Bolt tasks to interact with the Kubernetes API

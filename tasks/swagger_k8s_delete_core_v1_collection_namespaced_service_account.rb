@@ -114,11 +114,11 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
-      op_param('automountserviceaccounttoken', 'body', 'automount_service_account_token', 'automountserviceaccounttoken'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
+      op_param('automountserviceaccounttoken', 'body', 'automountserviceaccounttoken', 'automountserviceaccounttoken'),
       op_param('continue', 'query', 'continue', 'continue'),
       op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
-      op_param('imagepullsecrets', 'body', 'image_pull_secrets', 'imagepullsecrets'),
+      op_param('imagepullsecrets', 'body', 'imagepullsecrets', 'imagepullsecrets'),
       op_param('kind', 'body', 'kind', 'kind'),
       op_param('labelSelector', 'query', 'label_selector', 'label_selector'),
       op_param('limit', 'query', 'limit', 'limit'),

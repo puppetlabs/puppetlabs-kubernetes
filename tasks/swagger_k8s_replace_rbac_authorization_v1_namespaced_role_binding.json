@@ -19,20 +19,38 @@
 		
 		
 		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"pretty":{
 			   "description": "If 'true', then the output is pretty printed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
+			"body":{
+			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"field_manager":{
+			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the RoleBinding",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"subjects":{
 			   "description": "Subjects holds references to the objects the role applies to.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -55,32 +73,14 @@
 			}
 			,
 		    
-			"field_manager":{
-			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"name":{
-			   "description": "name of the RoleBinding",
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
 			"roleref":{
 			   "description": "RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			

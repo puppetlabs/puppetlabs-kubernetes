@@ -19,8 +19,14 @@
 		
 		
 		    
-			"spec":{
-			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.",
+			"field_manager":{
+			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"name":{
+			   "description": "name of the Scale",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -37,32 +43,20 @@
 			}
 			,
 		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"metadata":{
 			   "description": "Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"field_manager":{
-			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
 			"dry_run":{
 			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"name":{
-			   "description": "name of the Scale",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -79,8 +73,14 @@
 			}
 			,
 		    
-			"body":{
-			   "description": "",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.",
 			   "type": "Optional[String[1]]"
 			}
 			

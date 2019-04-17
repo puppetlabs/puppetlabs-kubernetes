@@ -19,14 +19,14 @@
 		
 		
 		    
-			"spec":{
-			   "description": "Specification of the desired behavior of the pod. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			"status":{
+			   "description": "Most recently observed status of the pod. This data may not be up to date. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"body":{
-			   "description": "",
+			"metadata":{
+			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -43,14 +43,8 @@
 			}
 			,
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -61,20 +55,26 @@
 			}
 			,
 		    
-			"metadata":{
-			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+			"spec":{
+			   "description": "Specification of the desired behavior of the pod. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"status":{
-			   "description": "Most recently observed status of the pod. This data may not be up to date. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			

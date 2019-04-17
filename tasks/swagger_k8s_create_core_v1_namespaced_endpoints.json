@@ -25,26 +25,14 @@
 			}
 			,
 		    
-			"dry_run":{
-			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"field_manager":{
 			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"subsets":{
-			   "description": "The set of all endpoints is the union of all subsets. Addresses are placed into subsets according to the IPs they share. A single address with multiple ports, some of which are ready and some of which are not (because they come from different containers) will result in the address being displayed in different subsets for the different ports. No address will appear in both Addresses and NotReadyAddresses in the same subset. Sets of addresses and ports that comprise a service.",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -61,8 +49,20 @@
 			}
 			,
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
+			"dry_run":{
+			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"subsets":{
+			   "description": "The set of all endpoints is the union of all subsets. Addresses are placed into subsets according to the IPs they share. A single address with multiple ports, some of which are ready and some of which are not (because they come from different containers) will result in the address being displayed in different subsets for the different ports. No address will appear in both Addresses and NotReadyAddresses in the same subset. Sets of addresses and ports that comprise a service.",
 			   "type": "Optional[String[1]]"
 			}
 			,

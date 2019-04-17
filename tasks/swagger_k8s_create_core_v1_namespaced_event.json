@@ -19,50 +19,8 @@
 		
 		
 		    
-			"body":{
-			   "description": "",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"reason":{
 			   "description": "This should be a short, machine understandable string that gives the reason for the transition into the object's current status.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"reportingcomponent":{
-			   "description": "Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"source":{
-			   "description": "The component reporting this event. Should be a short machine understandable string.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"field_manager":{
-			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"involvedobject":{
-			   "description": "The object that this event is about.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -73,38 +31,8 @@
 			}
 			,
 		    
-			"series":{
-			   "description": "Data about the Event series this event represents or nil if it's a singleton Event.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"metadata":{
-			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"action":{
-			   "description": "What action was taken/failed regarding to the Regarding object.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"count":{
-			   "description": "The number of times this event has occurred.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"reportinginstance":{
-			   "description": "ID of the controller instance, e.g. `kubelet-xyzf`.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"lasttimestamp":{
-			   "description": "The time at which the most recent occurrence of this event was recorded.",
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -121,8 +49,14 @@
 			}
 			,
 		    
-			"related":{
-			   "description": "Optional secondary object for more complex actions.",
+			"lasttimestamp":{
+			   "description": "The time at which the most recent occurrence of this event was recorded.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"count":{
+			   "description": "The number of times this event has occurred.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -133,8 +67,26 @@
 			}
 			,
 		    
-			"firsttimestamp":{
-			   "description": "The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)",
+			"related":{
+			   "description": "Optional secondary object for more complex actions.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"eventtime":{
+			   "description": "Time when this Event was first observed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"reportingcomponent":{
+			   "description": "Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -145,8 +97,56 @@
 			}
 			,
 		    
-			"eventtime":{
-			   "description": "Time when this Event was first observed.",
+			"reportinginstance":{
+			   "description": "ID of the controller instance, e.g. `kubelet-xyzf`.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"action":{
+			   "description": "What action was taken/failed regarding to the Regarding object.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"source":{
+			   "description": "The component reporting this event. Should be a short machine understandable string.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"field_manager":{
+			   "description": "fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"involvedobject":{
+			   "description": "The object that this event is about.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"firsttimestamp":{
+			   "description": "The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"series":{
+			   "description": "Data about the Event series this event represents or nil if it's a singleton Event.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"metadata":{
+			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
 			   "type": "Optional[String[1]]"
 			}
 			

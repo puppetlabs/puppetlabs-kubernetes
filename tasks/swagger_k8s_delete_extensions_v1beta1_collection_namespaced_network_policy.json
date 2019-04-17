@@ -49,8 +49,14 @@
 			}
 			,
 		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
+			"timeout_seconds":{
+			   "description": "Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"watch":{
+			   "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -73,20 +79,14 @@
 			}
 			,
 		    
-			"timeout_seconds":{
-			   "description": "Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"watch":{
-			   "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"metadata":{
 			   "description": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
 			   "type": "Optional[String[1]]"
 			}
 			,

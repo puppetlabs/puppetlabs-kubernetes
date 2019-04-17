@@ -19,12 +19,6 @@
 		
 		
 		    
-			"body":{
-			   "description": "",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
 			"dry_run":{
 			   "description": "When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed",
 			   "type": "Optional[String[1]]"
@@ -43,8 +37,8 @@
 			}
 			,
 		    
-			"status":{
-			   "description": "Status contains derived information about an API server",
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -69,6 +63,12 @@
 		    
 			"metadata":{
 			   "description": "",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"status":{
+			   "description": "Status contains derived information about an API server",
 			   "type": "Optional[String[1]]"
 			}
 			,

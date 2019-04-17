@@ -114,7 +114,7 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
       op_param('body', 'body', 'body', 'body'),
       op_param('data', 'body', 'data', 'data'),
       op_param('dryRun', 'query', 'dry_run', 'dry_run'),
@@ -126,7 +126,7 @@ def format_params(key_values)
       op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
       op_param('pretty', 'query', 'pretty', 'pretty'),
       op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
-      op_param('stringdata', 'body', 'string_data', 'stringdata'),
+      op_param('stringdata', 'body', 'stringdata', 'stringdata'),
       op_param('type', 'body', 'type', 'type'),
     ]
   op_params.each do |i|

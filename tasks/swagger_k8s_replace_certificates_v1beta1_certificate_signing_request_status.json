@@ -19,8 +19,26 @@
 		
 		
 		    
-			"name":{
-			   "description": "name of the CertificateSigningRequest",
+			"pretty":{
+			   "description": "If 'true', then the output is pretty printed.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"status":{
+			   "description": "Derived information about the request.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"apiversion":{
+			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -37,14 +55,8 @@
 			}
 			,
 		    
-			"pretty":{
-			   "description": "If 'true', then the output is pretty printed.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"apiversion":{
-			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+			"name":{
+			   "description": "name of the CertificateSigningRequest",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -63,18 +75,6 @@
 		    
 			"spec":{
 			   "description": "The certificate request itself and any additional information.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"status":{
-			   "description": "Derived information about the request.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"body":{
-			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			

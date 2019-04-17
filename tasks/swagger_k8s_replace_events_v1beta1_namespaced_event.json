@@ -19,8 +19,8 @@
 		
 		
 		    
-			"series":{
-			   "description": "Data about the Event series this event represents or nil if it's a singleton Event.",
+			"namespace":{
+			   "description": "object name and auth scope, such as for teams and projects",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -31,20 +31,26 @@
 			}
 			,
 		    
-			"type":{
-			   "description": "Type of this event (Normal, Warning), new types could be added in the future.",
+			"regarding":{
+			   "description": "The object this Event is about. In most cases it's an Object reporting controller implements. E.g. ReplicaSetController implements ReplicaSets and this event is emitted because it acts on some changes in a ReplicaSet object.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"reportingcontroller":{
-			   "description": "Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.",
+			"action":{
+			   "description": "What action was taken/failed regarding to the regarding object.",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"body":{
-			   "description": "",
+			"deprecatedfirsttimestamp":{
+			   "description": "Deprecated field assuring backward compatibility with core.v1 Event type",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"deprecatedsource":{
+			   "description": "Deprecated field assuring backward compatibility with core.v1 Event type",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -73,20 +79,14 @@
 			}
 			,
 		    
-			"action":{
-			   "description": "What action was taken/failed regarding to the regarding object.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"deprecatedsource":{
+			"deprecatedlasttimestamp":{
 			   "description": "Deprecated field assuring backward compatibility with core.v1 Event type",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"kind":{
-			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			"reportingcontroller":{
+			   "description": "Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -97,8 +97,8 @@
 			}
 			,
 		    
-			"metadata":{
-			   "description": "",
+			"reason":{
+			   "description": "Why the action was taken.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -109,32 +109,14 @@
 			}
 			,
 		    
-			"regarding":{
-			   "description": "The object this Event is about. In most cases it's an Object reporting controller implements. E.g. ReplicaSetController implements ReplicaSets and this event is emitted because it acts on some changes in a ReplicaSet object.",
+			"kind":{
+			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"deprecatedfirsttimestamp":{
-			   "description": "Deprecated field assuring backward compatibility with core.v1 Event type",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"reason":{
-			   "description": "Why the action was taken.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"namespace":{
-			   "description": "object name and auth scope, such as for teams and projects",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"related":{
-			   "description": "Optional secondary object for more complex actions. E.g. when regarding object triggers a creation or deletion of related object.",
+			"metadata":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -145,14 +127,32 @@
 			}
 			,
 		    
+			"type":{
+			   "description": "Type of this event (Normal, Warning), new types could be added in the future.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"deprecatedcount":{
 			   "description": "Deprecated field assuring backward compatibility with core.v1 Event type",
 			   "type": "Optional[String[1]]"
 			}
 			,
 		    
-			"deprecatedlasttimestamp":{
-			   "description": "Deprecated field assuring backward compatibility with core.v1 Event type",
+			"related":{
+			   "description": "Optional secondary object for more complex actions. E.g. when regarding object triggers a creation or deletion of related object.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"series":{
+			   "description": "Data about the Event series this event represents or nil if it's a singleton Event.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"body":{
+			   "description": "",
 			   "type": "Optional[String[1]]"
 			}
 			

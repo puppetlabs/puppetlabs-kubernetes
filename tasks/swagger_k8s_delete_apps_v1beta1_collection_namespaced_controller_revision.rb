@@ -114,7 +114,7 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
       op_param('continue', 'query', 'continue', 'continue'),
       op_param('data', 'body', 'data', 'data'),
       op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),

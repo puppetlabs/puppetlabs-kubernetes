@@ -114,7 +114,7 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
+      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
       op_param('body', 'body', 'body', 'body'),
       op_param('dryRun', 'query', 'dry_run', 'dry_run'),
       op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
@@ -125,7 +125,7 @@ def format_params(key_values)
       op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
       op_param('pretty', 'query', 'pretty', 'pretty'),
       op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
-      op_param('roleref', 'body', 'role_ref', 'roleref'),
+      op_param('roleref', 'body', 'roleref', 'roleref'),
       op_param('subjects', 'body', 'subjects', 'subjects'),
     ]
   op_params.each do |i|

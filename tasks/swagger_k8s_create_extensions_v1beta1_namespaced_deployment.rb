@@ -25,6 +25,7 @@ def create_extensions_v1beta1_namespaced_deployment(*args)
   query_params, body_params, path_params = format_params(arg_hash)
 
   uri_string = "#{arg_hash['kube_api']}/apis/extensions/v1beta1/namespaces/%{namespace}/deployments" % path_params
+puts uri_string
 
   if query_params
     uri_string = uri_string + '?' + to_query(query_params)

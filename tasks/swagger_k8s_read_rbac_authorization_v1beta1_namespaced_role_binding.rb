@@ -114,7 +114,7 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apigroup', 'body', 'api_group', 'apigroup'),
+      op_param('apigroup', 'body', 'apigroup', 'apigroup'),
       op_param('kind', 'body', 'kind', 'kind'),
       op_param('name', 'path', 'name', 'name'),
       op_param('namespace', 'path', 'namespace', 'namespace'),

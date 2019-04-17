@@ -19,6 +19,12 @@
 		
 		
 		    
+			"watch":{
+			   "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"apiversion":{
 			   "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
 			   "type": "Optional[String[1]]"
@@ -27,6 +33,12 @@
 		    
 			"kind":{
 			   "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
+			"spec":{
+			   "description": "Specification of the desired behavior of the Deployment.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -43,26 +55,14 @@
 			}
 			,
 		    
+			"resource_version":{
+			   "description": "When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.",
+			   "type": "Optional[String[1]]"
+			}
+			,
+		    
 			"timeout_seconds":{
 			   "description": "Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"watch":{
-			   "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"metadata":{
-			   "description": "Standard object metadata.",
-			   "type": "Optional[String[1]]"
-			}
-			,
-		    
-			"spec":{
-			   "description": "Specification of the desired behavior of the Deployment.",
 			   "type": "Optional[String[1]]"
 			}
 			,
@@ -91,8 +91,8 @@
 			}
 			,
 		    
-			"resource_version":{
-			   "description": "When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.",
+			"metadata":{
+			   "description": "Standard object metadata.",
 			   "type": "Optional[String[1]]"
 			}
 			
