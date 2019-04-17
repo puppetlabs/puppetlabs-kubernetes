@@ -9,11 +9,11 @@ plan k8s::deploy(
   Integer $container_port,
   String[1] $endpoint,
 ) {
-  $responses=run_task("k8s::swagger_k8s_create_extensions_v1beta1_namespaced_deployment", "localhost", namespace => "$namespace", kube_api => "$endpoint", apiversion=> "extensions/v1beta1", kind => "Deployment", metadata => "{'name' => '$name'; 'labels' => { 'app' => '$name' } }", spec => "{ 'replicas' => $replicas; 'selector' => {'matchLabels' => {'app' => '$name' }}; 'template' => { 'metadata' => {'labels'=>{ 'app' => '$name' }} ;  'spec' => { 'containers' => [ { 'name' => '$name'; 'image' => '$image'; 'ports' => [ {'containerPort' => $container_port }] }  ] } } }")
+  $responses=run_task('k8s::swagger_k8s_create_extensions_v1beta1_namespaced_deployment', 'localhost', namespace => $namespace, kube_api => $endpoint, apiversion=> 'extensions/v1beta1', kind => 'Deployment', metadata => "{'name' => '${name}'; 'labels' => { 'app' => '${name}' } }", spec => "{ 'replicas' => ${replicas}; 'selector' => {'matchLabels' => {'app' => '${name}' }}; 'template' => { 'metadata' => {'labels'=>{ 'app' => '${name}' }} ;  'spec' => { 'containers' => [ { 'name' => '${name}'; 'image' => '${image}'; 'ports' => [ {'containerPort' => ${container_port} }] }  ] } } }")
 
   notice($responses.first)
 
-  $service= run_task("k8s::swagger_k8s_create_core_v1_namespaced_service","localhost", namespace => "$namespace", kube_api => "$endpoint", apiversion => "v1", kind => "Service", metadata => "{'name' => '$name'}", spec => "{'selector'=>{'app'=>'$name'};'type'=>'ClusterIP';'ports'=>[{'protocol'=>'TCP';'port'=>$container_port}]}" )
+  $service= run_task('k8s::swagger_k8s_create_core_v1_namespaced_service','localhost', namespace => $namespace, kube_api => $endpoint, apiversion => 'v1', kind => 'Service', metadata => "{'name' => '${name}'}", spec => "{'selector'=>{'app'=>'${name}'};'type'=>'ClusterIP';'ports'=>[{'protocol'=>'TCP';'port'=>${container_port}}]}" )
 
   notice($service)
 }
