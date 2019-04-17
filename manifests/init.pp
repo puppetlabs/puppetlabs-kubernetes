@@ -82,7 +82,7 @@
 #
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
-#   Defaults to 3.1.12
+#   Defaults to 3.2.18
 #
 # [*etcd_archive*]
 #  The name of the etcd archive
@@ -368,7 +368,7 @@ class kubernetes (
   Boolean $manage_docker                       = true,
   Boolean $manage_etcd                         = true,
   Optional[String] $kube_api_advertise_address = undef,
-  Optional[String] $etcd_version               = '3.1.12',
+  Optional[String] $etcd_version               = '3.2.18',
   Optional[String] $etcd_hostname              = $facts['hostname'],
   Optional[String] $etcd_ip                    = undef,
   Optional[Array] $etcd_peers                  = undef,
@@ -444,6 +444,7 @@ class kubernetes (
                                                     true    => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                                                     default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf'],
                                                   },
+  Optional[Array] $ignore_preflight_errors     = undef,
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}

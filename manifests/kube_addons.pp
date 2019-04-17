@@ -11,11 +11,12 @@ class kubernetes::kube_addons (
   Optional[Boolean] $schedule_on_controller  = $kubernetes::schedule_on_controller,
   String $node_name                          = $kubernetes::node_name,
   Array $path                                = $kubernetes::default_path,
+  Optional[Array] $env                       = $kubernetes::environment,
 ){
 
   Exec {
     path        => $path,
-    environment => [ 'HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+    environment => $env,
     logoutput   => true,
     tries       => 10,
     try_sleep   => 30,
@@ -24,17 +25,19 @@ class kubernetes::kube_addons (
   if $cni_rbac_binding {
     $shellsafe_binding = shell_escape($cni_rbac_binding)
     exec { 'Install calico rbac bindings':
-    command => "kubectl apply -f ${shellsafe_binding}",
-    onlyif  => 'kubectl get nodes',
-    unless  => 'kubectl get clusterrole | grep calico'
+    environment => $env,
+    command     => "kubectl apply -f ${shellsafe_binding}",
+    onlyif      => 'kubectl get nodes',
+    unless      => 'kubectl get clusterrole | grep calico'
     }
   }
 
   $shellsafe_provider = shell_escape($cni_network_provider)
   exec { 'Install cni network provider':
-    command => "kubectl apply -f ${shellsafe_provider}",
-    onlyif  => 'kubectl get nodes',
-    unless  => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node)'"
+    command     => "kubectl apply -f ${shellsafe_provider}",
+    onlyif      => 'kubectl get nodes',
+    unless      => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node)'",
+    environment => $env,
     }
 
   if $schedule_on_controller {
@@ -48,9 +51,10 @@ class kubernetes::kube_addons (
   if $install_dashboard  {
     $shellsafe_source = shell_escape($kubernetes_dashboard_url)
     exec { 'Install Kubernetes dashboard':
-      command => "kubectl apply -f ${shellsafe_source}",
-      onlyif  => 'kubectl get nodes',
-      unless  => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
+      command     => "kubectl apply -f ${shellsafe_source}",
+      onlyif      => 'kubectl get nodes',
+      unless      => 'kubectl -n kube-system get pods | grep kubernetes-dashboard',
+      environment => $env,
       }
     }
 }

@@ -31,6 +31,12 @@ nodeRegistration:
 ---
 apiServer:
   timeoutForControlPlane: 4m0s
+<% if @apiserver_cert_extra_sans -%>
+  CertSANs:
+<% @apiserver_cert_extra_sans.each do |san| -%>
+- <%= san %>
+<% end -%>
+<% end -%>
 apiVersion: kubeadm.k8s.io/v1beta1
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
@@ -82,12 +88,6 @@ controllerManagerExtraVolumes:
     mountPath: <%= config['mountPath'] %>
   <%- end -%>
 <%- end -%>
-<% if @apiserver_cert_extra_sans -%>
-apiServerCertSANs:
-<% @apiserver_cert_extra_sans.each do |san| -%>
-- <%= san %>
-<% end -%>
-<% end -%>
 <%- if @kubeadm_extra_config  -%>
 <%= @kubeadm_extra_config_yaml %>
 <%- end -%>
