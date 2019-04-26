@@ -5,7 +5,8 @@ class kubernetes::cluster_roles (
   Optional[Boolean] $worker = $kubernetes::worker,
   String $node_name = $kubernetes::node_name,
   String $container_runtime = $kubernetes::container_runtime,
-  Optional[Array] $ignore_preflight_errors = []
+  Optional[Array] $ignore_preflight_errors = $kubernetes::ignore_preflight_errors,
+  Optional[Array] $env = $kubernetes::environment,
 ) {
   if $container_runtime == 'cri_containerd' {
     $preflight_errors = flatten(['Service-Docker',$ignore_preflight_errors])
@@ -19,6 +20,7 @@ class kubernetes::cluster_roles (
   if $controller {
     kubernetes::kubeadm_init { $node_name:
       ignore_preflight_errors => $preflight_errors,
+      env                     => $env,
       }
     }
 
@@ -26,6 +28,7 @@ class kubernetes::cluster_roles (
     kubernetes::kubeadm_join { $node_name:
       cri_socket              => $cri_socket,
       ignore_preflight_errors => $preflight_errors,
+      env                     => $env,
     }
   }
 }

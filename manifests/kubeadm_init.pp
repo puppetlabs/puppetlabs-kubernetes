@@ -5,7 +5,7 @@ define kubernetes::kubeadm_init (
   Boolean $dry_run                              = false,
   Array $path                                   = $kubernetes::default_path,
   Optional[Array] $env                          = $kubernetes::environment,
-  Optional[Array] $ignore_preflight_errors      = undef,
+  Optional[Array] $ignore_preflight_errors      = $kubernetes::ignore_preflight_errors,
 ) {
   $kubeadm_init_flags = kubeadm_init_flags({
     config                  => $config,
