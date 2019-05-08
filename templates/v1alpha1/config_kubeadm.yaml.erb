@@ -21,7 +21,7 @@ networking:
   serviceSubnet: <%= @service_cidr %>
 apiServerExtraArgs:
   endpoint-reconciler-type: lease
-  <%- @apiserver_extra_arguments.each do |arg| -%>
+  <%- @apiserver_merged_extra_arguments.each do |arg| -%>
   <%= arg %>
   <%- end -%>
 token: <%= @token %>

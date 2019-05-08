@@ -58,9 +58,9 @@ apiServerExtraArgs:
   <%= arg %>
   <%- end -%>
 <%- end -%>
-<%- if @apiserver_extra_volumes -%>
+<%- if @apiserver_merged_extra_volumes -%>
 apiServerExtraVolumes:
-  <%- @apiserver_extra_volumes.each do |name, config| -%>
+  <%- @apiserver_merged_extra_volumes.each do |name, config| -%>
   - name: <%= name %>
     hostPath: <%= config['hostPath'] %>
     mountPath: <%= config['mountPath'] %>
@@ -72,9 +72,9 @@ controllerManagerExtraArgs:
   <%= arg %>
   <%- end -%>
 <%- end -%>
-<%- if @controllermanager_extra_volumes -%>
+<%- if @controllermanager_merged_extra_volumes -%>
 controllerManagerExtraVolumes:
-  <%- @controllermanager_extra_volumes.each do |name, config| -%>
+  <%- @controllermanager_merged_extra_volumes.each do |name, config| -%>
   - name: <%= name %>
     hostPath: <%= config['hostPath'] %>
     mountPath: <%= config['mountPath'] %>

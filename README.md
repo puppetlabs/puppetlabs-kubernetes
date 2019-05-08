@@ -177,6 +177,23 @@ A string array of extra arguments passed to the API server.
 
 Defaults to `[]`.
 
+#### `apiserver_extra_volumes`
+
+A hash of extra volumes mounts mounted on the API server.
+
+For example,
+
+```puppet
+apiserver_extra_volumes => {
+  'volume-name' => {
+    hostPath  => '/data',
+    mountPath => '/data',
+  },
+}
+```
+
+Defaults to `{}`.
+
 #### `cloud_provider`
 
 The name of the cloud provider configured in `/etc/kubernetes/cloud-config`.
@@ -250,6 +267,30 @@ Defaults to `https://github.com/containerd/containerd/releases/download/v${conta
 The IP address and port for the controller the worker node joins. For example `172.17.10.101:6443`.
 
 Defaults to `undef`.
+
+#### `controllermanager_extra_arguments`
+
+A string array of extra arguments passed to the controller manager.
+
+Defaults to `[]`.
+
+#### `controllermanager_extra_volumes`
+
+A hash of extra volumes mounts mounted on the controller manager container.
+
+For example,
+
+```puppet
+controllermanager_extra_volumes => {
+  'volume-name' => {
+    hostPath  => '/data',
+    mountPath => '/data',
+  },
+}
+```
+
+Defaults to `{}`.
+
 
 #### `create_repos`
 
