@@ -171,4 +171,44 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
+
+  context 'with version = 1.12 , cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.12.3',
+        'node_name' => 'foo',
+        'cgroup_driver' => 'systemd',
+        'cloud_provider' => 'aws',
+        'cloud_config' => '/etc/kubernetes/cloud.conf',
+        'kubelet_extra_arguments' => ['foo: bar'],
+
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it 'has API Merged Extra Arguments in YAML document' do
+      expect(config_yaml[1]).to include('apiServerExtraArgs')
+    end
+  end
+
+  context 'with version = 1.12 , cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.12.3',
+        'node_name' => 'foo',
+        'cgroup_driver' => 'systemd',
+        'cloud_provider' => :undef,
+        'cloud_config' => '/etc/kubernetes/cloud.conf',
+        'kubelet_extra_arguments' => ['foo: bar'],
+
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it 'has API Merged Extra Arguments in YAML document' do
+      expect(config_yaml[1]).to include('apiServerExtraArgs')
+    end
+  end
 end

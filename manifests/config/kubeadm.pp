@@ -109,6 +109,12 @@ class kubernetes::config::kubeadm (
       }
     }
   }
+  else {
+    $apiserver_merged_extra_arguments = $apiserver_extra_arguments
+    $apiserver_extra_volumes = {}
+    $controllermanager_merged_extra_arguments = []
+    $controllermanager_extra_volumes = {}
+  }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
   $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
