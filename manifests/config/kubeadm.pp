@@ -31,11 +31,14 @@ class kubernetes::config::kubeadm (
   String $sa_key = $kubernetes::sa_key,
   Optional[Array] $apiserver_cert_extra_sans = $kubernetes::apiserver_cert_extra_sans,
   Optional[Array] $apiserver_extra_arguments = $kubernetes::apiserver_extra_arguments,
+  Optional[Array] $controllermanager_extra_arguments = $kubernetes::controllermanager_extra_arguments,
   Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
   String $service_cidr = $kubernetes::service_cidr,
   String $node_name = $kubernetes::node_name,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
   Optional[String] $cloud_config = $kubernetes::cloud_config,
+  Optional[Hash] $apiserver_extra_volumes = $kubernetes::apiserver_extra_volumes,
+  Optional[Hash] $controllermanager_extra_volumes = $kubernetes::controllermanager_extra_volumes,
   Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
   Optional[Hash] $kubelet_extra_config = $kubernetes::kubelet_extra_config,
   String $image_repository = $kubernetes::image_repository,
@@ -96,18 +99,30 @@ class kubernetes::config::kubeadm (
       default => ["cloud-provider: ${cloud_provider}", "cloud-config: ${cloud_config}"],
     }
     $apiserver_merged_extra_arguments = concat($apiserver_extra_arguments, $cloud_args)
-    $controllermanager_merged_extra_arguments = $cloud_args
+    $controllermanager_merged_extra_arguments = concat($controllermanager_extra_arguments, $cloud_args)
 
     # could check against Kubernetes 1.10 here, but that uses alpha1 config which doesn't have these options
     if $cloud_config {
       # The cloud config must be mounted into the apiserver and controllermanager containers
-      $controllermanager_extra_volumes = $apiserver_extra_volumes = {
+      $cloud_volume = {
         'cloud' => {
           hostPath  => $cloud_config,
           mountPath => $cloud_config,
-        }
+        },
       }
+      if has_key($apiserver_extra_volumes, 'cloud') or has_key($controllermanager_extra_volumes, 'cloud') {
+        fail('Cannot use "cloud" as volume name')
+      }
+
+      $apiserver_merged_extra_volumes = merge($apiserver_extra_volumes, $cloud_volume)
+      $controllermanager_merged_extra_volumes = merge($controllermanager_extra_volumes, $cloud_volume)
     }
+  } else {
+    $apiserver_merged_extra_arguments = $apiserver_extra_arguments
+    $controllermanager_merged_extra_arguments = $controllermanager_extra_arguments
+
+    $apiserver_merged_extra_volumes = $apiserver_extra_volumes
+      $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'

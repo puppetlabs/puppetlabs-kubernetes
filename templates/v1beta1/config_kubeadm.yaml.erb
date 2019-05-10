@@ -31,17 +31,45 @@ nodeRegistration:
 ---
 apiServer:
   timeoutForControlPlane: 4m0s
-<% if @apiserver_cert_extra_sans -%>
-  CertSANs:
-<% @apiserver_cert_extra_sans.each do |san| -%>
-- <%= san %>
-<% end -%>
-<% end -%>
+<%- if @apiserver_cert_extra_sans -%>
+  certSANs:
+  <%- @apiserver_cert_extra_sans.each do |san| -%>
+  - <%= san %>
+  <%- end -%>
+<%- end -%>
+<%- if @apiserver_merged_extra_arguments -%>
+  extraArgs:
+  <%- @apiserver_merged_extra_arguments.each do |arg| -%>
+    <%= arg %>
+  <%- end -%>
+<%- end -%>
+<%- if @apiserver_merged_extra_volumes -%>
+  extraVolumes:
+  <%- @apiserver_merged_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+  <%- end -%>
+<%- end -%>
 apiVersion: kubeadm.k8s.io/v1beta1
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
 controlPlaneEndpoint: ""
-controllerManager: {}
+controllerManager:
+<%- if @controllermanager_merged_extra_arguments -%>
+  extraArgs:
+  <%- @controllermanager_merged_extra_arguments.each do |arg| -%>
+    <%= arg %>
+  <%- end -%>
+<%- end -%>
+<%- if @controllermanager_merged_extra_volumes -%>
+  extraVolumes:
+  <%- @controllermanager_merged_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+  <%- end -%>
+<%- end -%>
 dns:
   type: CoreDNS
 etcd:
@@ -60,34 +88,6 @@ networking:
   dnsDomain: cluster.local
   podSubnet: <%= @cni_pod_cidr %>
   serviceSubnet: <%= @service_cidr %>
-<%- if @apiserver_merged_extra_arguments -%>
-apiServerExtraArgs:
-  <%- @apiserver_merged_extra_arguments.each do |arg| -%>
-  <%= arg %>
-  <%- end -%>
-<%- end -%>
-<%- if @apiserver_extra_volumes -%>
-apiServerExtraVolumes:
-  <%- @apiserver_extra_volumes.each do |name, config| -%>
-  - name: <%= name %>
-    hostPath: <%= config['hostPath'] %>
-    mountPath: <%= config['mountPath'] %>
-  <%- end -%>
-<%- end -%>
-<%- if @controllermanager_merged_extra_arguments -%>
-controllerManagerExtraArgs:
-  <%- @controllermanager_merged_extra_arguments.each do |arg| -%>
-  <%= arg %>
-  <%- end -%>
-<%- end -%>
-<%- if @controllermanager_extra_volumes -%>
-controllerManagerExtraVolumes:
-  <%- @controllermanager_extra_volumes.each do |name, config| -%>
-  - name: <%= name %>
-    hostPath: <%= config['hostPath'] %>
-    mountPath: <%= config['mountPath'] %>
-  <%- end -%>
-<%- end -%>
 <%- if @kubeadm_extra_config  -%>
 <%= @kubeadm_extra_config_yaml %>
 <%- end -%>
