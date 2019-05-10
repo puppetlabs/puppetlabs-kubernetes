@@ -171,4 +171,84 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.1',
+        'apiserver_extra_arguments' => ['foo', 'bar'],
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has foo in API server arguments' do
+      expect(config_yaml[1]['apiServer']['extraArgs']).to include('foo')
+    end
+    it 'has bar in API server arguments' do
+      expect(config_yaml[1]['apiServer']['extraArgs']).to include('bar')
+    end
+  end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.1',
+        'controllermanager_extra_arguments' => ['foo', 'bar'],
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has foo in controller manager arguments' do
+      expect(config_yaml[1]['controllerManager']['extraArgs']).to include('foo')
+    end
+    it 'has bar in controller manager  arguments' do
+      expect(config_yaml[1]['controllerManager']['extraArgs']).to include('bar')
+    end
+  end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.1',
+        'apiserver_extra_volumes' => {
+          'foo' => {
+            'hostPath'  => '/mnt',
+            'mountPath' => '/data',
+          },
+        },
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has hostPath: /mnt in API server extra volumes' do
+      expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
+    end
+  end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.1',
+        'controllermanager_extra_volumes' => {
+          'foo' => {
+            'hostPath'  => '/mnt',
+            'mountPath' => '/data',
+          },
+        },
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has hostPath: /mnt in controller manager extra volumes' do
+      expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
+    end
+  end
 end
