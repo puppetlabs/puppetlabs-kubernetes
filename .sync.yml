@@ -32,6 +32,7 @@ Gemfile:
      
 Rakefile:
   changelog_user: puppetlabs
+  changelog_since_tag: '4.0.0'
   requires:
     - puppet-lint/tasks/puppet-lint
     - puppetlabs_spec_helper/rake_tasks
