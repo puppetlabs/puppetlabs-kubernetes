@@ -23,6 +23,12 @@ describe 'kubernetes::config::worker', :type => :class do
     }
   end
 
+  context 'with default params' do
+    let(:config_yaml) { YAML.safe_load(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').that_requires('File[/etc/kubernetes]') }
+  end
+
   context 'with version => 1.12.3 and node_name => foo and kubelet_extra_args => foo: bar' do
     let(:params) do
       {
