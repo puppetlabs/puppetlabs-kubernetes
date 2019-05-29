@@ -28,6 +28,12 @@ class kubernetes::config::worker (
     default => 'v1alpha3',
   }
 
+  file { '/etc/kubernetes':
+    ensure  => directory,
+    mode    => '0600',
+    recurse => true,
+  }
+
   file { $config_file:
     ensure  => file,
     owner   => 'root',
