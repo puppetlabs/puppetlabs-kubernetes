@@ -1,6 +1,7 @@
 # Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
 class kubernetes::config::kubeadm (
   String $config_file = $kubernetes::config_file,
+  String $controller_address = $kubernetes::controller_address,
   Boolean $manage_etcd = $kubernetes::manage_etcd,
   String $etcd_install_method = $kubernetes::etcd_install_method,
   String $kubernetes_version  = $kubernetes::kubernetes_version,
