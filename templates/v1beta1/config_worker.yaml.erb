@@ -13,8 +13,7 @@ discovery:
     unsafeSkipCAVerification: false
     caCertHashes:
     - 'sha256:<%= @discovery_token_hash %>'
-tlsBootstrapToken: <%= @tls_bootstrap_token %>
-token: <%= @discovery_token %> 
+token: <%= @discovery_token %>
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
