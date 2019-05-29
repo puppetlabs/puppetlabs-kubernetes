@@ -267,5 +267,4 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[1]['controlPlaneEndpoint']).to include('foo')
     end
   end
-
 end
