@@ -41,6 +41,7 @@ RSpec.configure do |c|
       on host, puppet('module', 'install', 'herculesteam-augeasproviders_sysctl', '--version', '2.2.1'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'herculesteam-augeasproviders_core', '--version', '2.1.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'camptocamp-kmod', '--version', '2.2.0'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module', 'install', 'puppetlabs-docker', '--version', '3.5.0'), { :acceptable_exit_codes => [0,1] }
 
 
       # shell('echo "#{vmhostname}" > /etc/hostname')
@@ -92,13 +93,24 @@ spec:
 EOS
 
       hiera = <<-EOS
-:backends:
-  - yaml
-:hierarchy:
-  - "%{::hostname}"
-  - "%{::osfamily}"
-:yaml:
-  :datadir: /etc/puppetlabs/code/environments/production/hieradata
+version: 5
+defaults:
+  datadir: /etc/puppetlabs/code/environments/production/hieradata
+  data_hash: yaml_data
+hierarchy:
+  - name: "Per-node data (yaml version)"
+    path: "nodes/%{trusted.certname}.yaml" # Add file extension.
+    # Omitting datadir and data_hash to use defaults.
+
+  - name: "Other YAML hierarchy levels"
+    paths: # Can specify an array of paths instead of one.
+      - "location/%{facts.whereami}/%{facts.group}.yaml"
+      - "groups/%{facts.group}.yaml"
+      - "os/%{facts.os.family}.yaml"
+      - "%{facts.os.family}.yaml"
+      - "#{vmhostname}.yaml"
+      - "Redhat.yaml"
+      - "common.yaml"
 EOS
 
 
@@ -112,7 +124,7 @@ EOS
         end
         if fact('osfamily') == 'RedHat'
           runtime = 'cri_containerd'
-          cni = 'flannel'
+          cni = 'weave'
           #Installing rubydev environment
           on(host, "yum install -y ruby-devel git zlib-devel gcc-c++ lib yaml-devel libffi-devel make bzip2 libtool curl openssl-devel readline-devel", acceptable_exit_codes: [0]).stdout
           on(host, "gem install bundler", acceptable_exit_codes: [0]).stdout
@@ -128,6 +140,7 @@ EOS
         create_remote_file(host, "/etc/hosts", hosts_file)
         create_remote_file(host, "/tmp/nginx.yml", nginx)
         create_remote_file(host,"/etc/puppetlabs/puppet/hiera.yaml", hiera)
+        create_remote_file(host,"/etc/puppetlabs/code/environments/production/hiera.yaml", hiera)
         on(host, 'mkdir -p /etc/puppetlabs/code/environments/production/hieradata', acceptable_exit_codes: [0]).stdout
         on(host, 'cp /etc/puppetlabs/code/modules/kubernetes/tooling/*.yaml /etc/puppetlabs/code/environments/production/hieradata/', acceptable_exit_codes: [0]).stdout
 
@@ -140,6 +153,28 @@ EOS
           on(host, 'export KUBECONFIG=\'/etc/kubernetes/admin.conf\'', acceptable_exit_codes: [0]).stdout       
         end
 
+        if fact('osfamily') == 'RedHat'
+          on(host, 'sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
+          on(host, 'echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.13.5" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
+          on(host, 'echo "kubernetes::schedule_on_controller: true"  >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
+          on(host, 'echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
+          on(host, 'export KUBECONFIG=\'/etc/kubernetes/admin.conf\'', acceptable_exit_codes: [0]).stdout       
+          on(host, "setenforce 0 || true", acceptable_exit_codes: [0]).stdout
+          on(host, "swapoff -a", acceptable_exit_codes: [0]).stdout
+          on(host, "systemctl stop firewalld && systemctl disable firewalld", acceptable_exit_codes: [0]).stdout
+          on(host, "yum install -y yum-utils device-mapper-persistent-data lvm2", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum install -y docker-ce-18.06.3.ce-3.el7", acceptable_exit_codes: [0]).stdout 
+          on(host, "usermod -aG docker $(whoami)", acceptable_exit_codes: [0]).stdout 
+          on(host, "systemctl enable docker.service", acceptable_exit_codes: [0]).stdout 
+          on(host, "sudo systemctl start docker.service", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum install -y epel-release", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum install -y python-pip", acceptable_exit_codes: [0]).stdout 
+          on(host, "pip install docker-compose", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum upgrade python*", acceptable_exit_codes: [0]).stdout
+        end
+
     end
   end
 end
+
