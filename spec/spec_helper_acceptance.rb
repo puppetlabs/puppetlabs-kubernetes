@@ -41,7 +41,7 @@ RSpec.configure do |c|
       on host, puppet('module', 'install', 'herculesteam-augeasproviders_sysctl', '--version', '2.2.1'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'herculesteam-augeasproviders_core', '--version', '2.1.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'camptocamp-kmod', '--version', '2.2.0'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module', 'install', 'puppetlabs-docker', '--version', '3.5.0'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module', 'install', 'puppetlabs-docker'), { :acceptable_exit_codes => [0,1] }
 
 
       # shell('echo "#{vmhostname}" > /etc/hostname')
@@ -123,11 +123,24 @@ EOS
           on(host, "apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes", acceptable_exit_codes: [0]).stdout
         end
         if fact('osfamily') == 'RedHat'
-          runtime = 'cri_containerd'
-          cni = 'weave'
+          runtime = 'docker'
+          cni = 'flannel'
           #Installing rubydev environment
           on(host, "yum install -y ruby-devel git zlib-devel gcc-c++ lib yaml-devel libffi-devel make bzip2 libtool curl openssl-devel readline-devel", acceptable_exit_codes: [0]).stdout
           on(host, "gem install bundler", acceptable_exit_codes: [0]).stdout
+          on(host, "setenforce 0 || true", acceptable_exit_codes: [0]).stdout
+          on(host, "swapoff -a", acceptable_exit_codes: [0]).stdout
+          on(host, "systemctl stop firewalld && systemctl disable firewalld", acceptable_exit_codes: [0]).stdout
+          on(host, "yum install -y yum-utils device-mapper-persistent-data lvm2", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum install -y docker-ce-18.06.3.ce-3.el7", acceptable_exit_codes: [0]).stdout 
+          on(host, "usermod -aG docker $(whoami)", acceptable_exit_codes: [0]).stdout 
+          on(host, "systemctl enable docker.service", acceptable_exit_codes: [0]).stdout 
+          on(host, "sudo systemctl start docker.service", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum install -y epel-release", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum install -y python-pip", acceptable_exit_codes: [0]).stdout 
+          on(host, "pip install docker-compose", acceptable_exit_codes: [0]).stdout 
+          on(host, "yum upgrade python*", acceptable_exit_codes: [0]).stdout
           end
 
         # Installing go, cfssl
@@ -155,23 +168,10 @@ EOS
 
         if fact('osfamily') == 'RedHat'
           on(host, 'sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
-          on(host, 'echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.13.5" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
+          on(host, 'echo "kubernetes::cni_network_provider: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
           on(host, 'echo "kubernetes::schedule_on_controller: true"  >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
           on(host, 'echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml', acceptable_exit_codes: [0]).stdout
           on(host, 'export KUBECONFIG=\'/etc/kubernetes/admin.conf\'', acceptable_exit_codes: [0]).stdout       
-          on(host, "setenforce 0 || true", acceptable_exit_codes: [0]).stdout
-          on(host, "swapoff -a", acceptable_exit_codes: [0]).stdout
-          on(host, "systemctl stop firewalld && systemctl disable firewalld", acceptable_exit_codes: [0]).stdout
-          on(host, "yum install -y yum-utils device-mapper-persistent-data lvm2", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum install -y docker-ce-18.06.3.ce-3.el7", acceptable_exit_codes: [0]).stdout 
-          on(host, "usermod -aG docker $(whoami)", acceptable_exit_codes: [0]).stdout 
-          on(host, "systemctl enable docker.service", acceptable_exit_codes: [0]).stdout 
-          on(host, "sudo systemctl start docker.service", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum install -y epel-release", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum install -y python-pip", acceptable_exit_codes: [0]).stdout 
-          on(host, "pip install docker-compose", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum upgrade python*", acceptable_exit_codes: [0]).stdout
         end
 
     end
