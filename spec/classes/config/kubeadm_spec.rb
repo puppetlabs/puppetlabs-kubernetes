@@ -251,4 +251,20 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
     end
   end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.1',
+        'controller_address' => 'foo',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has foo in controlPlaneEndpoint' do
+      expect(config_yaml[1]['controlPlaneEndpoint']).to include('foo')
+    end
+  end
 end

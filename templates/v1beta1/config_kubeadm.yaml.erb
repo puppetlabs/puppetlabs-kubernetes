@@ -54,7 +54,7 @@ apiServer:
 apiVersion: kubeadm.k8s.io/v1beta1
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
-controlPlaneEndpoint: ""
+controlPlaneEndpoint: "<%= @controller_address %>"
 controllerManager:
 <%- if @controllermanager_merged_extra_arguments -%>
   extraArgs:
