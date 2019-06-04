@@ -47,7 +47,7 @@ class kubernetes::config::kubeadm (
   String $proxy_mode = $kubernetes::proxy_mode,
 ) {
 
-  if $proxy_mode =~ /^(|userspace|iptables|ipvs|kernelspace)$/ {
+  if $proxy_mode !~ /^(|userspace|iptables|ipvs|kernelspace)$/ {
     fail('Invalid kube-proxy mode! Must be one of "", userspace, iptables, ipvs, kernelspace.')
   }
 
