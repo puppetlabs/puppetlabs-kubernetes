@@ -121,6 +121,7 @@ EOS
           on(host, "apt install ruby-bundler --yes", acceptable_exit_codes: [0]).stdout
           on(host, "apt-get install ruby-dev --yes", acceptable_exit_codes: [0]).stdout
           on(host, "apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes", acceptable_exit_codes: [0]).stdout
+          on(host, "gem install bundler", acceptable_exit_codes: [0]).stdout
         end
         if fact('osfamily') == 'RedHat'
           runtime = 'docker'
@@ -137,8 +138,17 @@ EOS
           on(host, "usermod -aG docker $(whoami)", acceptable_exit_codes: [0]).stdout 
           on(host, "systemctl enable docker.service", acceptable_exit_codes: [0]).stdout 
           on(host, "sudo systemctl start docker.service", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum install -y epel-release", acceptable_exit_codes: [0]).stdout 
-          on(host, "yum install -y python-pip", acceptable_exit_codes: [0]).stdout 
+          
+          if fact('operatingsystem') != 'RedHat'
+            on(host, "yum install -y epel-release", acceptable_exit_codes: [0]).stdout
+          end
+          if fact_on(host, 'operatingsystem') == 'RedHat'
+            on(host, 'mv /etc/yum.repos.d/redhat.repo /etc/yum.repos.d/internal-mirror.repo')
+            on(host, 'rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm')
+          end
+          on(host, 'yum update -y -q') if fact_on(host, 'osfamily') == 'RedHat'
+          on(host, "yum install -y python-pip", acceptable_exit_codes: [0]).stdout
+          
           on(host, "pip install docker-compose", acceptable_exit_codes: [0]).stdout 
           on(host, "yum upgrade python*", acceptable_exit_codes: [0]).stdout
           end

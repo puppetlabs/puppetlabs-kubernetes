@@ -31,7 +31,6 @@ end
 
 RSpec.configure do |c|
   c.default_facts = default_facts
-  c.hiera_config = File.expand_path(File.join(File.dirname(__FILE__), 'fixtures/hiera/hiera.yaml'))
   c.before :each do
     # set to strictest setting for testing
     # by default Puppet runs at warning level
@@ -43,8 +42,6 @@ RSpec.configure do |c|
   end
 end
 
-# Ensures that a module is defined
-# @param module_name Name of the module
 def ensure_module_defined(module_name)
   module_name.split('::').reduce(Object) do |last_module, next_module|
     last_module.const_set(next_module, Module.new) unless last_module.const_defined?(next_module, false)
