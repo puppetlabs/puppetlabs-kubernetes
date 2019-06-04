@@ -28,7 +28,7 @@
 # [*containerd_version*]
 #   This is the version of the containerd runtime the module will install.
 #   Defaults to 1.1.0
-# 
+#
 # [*containerd_archive*]
 #  The name of the containerd archive
 #  Defaults to containerd-${containerd_version}.linux-amd64.tar.gz
@@ -57,7 +57,7 @@
 #
 # [*cni_rbac_binding*]
 #  The URL get the cni providers rbac rules. This is for use with Calico only.
-#  Defaults to `undef`.  
+#  Defaults to `undef`.
 #
 # [*controller*]
 #   This is a bool that sets the node as a Kubernetes controller
@@ -65,7 +65,7 @@
 #
 # [*worker*]
 #   This is a bool that sets a node to a worker.
-#   defaults to false 
+#   defaults to false
 #
 # [*manage_docker*]
 #   Whether or not to install Docker repositories and packages via this module.
@@ -95,7 +95,7 @@
 # [*etcd_install_method*]
 #  The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
 #  Defaults to wget
-# 
+#
 # [*etcd_package_name*]
 #  The system package name for installing etcd
 #  Defaults to etcd-server
@@ -120,10 +120,10 @@
 #
 # [*etcd_peers*]
 #   This will tell etcd how the list of peers to connect to into the cluster.
-#   An example with hiera would be kubernetes::etcd_peers: 
+#   An example with hiera would be kubernetes::etcd_peers:
 #                                  - 172.17.10.101
 #                                  - 172.17.10.102
-#                                  - 172.17.10.103    
+#                                  - 172.17.10.103
 #   Defaults to undef
 #
 # [*etcd_initial_cluster*]
@@ -205,8 +205,8 @@
 #   Defaults to undef
 #
 # [*node_label*]
-#  The name to assign the node in the cluster. 
-#  Defaults to hostname. 
+#  The name to assign the node in the cluster.
+#  Defaults to hostname.
 #   NOTE: Ignored when cloud_provider is AWS, until this lands fixed https://github.com/kubernetes/kubernetes/pull/61878
 #
 # [*token*]
@@ -269,6 +269,10 @@
 #  Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
 #  Defaults to []
 #
+# [*proxy_mode*]
+# The mode for kubeproxy to run. It should be one of: "" (default), "userspace", "kernelspace", "iptables", or "ipvs".
+# Defaults to ""
+#
 # [*kubernetes_apt_location*]
 #  The APT repo URL for the Kubernetes packages.
 #  Defaults to https://apt.kubernetes.io
@@ -324,7 +328,7 @@
 # [*docker_yum_gpgkey*]
 #  The URL for the Docker yum repo gpg key
 #  Defaults to https://yum.dockerproject.org/gpg
-# 
+#
 # [*create_repos*]
 #  A flag to install the upstream Kubernetes and Docker repos
 #  Defaults to true
@@ -421,6 +425,7 @@ class kubernetes (
   Optional[Hash] $kubeadm_extra_config               = undef,
   Optional[Hash] $kubelet_extra_config               = undef,
   Optional[Array] $kubelet_extra_arguments           = [],
+  Optional[String] $proxy_mode                       = '',
   Optional[String] $runc_version                     = '1.0.0-rc5',
   Optional[String] $runc_source                      =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",

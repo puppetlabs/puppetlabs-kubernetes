@@ -44,7 +44,12 @@ class kubernetes::config::kubeadm (
   Optional[Hash] $kubelet_extra_config = $kubernetes::kubelet_extra_config,
   String $image_repository = $kubernetes::image_repository,
   String $cgroup_driver = $kubernetes::cgroup_driver,
+  String $proxy_mode = $kubernetes::proxy_mode,
 ) {
+
+  if $proxy_mode =~ /^(|userspace|iptables|ipvs|kernelspace)$/ {
+    fail('Invalid kube-proxy mode! Must be one of "", userspace, iptables, ipvs, kernelspace.')
+  }
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
   $etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key','peer.crt', 'peer.key', 'server.crt', 'server.key']
