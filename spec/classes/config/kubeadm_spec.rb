@@ -267,4 +267,20 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[1]['controlPlaneEndpoint']).to include('foo')
     end
   end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.2',
+        'proxy_mode' => 'ipvs',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has ipvs in mode:' do
+      expect(config_yaml[2]['mode']).to include('ipvs')
+    end
+  end
 end
