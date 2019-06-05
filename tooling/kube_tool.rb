@@ -10,6 +10,7 @@ options = {:os                         => nil,
            :version                    => nil,
            :container_runtime          => nil,
            :cni_provider               => nil,
+           :cni_provider_version       => nil,
            :etcd_initial_cluster       => nil,
            :kube_api_advertise_address => nil,
       	   :install_dashboard          => nil,
@@ -29,8 +30,11 @@ parser = OptionParser.new do|opts|
     options[:container_runtime] = container_runtime;
   end
 
-  opts.on('-c', '--cni-provider cni-provider', 'the networking provider to use') do |cni_provider|
+  opts.on('-c', '--cni-provider cni-provider', 'the networking provider to use, flannel, weave, calico or cilium are supported') do |cni_provider|
     options[:cni_provider] = cni_provider;
+  end
+  opts.on('-p', '--cni-provider-version [cni_provider_version]', 'the networking provider version to use, calico and cilium will use this to reference the correct deployment downloadlink') do |cni_provider_version|
+    options[:cni_provider_version] = cni_provider_version;
   end
 
   opts.on('-i', '--etcd-initial-cluster etcd-initial-cluster', 'the list of servers in the etcd cluster') do | etcd_initial_cluster |
@@ -60,7 +64,7 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
-    OtherParams.create( hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
+    OtherParams.create( hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:cni_provider_version], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     PreChecks.checks
     CreateCerts.etcd_ca
     CreateCerts.etcd_clients
