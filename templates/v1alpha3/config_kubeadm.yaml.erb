@@ -5,7 +5,7 @@ apiEndpoint:
 bootstrapTokens:
   - token: "<%= @token %>"
     description: "kubeadm bootstrap token"
-    ttl: "24h"
+    ttl: "<%= @ttl_duration %>"
     usages:
     - signing
     - authentication
