@@ -24,6 +24,7 @@ class kubernetes::config::kubeadm (
   Integer $api_server_count = $kubernetes::api_server_count,
   String $etcd_version = $kubernetes::etcd_version,
   String $token = $kubernetes::token,
+  String $ttl_duration = $kubernetes::ttl_duration,
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
   String $kubernetes_ca_crt = $kubernetes::kubernetes_ca_crt,
   String $kubernetes_ca_key = $kubernetes::kubernetes_ca_key,
