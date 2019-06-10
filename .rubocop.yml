@@ -1,7 +1,5 @@
 ---
-require:
-- rubocop-rspec
-- rubocop-i18n
+require: rubocop-rspec
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: '2.2'
@@ -31,8 +29,6 @@ inherit_from: ".rubocop_todo.yml"
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
-GetText:
-  Enabled: false
 GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:
