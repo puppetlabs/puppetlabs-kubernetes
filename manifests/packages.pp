@@ -20,6 +20,7 @@ class kubernetes::packages (
   Boolean $disable_swap                        = $kubernetes::disable_swap,
   Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
   Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
+  Optional[String] $proxy_mode                 = $kubernetes::proxy_mode,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
@@ -48,6 +49,11 @@ class kubernetes::packages (
   } elsif $manage_kernel_modules {
 
     kmod::load { 'br_netfilter': }
+
+    if $proxy_mode == 'ipvs' {
+      $ipvs_modules = [ 'ip_vs', 'ip_vs_sh', 'ip_vs_rr', 'ip_vs_wrr', 'nf_conntrack_ipv4' ]
+      kmod::load { $ipvs_modules: }
+    }
 
   } elsif $manage_sysctl_settings {
     sysctl { 'net.bridge.bridge-nf-call-iptables':
