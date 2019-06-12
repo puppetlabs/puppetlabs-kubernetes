@@ -131,7 +131,7 @@ EOS
           on(host, "gem install bundler", acceptable_exit_codes: [0]).stdout
           on(host, "setenforce 0 || true", acceptable_exit_codes: [0]).stdout
           on(host, "swapoff -a", acceptable_exit_codes: [0]).stdout
-          on(host, "systemctl stop firewalld && systemctl disable firewalld", acceptable_exit_codes: [0]).stdout
+          on(host, "systemctl stop firewalld && systemctl disable firewalld", acceptable_exit_codes: [0,1,2]).stdout
           on(host, "yum install -y yum-utils device-mapper-persistent-data lvm2", acceptable_exit_codes: [0]).stdout 
           on(host, "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo", acceptable_exit_codes: [0]).stdout 
           on(host, "yum install -y docker-ce-18.06.3.ce-3.el7", acceptable_exit_codes: [0]).stdout 
