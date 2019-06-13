@@ -20,6 +20,12 @@ class kubernetes::packages (
   Boolean $disable_swap                        = $kubernetes::disable_swap,
   Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
   Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
+  Optional[Boolean] $manage_crio               = $kubernetes::manage_crio,
+  Optional[Hash] $crio_config_options          = $kubernetes::crio_config_options,
+  Optional[Hash] $crio_storage_options         = $kubernetes::crio_storage_options,
+  Optional[String] $crio_package_name          = $kubernetes::crio_package_name,
+  Optional[String] $crio_version               = $kubernetes::crio_version,
+  Optional[Array] $crio_install_options        = $kubernetes::crio_install_options,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
@@ -81,9 +87,7 @@ class kubernetes::packages (
       }
     default: { notify {"The OS family ${facts['os']['family']} is not supported by this module":} }
     }
-  }
-
-  elsif $container_runtime == 'cri_containerd' {
+  } elsif $container_runtime == 'cri_containerd' {
 
     archive { '/usr/bin/runc':
       source  => $runc_source,
@@ -103,6 +107,29 @@ class kubernetes::packages (
       extract_path    => '/',
       cleanup         => true,
       creates         => '/usr/bin/containerd'
+    }
+  } elsif $container_runtime == 'crio' and $manage_crio == true {
+
+    package { $crio_package_name:
+      ensure          => $crio_version,
+      install_options => $crio_install_options,
+    }
+
+    file { '/etc/crio/crio.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template('kubernetes/crio/crio.conf.erb'),
+      notify  => Service['crio'],
+    }
+    file { '/etc/containers/storage.conf':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template('kubernetes/crio/storage.conf.erb'),
+      notify  => Service['crio'],
     }
   }
 

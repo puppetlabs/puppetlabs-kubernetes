@@ -16,8 +16,16 @@ class OtherParams
 
     if os.downcase.match('debian')
       kubernetes_package_version = "#{version}-00"
+      conmon = "/usr/lib/crio/bin/conmon"
+      selinux = false
+      default_mounts = []
+      plugin_dir = "/opt/cni/bin/"
     elsif os.downcase.match('redhat')
       kubernetes_package_version = version
+      conmon = "/usr/libexec/crio/conmon"
+      selinux = true
+      default_mounts = ["/usr/share/rhel/secrets:/run/secrets"]
+      plugin_dir = "/usr/libexec/cni"
     end
 
     if cni_provider.match('weave')
@@ -61,8 +69,76 @@ class OtherParams
     etcd_peers = etcd_peers.split(",")
     api_server_count = x.length
 
+    crio_conf =
+{"crio"=>
+  {"storage_option"=>["overlay.override_kernel_check=1"],
+   "file_locking_path"=>"/run/crio.lock",
+   "file_locking"=>true},
+ "crio.api"=>
+  {"listen"=>"/var/run/crio/crio.sock",
+   "stream_address"=>"127.0.0.1",
+   "stream_port"=>0,
+   "stream_enable_tls"=>false,
+   "stream_tls_cert"=>"",
+   "stream_tls_key"=>"",
+   "stream_tls_ca"=>"",
+   "grpc_max_send_msg_size"=>16777216,
+   "grpc_max_recv_msg_size"=>16777216},
+ "crio.runtime"=>
+  {"default_runtime"=>"runc",
+   "no_pivot"=>false,
+   "conmon"=>conmon,
+   "conmon_env"=>
+    ["PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"],
+   "selinux"=>selinux,
+   "seccomp_profile"=>"/etc/crio/seccomp.json",
+   "apparmor_profile"=>"crio-default",
+   "cgroup_manager"=>"systemd",
+   "default_capabilities"=>
+    ["CHOWN",
+     "DAC_OVERRIDE",
+     "FSETID",
+     "FOWNER",
+     "NET_RAW",
+     "SETGID",
+     "SETUID",
+     "SETPCAP",
+     "NET_BIND_SERVICE",
+     "SYS_CHROOT",
+     "KILL"],
+   "default_sysctls"=>[],
+   "additional_devices"=>[],
+   "hooks_dir"=>["/usr/share/containers/oci/hooks.d"],
+   "default_mounts"=>default_mounts,
+   "pids_limit"=>1024,
+   "log_size_max"=>-1,
+   "container_exits_dir"=>"/var/run/crio/exits",
+   "container_attach_socket_dir"=>"/var/run/crio",
+   "read_only"=>false,
+   "log_level"=>"error",
+   "uid_mappings"=>"",
+   "gid_mappings"=>"",
+   "ctr_stop_timeout"=>0,
+   "default_workload_trust"=>"untrusted"},
+ "crio.runtime.runtimes.runc"=>{"runtime"=>"/usr/bin/runc"},
+ "crio.image"=>
+  {"default_transport"=>"docker://",
+   "pause_image"=>"k8s.gcr.io/pause:3.1",
+   "pause_image_auth_file"=>"",
+   "pause_command"=>"/pause",
+   "signature_policy"=>"",
+   "image_volumes"=>"mkdir",
+   "registries"=>["docker.io"]},
+ "crio.network"=>
+  {"network_dir"=>"/etc/cni/net.d/", "plugin_dir"=>plugin_dir}}
 
-
+crio_storage_conf =
+{"storage"=>
+  {"driver"=>"overlay",
+   "runroot"=>"/var/run/containers/storage",
+   "graphroot"=>"/var/lib/containers/storage"},
+ "storage.options"=>
+  {"additionalimagestores"=>[], "size"=>"", "override_kernel_check"=>true}}
 
     data = Hash.new
     data['kubernetes::kubernetes_version'] = version
@@ -78,6 +154,10 @@ class OtherParams
     data['kubernetes::install_dashboard'] = install
     data['kubernetes::controller_address'] = controller_address
     data['kubernetes::token'] = SecureRandom.hex(3) + "." + SecureRandom.hex(8)
+    if container_runtime.match('crio')
+      data['kubernetes::crio_config_options'] = crio_conf
+      data['kubernetes::crio_storage_options'] = crio_storage_conf
+    end
     File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
 
   end

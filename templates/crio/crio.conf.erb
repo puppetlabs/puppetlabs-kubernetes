@@ -1,0 +1,7 @@
+# CRI-O Configuration
+#
+# THIS FILE IS MANAGED BY PUPPET
+#
+<% if @crio_config_options -%>
+<%= require 'toml-rb'; TomlRB.dump(@crio_config_options) %>
+<% end -%>

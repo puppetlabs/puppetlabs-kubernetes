@@ -35,9 +35,12 @@ describe 'kubernetes::repos', :type => :class do
          'docker_yum_baseurl' => 'https://yum.dockerproject.org/repo/main/centos/7',
          'docker_yum_gpgkey' => 'https://yum.dockerproject.org/gpg',
          'docker_key_id' => '58118E89F3A912897C070ADBF76221572C52609D',
-         'docker_key_source' => 'https://apt.dockerproject.org/gpg',
+         'docker_key_source' => 'https://apt.dockerproject.org/gpg',              
          'create_repos' => true,         
          'manage_docker' => true, 
+         'crio_ppa_repository_name' => 'ppa:projectatomic/ppa',         
+         'crio_yum_baseurl' => 'https://cbs.centos.org/repos/paas7-crio-110-candidate/x86_64/os/',         
+         'manage_crio' => false,  
        }
     end    
 
@@ -98,6 +101,9 @@ describe 'kubernetes::repos', :type => :class do
         'docker_key_source' => 'https://apt.dockerproject.org/gpg',
         'create_repos' => true,
         'manage_docker' => false,
+        'crio_ppa_repository_name' => 'ppa:projectatomic/ppa',         
+        'crio_yum_baseurl' => 'https://cbs.centos.org/repos/paas7-crio-110-candidate/x86_64/os/',         
+        'manage_crio' => false,  
        }
    end 
 

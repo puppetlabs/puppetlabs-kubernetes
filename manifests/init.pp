@@ -71,6 +71,46 @@
 #   Whether or not to install Docker repositories and packages via this module.
 #   Defaults to true.
 #
+# [*manage_crio*]
+#   Whether or not to install crio repositories and packages via this module and manage configs. 
+#   Defaults to false.
+#
+# [*crio_package_name*]
+#   The crio package name to download from the upstream repo
+#   Defaults to crio for RHEL based systems and crio-kubernetes_minor_version for Ubuntu
+#
+# [*kubernetes_minor_version*]
+#   The minor version of Kubernetes. Computed from kubernetes_version.
+#   Defaults to 1.10
+# 
+# [*crio_version*]
+#   This is the version of the crio runtime that you want to install
+#   Defaults to present
+#
+# [*crio_ppa_repository_name*]
+#   The name of the PPA repo used for Ubuntu packages.
+#   Defaults to ppa:projectatomic/ppa
+#
+# [*crio_repository_version*]
+#  The crio repository version. Used for picking the right repo  on RHEL based systems. Computed from kubernetes_version 
+#  Defaults to 110
+#
+# [*crio_yum_baseurl*]
+#   The baseurl for the crio YUM repo.
+#   Defailts to https://cbs.centos.org/repos/paas7-crio-110-candidate/x86_64/os/
+#
+# [*crio_install_options*]
+#   Addition install options for the crio package.
+#   Defaults to [] (empty array)
+#
+# [*crio_config_options*]
+#   The options the crio config is created from. 
+#   Defaults to the one the package for the operating system delivers
+#
+# [*crio_storage_options*]
+#   The options the crio storage config is created from. 
+#   Defaults to the one the package for the operating system delivers
+#
 # [*manage_etcd*]
 #   When set to true, etcd will be downloaded from the specified source URL.
 #   Defaults to true.
@@ -366,6 +406,7 @@
 #
 class kubernetes (
   String $kubernetes_version                         = '1.10.2',
+  String $kubernetes_minor_version                   = regsubst($kubernetes_version, '^(\d+)\.(\d+).*$', '\1.\2'),
   String $kubernetes_cluster_name                    = 'kubernetes',
   String $kubernetes_package_version                 = $facts['os']['family'] ? {
                                                           'Debian' => "${kubernetes_version}-00",
@@ -378,6 +419,18 @@ class kubernetes (
                                                           'Debian' => '17.03.0~ce-0~ubuntu-xenial',
                                                           'RedHat' => '17.03.1.ce-1.el7.centos',
                                                         },
+  Optional[String] $crio_repository_version          = regsubst($kubernetes_version, '^(\d+)\.(\d+).*$', '\1\2'),
+  Optional[String] $crio_package_name                = $facts['os']['family'] ? {
+                                                          'Debian' => "crio-${kubernetes_minor_version}",
+                                                          'RedHat' => 'crio',
+                                                        },
+  Optional[String] $crio_version                     = 'present',
+  Boolean $manage_crio                               = false,
+  Optional[String] $crio_ppa_repository_name         = 'ppa:projectatomic/ppa',
+  Optional[String] $crio_yum_baseurl                 = "https://cbs.centos.org/repos/paas7-crio-${crio_repository_version}-candidate/x86_64/os/",
+  Optional[Array] $crio_install_options              = [],
+  Optional[Hash] $crio_config_options                = undef,
+  Optional[Hash] $crio_storage_options               = undef,
   Optional[String] $cni_pod_cidr                     = undef,
   Boolean $controller                                = false,
   Boolean $worker                                    = false,
@@ -432,39 +485,39 @@ class kubernetes (
   Optional[String] $containerd_archive               = "containerd-${containerd_version}.linux-amd64.tar.gz",
   Optional[String] $containerd_source                =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
-  String $etcd_archive                               = "etcd-v${etcd_version}-linux-amd64.tar.gz",
-  String $etcd_package_name                          = 'etcd-server',
-  String $etcd_source                                = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
-  String $etcd_install_method                        = 'wget',
-  Optional[String] $kubernetes_apt_location          = undef,
-  Optional[String] $kubernetes_apt_release           = undef,
-  Optional[String] $kubernetes_apt_repos             = undef,
-  Optional[String] $kubernetes_key_id                = undef,
-  Optional[String] $kubernetes_key_source            = undef,
-  Optional[String] $kubernetes_yum_baseurl           = undef,
-  Optional[String] $kubernetes_yum_gpgkey            = undef,
-  Optional[String] $docker_apt_location              = undef,
-  Optional[String] $docker_apt_release               = undef,
-  Optional[String] $docker_apt_repos                 = undef,
-  Optional[String] $docker_yum_baseurl               = undef,
-  Optional[String] $docker_yum_gpgkey                = undef,
-  Optional[String] $docker_key_id                    = undef,
-  Optional[String] $docker_key_source                = undef,
-  Boolean $disable_swap                              = true,
-  Boolean $manage_kernel_modules                     = true,
-  Boolean $manage_sysctl_settings                    = true,
-  Boolean $create_repos                              = true,
-  String $image_repository                           = 'k8s.gcr.io',
-  Array[String] $default_path                        = ['/usr/bin','/bin','/sbin','/usr/local/bin'],
-  String $cgroup_driver                              = $facts['os']['family'] ? {
-                                                          'RedHat' => 'systemd',
-                                                          default  => 'cgroupfs',
-                                                        },
-  Array[String] $environment                         = $controller ? {
-                                                          true    => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
-                                                          default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf'],
-                                                        },
-  Optional[Array] $ignore_preflight_errors           = undef,
+  String $etcd_archive                         = "etcd-v${etcd_version}-linux-amd64.tar.gz",
+  String $etcd_package_name                    = 'etcd-server',
+  String $etcd_source                          = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
+  String $etcd_install_method                  = 'wget',
+  Optional[String] $kubernetes_apt_location    = undef,
+  Optional[String] $kubernetes_apt_release     = undef,
+  Optional[String] $kubernetes_apt_repos       = undef,
+  Optional[String] $kubernetes_key_id          = undef,
+  Optional[String] $kubernetes_key_source      = undef,
+  Optional[String] $kubernetes_yum_baseurl     = undef,
+  Optional[String] $kubernetes_yum_gpgkey      = undef,
+  Optional[String] $docker_apt_location        = undef,
+  Optional[String] $docker_apt_release         = undef,
+  Optional[String] $docker_apt_repos           = undef,
+  Optional[String] $docker_yum_baseurl         = undef,
+  Optional[String] $docker_yum_gpgkey          = undef,
+  Optional[String] $docker_key_id              = undef,
+  Optional[String] $docker_key_source          = undef,
+  Boolean $disable_swap                        = true,
+  Boolean $manage_kernel_modules               = true,
+  Boolean $manage_sysctl_settings              = true,
+  Boolean $create_repos                        = true,
+  String $image_repository                     = 'k8s.gcr.io',
+  Array[String] $default_path                  = ['/usr/bin','/bin','/sbin','/usr/local/bin'],
+  String $cgroup_driver                        = $facts['os']['family'] ? {
+                                                    'RedHat' => 'systemd',
+                                                    default  => 'cgroupfs',
+                                                  },
+  Array[String] $environment                   = $controller ? {
+                                                    true    => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+                                                    default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf'],
+                                                  },
+  Optional[Array] $ignore_preflight_errors     = undef,
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}

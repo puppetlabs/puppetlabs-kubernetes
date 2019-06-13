@@ -39,6 +39,16 @@ To bootstrap a Kubernetes cluster in a secure and extensible way, this module us
 
 [Install](https://puppet.com/docs/puppet/5.5/modules_installing.html) this module, [generate the configuration](#generating-the-module-configuration), [add the OS and hostname yaml files to Hiera](#adding-the-`{$OS}.yaml`-and-`{$hostname}.yaml`-files-to-Hiera), and [configure your node](#configuring-your-node).
 
+If you want to use **Cri-o** as the container engine, this module **requires** the [toml-rb](https://github.com/eMancu/toml-rb) gem. Either install the gem using puppet's native gem provider, [puppetserver_gem](https://forge.puppetlabs.com/puppetlabs/puppetserver_gem), [pe_gem](https://forge.puppetlabs.com/puppetlabs/pe_gem), [pe_puppetserver_gem](https://forge.puppetlabs.com/puppetlabs/pe_puppetserver_gem), or manually using one of the following methods:
+```
+  # apply or puppet-master
+  gem install toml-rb
+  # PE apply
+  /opt/puppetlabs/puppet/bin/gem install toml-rb
+  # AIO or PE puppetserver
+  /opt/puppet/bin/puppetserver gem install toml-rb
+```
+
 Included in this module is [Kubetool](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/tooling/kube_tool.rb), a configuration tool that auto-generates the Hiera security parameters, the discovery token hash, and other configurations for your Kubernetes cluster. To simplify installation and use, the tool is available as a Docker image.
 
 ### Generating the module configuration
@@ -65,7 +75,7 @@ The above parameters are:
 
 * `OS`: The operating system Kubernetes runs on.
 * `VERSION`: The version of Kubernetes to deploy.
-* `CONTAINER_RUNTIME`: The container runtime Kubernetes uses. Set this value to `docker` (officially supported) or `cri_containerd`. Advanced Kubernetes users can use `cri_containerd`, however this requires an increased understanding of Kubernetes, specifically when running applications in a HA cluster. To run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module. For more information, see the Kubernetes [documentation](https://kubernetes-v1-4.github.io/docs/user-guide/load-balancer/).
+* `CONTAINER_RUNTIME`: The container runtime Kubernetes uses. Set this value to `docker` (officially supported), `cri_containerd` or `crio`. Advanced Kubernetes users can use `cri_containerd` or `crio`, however this requires an increased understanding of Kubernetes, specifically when running applications in a HA cluster. To run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module. For more information, see the Kubernetes [documentation](https://kubernetes-v1-4.github.io/docs/user-guide/load-balancer/).
 * `CNI_PROVIDER`: The CNI network to install. Set this value to `weave`, `flannel`, `calico` or `cilium`.
 * `CNI_PROVIDER_VERSION` The CNI version to use `calico` and `cilium` use this variable to reference the correct deployment file. Current version for `calico` is `3.6` and `cilium` is `1.4.3`
 * `ETCD_INITIAL_CLUSTER`: The server hostnames and IPs in the form of `hostname:ip`. When in production, include three, five, or seven nodes for etcd.

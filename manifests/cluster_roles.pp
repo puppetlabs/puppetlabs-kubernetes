@@ -11,6 +11,9 @@ class kubernetes::cluster_roles (
   if $container_runtime == 'cri_containerd' {
     $preflight_errors = flatten(['Service-Docker',$ignore_preflight_errors])
     $cri_socket = '/run/containerd/containerd.sock'
+  } elsif $container_runtime == 'crio' {
+    $preflight_errors = flatten(['Service-Docker',$ignore_preflight_errors])
+    $cri_socket = '/var/run/crio/crio.sock'
   } else {
     $preflight_errors = $ignore_preflight_errors
     $cri_socket = undef

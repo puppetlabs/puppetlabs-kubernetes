@@ -58,6 +58,24 @@ class kubernetes::service (
       }
     }
 
+    'crio': {
+      file { '/etc/systemd/system/kubelet.service.d/0-crio.conf':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template('kubernetes/crio/0-crio.conf.erb'),
+        notify  => [Service['crio'], Exec['kubernetes-systemd-reload']]
+      }
+
+      service { 'crio':
+        ensure     => running,
+        enable     => true,
+        hasrestart => true,
+        hasstatus  => true,
+      }
+    }
+
     default: {
       fail(translate('Please specify a valid container runtime'))
     }

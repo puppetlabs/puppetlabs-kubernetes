@@ -34,6 +34,12 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'manage_crio' => false,
+        'crio_config_options' => {},   
+        'crio_storage_options' => {},
+        'crio_package_name' => 'crio',
+        'crio_version' => 'present',
+        'crio_install_options' => [],
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -80,6 +86,12 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'package',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'manage_crio' => false,
+        'crio_config_options' => {},   
+        'crio_storage_options' => {},
+        'crio_package_name' => 'crio',
+        'crio_version' => 'present',
+        'crio_install_options' => [],
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -130,6 +142,12 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'manage_crio' => false,
+        'crio_config_options' => {},   
+        'crio_storage_options' => {},
+        'crio_package_name' => 'cri-o-1.13',
+        'crio_version' => 'present',
+        'crio_install_options' => [],
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -182,6 +200,12 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'manage_crio' => false,
+        'crio_config_options' => {},   
+        'crio_storage_options' => {},
+        'crio_package_name' => 'cri-o-1.13',
+        'crio_version' => 'present',
+        'crio_install_options' => [],
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -231,6 +255,12 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'manage_crio' => false,
+        'crio_config_options' => {},   
+        'crio_storage_options' => {},
+        'crio_package_name' => 'cri-o-1.13',
+        'crio_version' => 'present',
+        'crio_install_options' => [],
         }
     end
     it { should contain_kmod__load('br_netfilter')}

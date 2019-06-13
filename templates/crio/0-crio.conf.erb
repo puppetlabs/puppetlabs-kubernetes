@@ -1,0 +1,5 @@
+# CRI-O kubelet Systemd Configuration
+#
+# THIS FILE IS MANAGED BY PUPPET
+#
+KUBELET_EXTRA_ARGS=--enable-cri=true --container-runtime=remote --runtime-request-timeout=15m --image-service-endpoint /var/run/crio/crio.sock --container-runtime-endpoint /var/run/crio/crio.sock

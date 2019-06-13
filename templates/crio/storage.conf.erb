@@ -1,0 +1,7 @@
+# CRI-O Storage Configuration
+#
+# THIS FILE IS MANAGED BY PUPPET
+#
+<% if @crio_storage_options -%>
+<%= require 'toml-rb'; TomlRB.dump(@crio_storage_options) %>
+<% end -%>
