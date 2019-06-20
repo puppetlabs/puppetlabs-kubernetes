@@ -172,6 +172,20 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     }
   end
 
+  context 'with version = 1.13 and kubernetes_cluster_name => my_own_name' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.13.0',
+        'kubernetes_cluster_name' => 'my_own_name',
+      }
+    end
+
+    it {
+      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+        .with_content(%r{clusterName: my_own_name\n})
+    }
+  end
+
   context 'with version = 1.14' do
     let(:params) do
       {
