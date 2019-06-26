@@ -35,10 +35,11 @@ class kubernetes::config::worker (
   }
 
   file { $config_file:
-    ensure  => file,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => template("kubernetes/${template}/config_worker.yaml.erb"),
+    ensure    => file,
+    owner     => 'root',
+    group     => 'root',
+    mode      => '0644',
+    content   => template("kubernetes/${template}/config_worker.yaml.erb"),
+    show_diff => false,
   }
 }
