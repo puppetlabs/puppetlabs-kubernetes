@@ -27,6 +27,8 @@ class kubernetes::config::kubeadm (
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
   String $kubernetes_ca_crt = $kubernetes::kubernetes_ca_crt,
   String $kubernetes_ca_key = $kubernetes::kubernetes_ca_key,
+  String $kubernetes_front_proxy_ca_crt = $kubernetes::kubernetes_front_proxy_ca_crt,
+  String $kubernetes_front_proxy_ca_key = $kubernetes::kubernetes_front_proxy_ca_key,
   String $container_runtime = $kubernetes::container_runtime,
   String $sa_pub = $kubernetes::sa_pub,
   String $sa_key = $kubernetes::sa_key,
@@ -53,7 +55,7 @@ class kubernetes::config::kubeadm (
 
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
   $etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key','peer.crt', 'peer.key', 'server.crt', 'server.key']
-  $pki = ['ca.crt', 'ca.key','sa.pub','sa.key']
+  $pki = ['ca.crt','ca.key','front-proxy-ca.crt','front-proxy-ca.key','sa.pub','sa.key']
   $kube_dirs.each | String $dir |  {
     file  { $dir :
       ensure  => directory,

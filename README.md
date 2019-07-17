@@ -527,7 +527,19 @@ Defaults to `undef`.
 
 #### `kubernetes_ca_key`
 
-The clusters CA key. Must be passed as a string and not a file.
+The cluster's CA key. Must be passed as a string and not a file.
+
+Defaults to `undef`.
+
+#### `kubernetes_front_proxy_ca_crt`
+
+The cluster's front-proxy CA certificate. Must be passed as a string and not a file.
+
+Defaults to `undef`.
+
+#### `kubernetes_front_proxy_ca_key`
+
+The cluster's front-proxy CA key. Must be passed as a string and not a file.
 
 Defaults to `undef`.
 

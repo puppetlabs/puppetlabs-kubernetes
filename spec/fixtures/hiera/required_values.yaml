@@ -6,6 +6,8 @@ kubernetes::etcdclient_crt: 'foo'
 kubernetes::api_server_count: 3
 kubernetes::kubernetes_ca_crt: 'foo'
 kubernetes::kubernetes_ca_key: 'foo'
+kubernetes::kubernetes_front_proxy_ca_crt: 'foo'
+kubernetes::kubernetes_front_proxy_ca_key: 'foo'
 kubernetes::discovery_token_hash: 'foo'
 kubernetes::token: 'foo'
 kubernetes::sa_pub: 'foo'

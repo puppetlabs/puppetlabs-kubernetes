@@ -36,7 +36,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     kube_dirs = ['/etc/kubernetes', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/pki/etcd']
     etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key', 'peer.crt', 'peer.key', 'server.crt', 'server.key']
-    pki = ['ca.crt', 'ca.key', 'sa.pub', 'sa.key']
+    pki = ['ca.crt', 'ca.key', 'front-proxy-ca.crt', 'front-proxy-ca.key', 'sa.pub', 'sa.key']
 
     kube_dirs.each do |d|
       it { is_expected.to contain_file(d.to_s) }
@@ -69,7 +69,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     kube_dirs = ['/etc/kubernetes', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/pki/etcd']
     etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key', 'peer.crt', 'peer.key', 'server.crt', 'server.key']
-    pki = ['ca.crt', 'ca.key', 'sa.pub', 'sa.key']
+    pki = ['ca.crt', 'ca.key', 'front-proxy-ca.crt', 'front-proxy-ca.key', 'sa.pub', 'sa.key']
 
     kube_dirs.each do |d|
       it { is_expected.to contain_file(d.to_s) }
