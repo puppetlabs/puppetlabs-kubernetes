@@ -70,6 +70,7 @@ class Kube_tool
     CreateCerts.etcd_clients
     CreateCerts.etcd_server( hash[:etcd_initial_cluster])
     CreateCerts.kube_ca
+    CreateCerts.kube_front_proxy_ca
     CreateCerts.sa    
     CleanUp.remove_files
     CleanUp.clean_yaml( hash[:os])

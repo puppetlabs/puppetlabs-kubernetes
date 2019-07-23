@@ -96,6 +96,28 @@ class CreateCerts
     FileUtils.rm_f('discovery_token_hash.csr')
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) } 
   end
+
+  def CreateCerts.kube_front_proxy_ca
+    puts "Creating kube front-proxy ca"
+    files = ['front-proxy-ca-conf.json', 'front-proxy-ca-csr.json', 'front-proxy-ca-key.pem', 'front-proxy-ca-key.pem']
+    files.each do |x|
+      if File.exist?(x)
+        FileUtils.rm_f(x)
+      end
+    end
+    csr = { "CN": "front-proxy-ca", "key": {"algo": "rsa", "size": 2048 }}
+    conf = { "signing": { "default": { "expiry": "87600h" }}}
+    File.open("front-proxy-ca-csr.json", "w+") { |file| file.write(csr.to_json) }
+    File.open("front-proxy-ca-conf.json", "w+") { |file| file.write(conf.to_json) }
+    system('cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca')
+    FileUtils.rm_f('front-proxy-ca.csr')
+    data = Hash.new
+    cer = File.read("front-proxy-ca.pem")
+    key = File.read("front-proxy-ca-key.pem")
+    data['kubernetes::kubernetes_front_proxy_ca_crt'] = cer
+    data['kubernetes::kubernetes_front_proxy_ca_key'] = key
+    File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
+  end
   
   def CreateCerts.sa
     puts "Creating service account certs"
