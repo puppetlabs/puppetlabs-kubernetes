@@ -62,14 +62,15 @@ class kubernetes::config::kubeadm (
     }
   }
 
-  if $manage_etcd {
-    $etcd.each | String $etcd_files | {
-      file { "/etc/kubernetes/pki/etcd/${etcd_files}":
-        ensure  => present,
-        content => template("kubernetes/etcd/${etcd_files}.erb"),
-        mode    => '0600',
-      }
+  $etcd.each | String $etcd_files | {
+    file { "/etc/kubernetes/pki/etcd/${etcd_files}":
+      ensure  => present,
+      content => template("kubernetes/etcd/${etcd_files}.erb"),
+      mode    => '0600',
     }
+  }
+
+  if $manage_etcd {
     if $etcd_install_method == 'wget' {
       file { '/etc/systemd/system/etcd.service':
         ensure  => present,

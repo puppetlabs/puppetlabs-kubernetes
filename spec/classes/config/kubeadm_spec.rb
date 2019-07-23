@@ -76,7 +76,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
 
     etcd.each do |f|
-      it { is_expected.not_to contain_file("/etc/kubernetes/pki/etcd/#{f}") }
+      it { is_expected.to contain_file("/etc/kubernetes/pki/etcd/#{f}") }
     end
 
     pki.each do |cert|
