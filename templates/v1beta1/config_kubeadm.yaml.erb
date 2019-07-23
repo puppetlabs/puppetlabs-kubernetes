@@ -4,7 +4,7 @@ bootstrapTokens:
   groups:
   - system:bootstrappers:kubeadm:default-node-token
   token: <%= @token %>
-  ttl: 24h0m0s
+  ttl: <%= @ttl_duration %>
   usages:
   - signing
   - authentication

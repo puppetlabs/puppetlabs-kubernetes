@@ -356,6 +356,10 @@
 # [*environment*]
 # The environment passed to kubectl commands.
 # Defaults to setting HOME and KUBECONFIG variables
+# 
+# [*ttl_duration*]
+# Availability of the token
+# Default to 24h 
 #
 # Authors
 # -------
@@ -409,6 +413,7 @@ class kubernetes (
   String $kubernetes_ca_crt                          = undef,
   String $kubernetes_ca_key                          = undef,
   String $token                                      = undef,
+  String $ttl_duration                               = '24h',
   String $discovery_token_hash                       = undef,
   String $sa_pub                                     = undef,
   String $sa_key                                     = undef,
