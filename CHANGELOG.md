@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v5.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.0.0) (2019-07-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v4.0.1...v5.0.0)
+
+### Changed
+
+- \(FM-8100\) Update minimum supported Puppet version to 5.5.10 [\#291](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/291) ([sheenaajay](https://github.com/sheenaajay))
+
+### Added
+
+- Modify config\_version to kubernetes\_version mapping. Pre-req to supporting Kube 1.15 [\#308](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/308) ([nickperry](https://github.com/nickperry))
+- add support for cilium network provider [\#265](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/265) ([SimonHoenscheid](https://github.com/SimonHoenscheid))
+
+### Fixed
+
+- Manage front-proxy ca certs - fixes \#275 [\#321](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/321) ([nickperry](https://github.com/nickperry))
+- Expose ttl duration parameter [\#313](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/313) ([carabasdaniel](https://github.com/carabasdaniel))
+- make proxy mode configurable [\#297](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/297) ([mrwulf](https://github.com/mrwulf))
+- Fixed duplicate tlsBootstrapToken in config\_worker.yaml.erb for kubernetes 1.14 [\#287](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/287) ([Hillkorn](https://github.com/Hillkorn))
+
 ## [v4.0.1](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v4.0.1) (2019-05-13)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/4.0.0...v4.0.1)
