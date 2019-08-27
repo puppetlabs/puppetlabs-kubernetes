@@ -1,19 +1,15 @@
 apiVersion: kubeadm.k8s.io/v1beta1
 caCertPath: /etc/kubernetes/pki/ca.crt
 kind: JoinConfiguration
-<%- if @kubernetes_cluster_name != "kubernetes"  -%>
-clusterName: <%= @kubernetes_cluster_name %>
-<%- end -%>
-
 discovery:
   timeout: 5m0s
+  tlsBootstrapToken: <%= @tls_bootstrap_token %>
   bootstrapToken:
     token: <%= @discovery_token %>
     apiServerEndpoint: '<%= @controller_address %>'
     unsafeSkipCAVerification: false
     caCertHashes:
     - 'sha256:<%= @discovery_token_hash %>'
-token: <%= @discovery_token %>
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
@@ -30,7 +26,3 @@ nodeRegistration:
     <%- @kubelet_extra_arguments.each do |arg| -%>
     <%= arg %>
     <%- end %>
-<% if @feature_gates -%>
-featureGates: <%= @feature_gates %>
-<% end -%>
-tlsBootstrapToken: <%= @tls_bootstrap_token %>
