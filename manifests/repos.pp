@@ -26,7 +26,7 @@ class kubernetes::repos (
       'Debian': {
         $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
-          location => pick($kubernetes_apt_location,'http://apt.kubernetes.io'),
+          location => pick($kubernetes_apt_location,'https://apt.kubernetes.io'),
           repos    => pick($kubernetes_apt_repos,'main'),
           release  => pick($kubernetes_apt_release,"kubernetes-${codename}"),
           key      => {
