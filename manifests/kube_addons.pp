@@ -1,7 +1,7 @@
 # Class kubernetes kube_addons
 class kubernetes::kube_addons (
 
-  String $cni_network_provider               = $kubernetes::cni_network_provider,
+  Optional[String] $cni_network_provider               = $kubernetes::cni_network_provider,
   Optional[String] $cni_rbac_binding         = $kubernetes::cni_rbac_binding,
   Boolean $install_dashboard                 = $kubernetes::install_dashboard,
   String $dashboard_version                  = $kubernetes::dashboard_version,
@@ -32,13 +32,15 @@ class kubernetes::kube_addons (
     }
   }
 
-  $shellsafe_provider = shell_escape($cni_network_provider)
-  exec { 'Install cni network provider':
-    command     => "kubectl apply -f ${shellsafe_provider}",
-    onlyif      => 'kubectl get nodes',
-    unless      => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'",
-    environment => $env,
+  if $cni_network_provider {
+    $shellsafe_provider = shell_escape($cni_network_provider)
+    exec { 'Install cni network provider':
+      command     => "kubectl apply -f ${shellsafe_provider}",
+      onlyif      => 'kubectl get nodes',
+      unless      => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'",
+      environment => $env,
     }
+  }
 
   if $schedule_on_controller {
 
