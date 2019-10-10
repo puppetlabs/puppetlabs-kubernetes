@@ -20,35 +20,35 @@ class kubernetes::repos (
   Boolean $create_repos                     = $kubernetes::create_repos,
 
 
-){
+) {
   if $create_repos {
-    case $facts['os']['family']  {
+    case $facts['os']['family'] {
       'Debian': {
         $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
-          location => pick($kubernetes_apt_location,'https://apt.kubernetes.io'),
-          repos    => pick($kubernetes_apt_repos,'main'),
-          release  => pick($kubernetes_apt_release,"kubernetes-${codename}"),
+          location => pick($kubernetes_apt_location, 'https://apt.kubernetes.io'),
+          repos    => pick($kubernetes_apt_repos, 'main'),
+          release  => pick($kubernetes_apt_release, "kubernetes-${codename}"),
           key      => {
-            'id'     => pick($kubernetes_key_id,'54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'),
-            'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
-            },
-          }
-          -> anchor { 'kubernetes_repos_complete': 
-            require => Class['Apt::Update']
-          }
+            'id'     => pick($kubernetes_key_id, '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'),
+            'source' => pick($kubernetes_key_source, 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
+          },
+        }
+        -> anchor { 'kubernetes_repos_complete':
+          require => Class['Apt::Update']
+        }
 
-          if $container_runtime == 'docker' and $manage_docker == true {
-            apt::source { 'docker':
-              location => pick($docker_apt_location,'https://apt.dockerproject.org/repo'),
-              repos    => pick($docker_apt_repos,'main'),
-              release  => pick($docker_apt_release,"ubuntu-${codename}"),
-              key      => {
-                'id'     => pick($docker_key_id,'58118E89F3A912897C070ADBF76221572C52609D'),
-                'source' => pick($docker_key_source,'https://apt.dockerproject.org/gpg'),
+        if $container_runtime == 'docker' and $manage_docker == true {
+          apt::source { 'docker':
+            location => pick($docker_apt_location, 'https://apt.dockerproject.org/repo'),
+            repos    => pick($docker_apt_repos, 'main'),
+            release  => pick($docker_apt_release, "ubuntu-${codename}"),
+            key      => {
+              'id'     => pick($docker_key_id, '58118E89F3A912897C070ADBF76221572C52609D'),
+              'source' => pick($docker_key_source, 'https://apt.dockerproject.org/gpg'),
             },
           }
-          -> anchor { 'docker_repos_complete': 
+          -> anchor { 'docker_repos_complete':
             require => Class['Apt::Update']
           }
         }
@@ -57,8 +57,8 @@ class kubernetes::repos (
         if $container_runtime == 'docker' and $manage_docker == true {
           yumrepo { 'docker':
             descr    => 'docker',
-            baseurl  => pick($docker_yum_baseurl,'https://yum.dockerproject.org/repo/main/centos/7'),
-            gpgkey   => pick($docker_yum_gpgkey,'https://yum.dockerproject.org/gpg'),
+            baseurl  => pick($docker_yum_baseurl, 'https://yum.dockerproject.org/repo/main/centos/7'),
+            gpgkey   => pick($docker_yum_gpgkey, 'https://yum.dockerproject.org/gpg'),
             gpgcheck => true,
           }
           -> anchor { 'docker_repos_complete': }
@@ -66,21 +66,21 @@ class kubernetes::repos (
 
         yumrepo { 'kubernetes':
           descr    => 'Kubernetes',
-          baseurl  => pick($kubernetes_yum_baseurl,'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
-          gpgkey   => pick($kubernetes_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
+          baseurl  => pick($kubernetes_yum_baseurl, 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
+          gpgkey   => pick($kubernetes_yum_gpgkey, 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
           gpgcheck => true,
         }
         -> anchor { 'kubernetes_repos_complete': }
       }
 
-    default: { 
-          notify {"The OS family ${facts['os']['family']} is not supported by this module":} 
-          anchor { 'kubernetes_repos_complete': }
-          anchor { 'docker_repos_complete': }
+      default: {
+        notify { "The OS family ${facts['os']['family']} is not supported by this module": }
+        anchor { 'kubernetes_repos_complete': }
+        anchor { 'docker_repos_complete': }
+      }
     }
-   }
-  }else{
-     anchor { 'kubernetes_repos_complete': }
-     anchor { 'docker_repos_complete': }
+  }else {
+    anchor { 'kubernetes_repos_complete': }
+    anchor { 'docker_repos_complete': }
   }
 }
