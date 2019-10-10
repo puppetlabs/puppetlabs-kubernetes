@@ -1,32 +1,31 @@
 # Class kubernetes packages
 
 class kubernetes::packages (
-
-  String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
-  String $container_runtime                    = $kubernetes::container_runtime,
-  Boolean $manage_docker                       = $kubernetes::manage_docker,
-  Boolean $manage_etcd                         = $kubernetes::manage_etcd,
-  Optional[String] $docker_version             = $kubernetes::docker_version,
-  Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
-  Boolean $controller                          = $kubernetes::controller,
-  Optional[String] $containerd_archive         = $kubernetes::containerd_archive,
-  Optional[String] $containerd_source          = $kubernetes::containerd_source,
-  String $etcd_archive                         = $kubernetes::etcd_archive,
-  String $etcd_version                         = $kubernetes::etcd_version,
-  String $etcd_source                          = $kubernetes::etcd_source,
-  String $etcd_package_name                    = $kubernetes::etcd_package_name,
-  String $etcd_install_method                  = $kubernetes::etcd_install_method,
-  Optional[String] $runc_source                = $kubernetes::runc_source,
-  Boolean $disable_swap                        = $kubernetes::disable_swap,
-  Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
-  Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
+  String $kubernetes_package_version    = $kubernetes::kubernetes_package_version,
+  String $container_runtime             = $kubernetes::container_runtime,
+  Boolean $manage_docker                = $kubernetes::manage_docker,
+  Boolean $manage_etcd                  = $kubernetes::manage_etcd,
+  Optional[String] $docker_version      = $kubernetes::docker_version,
+  Optional[String] $docker_package_name = $kubernetes::docker_package_name,
+  Boolean $controller                   = $kubernetes::controller,
+  Optional[String] $containerd_archive  = $kubernetes::containerd_archive,
+  Optional[String] $containerd_source   = $kubernetes::containerd_source,
+  String $etcd_archive                  = $kubernetes::etcd_archive,
+  String $etcd_version                  = $kubernetes::etcd_version,
+  String $etcd_source                   = $kubernetes::etcd_source,
+  String $etcd_package_name             = $kubernetes::etcd_package_name,
+  String $etcd_install_method           = $kubernetes::etcd_install_method,
+  Optional[String] $runc_source         = $kubernetes::runc_source,
+  Boolean $disable_swap                 = $kubernetes::disable_swap,
+  Boolean $manage_kernel_modules        = $kubernetes::manage_kernel_modules,
+  Boolean $manage_sysctl_settings       = $kubernetes::manage_sysctl_settings,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
 
   if $disable_swap {
-    exec {'disable swap':
-      path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
+    exec { 'disable swap':
+      path    => ['/usr/sbin/', '/usr/bin', '/bin', '/sbin'],
       command => 'swapoff -a',
       unless  => "awk '{ if (NR > 1) exit 1}' /proc/swaps",
     }
@@ -71,7 +70,7 @@ class kubernetes::packages (
       }
       'RedHat': {
         package { $docker_package_name:
-          ensure => $docker_version,
+          ensure  => $docker_version,
           require => Anchor['docker_repos_complete'],
         }
         file_line { 'set systemd cgroup docker':
@@ -81,7 +80,7 @@ class kubernetes::packages (
           require => Package[$docker_package_name],
         }
       }
-    default: { notify {"The OS family ${facts['os']['family']} is not supported by this module":} }
+      default: { notify { "The OS family ${facts['os']['family']} is not supported by this module": } }
     }
   }
 
@@ -117,7 +116,7 @@ class kubernetes::packages (
         extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
         extract_path    => '/usr/local/bin',
         cleanup         => true,
-        creates         => ['/usr/local/bin/etcd','/usr/local/bin/etcdctl']
+        creates         => ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
       }
     } else {
       package { $etcd_package_name:
