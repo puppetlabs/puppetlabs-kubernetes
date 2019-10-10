@@ -65,12 +65,14 @@ class kubernetes::packages (
     case $facts['os']['family'] {
       'Debian': {
         package { $docker_package_name:
-          ensure => $docker_version,
+          ensure  => $docker_version,
+          require => Anchor['docker_repos_complete'],
         }
       }
       'RedHat': {
         package { $docker_package_name:
           ensure => $docker_version,
+          require => Anchor['docker_repos_complete'],
         }
         file_line { 'set systemd cgroup docker':
           path    => '/usr/lib/systemd/system/docker.service',
@@ -125,7 +127,8 @@ class kubernetes::packages (
   }
 
   package { $kube_packages:
-    ensure => $kubernetes_package_version,
+    ensure  => $kubernetes_package_version,
+    require => Anchor['kubernetes_repos_complete'],
   }
 
 }

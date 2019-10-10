@@ -34,6 +34,9 @@ class kubernetes::repos (
             'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
             },
           }
+          -> anchor { 'kubernetes_repos_complete': 
+            require => Class['Apt::Update']
+          }
 
           if $container_runtime == 'docker' and $manage_docker == true {
             apt::source { 'docker':
@@ -45,6 +48,9 @@ class kubernetes::repos (
                 'source' => pick($docker_key_source,'https://apt.dockerproject.org/gpg'),
             },
           }
+          -> anchor { 'docker_repos_complete': 
+            require => Class['Apt::Update']
+          }
         }
       }
       'RedHat': {
@@ -55,6 +61,7 @@ class kubernetes::repos (
             gpgkey   => pick($docker_yum_gpgkey,'https://yum.dockerproject.org/gpg'),
             gpgcheck => true,
           }
+          -> anchor { 'docker_repos_complete': }
         }
 
         yumrepo { 'kubernetes':
@@ -63,10 +70,17 @@ class kubernetes::repos (
           gpgkey   => pick($kubernetes_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
           gpgcheck => true,
         }
+        -> anchor { 'kubernetes_repos_complete': }
       }
 
-    default: { notify {"The OS family ${facts['os']['family']} is not supported by this module":} }
-
+    default: { 
+          notify {"The OS family ${facts['os']['family']} is not supported by this module":} 
+          anchor { 'kubernetes_repos_complete': }
+          anchor { 'docker_repos_complete': }
     }
+   }
+  }else{
+     anchor { 'kubernetes_repos_complete': }
+     anchor { 'docker_repos_complete': }
   }
 }
