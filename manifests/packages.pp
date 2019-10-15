@@ -70,31 +70,24 @@ class kubernetes::packages (
       'Debian': {
         file { '/etc/docker/daemon.json':
           ensure  => file,
-          owner   => "root",
-          group   => "root",
-          mode    => "0644",
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
           source  => 'puppet:///modules/kubernetes/docker/daemon_redhat.json',
           require => Package[$docker_package_name],
 
         }
       }
       'RedHat': {
-        file { '/etc/docker/daemon.json':
-          ensure => file,
-          owner  => "root",
-          group  => "root",
-          mode   => "0644",
-          source => 'puppet:///modules/kubernetes/docker/daemon_redhat.json',
-        }
         package { $docker_package_name:
           ensure  => $docker_version,
           require => Anchor['docker_repos_complete'],
         }
         file { '/etc/docker/daemon.json':
           ensure  => file,
-          owner   => "root",
-          group   => "root",
-          mode    => "0644",
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
           source  => 'puppet:///modules/kubernetes/docker/daemon_redhat.json',
           require => Package[$docker_package_name],
         }
@@ -104,9 +97,9 @@ class kubernetes::packages (
 
     file { '/etc/systemd/system/docker.service.d':
       ensure  => directory,
-      owner   => "root",
-      group   => "root",
-      mode    => "0755",
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0755',
       require => File['/etc/docker/daemon.json'],
       notify  => Exec['kubernetes-systemd-reload'],
     }
