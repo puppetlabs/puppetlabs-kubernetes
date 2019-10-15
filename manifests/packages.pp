@@ -85,6 +85,15 @@ class kubernetes::packages (
           group   => "root",
           mode    => "0644",
           source  => 'puppet:///modules/kubernetes/docker/daemon_redhat.json',
+        }
+        package { $docker_package_name:
+          ensure  => $docker_version,
+          require => Anchor['docker_repos_complete'],
+        }
+        file_line { 'set systemd cgroup docker':
+          path    => '/usr/lib/systemd/system/docker.service',
+          line    => 'ExecStart=/usr/bin/dockerd --exec-opt native.cgroupdriver=systemd',
+          match   => 'ExecStart',
           require => Package[$docker_package_name],
         }
       }
