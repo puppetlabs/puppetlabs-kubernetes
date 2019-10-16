@@ -22,6 +22,7 @@ class kubernetes::packages (
   Boolean $create_repos                 = $kubernetes::repos::create_repos,
 ) {
 
+
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
 
   if $disable_swap {
@@ -64,19 +65,22 @@ class kubernetes::packages (
   if $container_runtime == 'docker' and $manage_docker == true {
 
     # procedure: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
-    if $create_repos and $manage_docker {
-      package { $docker_package_name:
-        ensure  => $docker_version,
-        require => Class['Apt::Update'],
-      }
-    }
-    else {
-      package { $docker_package_name:
-        ensure => $docker_version,
-      }
-    }
     case $facts['os']['family'] {
       'Debian': {
+
+        include apt
+        if $create_repos and $manage_docker {
+          package { $docker_package_name:
+            ensure  => $docker_version,
+            require => Class['Apt::Update'],
+          }
+        }
+        else {
+          package { $docker_package_name:
+            ensure => $docker_version,
+          }
+        }
+
         file { '/etc/docker/daemon.json':
           ensure  => file,
           owner   => 'root',
@@ -152,9 +156,19 @@ class kubernetes::packages (
   }
 
   if $create_repos {
-    package { $kube_packages:
-      ensure  => $kubernetes_package_version,
-      require => Class['Apt::Update'],
+
+    case $facts['os']['family'] {
+      'Debian': {
+        package { $kube_packages:
+          ensure  => $kubernetes_package_version,
+          require => Class['Apt::Update'],
+        }
+      }
+      default: { 
+        package { $kube_packages:
+          ensure  => $kubernetes_package_version,
+        }
+      }
     }
   }else {
     package { $kube_packages:
