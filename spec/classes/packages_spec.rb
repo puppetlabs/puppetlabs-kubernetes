@@ -34,6 +34,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'manage_docker ' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
