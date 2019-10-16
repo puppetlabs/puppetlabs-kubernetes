@@ -35,7 +35,6 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
-        'manage_docker ' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -83,7 +82,6 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
-        'manage_docker ' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -135,7 +133,6 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
-        'manage_docker ' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -181,7 +178,7 @@ describe 'kubernetes::packages', :type => :class do
         'controller' => true,
         'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
-        'manage_docker' => false,
+        'manage_docker ' => true,
         'manage_etcd' => true,
         'manage_kernel_modules' => true,
         'manage_sysctl_settings' => true,
@@ -189,7 +186,6 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
-        'manage_docker ' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -232,7 +228,7 @@ describe 'kubernetes::packages', :type => :class do
         'controller' => true,
         'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
-        'manage_docker' => true,
+        'manage_docker ' => true,
         'manage_etcd' => true,
         'manage_kernel_modules' => true,
         'manage_sysctl_settings' => true,
@@ -240,7 +236,6 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
-        'manage_docker ' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}

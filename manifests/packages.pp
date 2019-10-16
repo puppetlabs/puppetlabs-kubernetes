@@ -87,9 +87,6 @@ class kubernetes::packages (
         }
       }
       'RedHat': {
-        package { $docker_package_name:
-          ensure => $docker_version,
-        }
         file { '/etc/docker/daemon.json':
           ensure  => file,
           owner   => 'root',
