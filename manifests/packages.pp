@@ -2,31 +2,31 @@
 
 class kubernetes::packages (
 
-  String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
-  String $container_runtime                    = $kubernetes::container_runtime,
-  Boolean $manage_docker                       = $kubernetes::manage_docker,
-  Boolean $manage_etcd                         = $kubernetes::manage_etcd,
-  Optional[String] $docker_version             = $kubernetes::docker_version,
-  Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
-  Boolean $controller                          = $kubernetes::controller,
-  Optional[String] $containerd_archive         = $kubernetes::containerd_archive,
-  Optional[String] $containerd_source          = $kubernetes::containerd_source,
-  String $etcd_archive                         = $kubernetes::etcd_archive,
-  String $etcd_version                         = $kubernetes::etcd_version,
-  String $etcd_source                          = $kubernetes::etcd_source,
-  String $etcd_package_name                    = $kubernetes::etcd_package_name,
-  String $etcd_install_method                  = $kubernetes::etcd_install_method,
-  Optional[String] $runc_source                = $kubernetes::runc_source,
-  Boolean $disable_swap                        = $kubernetes::disable_swap,
-  Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
-  Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
+  String $kubernetes_package_version    = $kubernetes::kubernetes_package_version,
+  String $container_runtime             = $kubernetes::container_runtime,
+  Boolean $manage_docker                = $kubernetes::manage_docker,
+  Boolean $manage_etcd                  = $kubernetes::manage_etcd,
+  Optional[String] $docker_version      = $kubernetes::docker_version,
+  Optional[String] $docker_package_name = $kubernetes::docker_package_name,
+  Boolean $controller                   = $kubernetes::controller,
+  Optional[String] $containerd_archive  = $kubernetes::containerd_archive,
+  Optional[String] $containerd_source   = $kubernetes::containerd_source,
+  String $etcd_archive                  = $kubernetes::etcd_archive,
+  String $etcd_version                  = $kubernetes::etcd_version,
+  String $etcd_source                   = $kubernetes::etcd_source,
+  String $etcd_package_name             = $kubernetes::etcd_package_name,
+  String $etcd_install_method           = $kubernetes::etcd_install_method,
+  Optional[String] $runc_source         = $kubernetes::runc_source,
+  Boolean $disable_swap                 = $kubernetes::disable_swap,
+  Boolean $manage_kernel_modules        = $kubernetes::manage_kernel_modules,
+  Boolean $manage_sysctl_settings       = $kubernetes::manage_sysctl_settings,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
 
   if $disable_swap {
-    exec {'disable swap':
-      path    => ['/usr/sbin/', '/usr/bin', '/bin','/sbin'],
+    exec { 'disable swap':
+      path    => ['/usr/sbin/', '/usr/bin', '/bin', '/sbin'],
       command => 'swapoff -a',
       unless  => "awk '{ if (NR > 1) exit 1}' /proc/swaps",
     }
@@ -62,25 +62,55 @@ class kubernetes::packages (
   }
 
   if $container_runtime == 'docker' and $manage_docker == true {
+
+    # procedure: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+    if $kubernetes::repos::create_repos and kubernetes::repos::manage_docker {
+      package { $docker_package_name:
+        ensure  => $docker_version,
+        require => Class['Apt::Update'],
+      }
+    }
+    else {
+      package { $docker_package_name:
+        ensure => $docker_version,
+      }
+    }
     case $facts['os']['family'] {
       'Debian': {
-        package { $docker_package_name:
-          ensure => $docker_version,
+        file { '/etc/docker/daemon.json':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          source  => 'puppet:///modules/kubernetes/docker/daemon_debian.json',
+          require => Package[$docker_package_name],
         }
       }
       'RedHat': {
         package { $docker_package_name:
           ensure => $docker_version,
         }
-        file_line { 'set systemd cgroup docker':
-          path    => '/usr/lib/systemd/system/docker.service',
-          line    => 'ExecStart=/usr/bin/dockerd --exec-opt native.cgroupdriver=systemd',
-          match   => 'ExecStart',
+        file { '/etc/docker/daemon.json':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          source  => 'puppet:///modules/kubernetes/docker/daemon_redhat.json',
           require => Package[$docker_package_name],
         }
       }
-    default: { notify {"The OS family ${facts['os']['family']} is not supported by this module":} }
+      default: { notify { "The OS family ${facts['os']['family']} is not supported by this module": } }
     }
+
+    file { '/etc/systemd/system/docker.service.d':
+      ensure  => directory,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0755',
+      require => File['/etc/docker/daemon.json'],
+      notify  => Exec['kubernetes-systemd-reload'],
+    }
+
   }
 
   elsif $container_runtime == 'cri_containerd' {
@@ -115,7 +145,7 @@ class kubernetes::packages (
         extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
         extract_path    => '/usr/local/bin',
         cleanup         => true,
-        creates         => ['/usr/local/bin/etcd','/usr/local/bin/etcdctl']
+        creates         => ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
       }
     } else {
       package { $etcd_package_name:
@@ -124,8 +154,15 @@ class kubernetes::packages (
     }
   }
 
-  package { $kube_packages:
-    ensure => $kubernetes_package_version,
+  if $kubernetes::repos::create_repos {
+    package { $kube_packages:
+      ensure  => $kubernetes_package_version,
+      require => Class['Apt::Update'],
+    }
+  }else {
+    package { $kube_packages:
+      ensure => $kubernetes_package_version,
+    }
   }
 
 }
