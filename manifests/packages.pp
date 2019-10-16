@@ -20,7 +20,6 @@ class kubernetes::packages (
   Boolean $manage_kernel_modules        = $kubernetes::manage_kernel_modules,
   Boolean $manage_sysctl_settings       = $kubernetes::manage_sysctl_settings,
   Boolean $create_repos                 = $kubernetes::repos::create_repos,
-  Boolean $manage_docker                = $kubernetes::repos::manage_docker,
 ) {
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
