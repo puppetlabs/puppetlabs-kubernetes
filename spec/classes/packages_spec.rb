@@ -14,6 +14,11 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
+    let(:pre_condition) {
+       '
+       exec { \'kubernetes-systemd-reload\': }
+       '
+    }
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -34,6 +39,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'create_repos' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -44,6 +50,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
+    it { should contain_file('/etc/docker/daemon.json')}
+    it { should contain_file('/etc/systemd/system/docker.service.d')}
   end
 
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true and etcd_install_method => package' do
@@ -60,6 +68,11 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
+    let(:pre_condition) {
+       '
+       exec { \'kubernetes-systemd-reload\': }
+       '
+    }
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -71,7 +84,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
-        'docker_package_name' => 'docker-engine',   
+        'docker_package_name' => 'docker-engine',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
@@ -80,6 +93,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'package',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'create_repos' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -91,6 +105,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
+    it { should contain_file('/etc/docker/daemon.json')}
+    it { should contain_file('/etc/systemd/system/docker.service.d')}
   end
 
   context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
@@ -110,6 +126,12 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
+    let(:pre_condition) {
+       '
+       include apt
+       exec { \'kubernetes-systemd-reload\': }
+       '
+    }
     let(:params) do
         {
         'container_runtime' => 'cri_containerd',
@@ -130,6 +152,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'create_repos' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -142,7 +165,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2-00')}
     it { should contain_package('kubectl').with_ensure('1.10.2-00')}
     it { should contain_package('kubeadm').with_ensure('1.10.2-00')}
-
+    it { should_not contain_file('/etc/docker/daemon.json')}
+    it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
@@ -162,6 +186,13 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
+    let(:pre_condition) {
+       '
+       include apt
+       exec { \'kubernetes-systemd-reload\': }
+       '
+    }
+
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -182,6 +213,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'create_repos' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -192,6 +224,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     it { should_not contain_package('docker-engine').with_ensure('17.03.0~ce-0~ubuntu-xenial')}
+    it { should_not contain_file('/etc/docker/daemon.json')}
+    it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 
   context 'with disable_swap => true' do
@@ -211,6 +245,12 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
+    let(:pre_condition) {
+       '
+       include apt
+       exec { \'kubernetes-systemd-reload\': }
+       '
+    }
     let(:params) do
         {
         'container_runtime' => 'cri_containerd',
@@ -231,11 +271,14 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_install_method' => 'wget',
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
+        'create_repos' => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_exec('disable swap')}
+    it { should_not contain_file('/etc/docker/daemon.json')}
+    it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 end
