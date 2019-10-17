@@ -164,9 +164,9 @@ class kubernetes::packages (
           require => Class['Apt::Update'],
         }
       }
-      default: { 
+      default: {
         package { $kube_packages:
-          ensure  => $kubernetes_package_version,
+          ensure => $kubernetes_package_version,
         }
       }
     }
