@@ -46,6 +46,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'cgroup_driver' => 'systemd',
+        'pin_packages'  => false,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -63,6 +65,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should_not contain_file('/etc/apt/preferences.d/kubernetes')}
   end
 
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true and etcd_install_method => package' do
@@ -111,6 +115,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'cgroup_driver' => 'systemd',
+        'pin_packages'  => false,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -129,6 +135,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should_not contain_file('/etc/apt/preferences.d/kubernetes')}
   end
 
   context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
@@ -180,6 +188,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'cgroup_driver' => 'systemd',
+        'pin_packages'  => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -199,6 +209,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should contain_file('/etc/apt/preferences.d/kubernetes')}
   end
 
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
@@ -251,6 +263,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'cgroup_driver' => 'systemd',
+        'pin_packages' => false,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -268,6 +282,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should contain_file('/etc/apt/preferences.d/kubernetes')}
   end
 
   context 'with disable_swap => true' do
@@ -319,6 +335,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'cgroup_driver' => 'systemd',
+        'pin_packages'  => true,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -326,11 +344,14 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_exec('disable swap')}
     it { should_not contain_file('/etc/docker')}
+    it { should_not contain_file('/etc/docker/daemon.json')}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"default-runtime": "runc"\s*/)}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should contain_file('/etc/apt/preferences.d/kubernetes')}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 end

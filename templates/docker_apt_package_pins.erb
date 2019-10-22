@@ -1,0 +1,16 @@
+###############################################################################
+###      THIS FILE IS MANAGED BY PUPPET - ALL CHANGES WILL BE REVERTED      ###
+
+<% @kube_packages.each do |package| -%>
+Package: <%= package %>
+Pin: version <%= @kubernetes_package_version  %>
+Pin-Priority: <%= @package_pin_priority %>
+
+<% end -%>
+
+###      THIS FILE IS MANAGED BY PUPPET - ALL CHANGES WILL BE REVERTED      ###
+###############################################################################
+
+
+
+

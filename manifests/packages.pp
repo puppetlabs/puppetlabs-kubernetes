@@ -4,6 +4,7 @@ class kubernetes::packages (
   String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
   String $container_runtime                    = $kubernetes::container_runtime,
   Boolean $manage_docker                       = $kubernetes::manage_docker,
+  String $cgroup_driver                        = $kubernetes::cgroup_driver,
   Boolean $manage_etcd                         = $kubernetes::manage_etcd,
   Optional[String] $docker_version             = $kubernetes::docker_version,
   Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
@@ -25,6 +26,8 @@ class kubernetes::packages (
   Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
   Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
   Boolean $create_repos                        = $kubernetes::repos::create_repos,
+  Boolean $pin_packages                        = $kubernetes::pin_packages,
+  Integer $package_pin_priority                = 32767,
 ) {
 
 
@@ -77,10 +80,25 @@ class kubernetes::packages (
             ensure  => $docker_version,
             require => Class['Apt::Update'],
           }
-        }
-        else {
+          if $pin_packages {
+            file { '/etc/apt/preferences.d/docker':
+              mode    => '0444',
+              owner   => 'root',
+              group   => 'root',
+              content => template('kubernetes/docker_apt_package_pins.erb'),
+              notify  => Service['docker'],
+            }
+          }else {
+            file { '/etc/apt/preferences.d/docker':
+              ensure => absent,
+            }
+          }
+        }else {
           package { $docker_package_name:
             ensure => $docker_version,
+          }
+          if $pin_packages {
+            fail('package pinning is not implemented on this platform')
           }
         }
 
@@ -103,7 +121,7 @@ class kubernetes::packages (
       }
       'RedHat': {
         package { $docker_package_name:
-            ensure  => $docker_version,
+          ensure => $docker_version,
         }
 
         file{ '/etc/docker':
@@ -178,14 +196,28 @@ class kubernetes::packages (
   }
 
   if $create_repos and $facts['os']['family'] == 'Debian' {
-        package { $kube_packages:
-          ensure  => $kubernetes_package_version,
-          require => Class['Apt::Update'],
-        }
+    package { $kube_packages:
+      ensure  => $kubernetes_package_version,
+      require => Class['Apt::Update'],
+    }
+    if $pin_packages {
+      file { '/etc/apt/preferences.d/kubernetes':
+        mode    => '0444',
+        owner   => 'root',
+        group   => 'root',
+        content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+      }
+    }else {
+      file { '/etc/apt/preferences.d/kubernetes':
+        ensure => absent,
+      }
+    }
   }else {
     package { $kube_packages:
       ensure => $kubernetes_package_version,
     }
+    if $pin_packages {
+      fail('package pinning is not implemented on this platform')
+    }
   }
-
 }
