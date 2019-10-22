@@ -1,5 +1,5 @@
 {
-  "exec-opts": ["native.cgroupdriver=systemd"],
+  "exec-opts": ["native.cgroupdriver=<%= @cgroup_driver  %>"],
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "100m"

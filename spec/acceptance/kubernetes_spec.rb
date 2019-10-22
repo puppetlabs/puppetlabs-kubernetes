@@ -18,7 +18,7 @@ describe 'the Kubernetes module' do
                   schedule_on_controller => true,
                   environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                   ignore_preflight_errors => ['NumCPU'],
-                  cgroup_driver => 'cgroupfs'
+                  cgroup_driver => 'systemd'
                 }
           }
         if $::osfamily == 'Debian'{

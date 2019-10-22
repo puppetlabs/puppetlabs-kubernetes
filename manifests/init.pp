@@ -281,6 +281,11 @@
 # The mode for kubeproxy to run. It should be one of: "" (default), "userspace", "kernelspace", "iptables", or "ipvs".
 # Defaults to ""
 #
+# [*pin_packages*]
+#  Enable pinning of the docker and kubernetes packages to prevent accidential updates.
+#  This is currently only implemented for debian based distributions.
+#  Defaults to false
+#
 # [*kubernetes_apt_location*]
 #  The APT repo URL for the Kubernetes packages.
 #  Defaults to https://apt.kubernetes.io
@@ -390,6 +395,7 @@ class kubernetes (
                                                           'Debian' => '17.03.0~ce-0~ubuntu-xenial',
                                                           'RedHat' => '17.03.1.ce-1.el7.centos',
                                                         },
+  Boolean $pin_packages                              = false,
   Optional[String] $cni_pod_cidr                     = undef,
   Boolean $controller                                = false,
   Boolean $worker                                    = false,
@@ -472,7 +478,8 @@ class kubernetes (
   String $image_repository                           = 'k8s.gcr.io',
   Array[String] $default_path                        = ['/usr/bin','/bin','/sbin','/usr/local/bin'],
   String $cgroup_driver                              = $facts['os']['family'] ? {
-                                                          'RedHat' => 'systemd',
+                                                          'RedHat'  => 'systemd',
+                                                          'Debian'  => 'systemd',
                                                           default  => 'cgroupfs',
                                                         },
   Array[String] $environment                         = $controller ? {
