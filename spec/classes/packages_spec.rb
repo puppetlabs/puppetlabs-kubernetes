@@ -1,5 +1,13 @@
 require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
+  let(:pre_condition) do
+      [
+      'include kubernetes',
+      'include kubernetes::config::kubeadm',
+      'exec { \'kubernetes-systemd-reload\': }',
+      'archive{ \'etcd-archive\': }',
+      ]
+  end
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
       {
@@ -32,8 +40,8 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
-	'docker_storage_driver' => 'overlay2',
-	'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
         'docker_extra_daemon_config' => '',
         'disable_swap' => true,
         'manage_docker' => true,
@@ -60,7 +68,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     it { should contain_file('/etc/docker')}
     it { should contain_file('/etc/docker/daemon.json')}
-    it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
+    it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
@@ -101,8 +109,8 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
-	'docker_storage_driver' => 'overlay2',
-	'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
+	     'docker_storage_driver' => 'overlay2',
+	      'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
         'docker_extra_daemon_config' => 'dummy',
         'disable_swap' => true,
         'manage_docker' => true,
@@ -130,7 +138,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     it { should contain_file('/etc/docker')}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*dummy\s*/)}
-    it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
+    it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
@@ -156,12 +164,7 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       include apt
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
+    let(:pre_condition) { 'include apt' }
     let(:params) do
         {
         'container_runtime' => 'cri_containerd',
@@ -204,7 +207,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubeadm').with_ensure('1.10.2-00')}
     it { should_not contain_file('/etc/docker')}
     it { should_not contain_file('/etc/docker/daemon.json').without_content(/\s*"default-runtime": "runc"\s*/)}
-    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
+    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
@@ -230,13 +233,7 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       include apt
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
-
+    let(:pre_condition) { 'include apt' }
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -249,8 +246,8 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
-	'docker_storage_driver' => 'overlay2',
-	'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
+	     'docker_storage_driver' => 'overlay2',
+	     'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
         'docker_extra_daemon_config' => '"default-runtime": "runc"',
         'disable_swap' => true,
         'manage_docker' => false,
@@ -277,7 +274,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_package('docker-engine').with_ensure('17.03.0~ce-0~ubuntu-xenial')}
     it { should_not contain_file('/etc/docker')}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"default-runtime": "runc"\s*/)}
-    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
+    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
@@ -303,12 +300,7 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       include apt
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
+    let(:pre_condition) { 'include apt' }
     let(:params) do
         {
         'container_runtime' => 'cri_containerd',
@@ -321,8 +313,8 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
-	'docker_storage_driver' => 'overlay2',
-	'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
+	     'docker_storage_driver' => 'overlay2',
+	     'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
         'docker_extra_daemon_config' => '"default-runtime": "runc"',
         'disable_swap' => true,
         'manage_docker' => true,
@@ -345,7 +337,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_exec('disable swap')}
     it { should_not contain_file('/etc/docker')}
     it { should_not contain_file('/etc/docker/daemon.json')}
-    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
+    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
