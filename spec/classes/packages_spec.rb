@@ -1,5 +1,13 @@
 require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
+  let(:pre_condition) do
+      [
+      'include kubernetes',
+      'include kubernetes::config::kubeadm',
+      'exec { \'kubernetes-systemd-reload\': }',
+      'archive{ \'etcd-archive\': }',
+      ]
+  end
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
       {
@@ -14,11 +22,6 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -72,11 +75,6 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -134,12 +132,7 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       include apt
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
+    let(:pre_condition) { 'include apt' }
     let(:params) do
         {
         'container_runtime' => 'cri_containerd',
@@ -198,13 +191,7 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       include apt
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
-
+    let(:pre_condition) { 'include apt' }
     let(:params) do
         {
         'container_runtime' => 'docker',
@@ -261,12 +248,7 @@ describe 'kubernetes::packages', :type => :class do
         },
       }
     end
-    let(:pre_condition) {
-       '
-       include apt
-       exec { \'kubernetes-systemd-reload\': }
-       '
-    }
+    let(:pre_condition) { 'include apt' }
     let(:params) do
         {
         'container_runtime' => 'cri_containerd',
