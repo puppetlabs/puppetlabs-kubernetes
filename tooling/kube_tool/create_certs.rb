@@ -44,6 +44,12 @@ class CreateCerts
 
   def CreateCerts.etcd_server(etcd_initial_cluster)
     etcd_servers = etcd_initial_cluster.split(",")
+    etcd_server_ips = []
+    etcd_servers.each do | servers |
+      server = servers.split(":")
+      etcd_server_ips.push(server[1])
+    end
+
     etcd_servers.each do | servers |
       server = servers.split(":")
       hostname = server[0]
@@ -51,11 +57,10 @@ class CreateCerts
       if File.exist?("#{hostname}.yaml")
         FileUtils.rm_f("#{hostname}.yaml")
       end  
-
         puts "Creating etcd peer and server certificates"
-        csr = { "CN": "etcd-#{hostname}", "hosts": [""], "key": { "algo": "rsa", "size": 2048 }}
+        csr = { "CN": "etcd-#{hostname}", "hosts": etcd_server_ips, "key": { "algo": "rsa", "size": 2048 }}
         File.open("config.json", "w+") { |file| file.write(csr.to_json) }
-        system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server --hostname=#{ip},#{hostname} config.json | cfssljson -bare #{hostname}-server")
+        system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server --hostname=#{etcd_server_ips * ","},#{hostname} config.json | cfssljson -bare #{hostname}-server")
         system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile peer --hostname=#{ip},#{hostname} config.json | cfssljson -bare #{hostname}-peer")
         FileUtils.rm_f('etcd-server.csr')
         data = Hash.new
