@@ -149,7 +149,7 @@ EOS
           on(host, "yum install -y python-pip", acceptable_exit_codes: [0]).stdout
           on(host, "pip install docker-compose", acceptable_exit_codes: [0]).stdout 
           on(host, "yum upgrade python*", acceptable_exit_codes: [0]).stdout
-          end
+        end
 
         # Installing go, cfssl
         on(host, "cd  /etc/puppetlabs/code/modules/kubernetes;rm -rf Gemfile.lock;bundle install --path vendor/bundle", acceptable_exit_codes: [0]).stdout
