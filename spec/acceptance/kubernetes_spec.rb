@@ -32,39 +32,39 @@ describe 'the Kubernetes module' do
     MANIFEST
         
         it 'should run' do
-          apply_manifest(pp, :catch_failures => true)
+          apply_manifest(pp)
         end
 
         it 'should install kubectl' do
-          shell('kubectl', :acceptable_exit_codes => [0])
+          run_shell('kubectl')
         end
 
         it 'should install kube-dns' do
-          shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get deploy --namespace kube-system coredns', :acceptable_exit_codes => [0])
+          run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get deploy --namespace kube-system coredns')
         end
       end
 
       context 'application deployment' do
 
         it 'can deploy an application into a namespace and expose it' do
-          shell('sleep 180')
-          shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl create -f /tmp/nginx.yml', :acceptable_exit_codes => [0]) do |r|
+          run_shell('sleep 180')
+          run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl create -f /tmp/nginx.yml') do |r|
             expect(r.stdout).to match(/namespace\/nginx created\ndeployment.apps\/my-nginx created\nservice\/my-nginx created\n/)
           end
         end
 
         it 'can access the deployed service' do
-          shell('sleep 60')
-          shell('curl -s 10.96.188.5', :acceptable_exit_codes => [0]) do |r|
+          run_shell('sleep 60')
+          run_shell('curl -s 10.96.188.5') do |r|
             expect(r.stdout).to match (/Welcome to nginx!/)
           end
         end
 
         it 'can delete a deployment' do
-          shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl delete -f /tmp/nginx.yml', :acceptable_exit_codes => [0]) do |r|
+          run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl delete -f /tmp/nginx.yml') do |r|
             expect(r.stdout).to match(/namespace "nginx" deleted\ndeployment.apps "my-nginx" deleted\nservice "my-nginx" deleted/)
           end
-          shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get deploy --all-namespaces | grep nginx', :acceptable_exit_codes => [1])
+          run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get deploy --all-namespaces | grep nginx', :expect_failures => true)
         end
       end
     end

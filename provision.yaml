@@ -1,0 +1,4 @@
+---
+  default:
+    provisioner: vagrant
+    images: ['centos/7']
