@@ -90,19 +90,21 @@ hierarchy:
       - "location/%{facts.whereami}/%{facts.group}.yaml"
       - "groups/%{facts.group}.yaml"
       - "os/%{facts.os.family}.yaml"
-      - "%{facts.os.family}.yaml"
+      - "#{os[:family].capitalize}.yaml"
       - "#{vmhostname}.yaml"
       - "Redhat.yaml"
       - "common.yaml"
 EOS
 
-  if os[:family] == 'debian'
+  if os[:family] == 'debian' || os[:family] == 'ubuntu'
     runtime = 'cri_containerd'
     cni = 'weave'
-    run_shell('apt install ruby-bundler --yes')
-    run_shell('apt-get install ruby-dev --yes')
-    run_shell('apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes')
-    run_shell('gem install bundler')
+    run_shell('apt-get -y install curl')
+    run_shell('DEBIAN_FRONTEND=noninteractive apt-get install ruby-dev --yes')
+    run_shell('DEBIAN_FRONTEND=noninteractive apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes')
+    run_shell('apt-get -y install ruby-full')
+    run_shell('gem install bundler concurrent-ruby semantic_puppet')
+    run_shell('sudo ufw disable')
   end 
   if os[:family] == 'redhat'
     runtime = 'docker'
@@ -164,6 +166,15 @@ EOS
     run_shell('echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml')
     run_shell('export KUBECONFIG=\'/etc/kubernetes/admin.conf\'')
   end
+
+  if os[:family] == 'ubuntu'
+    run_shell('sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
+    run_shell('echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.13.5" >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
+    run_shell('echo "kubernetes::schedule_on_controller: true"  >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
+    run_shell('echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
+    run_shell('export KUBECONFIG=\'/etc/kubernetes/admin.conf\'')
+  end
+
 
   if os[:family] == 'redhat'
     run_shell('sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml')

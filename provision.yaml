@@ -2,3 +2,6 @@
   default:
     provisioner: vagrant
     images: ['centos/7']
+  ubuntu:
+    provisioner: vagrant
+    images: ['ubuntu/xenial64']
