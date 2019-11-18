@@ -70,4 +70,6 @@ extra_gemfiles.each do |gemfile|
     eval(File.read(gemfile), binding)
   end
 end
+
+gem "puppet_litmus", git: "https://github.com/puppetlabs/puppet_litmus", require: false,  platforms: [:ruby, :mswin, :mingw, :x64_mingw] if ENV['PUPPET_GEM_VERSION'].nil? or ENV['PUPPET_GEM_VERSION'] !~ %r{ 5}
 # vim: syntax=ruby
