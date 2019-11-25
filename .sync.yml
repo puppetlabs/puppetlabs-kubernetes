@@ -22,6 +22,7 @@
 ".travis.yml":
   branches:
   - release
+  simplecov: true
 appveyor.yml:
   delete: true
 Gemfile:
