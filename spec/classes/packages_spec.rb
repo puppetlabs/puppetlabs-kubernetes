@@ -40,6 +40,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -94,6 +96,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -153,6 +157,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -214,6 +220,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -272,6 +280,8 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_package_name' => 'etcd-server',
         'etcd_version' => '3.1.12',
         'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
