@@ -101,7 +101,7 @@ EOS
     run_shell('DEBIAN_FRONTEND=noninteractive apt-get install ruby-dev --yes')
     run_shell('DEBIAN_FRONTEND=noninteractive apt-get install build-essential curl git m4 python-setuptools ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev --yes')
     run_shell('apt-get -y install ruby-full')
-    run_shell('gem install bundler concurrent-ruby semantic_puppet')
+    #run_shell('gem install bundler concurrent-ruby semantic_puppet')
     if os[:family] == 'ubuntu'
       run_shell('sudo ufw disable')
     else
@@ -123,6 +123,7 @@ EOS
     run_shell('gem install bundler')
     run_shell('gem install concurrent-ruby')
     run_shell('gem install semantic_puppet')
+    run_shell('gem install deep_merge')
 
     run_shell('setenforce 0 || true')
     run_shell('swapoff -a')
@@ -131,7 +132,7 @@ EOS
     run_shell('yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo')
     run_shell('yum install -y docker-ce-18.06.3.ce-3.el7')
     run_shell("usermod -aG docker $(whoami)")
-    run_shell('sudo systemctl start docker.service')
+    run_shell('systemctl start docker.service')
     if os[:operatingsystem] != 'redhat'
       run_shell('yum install -y epel-release')
     end
@@ -140,11 +141,6 @@ EOS
       run_shell('rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm')
     end
     run_shell('yum update -y -q')
-    run_shell('yum install -y python-pip')
-    run_shell('yum install -y python-devel')
-    run_shell('pip install --upgrade pip')
-    run_shell('pip install docker-compose')
-    run_shell('yum upgrade python')
   end
   #run_shell('cd  /etc/puppetlabs/code/modules/kubernetes;rm -rf Gemfile.lock;bundle install --path vendor/bundle')
   run_shell('curl -o go.tar.gz https://storage.googleapis.com/golang/go1.12.9.linux-amd64.tar.gz')
