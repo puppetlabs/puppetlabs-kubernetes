@@ -232,6 +232,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
           'foo' => {
             'hostPath'  => '/mnt',
             'mountPath' => '/data',
+            'readOnly' => false,
+            'pathType' => 'Directory',
           },
         },
       }
@@ -241,7 +243,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it 'has hostPath: /mnt in API server extra volumes' do
-      expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
+      expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
   end
 
@@ -253,6 +255,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
           'foo' => {
             'hostPath'  => '/mnt',
             'mountPath' => '/data',
+            'readOnly' => false,
+            'pathType' => 'Directory',
           },
         },
       }
@@ -262,7 +266,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it 'has hostPath: /mnt in controller manager extra volumes' do
-      expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
+      expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
   end
 
