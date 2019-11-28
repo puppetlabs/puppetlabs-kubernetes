@@ -2,7 +2,8 @@
   "exec-opts": ["native.cgroupdriver=systemd"],
   "log-driver": "json-file",
   "log-opts": {
-    "max-size": "100m"
+    "max-size": "<%= @docker_log_max_size %>",
+    "max-file": "<%= @docker_log_max_file %>"
   },
   "storage-driver": "overlay2",
   "storage-opts": [
