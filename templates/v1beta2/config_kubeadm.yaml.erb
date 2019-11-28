@@ -51,6 +51,8 @@ apiServer:
   - name: <%= name %>
     hostPath: <%= config['hostPath'] %>
     mountPath: <%= config['mountPath'] %>
+    readOnly: <%= config['readOnly'] %>
+    pathType: <%= config['pathType'] %>
   <%- end -%>
 <%- end -%>
 apiVersion: kubeadm.k8s.io/v1beta2
@@ -72,6 +74,8 @@ controllerManager:
   - name: <%= name %>
     hostPath: <%= config['hostPath'] %>
     mountPath: <%= config['mountPath'] %>
+    readOnly: <%= config['readOnly'] %>
+    pathType: <%= config['pathType'] %>
   <%- end -%>
 <%- end -%>
 dns:
