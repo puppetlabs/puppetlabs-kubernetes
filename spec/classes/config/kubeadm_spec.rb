@@ -131,9 +131,6 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it 'does not have cloud-config in second YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-config')
     end
-    it 'does not have API Server extra volumes in second YAML document (ClusterConfig)' do
-      expect(config_yaml[1]).not_to include('apiServerExtraVolumes')
-    end
   end
 
   context 'with version = 1.12 and cgroup_driver => systemd and cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
