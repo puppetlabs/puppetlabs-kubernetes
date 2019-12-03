@@ -189,6 +189,8 @@ apiserver_extra_volumes => {
   'volume-name' => {
     hostPath  => '/data',
     mountPath => '/data',
+    readOnly: => 'false',
+    pathType: => 'DirectoryOrCreate'
   },
 }
 ```
@@ -286,6 +288,8 @@ controllermanager_extra_volumes => {
   'volume-name' => {
     hostPath  => '/data',
     mountPath => '/data',
+    readOnly: => 'false',
+    pathType: => 'DirectoryOrCreate'
   },
 }
 ```

@@ -1,7 +1,6 @@
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
-- description: kubeadm bootstrap token
-  groups:
+- groups:
   - system:bootstrappers:kubeadm:default-node-token
   token: <%= @token %>
   ttl: <%= @ttl_duration %>
@@ -17,6 +16,9 @@ nodeRegistration:
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: /run/containerd/containerd.sock
   <%- end -%>
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
   kubeletExtraArgs:
     cgroup-driver: <%= @cgroup_driver %>
     <%- if @cloud_provider -%>
@@ -53,7 +55,7 @@ apiServer:
     pathType: <%= config['pathType'] %>
   <%- end -%>
 <%- end -%>
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
 <%- if @kubernetes_cluster_name != "kubernetes"  -%>
 clusterName: <%= @kubernetes_cluster_name %>
@@ -109,7 +111,6 @@ clientConnection:
 clusterCIDR: <%= @cni_pod_cidr %>
 configSyncPeriod: 15m0s
 conntrack:
-  max: null
   maxPerCore: 32768
   min: 131072
   tcpCloseWaitTimeout: 1h0m0s
@@ -133,5 +134,4 @@ mode: "<%= @proxy_mode %>"
 nodePortAddresses: null
 oomScoreAdj: -999
 portRange: ""
-resourceContainer: /kube-proxy
 udpIdleTimeout: 250ms
