@@ -20,6 +20,8 @@
           - plans/*.pp
           - tasks/*
 ".travis.yml":
+  deploy_to_forge:
+    enabled: false
   branches:
   - release
   simplecov: true
