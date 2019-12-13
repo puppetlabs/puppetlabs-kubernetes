@@ -13,7 +13,7 @@ jobs:
         ruby_version: [2.5.x]
         puppet_gem_version: [~> 6.0]
         platform: [release_checks]
-        agent_family: ['puppet5', 'puppet6']
+        agent_family: ['puppet5', 'puppet6-nightly']
 
     steps:
     - uses: actions/checkout@v1
