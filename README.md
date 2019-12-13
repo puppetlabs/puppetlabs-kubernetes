@@ -721,6 +721,31 @@ Docker is the supported container runtime for this module.
 
 If you would like to contribute to this module, please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md). For more information, see our [module contribution guide.](https://puppet.com/docs/puppet/latest/contributing.html)
 
+To run the acceptance tests you can use Puppet Litmus with the Vagrant provider by using the following commands:
+
+    bundle exec rake 'litmus:provision_list[all_supported]'
+    bundle exec rake 'litmus:install_agent[puppet5]'
+    bundle exec rake 'litmus:install_module'
+    bundle exec rake 'litmus:acceptance:parallel'
+
+As currently Litmus does not allow memory size and cpu size parameters for the Vagrant provisioner task we recommend to manually update the Vagrantfile used by the provisioner and add at least the following specifications for the puppetlabs-kubernetes module acceptance tests:
+
+**Update Vagrantfile in the file: spec/fixtures/modules/provision/tasks/vagrant.rb**
+    vf = <<-VF 
+    Vagrant.configure(\"2\") do |config|
+    config.vm.box = '#{platform}'
+    config.vm.boot_timeout = 600
+    config.ssh.insert_key = false
+    config.vm.hostname = "testkube"
+    config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = "2"
+    end
+    #{network}
+    #{synced_folder}
+    end
+    VF
+
 ## Examples
 
 In the examples folder you will find a [bash script](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/examples/task_examples.sh) containg a few sample Puppet Bolt commands for the usage of the tasks. The example script is intended to be used with a Kubernetes API that requires the token authentication header, but the token parameter is optional by default.  

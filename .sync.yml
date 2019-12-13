@@ -1,9 +1,39 @@
 ---
-".gitlab-ci.yml":
+.gitignore:
+  required:
+    - ---.project
+
+.gitlab-ci.yml:
   delete: true
-".rubocop.yml":
+
+.travis.yml:
+  branches:
+    - release
+
+appveyor.yml:
+  delete: true
+
+Gemfile:
+  optional:
+    ':development':
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
+     
+Rakefile:
+  changelog_user: puppetlabs
+  changelog_since_tag: '4.0.0'
+  requires:
+    - puppet-lint/tasks/puppet-lint
+    - puppetlabs_spec_helper/rake_tasks
+    - metadata-json-lint/rake_task
+    - rspec_junit_formatter
+    - puppet_pot_generator/rake_tasks
+
+.rubocop.yml:
   include_todos:
-    inherit_from: ".rubocop_todo.yml"
+    inherit_from: '.rubocop_todo.yml'
   profiles:
     strict:
       configs:
@@ -28,31 +58,17 @@
 appveyor.yml:
   delete: true
 Gemfile:
-  required:
-    ":system_tests":
-    - gem: puppet-module-posix-system-r#{minor_version}
-      platforms: ruby
-    - gem: puppet-module-win-system-r#{minor_version}
-      platforms:
-      - mswin
-      - mingw
-      - x64_mingw
-  optional:
-    ":development":
-    - gem: github_changelog_generator
-      git: https://github.com/skywinder/github-changelog-generator
-      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
-      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
-Rakefile:
-  changelog_user: puppetlabs
-  changelog_since_tag: 4.0.0
-  requires:
-  - puppet-lint/tasks/puppet-lint
-  - puppetlabs_spec_helper/rake_tasks
-  - metadata-json-lint/rake_task
-  - rspec_junit_formatter
-  - puppet_pot_generator/rake_tasks
+            - tooling/kube_tool/*
+            - tooling/*
+            - spec/defines/*
+            - spec/classes/*
+            - spec/*
+            - spec/acceptance/*
+            - rakelib/*
+            - plans/*.pp
+            - tasks/*
+
 spec/spec_helper.rb:
-  mock_with: ":rspec"
+  mock_with: ':rspec'
   coverage_report: true
   hiera_config_ruby: File.expand_path(File.join(File.dirname(__FILE__), 'fixtures/hiera/hiera.yaml'))
