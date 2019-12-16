@@ -5,7 +5,7 @@ cache: bundler
 before_install:
   - bundle -v
   - rm -f Gemfile.lock
-  - gem update --system $RUBYGEMS_VERSION
+  - yes | gem update --system $RUBYGEMS_VERSION
   - gem --version
   - bundle -v
 script:
