@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 require 'puppet_litmus'
+require 'tempfile'
+
 include PuppetLitmus
 
 def create_remote_file(name, full_name, file_content)
