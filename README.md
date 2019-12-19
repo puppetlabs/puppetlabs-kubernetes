@@ -58,7 +58,7 @@ docker run --rm -v $(pwd):/mnt --env-file env puppet/kubetool:{$module_version}
 The `docker run` command above includes an `env` file which is included in the root folder of this repo.
 
 ```
-docker run --rm -v $(pwd):/mnt -e OS=ubuntu -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=cilium -e CNI_PROVIDER_VERSION=1.4.3 -e ETCD_INITIAL_CLUSTER=kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220 -e ETCD_IP="%{::ipaddress_eth1}" -e KUBE_API_ADVERTISE_ADDRESS="%{::ipaddress_eth1}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
+docker run --rm -v $(pwd):/mnt -e OS=ubuntu -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=cilium -e CNI_PROVIDER_VERSION=1.4.3 -e ETCD_INITIAL_CLUSTER=kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220 -e ETCD_IP="%{networking.ip}" -e KUBE_API_ADVERTISE_ADDRESS="%{networking.ip}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
 ```
 
 The above parameters are:
@@ -432,7 +432,7 @@ Defaults to `$hostname`.
 
 Specifies the IP address etcd uses for communications.
 
-A Hiera is `kubernetes::etcd_ip:"%{::ipaddress_enp0s8}"`.
+A Hiera is `kubernetes::etcd_ip:"%{networking.ip}"`.
 
 Defaults to `undef`.
 
@@ -551,7 +551,7 @@ Defaults to `undef`.
 
 The IP address you want exposed by the API server.
 
-A Hiera example is `kubernetes::kube_api_advertise_address:"%{::ipaddress_enp0s8}"`.
+A Hiera example is `kubernetes::kube_api_advertise_address:"%{networking.ip}"`.
 
 Defaults to `undef`.
 

@@ -77,7 +77,8 @@
 #
 # [*kube_api_advertise_address*]
 #   This is the ip address that the want to api server to expose.
-#   An example with hiera would be kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
+#   An example with hiera would be kubernetes::kube_api_advertise_address: "%{networking.ip}"
+#   Or to pin explicitly to a specific interface kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
 #   defaults to undef
 #
 # [*etcd_version*]
@@ -115,7 +116,8 @@
 #
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
-#   An example with hiera would be kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
+#   An example with hiera would be kubernetes::etcd_ip: "%{networking.ip}"
+#   Or to pin explicitly to a specific interface kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
 #   Defaults to undef
 #
 # [*etcd_peers*]
