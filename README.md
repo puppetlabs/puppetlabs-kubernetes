@@ -23,7 +23,7 @@
 ## Description
 
 [<img
-src="https://raw.githubusercontent.com/cncf/artwork/master/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
+src="https://github.com/cncf/artwork/blob/04763c0f5f72b23d6a20bfc9c68c88cee805dbcc/projects/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
 align="right" width="150px" alt="certified kubernetes 1.13">][certified]
 
 [certified]: https://github.com/cncf/k8s-conformance/tree/master/v1.13/puppetlabs-kubernetes
