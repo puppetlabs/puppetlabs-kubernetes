@@ -8,6 +8,8 @@ class kubernetes::packages (
   Boolean $manage_etcd                  = $kubernetes::manage_etcd,
   Optional[String] $docker_version      = $kubernetes::docker_version,
   Optional[String] $docker_package_name = $kubernetes::docker_package_name,
+  String $docker_log_max_file           = $kubernetes::docker_log_max_file,
+  String $docker_log_max_size           = $kubernetes::docker_log_max_size,
   Boolean $controller                   = $kubernetes::controller,
   Optional[String] $containerd_archive  = $kubernetes::containerd_archive,
   Optional[String] $containerd_source   = $kubernetes::containerd_source,

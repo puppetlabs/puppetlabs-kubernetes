@@ -23,7 +23,7 @@
 ## Description
 
 [<img
-src="https://raw.githubusercontent.com/cncf/artwork/master/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
+src="https://github.com/cncf/artwork/blob/04763c0f5f72b23d6a20bfc9c68c88cee805dbcc/projects/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
 align="right" width="150px" alt="certified kubernetes 1.13">][certified]
 
 [certified]: https://github.com/cncf/k8s-conformance/tree/master/v1.13/puppetlabs-kubernetes
@@ -189,6 +189,8 @@ apiserver_extra_volumes => {
   'volume-name' => {
     hostPath  => '/data',
     mountPath => '/data',
+    readOnly: => 'false',
+    pathType: => 'DirectoryOrCreate'
   },
 }
 ```
@@ -286,6 +288,8 @@ controllermanager_extra_volumes => {
   'volume-name' => {
     hostPath  => '/data',
     mountPath => '/data',
+    readOnly: => 'false',
+    pathType: => 'DirectoryOrCreate'
   },
 }
 ```
@@ -716,6 +720,31 @@ Docker is the supported container runtime for this module.
 ## Development
 
 If you would like to contribute to this module, please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md). For more information, see our [module contribution guide.](https://puppet.com/docs/puppet/latest/contributing.html)
+
+To run the acceptance tests you can use Puppet Litmus with the Vagrant provider by using the following commands:
+
+    bundle exec rake 'litmus:provision_list[all_supported]'
+    bundle exec rake 'litmus:install_agent[puppet5]'
+    bundle exec rake 'litmus:install_module'
+    bundle exec rake 'litmus:acceptance:parallel'
+
+As currently Litmus does not allow memory size and cpu size parameters for the Vagrant provisioner task we recommend to manually update the Vagrantfile used by the provisioner and add at least the following specifications for the puppetlabs-kubernetes module acceptance tests:
+
+**Update Vagrantfile in the file: spec/fixtures/modules/provision/tasks/vagrant.rb**
+    vf = <<-VF 
+    Vagrant.configure(\"2\") do |config|
+    config.vm.box = '#{platform}'
+    config.vm.boot_timeout = 600
+    config.ssh.insert_key = false
+    config.vm.hostname = "testkube"
+    config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = "2"
+    end
+    #{network}
+    #{synced_folder}
+    end
+    VF
 
 ## Examples
 

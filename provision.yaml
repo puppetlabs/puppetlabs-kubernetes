@@ -1,0 +1,16 @@
+---
+  default:
+    provisioner: vagrant
+    images: ['centos/7']
+  debian:
+    provisioner: vagrant
+    images: ['debian/stretch64']
+  ubuntu:
+    provisioner: vagrant
+    images: ['ubuntu/xenial64']
+  all_supported:
+    provisioner: vagrant
+    images: ['ubuntu/xenial64', 'debian/stretch64', 'centos/7']
+  release_checks:
+    provisioner: vmpooler
+    images: ['redhat-7-x86_64', 'redhat-8-x86_64', 'centos-7-x86_64', 'ubuntu-1604-x86_64']

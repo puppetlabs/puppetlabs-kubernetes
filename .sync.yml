@@ -14,15 +14,6 @@ appveyor.yml:
   delete: true
 
 Gemfile:
-  required:
-    ':system_tests':
-      - gem: 'puppet-module-posix-system-r#{minor_version}'
-        platforms: ruby
-      - gem: 'puppet-module-win-system-r#{minor_version}'
-        platforms:
-          - mswin
-          - mingw
-          - x64_mingw
   optional:
     ':development':
       - gem: 'github_changelog_generator'
@@ -49,6 +40,24 @@ Rakefile:
         AllCops:
           TargetRubyVersion: '2.2'
           Exclude:
+          - tooling/kube_tool/*
+          - tooling/*
+          - spec/defines/*
+          - spec/classes/*
+          - spec/*
+          - spec/acceptance/*
+          - rakelib/*
+          - plans/*.pp
+          - tasks/*
+".travis.yml":
+  deploy_to_forge:
+    enabled: false
+  branches:
+  - release
+  simplecov: true
+appveyor.yml:
+  delete: true
+Gemfile:
             - tooling/kube_tool/*
             - tooling/*
             - spec/defines/*

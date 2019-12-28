@@ -45,6 +45,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'cgroup_driver' => 'systemd',
         'pin_packages'  => false,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -98,6 +100,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'cgroup_driver' => 'systemd',
         'pin_packages'  => false,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -155,7 +159,9 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_version' => '3.1.12',
         'create_repos' => true,
         'cgroup_driver' => 'systemd',
-         'pin_packages'  => true,
+        'pin_packages'  => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -215,6 +221,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'cgroup_driver' => 'systemd',
         'pin_packages' => false,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -272,6 +280,8 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'cgroup_driver' => 'systemd',
         'pin_packages'  => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
         }
     end
     it { should contain_kmod__load('br_netfilter')}

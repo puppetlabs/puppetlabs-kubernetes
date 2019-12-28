@@ -131,9 +131,6 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it 'does not have cloud-config in second YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-config')
     end
-    it 'does not have API Server extra volumes in second YAML document (ClusterConfig)' do
-      expect(config_yaml[1]).not_to include('apiServerExtraVolumes')
-    end
   end
 
   context 'with version = 1.12 and cgroup_driver => systemd and cloud_provider => aws and cloud_config => /etc/kubernetes/cloud.conf' do
@@ -232,6 +229,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
           'foo' => {
             'hostPath'  => '/mnt',
             'mountPath' => '/data',
+            'readOnly' => false,
+            'pathType' => 'Directory',
           },
         },
       }
@@ -241,7 +240,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it 'has hostPath: /mnt in API server extra volumes' do
-      expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
+      expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
   end
 
@@ -253,6 +252,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
           'foo' => {
             'hostPath'  => '/mnt',
             'mountPath' => '/data',
+            'readOnly' => false,
+            'pathType' => 'Directory',
           },
         },
       }
@@ -262,7 +263,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it 'has hostPath: /mnt in controller manager extra volumes' do
-      expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data')
+      expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
   end
 

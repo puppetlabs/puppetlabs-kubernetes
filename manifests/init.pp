@@ -342,6 +342,15 @@
 #  The URL for the Docker yum repo gpg key
 #  Defaults to https://yum.dockerproject.org/gpg
 #
+# [*docker_log_max_file*]
+#  The maximum number of log files that can be present.
+#  Defaults to 1. See https://docs.docker.com/config/containers/logging/json-file/
+#
+# [*docker_log_max_size*]
+#  The maximum size of the log before it is rolled.
+#  A positive integer plus a modifier representing the unit of measure (k, m, or g).
+#  Defaults to 100m. See https://docs.docker.com/config/containers/logging/json-file/
+#
 # [*create_repos*]
 #  A flag to install the upstream Kubernetes and Docker repos
 #  Defaults to true
@@ -471,6 +480,8 @@ class kubernetes (
   Optional[String] $docker_yum_gpgkey                = undef,
   Optional[String] $docker_key_id                    = undef,
   Optional[String] $docker_key_source                = undef,
+  String $docker_log_max_file                        = '1',
+  String $docker_log_max_size                        = '100m',
   Boolean $disable_swap                              = true,
   Boolean $manage_kernel_modules                     = true,
   Boolean $manage_sysctl_settings                    = true,

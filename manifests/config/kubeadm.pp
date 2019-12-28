@@ -125,13 +125,16 @@ class kubernetes::config::kubeadm (
 
       $apiserver_merged_extra_volumes = merge($apiserver_extra_volumes, $cloud_volume)
       $controllermanager_merged_extra_volumes = merge($controllermanager_extra_volumes, $cloud_volume)
+    } else {
+      $apiserver_merged_extra_volumes = $apiserver_extra_volumes
+      $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes
     }
   } else {
     $apiserver_merged_extra_arguments = $apiserver_extra_arguments
     $controllermanager_merged_extra_arguments = $controllermanager_extra_arguments
 
     $apiserver_merged_extra_volumes = $apiserver_extra_volumes
-      $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes
+    $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
@@ -140,9 +143,10 @@ class kubernetes::config::kubeadm (
   $kubelet_extra_config_alpha1_yaml = regsubst(to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
 
   $config_version = $kubernetes_version ? {
-    /1.1(0|1)/ => 'v1alpha1',
-    /1.12/     => 'v1alpha3',
-    default    => 'v1beta1',
+    /1.1(0|1)/   => 'v1alpha1',
+    /1.12/       => 'v1alpha3',
+    /1.1(3|4|5)/ => 'v1beta1',
+    default      => 'v1beta2',
   }
 
   file { $config_file:
