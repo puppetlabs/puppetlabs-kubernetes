@@ -5,6 +5,9 @@
     "max-size": "<%= @docker_log_max_size %>",
     "max-file": "<%= @docker_log_max_file %>"
   },
+  <%- if @docker_extra_daemon_config -%>
+  <%= @docker_extra_daemon_config -%>,
+  <%- end -%>
   "storage-driver": "overlay2",
   "storage-opts": [
     "overlay2.override_kernel_check=true"
