@@ -17,6 +17,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        exec { \'kubernetes-systemd-reload\': }
+       service { \'docker\': }
        '
     }
     let(:params) do
@@ -31,6 +32,7 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
+        'docker_extra_daemon_config' => '',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
@@ -52,6 +54,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
+    it { should contain_file('/etc/docker')}
     it { should contain_file('/etc/docker/daemon.json')}
     it { should contain_file('/etc/systemd/system/docker.service.d')}
   end
@@ -73,6 +76,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        exec { \'kubernetes-systemd-reload\': }
+       service { \'docker\': }
        '
     }
     let(:params) do
@@ -87,6 +91,7 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
+        'docker_extra_daemon_config' => 'dummy',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
@@ -109,7 +114,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
-    it { should contain_file('/etc/docker/daemon.json')}
+    it { should contain_file('/etc/docker')}
+    it { should contain_file('/etc/docker/daemon.json').with_content(/\s*dummy\s*/)}
     it { should contain_file('/etc/systemd/system/docker.service.d')}
   end
 
@@ -148,6 +154,7 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
+        'docker_extra_daemon_config' => '',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => false,
@@ -171,7 +178,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2-00')}
     it { should contain_package('kubectl').with_ensure('1.10.2-00')}
     it { should contain_package('kubeadm').with_ensure('1.10.2-00')}
-    it { should_not contain_file('/etc/docker/daemon.json')}
+    it { should_not contain_file('/etc/docker')}
+    it { should_not contain_file('/etc/docker/daemon.json').without_content(/\s*"default-runtime": "runc"\s*/)}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 
@@ -211,6 +219,7 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
         'disable_swap' => true,
         'manage_docker' => false,
         'manage_etcd' => true,
@@ -232,7 +241,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     it { should_not contain_package('docker-engine').with_ensure('17.03.0~ce-0~ubuntu-xenial')}
-    it { should_not contain_file('/etc/docker/daemon.json')}
+    it { should_not contain_file('/etc/docker')}
+    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"default-runtime": "runc"\s*/)}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 
@@ -271,6 +281,7 @@ describe 'kubernetes::packages', :type => :class do
         'runc_source' => 'https://github.com/runcsource',
         'controller' => true,
         'docker_package_name' => 'docker-engine',
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
         'disable_swap' => true,
         'manage_docker' => true,
         'manage_etcd' => true,
@@ -288,7 +299,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_exec('disable swap')}
-    it { should_not contain_file('/etc/docker/daemon.json')}
+    it { should_not contain_file('/etc/docker')}
+    it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"default-runtime": "runc"\s*/)}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 end
