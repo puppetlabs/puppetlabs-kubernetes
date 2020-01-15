@@ -48,6 +48,7 @@ class kubernetes::config::kubeadm (
   String $image_repository = $kubernetes::image_repository,
   String $cgroup_driver = $kubernetes::cgroup_driver,
   String $proxy_mode = $kubernetes::proxy_mode,
+  Stdlib::IP::Address $metrics_bind_address = $kubernetes::metrics_bind_address,
 ) {
 
   if !($proxy_mode in ['', 'userspace', 'iptables', 'ipvs', 'kernelspace']) {

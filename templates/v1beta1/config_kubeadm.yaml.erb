@@ -128,7 +128,7 @@ ipvs:
   scheduler: ""
   syncPeriod: 30s
 kind: KubeProxyConfiguration
-metricsBindAddress: 127.0.0.1:10249
+metricsBindAddress: <%= @metrics_bind_address %>:10249
 mode: "<%= @proxy_mode %>"
 nodePortAddresses: null
 oomScoreAdj: -999

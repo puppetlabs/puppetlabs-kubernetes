@@ -382,6 +382,10 @@
 # Availability of the token
 # Default to 24h
 #
+# [*metrics_bind_address*]
+# Set the metricsBindAddress (to allow prometheus)
+# Default to 127.0.0.1
+#
 # Authors
 # -------
 #
@@ -496,6 +500,7 @@ class kubernetes (
                                                           default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf'],
                                                         },
   Optional[Array] $ignore_preflight_errors           = undef,
+  Stdlib::IP::Address $metrics_bind_address          = '127.0.0.1',
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}
