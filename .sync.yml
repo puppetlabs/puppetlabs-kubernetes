@@ -1,14 +1,13 @@
 ---
-.gitignore:
-  required:
-    - ---.project
-
 .gitlab-ci.yml:
   delete: true
 
 .travis.yml:
+  deploy_to_forge:
+    enabled: false
   branches:
-    - release
+  - release
+  simplecov: true
 
 appveyor.yml:
   delete: true
@@ -49,24 +48,6 @@ Rakefile:
           - rakelib/*
           - plans/*.pp
           - tasks/*
-".travis.yml":
-  deploy_to_forge:
-    enabled: false
-  branches:
-  - release
-  simplecov: true
-appveyor.yml:
-  delete: true
-Gemfile:
-            - tooling/kube_tool/*
-            - tooling/*
-            - spec/defines/*
-            - spec/classes/*
-            - spec/*
-            - spec/acceptance/*
-            - rakelib/*
-            - plans/*.pp
-            - tasks/*
 
 spec/spec_helper.rb:
   mock_with: ':rspec'
