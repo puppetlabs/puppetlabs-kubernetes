@@ -42,7 +42,7 @@ class CreateCerts
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
   end
 
-  def CreateCerts.etcd_server(etcd_initial_cluster)
+  def CreateCerts.etcd_certificates(etcd_initial_cluster)
     etcd_servers = etcd_initial_cluster.split(",")
     etcd_server_ips = []
     etcd_servers.each do | servers |
@@ -62,16 +62,21 @@ class CreateCerts
         File.open("config.json", "w+") { |file| file.write(csr.to_json) }
         system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server --hostname=#{etcd_server_ips * ","},#{hostname} config.json | cfssljson -bare #{hostname}-server")
         system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile peer --hostname=#{ip},#{hostname} config.json | cfssljson -bare #{hostname}-peer")
+        system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile client --hostname=#{ip},#{hostname} config.json | cfssljson -bare #{hostname}-client")
         FileUtils.rm_f('etcd-server.csr')
         data = Hash.new
         cer_server = File.read("#{hostname}-server.pem")
         key_server = File.read("#{hostname}-server-key.pem")
         cer_peer = File.read("#{hostname}-peer.pem")
         key_peer = File.read("#{hostname}-peer-key.pem")
+        cer_client = File.read("#{hostname}-client.pem")
+        key_client = File.read("#{hostname}-client-key.pem")
         data['kubernetes::etcdserver_crt'] = cer_server
         data['kubernetes::etcdserver_key'] = key_server
         data['kubernetes::etcdpeer_crt'] = cer_peer
         data['kubernetes::etcdpeer_key'] = key_peer
+        data['kubernetes::etcdclient_crt'] = cer_client
+        data['kubernetes::etcdclient_key'] = key_client
         File.open("#{hostname}.yaml", "a") { |file| file.write(data.to_yaml) }
     end
   end
