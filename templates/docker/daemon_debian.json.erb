@@ -8,5 +8,12 @@
   <%- if @docker_extra_daemon_config -%>
   <%= @docker_extra_daemon_config -%>,
   <%- end -%>
-  "storage-driver": "overlay2"
+  "storage-driver": "<%= @docker_storage_driver %>",
+  <%- if @docker_storage_opts -%>
+  "storage-opts": [
+  <%- @docker_storage_opts.each do |opt| -%> 
+    "<%= opt %>"<%= "," if opt != @docker_storage_opts.last %>
+  <%- end -%>
+  ]
+  <%- end -%>
 }
