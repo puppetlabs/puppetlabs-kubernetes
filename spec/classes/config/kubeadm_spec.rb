@@ -298,4 +298,47 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[2]['mode']).to include('ipvs')
     end
   end
+
+  context 'with metrics_bind_address = 0.0.0.0 with version 1.14.2' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.2',
+        'metrics_bind_address' => '0.0.0.0',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has 0.0.0.0 in metrics_bind_address:' do
+      expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
+    end
+  end
+
+  context 'with metrics_bind_address = 0.0.0.0 with version 1.16.3' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.16.3',
+        'metrics_bind_address' => '0.0.0.0',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has 0.0.0.0 in metrics_bind_address:' do
+      expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
+    end
+  end
+
+  context 'with metrics_bind_address = invalid' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.2',
+        'metrics_bind_address' => 'invalid',
+      }
+    end
+
+    it { is_expected.to compile.and_raise_error(%r{metrics_bind_address}) }
+  end
 end
