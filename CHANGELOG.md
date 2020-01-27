@@ -2,12 +2,36 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v5.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.1.0) (2020-01-27)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.0.0...v5.1.0)
+
+### Added
+
+- Allow setting metricsBindAddress [\#377](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/377) ([TJM](https://github.com/TJM))
+- Add docker\_extra\_daemon\_config for use when managing docker [\#376](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/376) ([mrwulf](https://github.com/mrwulf))
+- Add support for managing Docker logging max-file and max-size settings. [\#358](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/358) ([nickperry](https://github.com/nickperry))
+- Add possibility to run acceptance tests with Litmus and Vagrant [\#353](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/353) ([carabasdaniel](https://github.com/carabasdaniel))
+- Add\_support\_1.16 [\#351](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/351) ([BaronMsk](https://github.com/BaronMsk))
+
+### Fixed
+
+- Fix worker k8s 1.6 [\#363](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/363) ([BaronMsk](https://github.com/BaronMsk))
+- Configure extra\_volumes when cloud\_provider is set and cloud\_config is not. Fixes \#301 [\#361](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/361) ([nickperry](https://github.com/nickperry))
+- Add support for readOnly and pathType fields on volumes [\#359](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/359) ([nickperry](https://github.com/nickperry))
+- Adding all IPs for etcd servers to etcd server cert [\#350](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/350) ([blodone](https://github.com/blodone))
+- repair/improve package installation [\#348](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/348) ([scoopex](https://github.com/scoopex))
+- Use correct apt release on Debian/Ubuntu [\#338](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/338) ([aptituz](https://github.com/aptituz))
+- Fix repository location for Ubuntu [\#337](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/337) ([aptituz](https://github.com/aptituz))
+- Fixed v1beta1 JoinConfiguration template to match the documentation [\#332](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/332) ([Xartos](https://github.com/Xartos))
+
 ## [v5.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.0.0) (2019-07-24)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v4.0.1...v5.0.0)
 
 ### Changed
 
+- \(MODULES-9550\) - v5.0.0 Release Prep [\#324](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/324) ([sheenaajay](https://github.com/sheenaajay))
 - \(FM-8100\) Update minimum supported Puppet version to 5.5.10 [\#291](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/291) ([sheenaajay](https://github.com/sheenaajay))
 
 ### Added
@@ -28,7 +52,6 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
-- Add extra arguments for API server and controller manager [\#282](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/282) ([fydai](https://github.com/fydai))
 - cluster name missing tag brackets in worker config [\#280](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/280) ([jorhett](https://github.com/jorhett))
 - Avoid log message about waiting for SA when it already exists [\#278](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/278) ([jorhett](https://github.com/jorhett))
 - MODULES-8947 fixing bugs and tests [\#274](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/274) ([sheenaajay](https://github.com/sheenaajay))
