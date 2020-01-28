@@ -7,6 +7,8 @@ class kubernetes::packages (
   Boolean $manage_etcd                         = $kubernetes::manage_etcd,
   Optional[String] $docker_version             = $kubernetes::docker_version,
   Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
+  Optional[String] $docker_storage_driver      = $kubernetes::docker_storage_driver,
+  Optional[Array] $docker_storage_opts         = $kubernetes::docker_storage_opts,
   Optional[String] $docker_extra_daemon_config = $kubernetes::docker_extra_daemon_config,
   String $docker_log_max_file                  = $kubernetes::docker_log_max_file,
   String $docker_log_max_size                  = $kubernetes::docker_log_max_size,

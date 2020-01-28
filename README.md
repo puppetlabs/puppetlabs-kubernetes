@@ -391,6 +391,24 @@ The URL for the Docker yum repo gpg key.
 
 Defaults to `https://yum.dockerproject.org/gpg`.
 
+#### `docker_storage_driver`
+
+The storage driver for Docker (added to '/etc/docker/daemon.json')
+
+Defaults to `overlay2`.
+
+#### `docker_storage_opts`
+
+The storage options for Docker (Array added to '/etc/docker/daemon.json')
+
+Defaults to `undef`.
+
+#### `docker_extra_daemon_config`
+
+Extra daemons options
+
+Defaults to `undef`.
+
 #### `etcd_version`
 
 Specifies the version of etcd.

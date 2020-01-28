@@ -339,6 +339,14 @@
 #  The URL for the Docker yum repo gpg key
 #  Defaults to https://yum.dockerproject.org/gpg
 #
+# [*docker_storage_driver*]
+#  Storage Driver to be added to `/etc/docker/daemon.json`
+#  Defaults to overlay2
+#
+# [*docker_storage_opts*]
+#  Storage options to be added to `/etc/docker/daemon.json`
+#  Defaults to undef
+#
 # [*docker_extra_daemon_config*]
 #  Extra configuration to be added to `/etc/docker/daemon.json`
 #  Defaults to undef
@@ -484,6 +492,11 @@ class kubernetes (
   Optional[String] $docker_yum_gpgkey                = undef,
   Optional[String] $docker_key_id                    = undef,
   Optional[String] $docker_key_source                = undef,
+  Optional[String] $docker_storage_driver            = 'overlay2',
+  Optional[Array] $docker_storage_opts               = $facts['os']['family'] ? {
+                                                          'RedHat' => ['overlay2.override_kernel_check=true'],
+                                                          default  => undef,
+                                                      },
   Optional[String] $docker_extra_daemon_config       = undef,
   String $docker_log_max_file                        = '1',
   String $docker_log_max_size                        = '100m',
