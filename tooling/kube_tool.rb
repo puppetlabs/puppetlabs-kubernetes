@@ -68,7 +68,7 @@ class Kube_tool
     PreChecks.checks
     CreateCerts.etcd_ca
     CreateCerts.etcd_clients
-    CreateCerts.etcd_server( hash[:etcd_initial_cluster])
+    CreateCerts.etcd_certificates( hash[:etcd_initial_cluster])
     CreateCerts.kube_ca
     CreateCerts.kube_front_proxy_ca
     CreateCerts.sa    
