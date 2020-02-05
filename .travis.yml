@@ -16,6 +16,9 @@ script:
 bundler_args: --without system_tests
 rvm:
   - 2.5.3
+env:
+  global:
+    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
 stages:
   - static
   - spec
