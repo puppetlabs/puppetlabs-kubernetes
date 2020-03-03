@@ -476,7 +476,7 @@ class kubernetes (
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $etcd_archive                               = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   String $etcd_package_name                          = 'etcd-server',
-  String $etcd_source                                = "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}",
+  String $etcd_source                                = "https://github.com/etcd-io/etcd/releases/download/v${etcd_version}/${etcd_archive}",
   String $etcd_install_method                        = 'wget',
   Optional[String] $kubernetes_apt_location          = undef,
   Optional[String] $kubernetes_apt_release           = undef,
