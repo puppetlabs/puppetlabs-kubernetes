@@ -741,11 +741,16 @@ If you would like to contribute to this module, please follow the rules in the [
 
 To run the acceptance tests you can use Puppet Litmus with the Vagrant provider by using the following commands:
 ```
+# install rvm with and ruby >2.5
+rvm install "ruby-2.5.1"
+gem install bundler
+bundler install
 bundle exec rake 'litmus:provision_list[all_supported]'
 bundle exec rake 'litmus:install_agent[puppet5]'
 bundle exec rake 'litmus:install_module'
 bundle exec rake 'litmus:acceptance:parallel'
 ```
+For more information about Litmus please see [the wiki](https://github.com/puppetlabs/puppet_litmus/wiki).
 
 As currently Litmus does not allow memory size and cpu size parameters for the Vagrant provisioner task we recommend to manually update the Vagrantfile used by the provisioner and add at least the following specifications for the puppetlabs-kubernetes module acceptance tests:
 
