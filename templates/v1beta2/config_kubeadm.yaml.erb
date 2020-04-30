@@ -93,7 +93,7 @@ imageRepository:  <%= @image_repository %>
 kind: ClusterConfiguration
 kubernetesVersion: v<%= @kubernetes_version %>
 networking:
-  dnsDomain: cluster.local
+  dnsDomain: <%= @dns_domain %>
   podSubnet: <%= @cni_pod_cidr %>
   serviceSubnet: <%= @service_cidr %>
 <%- if @kubeadm_extra_config  -%>

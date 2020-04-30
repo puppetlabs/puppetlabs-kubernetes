@@ -37,6 +37,10 @@
 #  The URL to download the containerd archive
 #  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 #
+# [*dns_domain*]
+#   This is a string that sets the dns domain in kubernetes cluster
+#   Default cluster.local
+#
 # [*docker_version*]
 #   This is the version of the docker runtime that you want to install.
 #   Defaults to 17.03.0.ce-1.el7.centos on RedHat
@@ -417,6 +421,7 @@ class kubernetes (
                                                           'Debian' => '17.03.0~ce-0~ubuntu-xenial',
                                                           'RedHat' => '17.03.1.ce-1.el7.centos',
                                                         },
+  Optional[String] $dns_domain                       = 'cluster.local',
   Optional[String] $cni_pod_cidr                     = undef,
   Boolean $controller                                = false,
   Boolean $worker                                    = false,

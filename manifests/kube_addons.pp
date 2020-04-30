@@ -32,7 +32,7 @@ class kubernetes::kube_addons (
     }
   }
 
-  if $cni_network_provider {
+  if $cni_network_provider != '' {
     $shellsafe_provider = shell_escape($cni_network_provider)
     exec { 'Install cni network provider':
       command     => "kubectl apply -f ${shellsafe_provider}",
