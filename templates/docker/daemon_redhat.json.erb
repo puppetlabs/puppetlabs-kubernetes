@@ -1,5 +1,5 @@
 {
-  "exec-opts": ["native.cgroupdriver=systemd"],
+  "exec-opts": ["native.cgroupdriver=<%= @docker_cgroup_driver %>"],
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "<%= @docker_log_max_size %>",
@@ -8,10 +8,10 @@
   <%- if @docker_extra_daemon_config -%>
   <%= @docker_extra_daemon_config -%>,
   <%- end -%>
-  "storage-driver": "<%= @docker_storage_driver %>",
+  "storage-driver": "<%= @docker_storage_driver %>"<%= "," if @docker_storage_opts %>
   <%- if @docker_storage_opts -%>
   "storage-opts": [
-  <%- @docker_storage_opts.each do |opt| -%> 
+  <%- @docker_storage_opts.each do |opt| -%>
     "<%= opt %>"<%= "," if opt != @docker_storage_opts.last %>
   <%- end -%>
   ]

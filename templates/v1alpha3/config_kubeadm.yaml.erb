@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1alpha3
 apiEndpoint:
   advertiseAddress: <%= @kube_api_advertise_address %>
-  bindPort: 6443
+  bindPort: <%= @kube_api_bind_port %>
 bootstrapTokens:
   - token: "<%= @token %>"
     description: "kubeadm bootstrap token"

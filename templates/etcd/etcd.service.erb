@@ -16,7 +16,11 @@ ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
     --listen-client-urls https://<%= @etcd_ip %>:2379 \
     --advertise-client-urls https://<%= @etcd_ip %>:2379 \
     --listen-peer-urls https://<%= @etcd_ip %>:2380 \
+<% if @etcd_discovery_srv -%>
+    --initial-advertise-peer-urls https://<%= @etcd_hostname %>:2380 \
+<% else -%>
     --initial-advertise-peer-urls https://<%= @etcd_ip %>:2380 \
+<% end -%>
     --cert-file=/etc/kubernetes/pki/etcd/server.crt \
     --key-file=/etc/kubernetes/pki/etcd/server.key \
     --client-cert-auth \
@@ -25,9 +29,17 @@ ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
     --peer-key-file=/etc/kubernetes/pki/etcd/peer.key \
     --peer-client-cert-auth \
     --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt \
+<% if @etcd_discovery_srv -%>
+    --discovery-srv <%= @etcd_discovery_srv %> \
+<% else -%>
     --initial-cluster <%= @etcd_initial_cluster %> \
+<% end -%>
     --initial-cluster-token my-etcd-token \
-    --initial-cluster-state <%= @etcd_initial_cluster_state %>
+    --initial-cluster-state <%= @etcd_initial_cluster_state %> \
+    --auto-compaction-retention <%= @etcd_compaction_retention %> \
+    --auto-compaction-mode <%= @etcd_compaction_method %> \
+    --max-wals <%= @etcd_max_wals %>
+
 
 [Install]
 WantedBy=multi-user.target
