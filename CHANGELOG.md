@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v5.2.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.2.0) (2020-05-13)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.1.0...v5.2.0)
+
+### Added
+
+- \(FEAT\) Add docker storage options [\#383](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/383) ([AblionGE](https://github.com/AblionGE))
+
+### Fixed
+
+- Create client certificates per server with SAN values [\#382](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/382) ([AblionGE](https://github.com/AblionGE))
+
 ## [v5.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.1.0) (2020-01-27)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.0.0...v5.1.0)
@@ -52,6 +64,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
+- Add extra arguments for API server and controller manager [\#282](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/282) ([fydai](https://github.com/fydai))
 - cluster name missing tag brackets in worker config [\#280](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/280) ([jorhett](https://github.com/jorhett))
 - Avoid log message about waiting for SA when it already exists [\#278](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/278) ([jorhett](https://github.com/jorhett))
 - MODULES-8947 fixing bugs and tests [\#274](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/274) ([sheenaajay](https://github.com/sheenaajay))
