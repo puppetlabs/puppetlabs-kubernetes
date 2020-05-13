@@ -17,7 +17,7 @@ jobs:
         ruby_version: [2.5.x]
         puppet_gem_version: [~> 6.0]
         platform: [release_checks]
-        agent_family: ['puppet5', 'puppet6-nightly']
+        agent_family: ['puppet5', 'puppet6']
 
     steps:
     - uses: actions/checkout@v1
@@ -30,7 +30,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        check: [parallel_spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
+        check: [spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
         ruby_version: [2.5.x]
         puppet_gem_version: [~> 5.0, ~> 6.0]
         exclude:
