@@ -1,7 +1,7 @@
 # Class kubernetes kube_addons
 class kubernetes::kube_addons (
 
-  Optional[String] $cni_network_provider               = $kubernetes::cni_network_provider,
+  Optional[String] $cni_network_provider     = $kubernetes::cni_network_provider,
   Optional[String] $cni_rbac_binding         = $kubernetes::cni_rbac_binding,
   Boolean $install_dashboard                 = $kubernetes::install_dashboard,
   String $dashboard_version                  = $kubernetes::dashboard_version,
