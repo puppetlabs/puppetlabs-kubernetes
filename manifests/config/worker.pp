@@ -24,9 +24,9 @@ class kubernetes::config::worker (
   $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')
 
   $template = $kubernetes_version ? {
-    /1.12/       => 'v1alpha3',
-    /1.1(3|4|5)/ => 'v1beta1',
-    default      => 'v1beta2',
+    /1\.12/              => 'v1alpha3',
+    /1\.1(3|4|5\.[012])/ => 'v1beta1',
+    default              => 'v1beta2',
   }
 
   file { '/etc/kubernetes':

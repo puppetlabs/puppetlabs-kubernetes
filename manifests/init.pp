@@ -10,6 +10,11 @@
 #   ie api server,
 #   Defaults to  1.10.2
 #
+# [*kubernetes_dns_domain*]
+#   The base DNS domain used by CoreDNS
+#   Only used by Kubernetes 1.12+
+#   Defaults to "cluster.local"
+#
 # [*kubernetes_cluster_name*]
 #   The name of the cluster, for use when multiple clusters are accessed from the same source
 #   Only used by Kubernetes 1.12+
@@ -202,10 +207,6 @@
 #   A string array of extra arguments to be passed to the api server.
 #   Defaults to []
 #
-# [*apiserver_port*]
-#   Apiserver listening port
-#   Defaults to 6443
-#
 # [*apiserver_cert_extra_sans*]
 #   A string array of Subhect Alternative Names for the api server certificates.
 #   Defaults to []
@@ -223,7 +224,7 @@
 #   Defaults to []
 #
 # [*delegated_pki*]
-#   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key variables except sa.pub and sa.key.
+#   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
 #   Defaults to false
 #
 # [*kubernetes_ca_crt*]
@@ -441,6 +442,7 @@
 #
 class kubernetes (
   String $kubernetes_version                         = '1.10.2',
+  String $kubernetes_dns_domain                      = 'cluster.local',
   String $kubernetes_cluster_name                    = 'kubernetes',
   String $kubernetes_package_version                 = $facts['os']['family'] ? {
                                                           'Debian' => "${kubernetes_version}-00",
@@ -495,8 +497,8 @@ class kubernetes (
   String $token                                      = undef,
   String $ttl_duration                               = '24h',
   String $discovery_token_hash                       = undef,
-  String $sa_pub                                     = undef,
-  String $sa_key                                     = undef,
+  Optional[String] $sa_pub                           = undef,
+  Optional[String] $sa_key                           = undef,
   Optional[Array] $apiserver_cert_extra_sans         = [],
   Optional[Array] $apiserver_extra_arguments         = [],
   Optional[Array] $controllermanager_extra_arguments = [],
@@ -559,6 +561,7 @@ class kubernetes (
                                                         },
   Optional[Array] $ignore_preflight_errors           = undef,
   Stdlib::IP::Address $metrics_bind_address          = '127.0.0.1',
+  Optional[String] $join_discovery_file              = undef,
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}

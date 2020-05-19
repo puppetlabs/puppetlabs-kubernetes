@@ -8,6 +8,7 @@ class kubernetes::config::kubeadm (
   String $etcd_install_method = $kubernetes::etcd_install_method,
   String $kubernetes_version  = $kubernetes::kubernetes_version,
   String $kubernetes_cluster_name  = $kubernetes::kubernetes_cluster_name,
+  String $kubernetes_dns_domain  = $kubernetes::kubernetes_dns_domain,
   Optional[String] $etcd_ca_key = $kubernetes::etcd_ca_key,
   Optional[String] $etcd_ca_crt = $kubernetes::etcd_ca_crt,
   Optional[String] $etcdclient_key = $kubernetes::etcdclient_key,
@@ -38,8 +39,8 @@ class kubernetes::config::kubeadm (
   Optional[String] $kubernetes_front_proxy_ca_crt = $kubernetes::kubernetes_front_proxy_ca_crt,
   Optional[String] $kubernetes_front_proxy_ca_key = $kubernetes::kubernetes_front_proxy_ca_key,
   String $container_runtime = $kubernetes::container_runtime,
-  String $sa_pub = $kubernetes::sa_pub,
-  String $sa_key = $kubernetes::sa_key,
+  Optional[String] $sa_pub = $kubernetes::sa_pub,
+  Optional[String] $sa_key = $kubernetes::sa_key,
   Optional[Array] $apiserver_cert_extra_sans = $kubernetes::apiserver_cert_extra_sans,
   Optional[Array] $apiserver_extra_arguments = $kubernetes::apiserver_extra_arguments,
   Optional[Array] $controllermanager_extra_arguments = $kubernetes::controllermanager_extra_arguments,
@@ -159,10 +160,10 @@ class kubernetes::config::kubeadm (
   $kubelet_extra_config_alpha1_yaml = regsubst(to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
 
   $config_version = $kubernetes_version ? {
-    /1.1(0|1)/   => 'v1alpha1',
-    /1.12/       => 'v1alpha3',
-    /1.1(3|4|5)/ => 'v1beta1',
-    default      => 'v1beta2',
+    /1\.1(0|1)/          => 'v1alpha1',
+    /1\.12/              => 'v1alpha3',
+    /1\.1(3|4|5\.[012])/ => 'v1beta1',
+    default              => 'v1beta2',
   }
 
   file { $config_file:

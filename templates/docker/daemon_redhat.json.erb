@@ -5,7 +5,7 @@
     "max-size": "<%= @docker_log_max_size %>",
     "max-file": "<%= @docker_log_max_file %>"
   },
-  <%- if @docker_extra_daemon_config -%>
+  <%- if @docker_extra_daemon_config and @docker_extra_daemon_config != '' -%>
   <%= @docker_extra_daemon_config -%>,
   <%- end -%>
   "storage-driver": "<%= @docker_storage_driver %>"<%= "," if @docker_storage_opts %>

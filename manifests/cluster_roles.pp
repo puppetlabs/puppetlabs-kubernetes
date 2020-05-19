@@ -5,6 +5,7 @@ class kubernetes::cluster_roles (
   Optional[Boolean] $worker = $kubernetes::worker,
   String $node_name = $kubernetes::node_name,
   String $container_runtime = $kubernetes::container_runtime,
+  Optional[String] $join_discovery_file = $kubernetes::join_discovery_file,
   Optional[Array] $ignore_preflight_errors = $kubernetes::ignore_preflight_errors,
   Optional[Array] $env = $kubernetes::environment,
 ) {
@@ -28,6 +29,7 @@ class kubernetes::cluster_roles (
     kubernetes::kubeadm_join { $node_name:
       cri_socket              => $cri_socket,
       ignore_preflight_errors => $preflight_errors,
+      discovery_file          => $join_discovery_file,
       env                     => $env,
     }
   }

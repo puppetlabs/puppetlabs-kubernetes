@@ -51,6 +51,45 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
 
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(/.*--initial-cluster */) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(/.*--discovery-srv.*/) }
+    it { is_expected.not_to contain_file('/etc/default/etcd') }
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
+  end
+
+  context 'with manage_etcd => true and delegated_pki => true' do
+    let(:pre_condition) { 'include kubernetes' }
+    let(:params) do
+      {
+        'manage_etcd' => true,
+        'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
+        'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
+        'kubelet_extra_arguments' => ['foo'],
+        'delegated_pki' => true,
+      }
+    end
+
+    kube_dirs = ['/etc/kubernetes', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/pki/etcd']
+    etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key', 'peer.crt', 'peer.key', 'server.crt', 'server.key']
+    pki = ['ca.crt', 'ca.key', 'front-proxy-ca.crt', 'front-proxy-ca.key', 'sa.pub', 'sa.key']
+
+    kube_dirs.each do |d|
+      it { is_expected.to contain_file(d.to_s) }
+    end
+
+    etcd.each do |f|
+      it { is_expected.not_to contain_file("/etc/kubernetes/pki/etcd/#{f}") }
+    end
+
+    pki.each do |cert|
+      it { is_expected.not_to contain_file("/etc/kubernetes/pki/#{cert}") }
+    end
+
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(/.*--initial-cluster */) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(/.*--discovery-srv.*/) }
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
@@ -103,6 +142,61 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/default/etcd') }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(/.*ETCD_DISCOVERY_SRV=.*/) }
+  end
+
+  context 'manage_etcd => true and etcd_install_method => package and etcd_discovery_srv => etcd-autodiscovery' do
+    let(:params) do
+      {
+        'etcd_install_method' => 'package',
+        'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
+        'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
+        'kubelet_extra_arguments' => ['foo'],
+        'manage_etcd' => true,
+        'etcd_discovery_srv' => 'etcd-autodiscovery',
+      }
+    end
+
+    it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
+    it { is_expected.to contain_file('/etc/default/etcd') }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_DISCOVERY_SRV="etcd-autodiscovery".*/) }
+  end
+
+  context 'manage_etcd => true and etcd_install_method => wget and etcd_discovery_srv => etcd-autodiscovery' do
+    let(:params) do
+      {
+        'etcd_install_method' => 'wget',
+        'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
+        'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
+        'kubelet_extra_arguments' => ['foo'],
+        'manage_etcd' => true,
+        'etcd_discovery_srv' => 'etcd-autodiscovery',
+      }
+    end
+
+    it { is_expected.not_to contain_file('/etc/default/etcd') }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(/.*--discovery-srv etcd-autodiscovery.*/) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(/.*--initial-cluster .*/) }
+  end
+
+  context 'manage_etcd => true and etcd_install_method => package' do
+    let(:params) do
+      {
+        'etcd_install_method' => 'package',
+        'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
+        'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
+        'kubelet_extra_arguments' => ['foo'],
+        'manage_etcd' => true,
+      }
+    end
+
+    it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
+    it { is_expected.to contain_file('/etc/default/etcd') }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
   end
 
   context 'with version = 1.12 and node_name => foo and cloud_provider => aws' do
@@ -299,11 +393,12 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
   end
 
-  context 'with metrics_bind_address = 0.0.0.0 with version 1.14.2' do
+  context 'with metrics_bind_address = 0.0.0.0 with version 1.14.2 and kube_api_bind_port 12345' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.2',
         'metrics_bind_address' => '0.0.0.0',
+        'kube_api_bind_port' => 12345,
       }
     end
 
@@ -313,13 +408,17 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it 'has 0.0.0.0 in metrics_bind_address:' do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
+    it 'has 12345 in kube_api_bind_port:' do
+      expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12345)
+    end
   end
 
-  context 'with metrics_bind_address = 0.0.0.0 with version 1.16.3' do
+  context 'with metrics_bind_address = 0.0.0.0 with version 1.16.3 and kube_api_bind_port 12345' do
     let(:params) do
       {
         'kubernetes_version' => '1.16.3',
         'metrics_bind_address' => '0.0.0.0',
+        'kube_api_bind_port' => 12345,
       }
     end
 
@@ -328,6 +427,9 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it 'has 0.0.0.0 in metrics_bind_address:' do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
+    end
+    it 'has 12345 in kube_api_bind_port:' do
+      expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12345)
     end
   end
 
