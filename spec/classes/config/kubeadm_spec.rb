@@ -51,8 +51,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
 
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
-    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(/.*--initial-cluster */) }
-    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(/.*--discovery-srv.*/) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--initial-cluster *}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--discovery-srv.*}) }
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
@@ -88,8 +88,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
 
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
-    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(/.*--initial-cluster */) }
-    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(/.*--discovery-srv.*/) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--initial-cluster *}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--discovery-srv.*}) }
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
@@ -142,8 +142,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/default/etcd') }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
-    it { is_expected.to contain_file('/etc/default/etcd').without_content(/.*ETCD_DISCOVERY_SRV=.*/) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => package and etcd_discovery_srv => etcd-autodiscovery' do
@@ -160,8 +160,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/default/etcd') }
-    it { is_expected.to contain_file('/etc/default/etcd').without_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_DISCOVERY_SRV="etcd-autodiscovery".*/) }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_DISCOVERY_SRV="etcd-autodiscovery".*}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => wget and etcd_discovery_srv => etcd-autodiscovery' do
@@ -178,8 +178,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
-    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(/.*--discovery-srv etcd-autodiscovery.*/) }
-    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(/.*--initial-cluster .*/) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--discovery-srv etcd-autodiscovery.*}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--initial-cluster .*}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => package' do
@@ -195,8 +195,8 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/default/etcd') }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(/.*ETCD_INITIAL_CLUSTER=.*/) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
   end
 
   context 'with version = 1.12 and node_name => foo and cloud_provider => aws' do
@@ -398,7 +398,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       {
         'kubernetes_version' => '1.14.2',
         'metrics_bind_address' => '0.0.0.0',
-        'kube_api_bind_port' => 12345,
+        'kube_api_bind_port' => 12_345,
       }
     end
 
@@ -409,7 +409,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
     it 'has 12345 in kube_api_bind_port:' do
-      expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12345)
+      expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12_345)
     end
   end
 
@@ -418,7 +418,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       {
         'kubernetes_version' => '1.16.3',
         'metrics_bind_address' => '0.0.0.0',
-        'kube_api_bind_port' => 12345,
+        'kube_api_bind_port' => 12_345,
       }
     end
 
@@ -429,7 +429,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
     it 'has 12345 in kube_api_bind_port:' do
-      expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12345)
+      expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12_345)
     end
   end
 
