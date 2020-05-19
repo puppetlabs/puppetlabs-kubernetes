@@ -12,5 +12,5 @@
     provisioner: vagrant
     images: ['ubuntu/xenial64', 'debian/stretch64', 'centos/7']
   release_checks:
-    provisioner: vmpooler
+    provisioner: abs
     images: ['redhat-7-x86_64', 'redhat-8-x86_64', 'centos-7-x86_64', 'ubuntu-1604-x86_64']
