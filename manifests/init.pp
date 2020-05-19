@@ -10,11 +10,6 @@
 #   ie api server,
 #   Defaults to  1.10.2
 #
-# [*kubernetes_dns_domain*]
-#   The base DNS domain used by CoreDNS
-#   Only used by Kubernetes 1.12+
-#   Defaults to "cluster.local"
-#
 # [*kubernetes_cluster_name*]
 #   The name of the cluster, for use when multiple clusters are accessed from the same source
 #   Only used by Kubernetes 1.12+
@@ -442,7 +437,6 @@
 #
 class kubernetes (
   String $kubernetes_version                         = '1.10.2',
-  String $kubernetes_dns_domain                      = 'cluster.local',
   String $kubernetes_cluster_name                    = 'kubernetes',
   String $kubernetes_package_version                 = $facts['os']['family'] ? {
                                                           'Debian' => "${kubernetes_version}-00",
