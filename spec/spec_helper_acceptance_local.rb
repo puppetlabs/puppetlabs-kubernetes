@@ -14,10 +14,15 @@ end
 RSpec.configure do |c|
   c.before :suite do
    vmhostname = run_shell('hostname').stdout.strip
-   vmipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
+   vmipaddr = nil
    if os[:family] == 'redhat'
      vmipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
+   else
+     vmipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
    end
+
+   raise "Error obtaining vm ip address" if vmipaddr.nil?
+
    vmos = os[:family]
 
    puts "Running acceptance test on #{vmhostname} with address #{vmipaddr} and OS #{vmos}"
@@ -41,17 +46,16 @@ hosts_file = <<-EOS
       EOS
 
       nginx = <<-EOS
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: nginx
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-nginx
-  namespace: nginx
 spec:
+  selector:
+    matchLabels:
+      run: my-nginx
+  replicas: 2
   template:
     metadata:
       labels:
@@ -59,7 +63,7 @@ spec:
     spec:
       containers:
       - name: my-nginx
-        image: nginx:1.12-alpine
+        image: nginx
         ports:
         - containerPort: 80
 ---
@@ -67,7 +71,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-nginx
-  namespace: nginx
   labels:
     run: my-nginx
 spec:

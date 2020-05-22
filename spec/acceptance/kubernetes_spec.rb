@@ -10,18 +10,22 @@ describe 'the Kubernetes module' do
       context 'it should install the module and run' do
 
         pp = <<-MANIFEST
-        if $::osfamily == 'RedHat'{
+        if $facts['os']['family'] == 'redhat'{
           class {'kubernetes':
+                  kubernetes_version => '1.16.0',
+                  kubernetes_package_version => '1.16.0',
+                  controller_address => "$::ipaddress:6443",
                   container_runtime => 'docker',
                   manage_docker => false,
                   controller => true,
                   schedule_on_controller => true,
                   environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
-                  ignore_preflight_errors => ['NumCPU'],
-                  cgroup_driver => 'cgroupfs'
+                  ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
+                  cgroup_driver => 'cgroupfs',
+                  etcd_initial_cluster => "localhost=https://$::ipaddress:2380",
                 }
           }
-        if $::osfamily == 'Debian'{
+        if $facts['os']['family'] == 'debian'{
           class {'kubernetes':
                   controller => true,
                   schedule_on_controller => true,
@@ -49,7 +53,7 @@ describe 'the Kubernetes module' do
         it 'can deploy an application into a namespace and expose it' do
           run_shell('sleep 180')
           run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl create -f /tmp/nginx.yml') do |r|
-            expect(r.stdout).to match(/namespace\/nginx created\ndeployment.apps\/my-nginx created\nservice\/my-nginx created\n/)
+            expect(r.stdout).to match(/my-nginx created\nservice\/my-nginx created\n/)
           end
         end
 
@@ -62,7 +66,7 @@ describe 'the Kubernetes module' do
 
         it 'can delete a deployment' do
           run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl delete -f /tmp/nginx.yml') do |r|
-            expect(r.stdout).to match(/namespace "nginx" deleted\ndeployment.apps "my-nginx" deleted\nservice "my-nginx" deleted/)
+            expect(r.stdout).to match(/deployment.apps "my-nginx" deleted\nservice "my-nginx" deleted/)
           end
           run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get deploy --all-namespaces | grep nginx', :expect_failures => true)
         end
