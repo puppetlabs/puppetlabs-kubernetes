@@ -309,11 +309,11 @@
 #
 # [*kubernetes_yum_baseurl*]
 #  The YUM repo URL for the Kubernetes packages.
-#  Defaults to https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+#  Defaults to https://download.docker.com/linux/centos/
 #
 # [*kubernetes_yum_gpgkey*]
 #  The URL for the Kubernetes yum repo gpg key
-#  Defaults to https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+#  Defaults to https://download.docker.com/linux/centos/gpg
 #
 # [*docker_apt_location*]
 #  The APT repo URL for the Docker packages
