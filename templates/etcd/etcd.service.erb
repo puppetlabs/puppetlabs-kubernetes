@@ -37,7 +37,9 @@ ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
     --initial-cluster-token my-etcd-token \
     --initial-cluster-state <%= @etcd_initial_cluster_state %> \
     --auto-compaction-retention <%= @etcd_compaction_retention %> \
+<% if @etcd_version >= "3.3.0" -%>
     --auto-compaction-mode <%= @etcd_compaction_method %> \
+<% end -%>
     --max-wals <%= @etcd_max_wals %>
 
 

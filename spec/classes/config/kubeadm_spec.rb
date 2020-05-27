@@ -68,6 +68,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'delegated_pki' => true,
+        'etcd_version' => '3.3.0',
       }
     end
 
@@ -89,6 +90,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--initial-cluster *}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--auto-compaction-mode*}) }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--discovery-srv.*}) }
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
@@ -137,12 +139,14 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
+        'etcd_version' => '3.3.0',
       }
     end
 
     it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
   end
 
@@ -155,12 +159,14 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
+        'etcd_version' => '2.9.9',
       }
     end
 
     it { is_expected.not_to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_DISCOVERY_SRV="etcd-autodiscovery".*}) }
   end
 
@@ -173,6 +179,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
+        'etcd_version' => '2.9.9',
       }
     end
 
@@ -180,6 +187,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--discovery-srv etcd-autodiscovery.*}) }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--initial-cluster .*}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--auto-compaction-mode .*}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => package' do

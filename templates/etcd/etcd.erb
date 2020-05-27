@@ -11,7 +11,9 @@ ETCD_INITIAL_CLUSTER="<%= @etcd_initial_cluster %>"
 <% end -%>
 ETCD_INITIAL_CLUSTER_STATE="new"
 ETCD_INITIAL_CLUSTER_TOKEN="my-etcd-token"
+<% if @etcd_version >= "3.3.0" -%>
 ETCD_AUTO_COMPACTION_MODE="<%= @etcd_compaction_method %>"
+<% end -%>
 ETCD_AUTO_COMPACTION_RETENTION="<%= @etcd_compaction_retention %>"
 ETCD_MAX_WALS="<%= @etcd_max_wals %>"
 ETCD_ADVERTISE_CLIENT_URLS="https://<%= @etcd_ip %>:2379"
