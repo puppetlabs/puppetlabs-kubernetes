@@ -8,7 +8,8 @@ module Puppet::Parser::Functions
     opts = args[0] || {}
     flags = []
     flags << "'#{opts['controller_address']}'" if opts['controller_address'] && opts['controller_address'].to_s != 'undef'
-    flags << "--config '#{opts['config']}'" if opts['config'] && opts['config'].to_s != 'undef'
+    # --config is exclusive with --discovery-file, so if --discovery-file is present, don't use --config
+    flags << "--config '#{opts['config']}'" if opts['config'] && opts['config'].to_s != 'undef' && !(opts['discovery_file'] && opts['discovery_file'].to_s != 'undef')
     flags << "--cri-socket '#{opts['cri_socket']}'" if opts['cri_socket'] && opts['cri_socket'].to_s != 'undef'
     flags << "--discovery-file '#{opts['discovery_file']}'" if opts['discovery_file'] && opts['discovery_file'].to_s != 'undef'
     flags << "--discovery-token '#{opts['discovery_token']}'" if opts['discovery_token'] && opts['discovery_token'].to_s != 'undef'

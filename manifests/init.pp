@@ -85,6 +85,10 @@
 #   Or to pin explicitly to a specific interface kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
 #   defaults to undef
 #
+# [*kube_api_bind_port*]
+#   Apiserver bind port
+#   Defaults to 6443
+#
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
 #   Defaults to 3.2.18
@@ -132,6 +136,12 @@
 #                                  - 172.17.10.103
 #   Defaults to undef
 #
+# [*etcd_discovery_srv*]
+#    This will tell etcd to use DNS SRV discovery method. This option is exclusive with `etcd_initial_cluster`, taking precedence
+#    over it if both are present.
+#   An example with hiera would be kubernetes::etcd_discovery_srv: etcd-gen.example.org
+#   Defaults to undef
+#
 # [*etcd_initial_cluster*]
 #    This will tell etcd how many nodes will be in the cluster and is passed as a string.
 #   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
@@ -141,6 +151,20 @@
 #     This will tell etcd the initial state of the cluster. Useful for adding a node to the cluster. Allowed values are
 #   "new" or "existing"
 #   Defaults to "new"
+#
+# [*etcd_compaction_retention*]
+#     This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`. An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
+#   Integer or String
+#   Defaults to 0 (disabled)
+#
+# [*etcd_compaction_method*]
+#     This will tell etcd the compaction method to be used.
+#   "periodic" or "revision"
+#   Defaults to "periodic"
+#
+# [*etcd_max_wals*]
+#     This will tell etcd how many WAL files to be kept
+#   Defaults to 5
 #
 # [*etcd_ca_key*]
 #   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
@@ -193,6 +217,10 @@
 # [*controllermanager_extra_volumes*]
 #   A hash of extra volume mounts mounted on the controller manager.
 #   Defaults to []
+#
+# [*delegated_pki*]
+#   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
+#   Defaults to false
 #
 # [*kubernetes_ca_crt*]
 #   The clusters ca certificate. Must be passed as a string not a file.
@@ -427,17 +455,22 @@ class kubernetes (
   Boolean $worker                                    = false,
   Boolean $manage_docker                             = true,
   Boolean $manage_etcd                               = true,
+  Integer $kube_api_bind_port                        = 6443,
   Optional[String] $kube_api_advertise_address       = undef,
   Optional[String] $etcd_version                     = '3.2.18',
   Optional[String] $etcd_hostname                    = $facts['hostname'],
   Optional[String] $etcd_ip                          = undef,
   Optional[Array] $etcd_peers                        = undef,
   Optional[String] $etcd_initial_cluster             = undef,
+  Optional[String] $etcd_discovery_srv               = undef,
   Optional[Enum['new','existing']] $etcd_initial_cluster_state = 'new',
-  String $etcd_ca_key                                = undef,
-  String $etcd_ca_crt                                = undef,
-  String $etcdclient_key                             = undef,
-  String $etcdclient_crt                             = undef,
+  Optional[Enum['periodic','revision']] $etcd_compaction_method = 'periodic',
+  Variant[String,Integer] $etcd_compaction_retention = 0,
+  Integer $etcd_max_wals                             = 5,
+  Optional[String] $etcd_ca_key                      = undef,
+  Optional[String] $etcd_ca_crt                      = undef,
+  Optional[String] $etcdclient_key                   = undef,
+  Optional[String] $etcdclient_crt                   = undef,
   Optional[String] $etcdserver_crt                   = undef,
   Optional[String] $etcdserver_key                   = undef,
   Optional[String] $etcdpeer_crt                     = undef,
@@ -450,15 +483,16 @@ class kubernetes (
   "https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml",
   Boolean $schedule_on_controller                    = false,
   Integer $api_server_count                          = undef,
-  String $kubernetes_ca_crt                          = undef,
-  String $kubernetes_ca_key                          = undef,
-  String $kubernetes_front_proxy_ca_crt              = undef,
-  String $kubernetes_front_proxy_ca_key              = undef,
+  Boolean $delegated_pki                             = false,
+  Optional[String] $kubernetes_ca_crt                = undef,
+  Optional[String] $kubernetes_ca_key                = undef,
+  Optional[String] $kubernetes_front_proxy_ca_crt    = undef,
+  Optional[String] $kubernetes_front_proxy_ca_key    = undef,
   String $token                                      = undef,
   String $ttl_duration                               = '24h',
   String $discovery_token_hash                       = undef,
-  String $sa_pub                                     = undef,
-  String $sa_key                                     = undef,
+  Optional[String] $sa_pub                           = undef,
+  Optional[String] $sa_key                           = undef,
   Optional[Array] $apiserver_cert_extra_sans         = [],
   Optional[Array] $apiserver_extra_arguments         = [],
   Optional[Array] $controllermanager_extra_arguments = [],
@@ -521,6 +555,7 @@ class kubernetes (
                                                         },
   Optional[Array] $ignore_preflight_errors           = undef,
   Stdlib::IP::Address $metrics_bind_address          = '127.0.0.1',
+  Optional[String] $join_discovery_file              = undef,
 ){
   if ! $facts['os']['family'] in ['Debian','RedHat'] {
     notify {"The OS family ${facts['os']['family']} is not supported by this module":}

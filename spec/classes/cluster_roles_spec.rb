@@ -15,9 +15,6 @@ describe 'kubernetes::cluster_roles', :type => :class do
         :codename => "xenial",
       },
     },
-    :networking => {
-      :hostname => 'foo',
-    },
     :ec2_metadata => {
       :hostname => 'ip-10-10-10-1.ec2.internal',
     },

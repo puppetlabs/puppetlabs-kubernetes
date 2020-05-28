@@ -10,7 +10,7 @@ bootstrapTokens:
 kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: <%= @kube_api_advertise_address %>
-  bindPort: 6443
+  bindPort: <%= @kube_api_bind_port %>
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
@@ -134,4 +134,5 @@ mode: "<%= @proxy_mode %>"
 nodePortAddresses: null
 oomScoreAdj: -999
 portRange: ""
+resourceContainer: /
 udpIdleTimeout: 250ms
