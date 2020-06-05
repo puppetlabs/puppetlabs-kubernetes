@@ -26,6 +26,8 @@ class kubernetes::packages (
   Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
   Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
   Boolean $create_repos                        = $kubernetes::repos::create_repos,
+  Boolean $pin_packages                        = $kubernetes::pin_packages,
+  Integer $package_pin_priority                = 32767,
 ) {
 
 
@@ -78,10 +80,25 @@ class kubernetes::packages (
             ensure  => $docker_version,
             require => Class['Apt::Update'],
           }
-        }
-        else {
+          if $pin_packages {
+            file { '/etc/apt/preferences.d/docker':
+              mode    => '0444',
+              owner   => 'root',
+              group   => 'root',
+              content => template('kubernetes/docker_apt_package_pins.erb'),
+              notify  => Service['docker'],
+            }
+          }else {
+            file { '/etc/apt/preferences.d/docker':
+              ensure => absent,
+            }
+          }
+        }else {
           package { $docker_package_name:
             ensure => $docker_version,
+          }
+          if $pin_packages {
+            fail('for safety reasons package pinning is only usable if you define the create_repos and manage_docker flags')
           }
         }
 
@@ -179,13 +196,28 @@ class kubernetes::packages (
   }
 
   if $create_repos and $facts['os']['family'] == 'Debian' {
-        package { $kube_packages:
-          ensure  => $kubernetes_package_version,
-          require => Class['Apt::Update'],
-        }
+    package { $kube_packages:
+      ensure  => $kubernetes_package_version,
+      require => Class['Apt::Update'],
+    }
+    if $pin_packages {
+      file { '/etc/apt/preferences.d/kubernetes':
+        mode    => '0444',
+        owner   => 'root',
+        group   => 'root',
+        content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+      }
+    }else {
+      file { '/etc/apt/preferences.d/kubernetes':
+        ensure => absent,
+      }
+    }
   }else {
     package { $kube_packages:
       ensure => $kubernetes_package_version,
+    }
+    if $pin_packages {
+      fail('package pinning is not implemented on this platform')
     }
   }
 
