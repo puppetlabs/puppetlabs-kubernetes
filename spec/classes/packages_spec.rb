@@ -26,6 +26,8 @@ describe 'kubernetes::packages', :type => :class do
        '
        exec { \'kubernetes-systemd-reload\': }
        service { \'docker\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
        '
     }
     let(:params) do
@@ -56,6 +58,9 @@ describe 'kubernetes::packages', :type => :class do
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
         'pin_packages'  => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -104,6 +109,8 @@ describe 'kubernetes::packages', :type => :class do
        '
        exec { \'kubernetes-systemd-reload\': }
        service { \'docker\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
        '
     }
     let(:params) do
@@ -134,6 +141,9 @@ describe 'kubernetes::packages', :type => :class do
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
         'pin_packages'  => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -185,6 +195,8 @@ describe 'kubernetes::packages', :type => :class do
        '
        include apt
        exec { \'kubernetes-systemd-reload\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
        '
     }
     let(:params) do
@@ -215,6 +227,9 @@ describe 'kubernetes::packages', :type => :class do
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
         'pin_packages' => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -261,6 +276,8 @@ describe 'kubernetes::packages', :type => :class do
        include apt
        exec { \'kubernetes-systemd-reload\': }
        service { \'docker\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
        '
     }
 
@@ -292,6 +309,9 @@ describe 'kubernetes::packages', :type => :class do
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
         'pin_packages'  => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -338,6 +358,8 @@ describe 'kubernetes::packages', :type => :class do
        '
        include apt
        exec { \'kubernetes-systemd-reload\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
        '
     }
 
@@ -369,6 +391,9 @@ describe 'kubernetes::packages', :type => :class do
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
         'pin_packages' => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
         }
     end
     it { should contain_kmod__load('br_netfilter')}
@@ -411,6 +436,8 @@ describe 'kubernetes::packages', :type => :class do
        '
        include apt
        exec { \'kubernetes-systemd-reload\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
        '
     }
     let(:params) do
@@ -441,6 +468,9 @@ describe 'kubernetes::packages', :type => :class do
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
         'pin_packages'  => true,
+        'containerd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
+        'etcd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
+        'runc_source_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
         }
     end
     it { should contain_kmod__load('br_netfilter')}
