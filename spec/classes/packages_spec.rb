@@ -58,6 +58,7 @@ describe 'kubernetes::packages', :type => :class do
         'pin_packages'  => false,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -136,6 +137,7 @@ describe 'kubernetes::packages', :type => :class do
         'pin_packages'  => false,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -217,6 +219,7 @@ describe 'kubernetes::packages', :type => :class do
         'pin_packages' => true,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -294,6 +297,7 @@ describe 'kubernetes::packages', :type => :class do
         'pin_packages'  => true,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -371,6 +375,7 @@ describe 'kubernetes::packages', :type => :class do
         'pin_packages' => false,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -443,6 +448,7 @@ describe 'kubernetes::packages', :type => :class do
         'pin_packages'  => true,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}

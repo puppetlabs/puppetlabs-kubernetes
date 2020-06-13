@@ -39,6 +39,13 @@ class kubernetes::packages (
       command => 'swapoff -a',
       unless  => "awk '{ if (NR > 1) exit 1}' /proc/swaps",
     }
+    file_line { 'remove swap in /etc/fstab':
+      ensure            => absent,
+      path              => '/etc/fstab',
+      match             => '\sswap\s',
+      match_for_absence => true,
+      multiple          => true,
+    }
   }
 
   if $manage_kernel_modules and $manage_sysctl_settings {
@@ -102,7 +109,7 @@ class kubernetes::packages (
           }
         }
 
-        file{ '/etc/docker':
+        file { '/etc/docker':
           ensure => 'directory',
           mode   => '0644',
           owner  => 'root',
@@ -121,10 +128,10 @@ class kubernetes::packages (
       }
       'RedHat': {
         package { $docker_package_name:
-            ensure  => $docker_version,
+          ensure => $docker_version,
         }
 
-        file{ '/etc/docker':
+        file { '/etc/docker':
           ensure => 'directory',
           mode   => '0644',
           owner  => 'root',
