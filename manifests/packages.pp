@@ -1,35 +1,49 @@
 # Class kubernetes packages
 
 class kubernetes::packages (
-  String $kubernetes_package_version           = $kubernetes::kubernetes_package_version,
-  String $container_runtime                    = $kubernetes::container_runtime,
-  Boolean $manage_docker                       = $kubernetes::manage_docker,
-  Boolean $manage_etcd                         = $kubernetes::manage_etcd,
-  Optional[String] $docker_version             = $kubernetes::docker_version,
-  Optional[String] $docker_package_name        = $kubernetes::docker_package_name,
-  Optional[String] $docker_storage_driver      = $kubernetes::docker_storage_driver,
-  Optional[String] $docker_cgroup_driver       = $kubernetes::cgroup_driver,
-  Optional[Array] $docker_storage_opts         = $kubernetes::docker_storage_opts,
-  Optional[String] $docker_extra_daemon_config = $kubernetes::docker_extra_daemon_config,
-  String $docker_log_max_file                  = $kubernetes::docker_log_max_file,
-  String $docker_log_max_size                  = $kubernetes::docker_log_max_size,
-  Boolean $controller                          = $kubernetes::controller,
-  Optional[String] $containerd_archive         = $kubernetes::containerd_archive,
-  Optional[String] $containerd_source          = $kubernetes::containerd_source,
-  String $etcd_archive                         = $kubernetes::etcd_archive,
-  String $etcd_version                         = $kubernetes::etcd_version,
-  String $etcd_source                          = $kubernetes::etcd_source,
-  String $etcd_package_name                    = $kubernetes::etcd_package_name,
-  String $etcd_install_method                  = $kubernetes::etcd_install_method,
-  Optional[String] $runc_source                = $kubernetes::runc_source,
-  Boolean $disable_swap                        = $kubernetes::disable_swap,
-  Boolean $manage_kernel_modules               = $kubernetes::manage_kernel_modules,
-  Boolean $manage_sysctl_settings              = $kubernetes::manage_sysctl_settings,
-  Boolean $create_repos                        = $kubernetes::repos::create_repos,
-  Boolean $pin_packages                        = $kubernetes::pin_packages,
-  Integer $package_pin_priority                = 32767,
+  String $kubernetes_package_version            = $kubernetes::kubernetes_package_version,
+  String $container_runtime                     = $kubernetes::container_runtime,
+  Boolean $manage_docker                        = $kubernetes::manage_docker,
+  Boolean $manage_etcd                          = $kubernetes::manage_etcd,
+  Optional[String] $docker_version              = $kubernetes::docker_version,
+  Optional[String] $docker_package_name         = $kubernetes::docker_package_name,
+  Optional[String] $docker_storage_driver       = $kubernetes::docker_storage_driver,
+  Optional[String] $docker_cgroup_driver        = $kubernetes::cgroup_driver,
+  Optional[Array] $docker_storage_opts          = $kubernetes::docker_storage_opts,
+  Optional[String] $docker_extra_daemon_config  = $kubernetes::docker_extra_daemon_config,
+  String $docker_log_max_file                   = $kubernetes::docker_log_max_file,
+  String $docker_log_max_size                   = $kubernetes::docker_log_max_size,
+  Boolean $controller                           = $kubernetes::controller,
+  Optional[String] $containerd_archive          = $kubernetes::containerd_archive,
+  Optional[String] $containerd_archive_checksum = $kubernetes::containerd_archive_checksum,
+  Optional[String] $containerd_source           = $kubernetes::containerd_source,
+  String $etcd_archive                          = $kubernetes::etcd_archive,
+  Optional[String] $etcd_archive_checksum       = $kubernetes::etcd_archive_checksum,
+  String $etcd_version                          = $kubernetes::etcd_version,
+  String $etcd_source                           = $kubernetes::etcd_source,
+  String $etcd_package_name                     = $kubernetes::etcd_package_name,
+  String $etcd_install_method                   = $kubernetes::etcd_install_method,
+  Optional[String] $runc_source                 = $kubernetes::runc_source,
+  Optional[String] $runc_source_checksum        = $kubernetes::runc_source_checksum,
+  Boolean $disable_swap                         = $kubernetes::disable_swap,
+  Boolean $manage_kernel_modules                = $kubernetes::manage_kernel_modules,
+  Boolean $manage_sysctl_settings               = $kubernetes::manage_sysctl_settings,
+  Boolean $create_repos                         = $kubernetes::repos::create_repos,
+  Boolean $pin_packages                         = $kubernetes::pin_packages,
+  Integer $package_pin_priority                 = 32767,
+  String $archive_checksum_type                 = 'sha256',
 ) {
 
+  $tmp_directory = '/var/tmp/puppetlabs-kubernetes'
+
+  # Download directory for archives
+  file { $tmp_directory:
+    ensure => 'directory',
+    mode   => '0750',
+    owner  => 'root',
+    group  => 'root',
+    backup => false,
+  }
 
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
 
@@ -163,41 +177,76 @@ class kubernetes::packages (
   }
 
   elsif $container_runtime == 'cri_containerd' {
+    if $runc_source_checksum and $runc_source_checksum =~ /.+/ {
+      $runc_source_checksum_verify = true
+      $runc_source_creates = undef
+    }else {
+      $runc_source_checksum_verify = false
+      $runc_source_creates = ['/usr/bin/runc']
+    }
     archive { '/usr/bin/runc':
-      source  => $runc_source,
-      extract => false,
-      cleanup => false,
-      creates => '/usr/bin/runc',
+      source          => $runc_source,
+      checksum_type   => $archive_checksum_type,
+      checksum        => $runc_source_checksum,
+      checksum_verify => $runc_source_checksum_verify,
+      extract         => false,
+      cleanup         => false,
+      creates         => $runc_source_creates,
     }
     -> file { '/usr/bin/runc':
       mode => '0700'
     }
 
+    if $containerd_archive_checksum and $containerd_archive_checksum =~ /.+/ {
+      $containerd_archive_checksum_verify = true
+      $containerd_archive_creates = undef
+    }else {
+      $containerd_archive_checksum_verify = false
+      $containerd_archive_creates = ['/usr/bin/containerd']
+    }
     archive { $containerd_archive:
-      path            => "/${containerd_archive}",
+      path            => "${tmp_directory}/${containerd_archive}",
       source          => $containerd_source,
+      checksum_type   => $archive_checksum_type,
+      checksum        => $containerd_archive_checksum,
+      checksum_verify => $containerd_archive_checksum_verify,
       extract         => true,
       extract_command => 'tar xfz %s --strip-components=1 -C /usr/bin/',
       extract_path    => '/',
       cleanup         => true,
-      creates         => '/usr/bin/containerd'
+      creates         => $containerd_archive_creates,
+      notify          => Service['containerd'],
+      require         => File[$tmp_directory],
     }
   }
 
   if $controller and $manage_etcd {
     if $etcd_install_method == 'wget' {
+      if $etcd_archive_checksum and $etcd_archive_checksum =~ /.+/ {
+        $etcd_archive_checksum_verify = true
+        $etcd_archive_creates = undef
+      }else {
+        $etcd_archive_checksum_verify = false
+        $etcd_archive_creates = ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
+      }
       archive { $etcd_archive:
-        path            => "/${etcd_archive}",
+        path            => "${tmp_directory}/${etcd_archive}",
         source          => $etcd_source,
+        checksum_type   => $archive_checksum_type,
+        checksum        => $etcd_archive_checksum,
+        checksum_verify => $etcd_archive_checksum_verify,
         extract         => true,
         extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
         extract_path    => '/usr/local/bin',
         cleanup         => true,
-        creates         => ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
+        creates         => $etcd_archive_creates,
+        notify          => Service['etcd'],
+        require         => File[$tmp_directory],
       }
     } else {
       package { $etcd_package_name:
         ensure => $etcd_version,
+        notify => Service['etcd'],
       }
     }
   }
