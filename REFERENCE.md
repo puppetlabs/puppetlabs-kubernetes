@@ -905,6 +905,14 @@ Defaults to ""
  The URL for the Docker yum repo gpg key
  Defaults to https://yum.dockerproject.org/gpg
 
+[*docker_storage_driver*]
+ Storage Driver to be added to `/etc/docker/daemon.json`
+ Defaults to overlay2
+
+[*docker_storage_opts*]
+ Storage options to be added to `/etc/docker/daemon.json`
+ Defaults to undef
+
 [*docker_extra_daemon_config*]
  Extra configuration to be added to `/etc/docker/daemon.json`
  Defaults to undef
@@ -1473,7 +1481,7 @@ Data type: `String`
 
 
 
-Default value: "https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}"
+Default value: "https://github.com/etcd-io/etcd/releases/download/v${etcd_version}/${etcd_archive}"
 
 ##### `etcd_install_method`
 
@@ -1594,6 +1602,22 @@ Data type: `Optional[String]`
 
 
 Default value: `undef`
+
+##### `docker_storage_driver`
+
+Data type: `Optional[String]`
+
+
+
+Default value: 'overlay2'
+
+##### `docker_storage_opts`
+
+Data type: `Optional[Array]`
+
+
+
+Default value: $facts['os']['family']
 
 ##### `docker_extra_daemon_config`
 
@@ -2466,6 +2490,22 @@ Data type: `Optional[String]`
 
 
 Default value: $kubernetes::docker_package_name
+
+##### `docker_storage_driver`
+
+Data type: `Optional[String]`
+
+
+
+Default value: $kubernetes::docker_storage_driver
+
+##### `docker_storage_opts`
+
+Data type: `Optional[Array]`
+
+
+
+Default value: $kubernetes::docker_storage_opts
 
 ##### `docker_extra_daemon_config`
 
