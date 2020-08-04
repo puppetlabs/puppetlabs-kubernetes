@@ -32,4 +32,5 @@ release_checks_7:
   - centos-7-x86_64
 travis_puppet7_centos_7:
   provisioner: docker
-  images: litmusimage/centos:7
+  images:
+  - litmusimage/centos:7
