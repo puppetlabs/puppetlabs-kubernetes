@@ -1,5 +1,13 @@
 require 'spec_helper'
 describe 'kubernetes::packages', :type => :class do
+  let(:pre_condition) do
+      [
+      'include kubernetes',
+      'include kubernetes::config::kubeadm',
+      'exec { \'kubernetes-systemd-reload\': }',
+      'archive{ \'etcd-archive\': }',
+      ]
+  end
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
       {
@@ -47,8 +55,10 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'pin_packages'  => false,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -65,6 +75,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=systemd"\s*/)}
     it { should contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should_not contain_file('/etc/apt/preferences.d/kubernetes')}
     it '/etc/docker/daemon.json should be valid JSON' do
       require 'json'
       json_data = catalogue
@@ -122,8 +134,10 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'pin_packages'  => false,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -141,6 +155,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=cgroupfs"\s*/)}
     it { should contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should_not contain_file('/etc/apt/preferences.d/kubernetes')}
     it '/etc/docker/daemon.json should be valid JSON' do
       require 'json'
       json_data = catalogue
@@ -200,8 +216,10 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'pin_packages' => true,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -220,6 +238,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=systemd"\s*/)}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should contain_file('/etc/apt/preferences.d/kubernetes')}
   end
 
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
@@ -274,8 +294,10 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'pin_packages'  => true,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -289,6 +311,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
     it { should contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=systemd"\s*/)}
+    it { should contain_file('/etc/apt/preferences.d/docker')}
     it '/etc/docker/daemon.json should be valid JSON' do
       require 'json'
       json_data = catalogue
@@ -349,8 +372,10 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'pin_packages' => false,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -366,6 +391,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=systemd"\s*/)}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should contain_file('/etc/apt/preferences.d/kubernetes')}
   end
 
   context 'with disable_swap => true' do
@@ -418,8 +445,10 @@ describe 'kubernetes::packages', :type => :class do
         'create_repos' => true,
         'docker_log_max_file' => '1',
         'docker_log_max_size' => '100m',
+        'pin_packages'  => true,
         }
     end
+    it { should contain_file_line('remove swap in /etc/fstab')}
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
@@ -431,6 +460,8 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"default-runtime": "runc"\s*/)}
     it { should_not contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=systemd"\s*/)}
+    it { should_not contain_file('/etc/apt/preferences.d/docker')}
+    it { should contain_file('/etc/apt/preferences.d/kubernetes')}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
 end
