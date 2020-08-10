@@ -463,7 +463,7 @@ class kubernetes (
   Boolean $manage_etcd                               = true,
   Integer $kube_api_bind_port                        = 6443,
   Optional[String] $kube_api_advertise_address       = undef,
-  Optional[String] $etcd_version                     = '3.2.18',
+  Optional[String] $etcd_version                     = "3.2.18",
   Optional[String] $etcd_hostname                    = $facts['hostname'],
   Optional[String] $etcd_ip                          = undef,
   Optional[Array] $etcd_peers                        = undef,
