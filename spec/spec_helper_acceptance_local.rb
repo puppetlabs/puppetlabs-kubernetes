@@ -133,10 +133,10 @@ EOS
     run_shell('systemctl start docker.service')
     
   end
-  run_shell('curl -o go.tar.gz https://storage.googleapis.com/golang/go1.12.9.linux-amd64.tar.gz')
+  run_shell('curl -o go.tar.gz https://storage.googleapis.com/golang/go1.15.linux-amd64.tar.gz')
   run_shell('tar -C /usr/local -xzf go.tar.gz')
   run_shell('export PATH=$PATH:/usr/local/go/bin;go get -u github.com/cloudflare/cfssl/cmd/...')
-  run_shell("export PATH=$PATH:/usr/local/go/bin;export PATH=$PATH:/root/go/bin;cd /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling;/opt/puppetlabs/puppet/bin/ruby kube_tool.rb -o #{vmos} -v 1.13.5 -r #{runtime} -c #{cni} -i \"#{vmhostname}:#{vmipaddr}\" -t \"#{vmipaddr}\" -a \"#{vmipaddr}\" -d true")
+  run_shell("export PATH=$PATH:/usr/local/go/bin;export PATH=$PATH:/root/go/bin;cd /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling;/opt/puppetlabs/puppet/bin/ruby kube_tool.rb -o #{vmos} -v 1.16.6 -r #{runtime} -c #{cni} -i \"#{vmhostname}:#{vmipaddr}\" -t \"#{vmipaddr}\" -a \"#{vmipaddr}\" -d true")
   create_remote_file("hosts","/etc/hosts", hosts_file)
   create_remote_file("nginx","/tmp/nginx.yml", nginx)
   create_remote_file("hiera","/etc/puppetlabs/puppet/hiera.yaml", hiera)
@@ -146,7 +146,7 @@ EOS
 
   if os[:family] == 'debian'
     run_shell('sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml')
-    run_shell('echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.13.5" >> /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml')
+    run_shell('echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.16.6" >> /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml')
     run_shell('echo "kubernetes::schedule_on_controller: true"  >> /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml')
     run_shell('echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Debian.yaml')
     run_shell('export KUBECONFIG=\'/etc/kubernetes/admin.conf\'')
@@ -154,7 +154,7 @@ EOS
 
   if os[:family] == 'ubuntu'
     run_shell('sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
-    run_shell('echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.13.5" >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
+    run_shell('echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.16.6" >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
     run_shell('echo "kubernetes::schedule_on_controller: true"  >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
     run_shell('echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Ubuntu.yaml')
     run_shell('export KUBECONFIG=\'/etc/kubernetes/admin.conf\'')

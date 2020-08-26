@@ -12,8 +12,8 @@ describe 'the Kubernetes module' do
         pp = <<-MANIFEST
         if $facts['os']['family'] == 'redhat'{
           class {'kubernetes':
-                  kubernetes_version => '1.16.0',
-                  kubernetes_package_version => '1.16.0',
+                  kubernetes_version => '1.16.6',
+                  kubernetes_package_version => '1.16.6',
                   controller_address => "$::ipaddress:6443",
                   container_runtime => 'docker',
                   manage_docker => false,
@@ -22,7 +22,6 @@ describe 'the Kubernetes module' do
                   environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                   ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
                   cgroup_driver => 'cgroupfs',
-                  etcd_initial_cluster => "localhost=https://$::ipaddress:2380",
                 }
           }
         if $facts['os']['family'] == 'debian'{
