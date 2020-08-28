@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v5.3.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.3.0) (2020-08-26)
+## [v5.4.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.4.0) (2020-08-28)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.2.0...v5.3.0)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.2.0...v5.4.0)
 
 ### Added
 
@@ -15,12 +15,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
-- Remove invalid field "max" from conntrack spec [\#407](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/407) ([nickperry](https://github.com/nickperry))
-
-### UNCATEGORIZED PRS; LABEL THEM ON GITHUB
-
 - Update default yum repositories for docker [\#414](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/414) ([carabasdaniel](https://github.com/carabasdaniel))
-- pdksync - \(maint\) - Pdk Update [\#408](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/408) ([david22swan](https://github.com/david22swan))
+- Remove invalid field "max" from conntrack spec [\#407](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/407) ([nickperry](https://github.com/nickperry))
 
 ## [v5.2.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.2.0) (2020-05-13)
 
@@ -69,6 +65,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Added
 
 - Modify config\_version to kubernetes\_version mapping. Pre-req to supporting Kube 1.15 [\#308](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/308) ([nickperry](https://github.com/nickperry))
+- add support for cilium network provider [\#265](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/265) ([SimonHoenscheid](https://github.com/SimonHoenscheid))
 
 ### Fixed
 
