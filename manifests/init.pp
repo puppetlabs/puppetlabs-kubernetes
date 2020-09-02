@@ -385,11 +385,11 @@
 #
 # [*docker_yum_baseurl*]
 #  The YUM repo URL for the Docker packages.
-#  Defaults to https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+#  Defaults to https://download.docker.com/linux/centos/7/x86_64/stable
 #
 # [*docker_yum_gpgkey*]
 #  The URL for the Docker yum repo gpg key
-#  Defaults to https://yum.dockerproject.org/gpg
+#  Defaults to https://download.docker.com/linux/centos/gpg
 #
 # [*docker_storage_driver*]
 #  Storage Driver to be added to `/etc/docker/daemon.json`
