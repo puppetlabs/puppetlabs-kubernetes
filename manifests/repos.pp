@@ -51,7 +51,7 @@ class kubernetes::repos (
         if $container_runtime == 'docker' and $manage_docker == true {
           yumrepo { 'docker':
             descr    => 'docker',
-            baseurl  => pick($docker_yum_baseurl,'https://download.docker.com/linux/centos/'),
+            baseurl  => pick($docker_yum_baseurl,'https://download.docker.com/linux/centos/7/x86_64/stable'),
             gpgkey   => pick($docker_yum_gpgkey,'https://download.docker.com/linux/centos/gpg'),
             gpgcheck => true,
           }
