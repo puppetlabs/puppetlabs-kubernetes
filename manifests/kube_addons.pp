@@ -13,7 +13,6 @@ class kubernetes::kube_addons (
   Array $path                               = $kubernetes::default_path,
   Optional[Array] $env                      = $kubernetes::environment,
 ) {
-
   Exec {
     path        => $path,
     environment => $env,
@@ -28,7 +27,7 @@ class kubernetes::kube_addons (
       environment => $env,
       command     => "kubectl apply -f ${shellsafe_binding}",
       onlyif      => 'kubectl get nodes',
-      unless      => 'kubectl get clusterrole | grep calico'
+      unless      => 'kubectl get clusterrole | grep calico',
     }
   }
 
@@ -43,10 +42,9 @@ class kubernetes::kube_addons (
   }
 
   if $schedule_on_controller {
-
     exec { 'schedule on controller':
       command => "kubectl taint nodes ${node_name} node-role.kubernetes.io/master-",
-      onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'"
+      onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'",
     }
   }
 

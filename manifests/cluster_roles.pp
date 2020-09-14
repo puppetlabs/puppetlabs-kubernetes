@@ -17,13 +17,12 @@ class kubernetes::cluster_roles (
     $cri_socket = undef
   }
 
-
   if $controller {
     kubernetes::kubeadm_init { $node_name:
       ignore_preflight_errors => $preflight_errors,
       env                     => $env,
-      }
     }
+  }
 
   if $worker {
     kubernetes::kubeadm_join { $node_name:

@@ -479,7 +479,7 @@ class kubernetes (
   Integer $kube_api_bind_port                                    = 6443,
   Optional[String] $kube_api_advertise_address                   = undef,
   Optional[String] $etcd_version                                 = '3.2.18',
-  Optional[String] $etcd_hostname                                = $facts['hostname'],
+  Optional[String] $etcd_hostname                                = $facts['networking']['hostname'],
   Optional[String] $etcd_ip                                      = undef,
   Optional[Array] $etcd_peers                                    = undef,
   Optional[String] $etcd_initial_cluster                         = undef,
@@ -501,7 +501,7 @@ class kubernetes (
   Boolean $install_dashboard                                     = false,
   String $dashboard_version                                      = 'v1.10.1',
   String $kubernetes_dashboard_url                               =
-  "https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml",
+    "https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml",
   Boolean $schedule_on_controller                                = false,
   Integer $api_server_count                                      = undef,
   Boolean $delegated_pki                                         = false,
@@ -530,12 +530,12 @@ class kubernetes (
   Optional[String] $proxy_mode                                   = '',
   Optional[String] $runc_version                                 = '1.0.0-rc5',
   Optional[String] $runc_source                                  =
-  "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
+    "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
   Optional[String] $runc_source_checksum                         = undef,
   Optional[String] $containerd_archive                           = "containerd-${containerd_version}.linux-amd64.tar.gz",
   Optional[String] $containerd_archive_checksum                  = undef,
   Optional[String] $containerd_source                            =
-  "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
+    "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $etcd_archive                                           = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                        = undef,
   String $etcd_package_name                                      = 'etcd-server',
