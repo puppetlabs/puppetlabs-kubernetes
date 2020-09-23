@@ -21,14 +21,12 @@ class kubernetes::service (
 
   case $container_runtime {
     'docker': {
-
       if $manage_docker == true {
         service { 'docker':
           ensure => running,
           enable => true,
         }
       }
-
     }
 
     'cri_containerd': {
@@ -39,7 +37,7 @@ class kubernetes::service (
         mode    => '0644',
         content => template('kubernetes/0-containerd.conf.erb'),
         require => File['/etc/systemd/system/kubelet.service.d'],
-        notify  => [ Exec['kubernetes-systemd-reload'], Service['containerd']],
+        notify  => [Exec['kubernetes-systemd-reload'], Service['containerd']],
       }
 
       file { '/etc/systemd/system/containerd.service':
@@ -48,7 +46,7 @@ class kubernetes::service (
         group   => 'root',
         mode    => '0644',
         content => template('kubernetes/containerd.service.erb'),
-        notify  => [ Exec['kubernetes-systemd-reload'], Service['containerd']],
+        notify  => [Exec['kubernetes-systemd-reload'], Service['containerd']],
       }
 
       service { 'containerd':
@@ -104,6 +102,6 @@ class kubernetes::service (
   }
 
   service { 'kubelet':
-    enable => true
+    enable => true,
   }
 }

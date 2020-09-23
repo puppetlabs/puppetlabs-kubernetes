@@ -57,7 +57,6 @@ class kubernetes::config::kubeadm (
   String $proxy_mode = $kubernetes::proxy_mode,
   Stdlib::IP::Address $metrics_bind_address = $kubernetes::metrics_bind_address,
 ) {
-
   if !($proxy_mode in ['', 'userspace', 'iptables', 'ipvs', 'kernelspace']) {
     fail('Invalid kube-proxy mode! Must be one of "", userspace, iptables, ipvs, kernelspace.')
   }
@@ -69,8 +68,8 @@ class kubernetes::config::kubeadm (
   $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
   $etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key','peer.crt', 'peer.key', 'server.crt', 'server.key']
   $pki = ['ca.crt','ca.key','front-proxy-ca.crt','front-proxy-ca.key','sa.pub','sa.key']
-  $kube_dirs.each | String $dir |  {
-    file  { $dir :
+  $kube_dirs.each | String $dir | {
+    file { $dir :
       ensure  => directory,
       mode    => '0600',
       recurse => true,
@@ -81,7 +80,7 @@ class kubernetes::config::kubeadm (
     if !$delegated_pki {
       $etcd.each | String $etcd_files | {
         file { "/etc/kubernetes/pki/etcd/${etcd_files}":
-          ensure  => present,
+          ensure  => file,
           content => template("kubernetes/etcd/${etcd_files}.erb"),
           mode    => '0600',
         }
@@ -89,12 +88,12 @@ class kubernetes::config::kubeadm (
     }
     if $etcd_install_method == 'wget' {
       file { '/etc/systemd/system/etcd.service':
-        ensure  => present,
+        ensure  => file,
         content => template('kubernetes/etcd/etcd.service.erb'),
       }
     } else {
       file { '/etc/default/etcd':
-        ensure  => present,
+        ensure  => file,
         content => template('kubernetes/etcd/etcd.erb'),
       }
     }
@@ -102,8 +101,8 @@ class kubernetes::config::kubeadm (
 
   if !$delegated_pki {
     $pki.each | String $pki_files | {
-      file {"/etc/kubernetes/pki/${pki_files}":
-        ensure  => present,
+      file { "/etc/kubernetes/pki/${pki_files}":
+        ensure  => file,
         content => template("kubernetes/pki/${pki_files}.erb"),
         mode    => '0600',
       }
@@ -166,7 +165,7 @@ class kubernetes::config::kubeadm (
   }
 
   file { $config_file:
-    ensure  => present,
+    ensure  => file,
     content => template("kubernetes/${config_version}/config_kubeadm.yaml.erb"),
     mode    => '0600',
   }

@@ -33,7 +33,6 @@ class kubernetes::packages (
   Integer $package_pin_priority                 = 32767,
   String $archive_checksum_type                 = 'sha256',
 ) {
-
   $tmp_directory = '/var/tmp/puppetlabs-kubernetes'
 
   # Download directory for archives
@@ -76,9 +75,7 @@ class kubernetes::packages (
       value  => '1',
     }
   } elsif $manage_kernel_modules {
-
     kmod::load { 'br_netfilter': }
-
   } elsif $manage_sysctl_settings {
     sysctl { 'net.bridge.bridge-nf-call-iptables':
       ensure => present,
@@ -92,7 +89,6 @@ class kubernetes::packages (
   }
 
   if $container_runtime == 'docker' and $manage_docker == true {
-
     # procedure: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
     case $facts['os']['family'] {
       'Debian': {
@@ -136,7 +132,7 @@ class kubernetes::packages (
           group   => 'root',
           mode    => '0644',
           content => template('kubernetes/docker/daemon_debian.json.erb'),
-          require => [ File['/etc/docker'], Package[$docker_package_name] ],
+          require => [File['/etc/docker'], Package[$docker_package_name]],
           notify  => Service['docker'],
         }
       }
@@ -158,7 +154,7 @@ class kubernetes::packages (
           group   => 'root',
           mode    => '0644',
           content => template('kubernetes/docker/daemon_redhat.json.erb'),
-          require => [ File['/etc/docker'], Package[$docker_package_name] ],
+          require => [File['/etc/docker'], Package[$docker_package_name]],
           notify  => Service['docker'],
         }
       }
@@ -173,7 +169,6 @@ class kubernetes::packages (
       require => File['/etc/docker/daemon.json'],
       notify  => Exec['kubernetes-systemd-reload'],
     }
-
   }
 
   elsif $container_runtime == 'cri_containerd' {
@@ -194,7 +189,7 @@ class kubernetes::packages (
       creates         => $runc_source_creates,
     }
     -> file { '/usr/bin/runc':
-      mode => '0700'
+      mode => '0700',
     }
 
     if $containerd_archive_checksum and $containerd_archive_checksum =~ /.+/ {
@@ -276,5 +271,4 @@ class kubernetes::packages (
       fail('package pinning is not implemented on this platform')
     }
   }
-
 }
