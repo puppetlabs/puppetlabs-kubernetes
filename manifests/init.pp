@@ -128,6 +128,11 @@
 #   Or to pin explicitly to a specific interface kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
 #   Defaults to undef
 #
+# [*etcd_advertise_ip*]
+#   The ip address that you want etcd to advertise.
+#   Useful when using a proxy or floating IP.
+#   Defaults to the value of etcd_ip
+#
 # [*etcd_peers*]
 #   This will tell etcd how the list of peers to connect to into the cluster.
 #   An example with hiera would be kubernetes::etcd_peers:
@@ -466,6 +471,7 @@ class kubernetes (
   Optional[String] $etcd_version                     = '3.2.18',
   Optional[String] $etcd_hostname                    = $facts['hostname'],
   Optional[String] $etcd_ip                          = undef,
+  Optional[String] $etcd_advertise_ip                = $etcd_ip,
   Optional[Array] $etcd_peers                        = undef,
   Optional[String] $etcd_initial_cluster             = undef,
   Optional[String] $etcd_discovery_srv               = undef,

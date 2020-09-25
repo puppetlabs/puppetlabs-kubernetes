@@ -454,6 +454,15 @@ A Hiera is `kubernetes::etcd_ip:"%{networking.ip}"`.
 
 Defaults to `undef`.
 
+#### `etcd_advertise_ip`
+
+Specifies the IP address etcd can be reached from.
+Useful when using a proxy or floating IP.
+
+A Hiera example is `kubernetes::etcd_advertise_ip:10.0.0.10`.
+
+Defaults to the same value as `etc_ip`.
+
 #### `etcd_initial_cluster`
 
 Informs etcd on how many nodes are in the cluster.

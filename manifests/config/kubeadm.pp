@@ -19,6 +19,7 @@ class kubernetes::config::kubeadm (
   Array $etcd_peers = $kubernetes::etcd_peers,
   String $etcd_hostname = $kubernetes::etcd_hostname,
   String $etcd_ip = $kubernetes::etcd_ip,
+  String $etcd_advertise_ip = $kubernetes::etcd_advertise_ip,
   String $cni_pod_cidr = $kubernetes::cni_pod_cidr,
   Integer $kube_api_bind_port = $kubernetes::kube_api_bind_port,
   String $kube_api_advertise_address = $kubernetes::kube_api_advertise_address,

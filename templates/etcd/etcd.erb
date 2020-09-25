@@ -6,7 +6,7 @@ ETCD_LISTEN_CLIENT_URLS="https://<%= @etcd_ip %>:2379"
 ETCD_DISCOVERY_SRV="<%= @etcd_discovery_srv %>"
 ETCD_INITIAL_ADVERTISE_PEER_URLS="https://<%= @etcd_hostname %>:2380"
 <% else -%>
-ETCD_INITIAL_ADVERTISE_PEER_URLS="https://<%= @etcd_ip %>:2380"
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://<%= @etcd_advertise_ip %>:2380"
 ETCD_INITIAL_CLUSTER="<%= @etcd_initial_cluster %>"
 <% end -%>
 ETCD_INITIAL_CLUSTER_STATE="new"
@@ -16,7 +16,7 @@ ETCD_AUTO_COMPACTION_MODE="<%= @etcd_compaction_method %>"
 <% end -%>
 ETCD_AUTO_COMPACTION_RETENTION="<%= @etcd_compaction_retention %>"
 ETCD_MAX_WALS="<%= @etcd_max_wals %>"
-ETCD_ADVERTISE_CLIENT_URLS="https://<%= @etcd_ip %>:2379"
+ETCD_ADVERTISE_CLIENT_URLS="https://<%= @etcd_advertise_ip %>:2379"
 ETCD_CERT_FILE="/etc/kubernetes/pki/etcd/server.crt"
 ETCD_KEY_FILE="/etc/kubernetes/pki/etcd/server.key"
 ETCD_CLIENT_CERT_AUTH=1
