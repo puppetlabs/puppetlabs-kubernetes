@@ -448,6 +448,24 @@
 # Set the metricsBindAddress (to allow prometheus)
 # Default to 127.0.0.1
 #
+# [*conntrack_max_per_core*]
+# Maximum number of NAT connections to track per CPU core.
+# Set to 0 to leave the limit as-is and ignore conntrack_min.
+# Default to 32768
+#
+# [*conntrack_min*]
+# Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
+# Set conntrack_max_per_core to 0 to leave the limit as-is
+# Default to 131072
+#
+# [*conntrack_tcp_wait_timeout*]
+# NAT timeout for TCP connections in the CLOSE_WAIT state.
+# Default to 1h0m0s
+#
+# [*conntrack_tcp_stablished_timeout*]
+# Idle timeout for established TCP connections (0 to leave as-is).
+# Default to 24h0m0s
+#
 # Authors
 # -------
 #
@@ -580,6 +598,10 @@ class kubernetes (
   Optional[Array] $ignore_preflight_errors                       = undef,
   Stdlib::IP::Address $metrics_bind_address                      = '127.0.0.1',
   Optional[String] $join_discovery_file                          = undef,
+  Integer $conntrack_max_per_core                                = 32768,
+  Integer $conntrack_min                                         = 131072,
+  String $conntrack_tcp_wait_timeout                             = '1h0m0s',
+  String $conntrack_tcp_stablished_timeout                       = '24h0m0s',
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }

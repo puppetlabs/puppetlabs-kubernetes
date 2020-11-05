@@ -56,6 +56,10 @@ class kubernetes::config::kubeadm (
   String $cgroup_driver = $kubernetes::cgroup_driver,
   String $proxy_mode = $kubernetes::proxy_mode,
   Stdlib::IP::Address $metrics_bind_address = $kubernetes::metrics_bind_address,
+  Integer $conntrack_max_per_core = $kubernetes::conntrack_max_per_core,
+  Integer $conntrack_min = $kubernetes::conntrack_min,
+  String $conntrack_tcp_wait_timeout = $kubernetes::conntrack_tcp_wait_timeout,
+  String $conntrack_tcp_stablished_timeout = $kubernetes::conntrack_tcp_stablished_timeout,
 ) {
   if !($proxy_mode in ['', 'userspace', 'iptables', 'ipvs', 'kernelspace']) {
     fail('Invalid kube-proxy mode! Must be one of "", userspace, iptables, ipvs, kernelspace.')

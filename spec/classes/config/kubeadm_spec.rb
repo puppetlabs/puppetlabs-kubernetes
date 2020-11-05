@@ -451,4 +451,60 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it { is_expected.to compile.and_raise_error(%r{metrics_bind_address}) }
   end
+
+  context 'with conntrack settings version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.2',
+        'conntrack_max_per_core' => 0,
+        'conntrack_min' => 0,
+        'conntrack_tcp_wait_timeout' => '0h0m0s',
+        'conntrack_tcp_stablished_timeout' => '0h0m0s',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has 0 in kube_proxy_conntrack_max_per_core:' do
+      expect(config_yaml[2]['conntrack']['maxPerCore']).to eq(0)
+    end
+    it 'has 0 in kube_proxy_conntrack_min:' do
+      expect(config_yaml[2]['conntrack']['min']).to eq(0)
+    end
+    it 'has 0h0m0s in kube_proxy_conntrack_tcp_wait_timeout:' do
+      expect(config_yaml[2]['conntrack']['tcpCloseWaitTimeout']).to eq('0h0m0s')
+    end
+    it 'has 0h0m0s in kube_proxy_conntrack_tcp_stablished_timeout:' do
+      expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
+    end
+  end
+  context 'with conntrack settings version = 1.16' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.16.2',
+        'conntrack_max_per_core' => 0,
+        'conntrack_min' => 0,
+        'conntrack_tcp_wait_timeout' => '0h0m0s',
+        'conntrack_tcp_stablished_timeout' => '0h0m0s',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has 0 in kube_proxy_conntrack_max_per_core:' do
+      expect(config_yaml[2]['conntrack']['maxPerCore']).to eq(0)
+    end
+    it 'has 0 in kube_proxy_conntrack_min:' do
+      expect(config_yaml[2]['conntrack']['min']).to eq(0)
+    end
+    it 'has 0h0m0s in kube_proxy_conntrack_tcp_wait_timeout:' do
+      expect(config_yaml[2]['conntrack']['tcpCloseWaitTimeout']).to eq('0h0m0s')
+    end
+    it 'has 0h0m0s in kube_proxy_conntrack_tcp_stablished_timeout:' do
+      expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
+    end
+  end
+
 end
