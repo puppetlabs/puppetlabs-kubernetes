@@ -479,6 +479,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
   end
+
   context 'with conntrack settings version = 1.16' do
     let(:params) do
       {
@@ -506,5 +507,4 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
   end
-
 end
