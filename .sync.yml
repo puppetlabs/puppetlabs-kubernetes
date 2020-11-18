@@ -55,3 +55,7 @@ spec/spec_helper.rb:
   mock_with: ':rspec'
   coverage_report: true
   hiera_config_ruby: File.expand_path(File.join(File.dirname(__FILE__), 'fixtures/hiera/hiera.yaml'))
+.gitpod.Dockerfile:
+  unmanaged: false
+.gitpod.yml:
+  unmanaged: false
