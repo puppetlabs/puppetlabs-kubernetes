@@ -111,10 +111,10 @@ clientConnection:
 clusterCIDR: <%= @cni_pod_cidr %>
 configSyncPeriod: 15m0s
 conntrack:
-  maxPerCore: 32768
-  min: 131072
-  tcpCloseWaitTimeout: 1h0m0s
-  tcpEstablishedTimeout: 24h0m0s
+  maxPerCore: <%= @conntrack_max_per_core %>
+  min: <%= @conntrack_min %>
+  tcpCloseWaitTimeout: <%= @conntrack_tcp_wait_timeout %>
+  tcpEstablishedTimeout: <%= @conntrack_tcp_stablished_timeout %>
 enableProfiling: false
 healthzBindAddress: 0.0.0.0:10256
 hostnameOverride: ""
