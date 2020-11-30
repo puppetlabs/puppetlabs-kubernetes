@@ -800,6 +800,10 @@ the files if they do not exist.
   A hash of extra volume mounts mounted on the controller manager.
   Defaults to []
 
+[*scheduler_extra_arguments*]
+  A string array of extra arguments to be passed to scheduler.
+  Defaults to []
+
 [*delegated_pki*]
   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
   Defaults to false
@@ -1015,6 +1019,24 @@ Default to 24h
 Set the metricsBindAddress (to allow prometheus)
 Default to 127.0.0.1
 
+[*conntrack_max_per_core*]
+Maximum number of NAT connections to track per CPU core.
+Set to 0 to leave the limit as-is and ignore conntrack_min.
+Default to 32768
+
+[*conntrack_min*]
+Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
+Set conntrack_max_per_core to 0 to leave the limit as-is
+Default to 131072
+
+[*conntrack_tcp_wait_timeout*]
+NAT timeout for TCP connections in the CLOSE_WAIT state.
+Default to 1h0m0s
+
+[*conntrack_tcp_stablished_timeout*]
+Idle timeout for established TCP connections (0 to leave as-is).
+Default to 24h0m0s
+
 Authors
 -------
 
@@ -1166,7 +1188,7 @@ Data type: `Optional[String]`
 
 
 
-Default value: `$facts['hostname']`
+Default value: `$facts['networking']['hostname']`
 
 ##### `etcd_ip`
 
@@ -1449,6 +1471,14 @@ Data type: `Optional[Array]`
 Default value: `[]`
 
 ##### `controllermanager_extra_arguments`
+
+Data type: `Optional[Array]`
+
+
+
+Default value: `[]`
+
+##### `scheduler_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -1872,6 +1902,38 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
+##### `conntrack_max_per_core`
+
+Data type: `Integer`
+
+
+
+Default value: `32768`
+
+##### `conntrack_min`
+
+Data type: `Integer`
+
+
+
+Default value: `131072`
+
+##### `conntrack_tcp_wait_timeout`
+
+Data type: `String`
+
+
+
+Default value: `'1h0m0s'`
+
+##### `conntrack_tcp_stablished_timeout`
+
+Data type: `String`
+
+
+
+Default value: `'24h0m0s'`
+
 ### `kubernetes::cluster_roles`
 
 The kubernetes::cluster_roles class.
@@ -2288,6 +2350,14 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::controllermanager_extra_arguments`
 
+##### `scheduler_extra_arguments`
+
+Data type: `Optional[Array]`
+
+
+
+Default value: `$kubernetes::scheduler_extra_arguments`
+
 ##### `kubelet_extra_arguments`
 
 Data type: `Optional[Array]`
@@ -2391,6 +2461,38 @@ Data type: `Stdlib::IP::Address`
 
 
 Default value: `$kubernetes::metrics_bind_address`
+
+##### `conntrack_max_per_core`
+
+Data type: `Integer`
+
+
+
+Default value: `$kubernetes::conntrack_max_per_core`
+
+##### `conntrack_min`
+
+Data type: `Integer`
+
+
+
+Default value: `$kubernetes::conntrack_min`
+
+##### `conntrack_tcp_wait_timeout`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::conntrack_tcp_wait_timeout`
+
+##### `conntrack_tcp_stablished_timeout`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::conntrack_tcp_stablished_timeout`
 
 ### `kubernetes::config::worker`
 

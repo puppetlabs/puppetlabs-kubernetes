@@ -2,12 +2,31 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v5.4.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.4.0) (2020-11-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.3.0...v5.4.0)
+
+### Added
+
+- Add scheduler\_extra\_arguments parameter [\#451](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/451) ([treydock](https://github.com/treydock))
+- Add configuration options for conntrack settings in v1beta1 and v1beta2 [\#447](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/447) ([Wiston999](https://github.com/Wiston999))
+
+### Fixed
+
+- Updates docker yumrepo default [\#436](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/436) ([JasonWhall](https://github.com/JasonWhall))
+
+### UNCATEGORIZED PRS; LABEL THEM ON GITHUB
+
+- Remove invalid kube-proxy config resourceContainer [\#448](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/448) ([treydock](https://github.com/treydock))
+- Release mergeback version 5.3.0 [\#437](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/437) ([daianamezdrea](https://github.com/daianamezdrea))
+
 ## [v5.3.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.3.0) (2020-09-02)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.2.0...v5.3.0)
 
 ### Added
 
+- pdksync - \(IAC-973\) - Update travis/appveyor to run on new default branch `main` [\#428](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/428) ([david22swan](https://github.com/david22swan))
 - Package pinning and auto restart of etcd [\#420](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/420) ([scoopex](https://github.com/scoopex))
 - Delegated PKI and adapt to k8s 1.15.3+ [\#412](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/412) ([Wiston999](https://github.com/Wiston999))
 - Add option to set the dns domain in kubernetes cluster [\#405](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/405) ([BaronMsk](https://github.com/BaronMsk))
@@ -35,7 +54,6 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
-- pdksync - \(IAC-973\) - Update travis/appveyor to run on new default branch `main` [\#428](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/428) ([david22swan](https://github.com/david22swan))
 - Allow setting metricsBindAddress [\#377](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/377) ([TJM](https://github.com/TJM))
 - Add docker\_extra\_daemon\_config for use when managing docker [\#376](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/376) ([mrwulf](https://github.com/mrwulf))
 - Add support for managing Docker logging max-file and max-size settings. [\#358](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/358) ([nickperry](https://github.com/nickperry))
@@ -73,7 +91,6 @@ All notable changes to this project will be documented in this file. The format 
 - Expose ttl duration parameter [\#313](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/313) ([carabasdaniel](https://github.com/carabasdaniel))
 - make proxy mode configurable [\#297](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/297) ([mrwulf](https://github.com/mrwulf))
 - Fixed duplicate tlsBootstrapToken in config\_worker.yaml.erb for kubernetes 1.14 [\#287](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/287) ([Hillkorn](https://github.com/Hillkorn))
-- Add extra arguments for API server and controller manager [\#282](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/282) ([fydai](https://github.com/fydai))
 
 ## [v4.0.1](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v4.0.1) (2019-05-13)
 
@@ -81,8 +98,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
+- Add extra arguments for API server and controller manager [\#282](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/282) ([fydai](https://github.com/fydai))
 - cluster name missing tag brackets in worker config [\#280](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/280) ([jorhett](https://github.com/jorhett))
 - Avoid log message about waiting for SA when it already exists [\#278](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/278) ([jorhett](https://github.com/jorhett))
+- MODULES-8947 fixing bugs and tests [\#274](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/274) ([sheenaajay](https://github.com/sheenaajay))
 
 # Version 4.0.0
 
