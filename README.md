@@ -296,6 +296,11 @@ controllermanager_extra_volumes => {
 
 Defaults to `{}`.
 
+#### `scheduler_extra_arguments`
+
+A string array of extra arguments passed to the scheduler.
+
+Defaults to `[]`.
 
 #### `create_repos`
 

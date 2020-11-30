@@ -43,6 +43,7 @@ class kubernetes::config::kubeadm (
   Optional[Array] $apiserver_cert_extra_sans = $kubernetes::apiserver_cert_extra_sans,
   Optional[Array] $apiserver_extra_arguments = $kubernetes::apiserver_extra_arguments,
   Optional[Array] $controllermanager_extra_arguments = $kubernetes::controllermanager_extra_arguments,
+  Optional[Array] $scheduler_extra_arguments = $kubernetes::scheduler_extra_arguments,
   Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
   String $service_cidr = $kubernetes::service_cidr,
   String $node_name = $kubernetes::node_name,
@@ -128,6 +129,7 @@ class kubernetes::config::kubeadm (
     }
     $apiserver_merged_extra_arguments = concat($apiserver_extra_arguments, $cloud_args)
     $controllermanager_merged_extra_arguments = concat($controllermanager_extra_arguments, $cloud_args)
+    $scheduler_merged_extra_arguments = concat($scheduler_extra_arguments, $cloud_args)
 
     # could check against Kubernetes 1.10 here, but that uses alpha1 config which doesn't have these options
     if $cloud_config {
@@ -151,6 +153,7 @@ class kubernetes::config::kubeadm (
   } else {
     $apiserver_merged_extra_arguments = $apiserver_extra_arguments
     $controllermanager_merged_extra_arguments = $controllermanager_extra_arguments
+    $scheduler_merged_extra_arguments = $scheduler_extra_arguments
 
     $apiserver_merged_extra_volumes = $apiserver_extra_volumes
     $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes

@@ -327,6 +327,25 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
+        'scheduler_extra_arguments' => ['foo', 'bar'],
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+    it 'has foo in scheduler arguments' do
+      expect(config_yaml[1]['scheduler']['extraArgs']).to include('foo')
+    end
+    it 'has bar in scheduler arguments' do
+      expect(config_yaml[1]['scheduler']['extraArgs']).to include('bar')
+    end
+  end
+
+  context 'with version = 1.14' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.14.1',
         'apiserver_extra_volumes' => {
           'foo' => {
             'hostPath'  => '/mnt',

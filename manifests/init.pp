@@ -233,6 +233,10 @@
 #   A hash of extra volume mounts mounted on the controller manager.
 #   Defaults to []
 #
+# [*scheduler_extra_arguments*]
+#   A string array of extra arguments to be passed to scheduler.
+#   Defaults to []
+#
 # [*delegated_pki*]
 #   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
 #   Defaults to false
@@ -535,6 +539,7 @@ class kubernetes (
   Optional[Array] $apiserver_cert_extra_sans                     = [],
   Optional[Array] $apiserver_extra_arguments                     = [],
   Optional[Array] $controllermanager_extra_arguments             = [],
+  Optional[Array] $scheduler_extra_arguments                     = [],
   String $service_cidr                                           = '10.96.0.0/12',
   Optional[String] $node_label                                   = undef,
   Optional[String] $controller_address                           = undef,
