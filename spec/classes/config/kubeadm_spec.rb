@@ -6,6 +6,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       :kernel => 'Linux',
       :networking => {
         :hostname => 'foo',
+        :fqdn => 'foo.internal.fullurl.com',
       },
       :os => {
         :family => 'Debian',
