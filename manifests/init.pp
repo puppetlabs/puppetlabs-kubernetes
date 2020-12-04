@@ -29,6 +29,14 @@
 #   This is the version of the containerd runtime the module will install.
 #   Defaults to 1.1.0
 #
+# [*containerd_install_method*]
+#   Whether to install containerd via archive or package.
+#   Defaults to archive
+#
+# [*containerd_package_name*]
+#   containerd package name
+#   Defaults to containerd.io
+#
 # [*containerd_archive*]
 #  The name of the containerd archive
 #  Defaults to containerd-${containerd_version}.linux-amd64.tar.gz
@@ -486,6 +494,8 @@ class kubernetes (
   },
   String $container_runtime                                      = 'docker',
   Optional[String] $containerd_version                           = '1.1.0',
+  Enum['archive','package'] $containerd_install_method           = 'archive',
+  String $containerd_package_name                                = 'containerd.io',
   Optional[String] $docker_package_name                          = 'docker-engine',
   Optional[String] $docker_version                               = $facts['os']['family'] ? {
     'Debian' => '17.03.0~ce-0~ubuntu-xenial',

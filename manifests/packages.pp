@@ -1,37 +1,40 @@
 # Class kubernetes packages
 
 class kubernetes::packages (
-  String $kubernetes_package_version            = $kubernetes::kubernetes_package_version,
-  String $container_runtime                     = $kubernetes::container_runtime,
-  Boolean $manage_docker                        = $kubernetes::manage_docker,
-  Boolean $manage_etcd                          = $kubernetes::manage_etcd,
-  Optional[String] $docker_version              = $kubernetes::docker_version,
-  Optional[String] $docker_package_name         = $kubernetes::docker_package_name,
-  Optional[String] $docker_storage_driver       = $kubernetes::docker_storage_driver,
-  Optional[String] $docker_cgroup_driver        = $kubernetes::cgroup_driver,
-  Optional[Array] $docker_storage_opts          = $kubernetes::docker_storage_opts,
-  Optional[String] $docker_extra_daemon_config  = $kubernetes::docker_extra_daemon_config,
-  String $docker_log_max_file                   = $kubernetes::docker_log_max_file,
-  String $docker_log_max_size                   = $kubernetes::docker_log_max_size,
-  Boolean $controller                           = $kubernetes::controller,
-  Optional[String] $containerd_archive          = $kubernetes::containerd_archive,
-  Optional[String] $containerd_archive_checksum = $kubernetes::containerd_archive_checksum,
-  Optional[String] $containerd_source           = $kubernetes::containerd_source,
-  String $etcd_archive                          = $kubernetes::etcd_archive,
-  Optional[String] $etcd_archive_checksum       = $kubernetes::etcd_archive_checksum,
-  String $etcd_version                          = $kubernetes::etcd_version,
-  String $etcd_source                           = $kubernetes::etcd_source,
-  String $etcd_package_name                     = $kubernetes::etcd_package_name,
-  String $etcd_install_method                   = $kubernetes::etcd_install_method,
-  Optional[String] $runc_source                 = $kubernetes::runc_source,
-  Optional[String] $runc_source_checksum        = $kubernetes::runc_source_checksum,
-  Boolean $disable_swap                         = $kubernetes::disable_swap,
-  Boolean $manage_kernel_modules                = $kubernetes::manage_kernel_modules,
-  Boolean $manage_sysctl_settings               = $kubernetes::manage_sysctl_settings,
-  Boolean $create_repos                         = $kubernetes::repos::create_repos,
-  Boolean $pin_packages                         = $kubernetes::pin_packages,
-  Integer $package_pin_priority                 = 32767,
-  String $archive_checksum_type                 = 'sha256',
+  String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
+  String $container_runtime                             = $kubernetes::container_runtime,
+  Boolean $manage_docker                                = $kubernetes::manage_docker,
+  Boolean $manage_etcd                                  = $kubernetes::manage_etcd,
+  Optional[String] $docker_version                      = $kubernetes::docker_version,
+  Optional[String] $docker_package_name                 = $kubernetes::docker_package_name,
+  Optional[String] $docker_storage_driver               = $kubernetes::docker_storage_driver,
+  Optional[String] $docker_cgroup_driver                = $kubernetes::cgroup_driver,
+  Optional[Array] $docker_storage_opts                  = $kubernetes::docker_storage_opts,
+  Optional[String] $docker_extra_daemon_config          = $kubernetes::docker_extra_daemon_config,
+  String $docker_log_max_file                           = $kubernetes::docker_log_max_file,
+  String $docker_log_max_size                           = $kubernetes::docker_log_max_size,
+  Boolean $controller                                   = $kubernetes::controller,
+  Optional[String] $containerd_version                  = $kubernetes::containerd_version,
+  Enum['archive','package'] $containerd_install_method  = $kubernetes::containerd_install_method,
+  String $containerd_package_name                       = $kubernetes::containerd_package_name,
+  Optional[String] $containerd_archive                  = $kubernetes::containerd_archive,
+  Optional[String] $containerd_archive_checksum         = $kubernetes::containerd_archive_checksum,
+  Optional[String] $containerd_source                   = $kubernetes::containerd_source,
+  String $etcd_archive                                  = $kubernetes::etcd_archive,
+  Optional[String] $etcd_archive_checksum               = $kubernetes::etcd_archive_checksum,
+  String $etcd_version                                  = $kubernetes::etcd_version,
+  String $etcd_source                                   = $kubernetes::etcd_source,
+  String $etcd_package_name                             = $kubernetes::etcd_package_name,
+  String $etcd_install_method                           = $kubernetes::etcd_install_method,
+  Optional[String] $runc_source                         = $kubernetes::runc_source,
+  Optional[String] $runc_source_checksum                = $kubernetes::runc_source_checksum,
+  Boolean $disable_swap                                 = $kubernetes::disable_swap,
+  Boolean $manage_kernel_modules                        = $kubernetes::manage_kernel_modules,
+  Boolean $manage_sysctl_settings                       = $kubernetes::manage_sysctl_settings,
+  Boolean $create_repos                                 = $kubernetes::repos::create_repos,
+  Boolean $pin_packages                                 = $kubernetes::pin_packages,
+  Integer $package_pin_priority                         = 32767,
+  String $archive_checksum_type                         = 'sha256',
 ) {
   $tmp_directory = '/var/tmp/puppetlabs-kubernetes'
 
@@ -62,6 +65,7 @@ class kubernetes::packages (
   }
 
   if $manage_kernel_modules and $manage_sysctl_settings {
+    kmod::load { 'overlay': }
     kmod::load { 'br_netfilter':
       before => Sysctl['net.bridge.bridge-nf-call-iptables'],
     }
@@ -75,6 +79,7 @@ class kubernetes::packages (
       value  => '1',
     }
   } elsif $manage_kernel_modules {
+    kmod::load { 'overlay': }
     kmod::load { 'br_netfilter': }
   } elsif $manage_sysctl_settings {
     sysctl { 'net.bridge.bridge-nf-call-iptables':
@@ -170,8 +175,82 @@ class kubernetes::packages (
       notify  => Exec['kubernetes-systemd-reload'],
     }
   }
+  elsif $container_runtime == 'cri_containerd' and $containerd_install_method == 'package' {
+    # procedure: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+    case $facts['os']['family'] {
+      'Debian': {
+        if $create_repos {
+          package { $containerd_package_name:
+            ensure  => $containerd_version,
+            require => Class['Apt::Update'],
+          }
+          if $pin_packages {
+            file { '/etc/apt/preferences.d/containerd':
+              mode    => '0444',
+              owner   => 'root',
+              group   => 'root',
+              content => template('kubernetes/containerd_apt_package_pins.erb'),
+              notify  => Service['containerd'],
+            }
+          }else {
+            file { '/etc/apt/preferences.d/containerd':
+              ensure => absent,
+            }
+          }
+        }else {
+          package { $containerd_package_name:
+            ensure => $containerd_version,
+          }
+          if $pin_packages {
+            fail('for safety reasons package pinning is only usable if you define the create_repos flag')
+          }
+        }
 
-  elsif $container_runtime == 'cri_containerd' {
+        file { '/etc/containerd':
+          ensure => 'directory',
+          mode   => '0644',
+          owner  => 'root',
+          group  => 'root',
+        }
+
+        # Generate using 'containerd config default'
+        file { '/etc/containerd/config.toml':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template('kubernetes/containerd/config.toml.erb'),
+          require => [File['/etc/containerd'], Package[$containerd_package_name]],
+          notify  => Service['containerd'],
+        }
+      }
+      'RedHat': {
+        package { $containerd_package_name:
+          ensure => $containerd_version,
+        }
+
+        file { '/etc/containerd':
+          ensure => 'directory',
+          mode   => '0644',
+          owner  => 'root',
+          group  => 'root',
+        }
+
+        # Generate using 'containerd config default'
+        file { '/etc/containerd/config.toml':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template('kubernetes/containerd/config.toml.erb'),
+          require => [File['/etc/containerd'], Package[$containerd_package_name]],
+          notify  => Service['containerd'],
+        }
+      }
+      default: { notify { "The OS family ${facts['os']['family']} is not supported by this module": } }
+    }
+  }
+  elsif $container_runtime == 'cri_containerd' and $containerd_install_method == 'archive' {
     if $runc_source_checksum and $runc_source_checksum =~ /.+/ {
       $runc_source_checksum_verify = true
       $runc_source_creates = undef

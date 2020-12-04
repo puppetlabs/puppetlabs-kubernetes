@@ -253,6 +253,18 @@ Specifies the version of the containerd runtime the module installs.
 
 Defaults to `1.1.0`.
 
+### `containerd_install_method`
+
+The method used to install containerd. Either `archive` or `package`.
+
+Defaults to `archive`.
+
+### `containerd_package_name`
+
+The package name for containerd when `containerd_install_method` is `package`.
+
+Defaults to `containerd.io`
+
 #### `containerd_archive`
 
 The name of the containerd archive.

@@ -1,23 +1,24 @@
 ## kubernetes repos
 
 class kubernetes::repos (
-  String $container_runtime                 = $kubernetes::container_runtime,
-  Optional[String] $kubernetes_apt_location = $kubernetes::kubernetes_apt_location,
-  Optional[String] $kubernetes_apt_release  = $kubernetes::kubernetes_apt_release,
-  Optional[String] $kubernetes_apt_repos    = $kubernetes::kubernetes_apt_repos,
-  Optional[String] $kubernetes_key_id       = $kubernetes::kubernetes_key_id,
-  Optional[String] $kubernetes_key_source   = $kubernetes::kubernetes_key_source,
-  Optional[String] $kubernetes_yum_baseurl  = $kubernetes::kubernetes_yum_baseurl,
-  Optional[String] $kubernetes_yum_gpgkey   = $kubernetes::kubernetes_yum_gpgkey,
-  Optional[String] $docker_apt_location     = $kubernetes::docker_apt_location,
-  Optional[String] $docker_apt_release      = $kubernetes::docker_apt_release,
-  Optional[String] $docker_apt_repos        = $kubernetes::docker_apt_repos,
-  Optional[String] $docker_yum_baseurl      = $kubernetes::docker_yum_baseurl,
-  Optional[String] $docker_yum_gpgkey       = $kubernetes::docker_yum_gpgkey,
-  Optional[String] $docker_key_id           = $kubernetes::docker_key_id,
-  Optional[String] $docker_key_source       = $kubernetes::docker_key_source,
-  Boolean $manage_docker                    = $kubernetes::manage_docker,
-  Boolean $create_repos                     = $kubernetes::create_repos,
+  String $container_runtime                   = $kubernetes::container_runtime,
+  Optional[String] $kubernetes_apt_location   = $kubernetes::kubernetes_apt_location,
+  Optional[String] $kubernetes_apt_release    = $kubernetes::kubernetes_apt_release,
+  Optional[String] $kubernetes_apt_repos      = $kubernetes::kubernetes_apt_repos,
+  Optional[String] $kubernetes_key_id         = $kubernetes::kubernetes_key_id,
+  Optional[String] $kubernetes_key_source     = $kubernetes::kubernetes_key_source,
+  Optional[String] $kubernetes_yum_baseurl    = $kubernetes::kubernetes_yum_baseurl,
+  Optional[String] $kubernetes_yum_gpgkey     = $kubernetes::kubernetes_yum_gpgkey,
+  Optional[String] $docker_apt_location       = $kubernetes::docker_apt_location,
+  Optional[String] $docker_apt_release        = $kubernetes::docker_apt_release,
+  Optional[String] $docker_apt_repos          = $kubernetes::docker_apt_repos,
+  Optional[String] $docker_yum_baseurl        = $kubernetes::docker_yum_baseurl,
+  Optional[String] $docker_yum_gpgkey         = $kubernetes::docker_yum_gpgkey,
+  Optional[String] $docker_key_id             = $kubernetes::docker_key_id,
+  Optional[String] $docker_key_source         = $kubernetes::docker_key_source,
+  Optional[String] $containerd_install_method = $kubernetes::containerd_install_method,
+  Boolean $manage_docker                      = $kubernetes::manage_docker,
+  Boolean $create_repos                       = $kubernetes::create_repos,
 
 ) {
   if $create_repos {
@@ -34,7 +35,8 @@ class kubernetes::repos (
           },
         }
 
-        if $container_runtime == 'docker' and $manage_docker == true {
+        if ($container_runtime == 'docker' and $manage_docker == true) or
+            ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           apt::source { 'docker':
             location => pick($docker_apt_location,'https://apt.dockerproject.org/repo'),
             repos    => pick($docker_apt_repos,'main'),
@@ -47,7 +49,8 @@ class kubernetes::repos (
         }
       }
       'RedHat': {
-        if $container_runtime == 'docker' and $manage_docker == true {
+        if ($container_runtime == 'docker' and $manage_docker == true) or
+            ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           yumrepo { 'docker':
             descr    => 'docker',
             baseurl  => pick($docker_yum_baseurl,'https://download.docker.com/linux/centos/7/x86_64/stable'),
