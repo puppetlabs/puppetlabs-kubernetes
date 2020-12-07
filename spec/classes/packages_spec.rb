@@ -64,6 +64,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -152,6 +153,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -239,6 +241,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -315,6 +318,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -402,6 +406,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -489,6 +494,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -572,6 +578,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -648,6 +655,7 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
         'etcd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
         'runc_source_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
