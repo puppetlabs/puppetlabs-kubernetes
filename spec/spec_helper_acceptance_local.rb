@@ -118,8 +118,8 @@ EOS
     end
   end 
   if os[:family] == 'redhat'
-    runtime = 'docker'
-    cni = 'flannel'
+    runtime = 'cri_containerd'
+    cni = 'weave'
     run_shell('yum install -y  make bzip2 libtool curl openssl-devel readline-devel ruby-devel git zlib-devel gcc-c++', expect_failures: true)
     run_shell('yum install -y curl gpg gcc gcc-c++ make patch autoconf automake bison libffi-devel libtool patch readline-devel sqlite-devel zlib-devel openssl-devel')
     run_shell('gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB')
@@ -162,7 +162,7 @@ EOS
 
   if os[:family] == 'redhat'
     run_shell('sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml')
-    run_shell('echo "kubernetes::cni_network_provider: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml')
+    run_shell('echo "kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.16.6" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml')
     run_shell('echo "kubernetes::schedule_on_controller: true"  >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml')
     run_shell('echo "kubernetes::taint_master: false" >> /etc/puppetlabs/code/environments/production/hieradata/Redhat.yaml')
     run_shell('export KUBECONFIG=\'/etc/kubernetes/admin.conf\'')
