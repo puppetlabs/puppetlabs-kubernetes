@@ -127,10 +127,6 @@ EOS
     run_shell('swapoff -a')
     run_shell('systemctl stop firewalld && systemctl disable firewalld')
     run_shell('yum install -y yum-utils device-mapper-persistent-data lvm2')
-    run_shell('yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo')
-    run_shell('yum install -y docker-ce-18.06.3.ce-3.el7')
-    run_shell("usermod -aG docker $(whoami)")
-    run_shell('systemctl start docker.service')
     
   end
   run_shell('curl -o go.tar.gz https://storage.googleapis.com/golang/go1.15.linux-amd64.tar.gz')
