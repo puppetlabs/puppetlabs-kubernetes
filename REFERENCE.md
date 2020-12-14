@@ -748,6 +748,10 @@ the files if they do not exist.
     This will tell etcd how many WAL files to be kept
   Defaults to 5
 
+[*etcd_request_bytes*]
+    This will tell etcd the maximum size of a request in bytes
+  Defaults to 1572864
+
 [*etcd_ca_key*]
   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
   Defaults to undef
@@ -1253,6 +1257,14 @@ Data type: `Integer`
 
 
 Default value: `5`
+
+##### `etcd_request_bytes`
+
+Data type: `Integer`
+
+
+
+Default value: `1572864`
 
 ##### `etcd_ca_key`
 

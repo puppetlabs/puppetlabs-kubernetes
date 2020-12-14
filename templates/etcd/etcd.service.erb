@@ -40,7 +40,8 @@ ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
 <% if @etcd_version >= "3.3.0" -%>
     --auto-compaction-mode <%= @etcd_compaction_method %> \
 <% end -%>
-    --max-wals <%= @etcd_max_wals %>
+    --max-wals <%= @etcd_max_wals %> \
+    --max-request-bytes <%= @etcd_max_request_bytes %>
 
 
 [Install]

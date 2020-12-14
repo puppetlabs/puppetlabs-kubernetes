@@ -189,6 +189,10 @@
 #     This will tell etcd how many WAL files to be kept
 #   Defaults to 5
 #
+# [*etcd_max_request_bytes*]
+#     This will tell etcd the maximum size of a request in bytes
+#   Defaults to 1572864
+#
 # [*etcd_ca_key*]
 #   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
 #   Defaults to undef
@@ -520,6 +524,7 @@ class kubernetes (
   Optional[Enum['periodic', 'revision']] $etcd_compaction_method = 'periodic',
   Variant[String, Integer] $etcd_compaction_retention            = 0,
   Integer $etcd_max_wals                                         = 5,
+  Integer $etcd_max_request_bytes                                = 1572864,
   Optional[String] $etcd_ca_key                                  = undef,
   Optional[String] $etcd_ca_crt                                  = undef,
   Optional[String] $etcdclient_key                               = undef,
