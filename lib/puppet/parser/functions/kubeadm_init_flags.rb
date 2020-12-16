@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'shellwords'
 #
 # kubeadm_init_flags.rb
