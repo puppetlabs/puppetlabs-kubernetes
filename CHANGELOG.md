@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v5.5.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.5.0) (2020-12-16)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.4.0...v5.5.0)
+
+### Added
+
+- Support installing containerd using a package [\#460](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/460) ([treydock](https://github.com/treydock))
+- pdksync - \(feat\) - Add support for puppet 7 [\#459](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/459) ([daianamezdrea](https://github.com/daianamezdrea))
+
 ## [v5.4.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.4.0) (2020-11-30)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.3.0...v5.4.0)
@@ -13,12 +22,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
-- Updates docker yumrepo default [\#436](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/436) ([JasonWhall](https://github.com/JasonWhall))
-
-### UNCATEGORIZED PRS; LABEL THEM ON GITHUB
-
 - Remove invalid kube-proxy config resourceContainer [\#448](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/448) ([treydock](https://github.com/treydock))
-- Release mergeback version 5.3.0 [\#437](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/437) ([daianamezdrea](https://github.com/daianamezdrea))
 
 ## [v5.3.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.3.0) (2020-09-02)
 
@@ -30,19 +34,18 @@ All notable changes to this project will be documented in this file. The format 
 - Package pinning and auto restart of etcd [\#420](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/420) ([scoopex](https://github.com/scoopex))
 - Delegated PKI and adapt to k8s 1.15.3+ [\#412](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/412) ([Wiston999](https://github.com/Wiston999))
 - Add option to set the dns domain in kubernetes cluster [\#405](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/405) ([BaronMsk](https://github.com/BaronMsk))
+- \(FEAT\) Add docker storage options [\#383](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/383) ([AblionGE](https://github.com/AblionGE))
 
 ### Fixed
 
+- Updates docker yumrepo default [\#436](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/436) ([JasonWhall](https://github.com/JasonWhall))
 - Update default yum repositories for docker [\#414](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/414) ([carabasdaniel](https://github.com/carabasdaniel))
 - Remove invalid field "max" from conntrack spec [\#407](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/407) ([nickperry](https://github.com/nickperry))
+- Configure extra\_volumes when cloud\_provider is set and cloud\_config is not. Fixes \#301 [\#361](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/361) ([nickperry](https://github.com/nickperry))
 
 ## [v5.2.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v5.2.0) (2020-05-13)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.1.0...v5.2.0)
-
-### Added
-
-- \(FEAT\) Add docker storage options [\#383](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/383) ([AblionGE](https://github.com/AblionGE))
 
 ### Fixed
 
@@ -63,7 +66,6 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - Fix worker k8s 1.6 [\#363](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/363) ([BaronMsk](https://github.com/BaronMsk))
-- Configure extra\_volumes when cloud\_provider is set and cloud\_config is not. Fixes \#301 [\#361](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/361) ([nickperry](https://github.com/nickperry))
 - Add support for readOnly and pathType fields on volumes [\#359](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/359) ([nickperry](https://github.com/nickperry))
 - Adding all IPs for etcd servers to etcd server cert [\#350](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/350) ([blodone](https://github.com/blodone))
 - repair/improve package installation [\#348](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/348) ([scoopex](https://github.com/scoopex))
@@ -78,7 +80,6 @@ All notable changes to this project will be documented in this file. The format 
 ### Changed
 
 - \(MODULES-9550\) - v5.0.0 Release Prep [\#324](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/324) ([sheenaajay](https://github.com/sheenaajay))
-- \(FM-8100\) Update minimum supported Puppet version to 5.5.10 [\#291](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/291) ([sheenaajay](https://github.com/sheenaajay))
 
 ### Added
 
@@ -95,6 +96,10 @@ All notable changes to this project will be documented in this file. The format 
 ## [v4.0.1](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v4.0.1) (2019-05-13)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/4.0.0...v4.0.1)
+
+### Changed
+
+- \(FM-8100\) Update minimum supported Puppet version to 5.5.10 [\#291](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/291) ([sheenaajay](https://github.com/sheenaajay))
 
 ### Fixed
 
