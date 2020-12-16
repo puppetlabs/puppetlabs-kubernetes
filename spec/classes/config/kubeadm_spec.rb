@@ -5,22 +5,22 @@ describe 'kubernetes::config::kubeadm', :type => :class do
   let(:pre_condition) { 'include kubernetes' }
   let(:facts) do
     {
-      :kernel => 'Linux',
-      :networking => {
-        :hostname => 'foo',
+      kernel: 'Linux',
+      networking: {
+        hostname: 'foo',
       },
-      :os => {
-        :family => 'Debian',
-        :name => 'Ubuntu',
-        :release => {
-          :full => '16.04',
+      os: {
+        family: 'Debian',
+        name: 'Ubuntu',
+        release: {
+          full: '16.04',
         },
-        :distro => {
-          :codename => 'xenial',
+        distro: {
+          codename: 'xenial',
         },
       },
-      :ec2_metadata => {
-        :hostname => 'ip-10-10-10-1.ec2.internal',
+      ec2_metadata: {
+        hostname: 'ip-10-10-10-1.ec2.internal',
       },
     }
   end
