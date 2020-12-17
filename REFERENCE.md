@@ -596,6 +596,14 @@ Parameters
   This is the version of the containerd runtime the module will install.
   Defaults to 1.1.0
 
+[*containerd_install_method*]
+  Whether to install containerd via archive or package.
+  Defaults to archive
+
+[*containerd_package_name*]
+  containerd package name
+  Defaults to containerd.io
+
 [*containerd_archive*]
  The name of the containerd archive
  Defaults to containerd-${containerd_version}.linux-amd64.tar.gz
@@ -1085,6 +1093,22 @@ Data type: `Optional[String]`
 
 
 Default value: `'1.1.0'`
+
+##### `containerd_install_method`
+
+Data type: `Enum['archive','package']`
+
+
+
+Default value: `'archive'`
+
+##### `containerd_package_name`
+
+Data type: `String`
+
+
+
+Default value: `'containerd.io'`
 
 ##### `docker_package_name`
 
@@ -2862,6 +2886,30 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
+##### `containerd_version`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::containerd_version`
+
+##### `containerd_install_method`
+
+Data type: `Enum['archive','package']`
+
+
+
+Default value: `$kubernetes::containerd_install_method`
+
+##### `containerd_package_name`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::containerd_package_name`
+
 ##### `containerd_archive`
 
 Data type: `Optional[String]`
@@ -3134,6 +3182,14 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_key_source`
 
+##### `containerd_install_method`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::containerd_install_method`
+
 ##### `manage_docker`
 
 Data type: `Boolean`
@@ -3165,6 +3221,14 @@ Data type: `String`
 
 
 Default value: `$kubernetes::container_runtime`
+
+##### `containerd_install_method`
+
+Data type: `Enum['archive','package']`
+
+
+
+Default value: `$kubernetes::containerd_install_method`
 
 ##### `controller`
 
