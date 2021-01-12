@@ -33,7 +33,7 @@ parser = OptionParser.new do|opts|
   opts.on('-c', '--cni-provider cni-provider', 'the networking provider to use, flannel, weave, calico or cilium are supported') do |cni_provider|
     options[:cni_provider] = cni_provider;
   end
-  opts.on('-p', '--cni-provider-version [cni_provider_version]', 'the networking provider version to use, calico and cilium will use this to reference the correct deployment downloadlink') do |cni_provider_version|
+  opts.on('-p', '--cni-provider-version [cni_provider_version]', 'the networking provider version to use, cilium will use this to reference the correct deployment download link') do |cni_provider_version|
     options[:cni_provider_version] = cni_provider_version;
   end
 

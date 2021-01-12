@@ -67,10 +67,19 @@
 #   The overlay (internal) network range to use.
 #   Defaults to undef. kube_tool sets this per cni provider.
 #
+# [*cni_network_preinstall*]
+#
+#  The URL to install the Tigera operator.
+#  Used only by calico.
+#
 # [*cni_network_provider*]
 #
 #  The URL to get the cni providers yaml file.
 #  Defaults to `undef`. `kube_tool` sets this value.
+#
+# [*cni_provider*]
+#
+#  The NAME of the CNI provider, as provided to kubetool.
 #
 # [*cni_rbac_binding*]
 #  The URL get the cni providers rbac rules. This is for use with Calico only.
@@ -533,7 +542,9 @@ class kubernetes (
   Optional[String] $etcdserver_key                               = undef,
   Optional[String] $etcdpeer_crt                                 = undef,
   Optional[String] $etcdpeer_key                                 = undef,
+  Optional[String] $cni_network_preinstall                       = undef,
   Optional[String] $cni_network_provider                         = undef,
+  Optional[String] $cni_provider                                 = undef,
   Optional[String] $cni_rbac_binding                             = undef,
   Boolean $install_dashboard                                     = false,
   String $dashboard_version                                      = 'v1.10.1',

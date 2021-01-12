@@ -67,7 +67,7 @@ The above parameters are:
 * `VERSION`: The version of Kubernetes to deploy.
 * `CONTAINER_RUNTIME`: The container runtime Kubernetes uses. Set this value to `docker` (officially supported) or `cri_containerd`. Advanced Kubernetes users can use `cri_containerd`, however this requires an increased understanding of Kubernetes, specifically when running applications in a HA cluster. To run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module. For more information, see the Kubernetes [documentation](https://kubernetes-v1-4.github.io/docs/user-guide/load-balancer/).
 * `CNI_PROVIDER`: The CNI network to install. Set this value to `weave`, `flannel`, `calico` or `cilium`.
-* `CNI_PROVIDER_VERSION` The CNI version to use `calico` and `cilium` use this variable to reference the correct deployment file. Current version for `calico` is `3.6` and `cilium` is `1.4.3`
+* `CNI_PROVIDER_VERSION` The CNI version to use. `cilium` uses this variable to reference the correct deployment file. Current version `cilium` is `1.4.3`
 * `ETCD_INITIAL_CLUSTER`: The server hostnames and IPs in the form of `hostname:ip`. When in production, include three, five, or seven nodes for etcd.
 * `ETCD_IP`: The IP each etcd member listens on. We recommend passing the fact for the interface to be used by the cluster.
 * `KUBE_API_ADVERTISE_ADDRESS`: The IP each etcd/apiserver instance uses on each controller. We recommend passing the fact for the interface to be used by the cluster.
