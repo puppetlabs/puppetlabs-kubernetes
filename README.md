@@ -277,6 +277,18 @@ The download URL for the containerd archive.
 
 Defaults to `https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}`.
 
+#### `containerd_plugins_registry_mirrors`
+
+Specifies custom mirrors registry.
+
+An example in hiera:
+```
+kubernetes::containerd_plugins_registry_mirrors:
+  docker.elastic.co: https://artifact-docker-remote.lapin.lapine.net
+  k8s.gcr.io: https://artifact-docker-remote.lapin.lapine.net
+```
+Defaults `undef`
+
 #### `controller_address`
 
 The IP address and port for the controller the worker node joins. For example `172.17.10.101:6443`.

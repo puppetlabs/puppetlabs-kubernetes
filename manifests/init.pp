@@ -50,6 +50,12 @@
 #  The URL to download the containerd archive
 #  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 #
+# [*containerd_plugins_registry_mirrors*]
+# If you want custom plugins mirrors.
+#   An example with hiera would be kubernetes::containerd_plugins_registry_mirrors:
+#                                   docker.elastic.co: https://artifact-docker-remote.lapin.lapine.net
+# Defaults Undef
+#
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
 #   Default cluster.local
@@ -574,6 +580,7 @@ class kubernetes (
   Optional[String] $containerd_archive_checksum                  = undef,
   Optional[String] $containerd_source                            =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
+  Optional[Hash] $containerd_plugins_registry_mirrors            = undef,
   String $etcd_archive                                           = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                        = undef,
   String $etcd_package_name                                      = 'etcd-server',
