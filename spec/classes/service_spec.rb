@@ -71,11 +71,13 @@ describe 'kubernetes::service', :type => :class do
             'cloud_config' => '',
             'manage_docker' => false,
             'manage_etcd' => true,
+            'etcd_install_method' => 'wget',
         }
     end
     it { should_not contain_service('docker')}
     it { should contain_service('etcd')}
     it { should contain_service('kubelet')}
+    it { should contain_exec('systemctl-daemon-reload-etcd') }
   end
 
   context 'with os.family => RedHat' do

@@ -6,6 +6,7 @@ class kubernetes::service (
   Boolean $controller                                   = $kubernetes::controller,
   Boolean $manage_docker                                = $kubernetes::manage_docker,
   Boolean $manage_etcd                                  = $kubernetes::manage_etcd,
+  String $etcd_install_method                           = $kubernetes::etcd_install_method,
   String $kubernetes_version                            = $kubernetes::kubernetes_version,
   Optional[String] $cloud_provider                      = $kubernetes::cloud_provider,
   Optional[String] $cloud_config                        = $kubernetes::cloud_config,
@@ -72,7 +73,21 @@ class kubernetes::service (
       ensure => running,
       enable => true,
     }
-    File <| path == '/etc/systemd/system/kubelet.service.d' or path == '/etc/default/etcd' |> ~> Service['etcd']
+    File <|
+      path == '/etc/systemd/system/kubelet.service.d' or
+      path == '/etc/default/etcd' or
+      path == '/etc/systemd/system/etcd.service'
+    |> ~> Service['etcd']
+
+    if $etcd_install_method == 'wget' {
+      exec { 'systemctl-daemon-reload-etcd':
+        path        => '/usr/bin:/bin:/usr/sbin:/sbin',
+        command     => 'systemctl daemon-reload',
+        refreshonly => true,
+        subscribe   => File['/etc/systemd/system/etcd.service'],
+        notify      => Service['etcd'],
+      }
+    }
   }
 
   # RedHat needs to have CPU and Memory accounting enabled to avoid systemd proc errors
