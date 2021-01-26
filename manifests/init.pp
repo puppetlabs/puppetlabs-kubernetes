@@ -167,7 +167,7 @@
 #
 # [*etcd_initial_cluster*]
 #    This will tell etcd how many nodes will be in the cluster and is passed as a string.
-#   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-master=http://172.17.10.101:2380,etcd-kube-replica-master-01=http://172.17.10.210:2380,etcd-kube-replica-master-02=http://172.17.10.220:2380
+#   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-control-plane=http://172.17.10.101:2380,etcd-kube-replica-control-plane-01=http://172.17.10.210:2380,etcd-kube-replica-control-plane-02=http://172.17.10.220:2380
 #   Defaults to undef
 #
 # [*etcd_initial_cluster_state*]
@@ -303,7 +303,7 @@
 #   Defaults to v1.10.1
 #
 # [*schedule_on_controller*]
-#   A flag to remove the master role and allow pod scheduling on controllers
+#   A flag to remove the control plane role and allow pod scheduling on controllers
 #   Defaults to true
 #
 # [*service_cidr*]
@@ -338,7 +338,7 @@
 #  Defaults to {}
 #
 # [*kubelet_extra_arguments*]
-#  A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both masters and nodes.
+#  A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
 #  Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
 #  Defaults to []
 #
