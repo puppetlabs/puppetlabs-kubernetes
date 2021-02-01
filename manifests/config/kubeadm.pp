@@ -31,6 +31,7 @@ class kubernetes::config::kubeadm (
   String $etcd_version = $kubernetes::etcd_version,
   Integer $etcd_max_wals = $kubernetes::etcd_max_wals,
   Integer $etcd_max_request_bytes = $kubernetes::etcd_max_request_bytes,
+  Optional[String] $etcd_listen_metric_urls = $kubernetes::etcd_listen_metric_urls,
   String $token = $kubernetes::token,
   String $ttl_duration = $kubernetes::ttl_duration,
   String $discovery_token_hash = $kubernetes::discovery_token_hash,

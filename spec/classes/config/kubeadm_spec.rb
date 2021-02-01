@@ -55,10 +55,25 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service') }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--initial-cluster *}) }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--discovery-srv.*}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--listen-metrics-urls.*}) }
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
+
+    context 'with etcd_listen_metric_urls defined' do
+      let(:params) do
+        {
+          'manage_etcd' => true,
+          'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
+          'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
+          'kubelet_extra_arguments' => ['foo'],
+          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381',
+        }
+      end
+
+      it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--listen-metrics-urls http://0.0.0.0:2381.*}) }
+    end
   end
 
   context 'with manage_etcd => true and delegated_pki => true' do
@@ -94,6 +109,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--initial-cluster *}) }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--auto-compaction-mode*}) }
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--discovery-srv.*}) }
+    it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--listen-metrics-urls.*}) }
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
@@ -150,6 +166,23 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_LISTEN_METRICS_URLS=.*}) }
+
+    context 'with etcd_listen_metric_urls defined' do
+      let(:params) do
+        {
+          'etcd_install_method' => 'package',
+          'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
+          'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
+          'kubelet_extra_arguments' => ['foo'],
+          'manage_etcd' => true,
+          'etcd_version' => '3.3.0',
+          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381',
+        }
+      end
+
+      it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_LISTEN_METRICS_URLS="http://0.0.0.0:2381".*}) }
+    end
   end
 
   context 'manage_etcd => true and etcd_install_method => package and etcd_discovery_srv => etcd-autodiscovery' do

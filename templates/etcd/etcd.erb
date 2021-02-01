@@ -17,6 +17,9 @@ ETCD_AUTO_COMPACTION_MODE="<%= @etcd_compaction_method %>"
 ETCD_AUTO_COMPACTION_RETENTION="<%= @etcd_compaction_retention %>"
 ETCD_MAX_WALS="<%= @etcd_max_wals %>"
 ETCD_MAX_REQUEST_BYTES="<%= @etcd_max_request_bytes %>"
+<%- if @etcd_listen_metric_urls -%>
+ETCD_LISTEN_METRICS_URLS="<%= @etcd_listen_metric_urls %>"
+<%- end -%>
 ETCD_ADVERTISE_CLIENT_URLS="https://<%= @etcd_ip %>:2379"
 ETCD_CERT_FILE="/etc/kubernetes/pki/etcd/server.crt"
 ETCD_KEY_FILE="/etc/kubernetes/pki/etcd/server.key"
