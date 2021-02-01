@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-kubernetes.svg?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-kubernetes)
+[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-kubernetes.svg?branch=main)](https://travis-ci.org/puppetlabs/puppetlabs-kubernetes)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/puppetlabs/kubernetes.svg)](https://forge.puppetlabs.com/puppetlabs/kubernetes)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/puppetlabs/kubernetes.svg)](https://forge.puppetlabs.com/puppetlabs/kubernetes)
 
@@ -26,7 +26,7 @@
 src="https://github.com/cncf/artwork/blob/04763c0f5f72b23d6a20bfc9c68c88cee805dbcc/projects/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
 align="right" width="150px" alt="certified kubernetes 1.13">][certified]
 
-[certified]: https://github.com/cncf/k8s-conformance/tree/master/v1.13/puppetlabs-kubernetes
+[certified]: https://github.com/cncf/k8s-conformance/tree/main/v1.13/puppetlabs-kubernetes
 
 This module installs and configures [Kubernetes](https://kubernetes.io/) which is an open-source system for automating deployment, scaling, and management of containerized applications. For efficient management and discovery, containers that make up an application are grouped into logical units.
 
@@ -39,7 +39,7 @@ To bootstrap a Kubernetes cluster in a secure and extensible way, this module us
 
 [Install](https://puppet.com/docs/puppet/5.5/modules_installing.html) this module, [generate the configuration](#generating-the-module-configuration), [add the OS and hostname yaml files to Hiera](#adding-the-`{$OS}.yaml`-and-`{$hostname}.yaml`-files-to-Hiera), and [configure your node](#configuring-your-node).
 
-Included in this module is [Kubetool](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/tooling/kube_tool.rb), a configuration tool that auto-generates the Hiera security parameters, the discovery token hash, and other configurations for your Kubernetes cluster. To simplify installation and use, the tool is available as a Docker image.
+Included in this module is [Kubetool](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/main/tooling/kube_tool.rb), a configuration tool that auto-generates the Hiera security parameters, the discovery token hash, and other configurations for your Kubernetes cluster. To simplify installation and use, the tool is available as a Docker image.
 
 ### Generating the module configuration
 
@@ -58,7 +58,7 @@ docker run --rm -v $(pwd):/mnt --env-file env puppet/kubetool:{$module_version}
 The `docker run` command above includes an `env` file which is included in the root folder of this repo.
 
 ```
-docker run --rm -v $(pwd):/mnt -e OS=ubuntu -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=cilium -e CNI_PROVIDER_VERSION=1.4.3 -e ETCD_INITIAL_CLUSTER=kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220 -e ETCD_IP="%{networking.ip}" -e KUBE_API_ADVERTISE_ADDRESS="%{networking.ip}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
+docker run --rm -v $(pwd):/mnt -e OS=ubuntu -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=cilium -e CNI_PROVIDER_VERSION=1.4.3 -e ETCD_INITIAL_CLUSTER=kube-control-plane:172.17.10.101,kube-replica-control-plane-01:172.17.10.210,kube-replica-control-plane-02:172.17.10.220 -e ETCD_IP="%{networking.ip}" -e KUBE_API_ADVERTISE_ADDRESS="%{networking.ip}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
 ```
 
 The above parameters are:
@@ -475,7 +475,7 @@ Defaults to `undef`.
 
 Informs etcd on how many nodes are in the cluster.
 
-A Hiera example is `kubernetes::etcd_initial_cluster: kube-master:172.17.10.101,kube-replica-master-01:172.17.10.210,kube-replica-master-02:172.17.10.220`.
+A Hiera example is `kubernetes::etcd_initial_cluster: kube-control-plane:172.17.10.101,kube-replica-control-plane-01:172.17.10.210,kube-replica-control-plane-02:172.17.10.220`.
 
 Defaults to `undef`.
 
@@ -616,7 +616,7 @@ Defaults to `{}`.
 
 #### `kubelet_extra_arguments`
 
-A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration. It is applied to both masters and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config and DynamicKubeletConfig.
+A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration. It is applied to both control-planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config and DynamicKubeletConfig.
 
 Defaults to `[]`.
 
@@ -710,7 +710,7 @@ Defaults to `undef`.
 
 #### `schedule_on_controller`
 
-Specifies whether to remove the master role and allow pod scheduling on controllers.
+Specifies whether to remove the control plane role and allow pod scheduling on controllers.
 
 Valid values are `true`, `false`.
 
@@ -754,7 +754,7 @@ Docker is the supported container runtime for this module.
 
 ## Development
 
-If you would like to contribute to this module, please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/CONTRIBUTING.md). For more information, see our [module contribution guide.](https://puppet.com/docs/puppet/latest/contributing.html)
+If you would like to contribute to this module, please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/main/CONTRIBUTING.md). For more information, see our [module contribution guide.](https://puppet.com/docs/puppet/latest/contributing.html)
 
 To run the acceptance tests you can use Puppet Litmus with the Vagrant provider by using the following commands:
 ```
@@ -791,4 +791,4 @@ As currently Litmus does not allow memory size and cpu size parameters for the V
 
 ## Examples
 
-In the examples folder you will find a [bash script](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/master/examples/task_examples.sh) containg a few sample Puppet Bolt commands for the usage of the tasks. The example script is intended to be used with a Kubernetes API that requires the token authentication header, but the token parameter is optional by default.  
+In the examples folder you will find a [bash script](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/main/examples/task_examples.sh) containg a few sample Puppet Bolt commands for the usage of the tasks. The example script is intended to be used with a Kubernetes API that requires the token authentication header, but the token parameter is optional by default.  

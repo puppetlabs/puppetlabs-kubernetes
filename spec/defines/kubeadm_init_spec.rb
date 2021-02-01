@@ -23,7 +23,7 @@ describe 'kubernetes::kubeadm_init', :type => :define do
     let(:params) do
       {
         'config' => '/etc/kubernetes/config.yaml',
-        'node_name' => 'kube-master',
+        'node_name' => 'kube-control-plane',
         'path' => [ '/bin','/usr/bin','/sbin'],
         'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
       }
@@ -37,7 +37,7 @@ describe 'kubernetes::kubeadm_init', :type => :define do
     let(:params) do
       {
         'config' => '/etc/kubernetes/config.yaml',
-        'node_name' => 'kube-master',
+        'node_name' => 'kube-control-plane',
         'path' => [ '/bin','/usr/bin','/sbin'],
         'dry_run' => true,
         'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
@@ -52,7 +52,7 @@ describe 'kubernetes::kubeadm_init', :type => :define do
     let(:params) do
       {
         'config' => '/etc/kubernetes/config.yaml',
-        'node_name' => 'kube-master',
+        'node_name' => 'kube-control-plane',
         'path' => [ '/bin','/usr/bin','/sbin'],
         'ignore_preflight_errors' => ['foo', 'bar'],
         'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],

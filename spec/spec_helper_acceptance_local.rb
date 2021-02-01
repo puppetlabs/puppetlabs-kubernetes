@@ -39,10 +39,10 @@ RSpec.configure do |c|
    run_shell('puppet module install puppetlabs-docker')
 
 hosts_file = <<-EOS
-127.0.0.1 localhost #{vmhostname} kubernetes kube-master
+127.0.0.1 localhost #{vmhostname} kubernetes kube-control-plane
 #{vmipaddr} #{vmhostname}
 #{vmipaddr} kubernetes
-#{vmipaddr} kube-master
+#{vmipaddr} kube-control-plane
       EOS
 
       nginx = <<-EOS
