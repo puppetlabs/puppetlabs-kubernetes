@@ -35,9 +35,8 @@ class kubernetes::packages (
   Boolean $pin_packages                                 = $kubernetes::pin_packages,
   Integer $package_pin_priority                         = 32767,
   String $archive_checksum_type                         = 'sha256',
+  String $tmp_directory                                 = $kubernetes::tmp_directory,
 ) {
-  $tmp_directory = '/var/tmp/puppetlabs-kubernetes'
-
   # Download directory for archives
   file { $tmp_directory:
     ensure => 'directory',

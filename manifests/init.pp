@@ -482,6 +482,10 @@
 # Idle timeout for established TCP connections (0 to leave as-is).
 # Default to 24h0m0s
 #
+# [*tmp_directory*]
+# Directory to use when downloading archives for install.
+# Default to /var/tmp/puppetlabs-kubernetes
+#
 # Authors
 # -------
 #
@@ -622,6 +626,7 @@ class kubernetes (
   Integer $conntrack_min                                         = 131072,
   String $conntrack_tcp_wait_timeout                             = '1h0m0s',
   String $conntrack_tcp_stablished_timeout                       = '24h0m0s',
+  String $tmp_directory                                          = '/var/tmp/puppetlabs-kubernetes',
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }
