@@ -28,7 +28,8 @@ class OtherParams
        cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
        cni_pod_cidr = '10.244.0.0/16'
     elsif cni_provider.match('calico')
-       cni_network_provider = "https://docs.projectcalico.org/v#{cni_provider_version}/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml"
+       cni_network_preinstall = "https://docs.projectcalico.org/manifests/tigera-operator.yaml"
+       cni_network_provider = "https://docs.projectcalico.org/manifests/custom-resources.yaml"
        cni_pod_cidr = '192.168.0.0/16'
     elsif cni_provider.match('cilium')
       cni_pod_cidr = '10.244.0.0/16'
@@ -68,8 +69,12 @@ class OtherParams
     data['kubernetes::kubernetes_version'] = version
     data['kubernetes::kubernetes_package_version'] = kubernetes_package_version
     data['kubernetes::container_runtime'] = container_runtime
+    if cni_network_preinstall
+      data['kubernetes::cni_network_preinstall'] = cni_network_preinstall
+    end
     data['kubernetes::cni_network_provider'] = cni_network_provider
     data['kubernetes::cni_pod_cidr'] = cni_pod_cidr
+    data['kubernetes::cni_provider'] = cni_provider
     data['kubernetes::etcd_initial_cluster'] = etcd_initial_cluster
     data['kubernetes::etcd_peers'] = etcd_peers
     data['kubernetes::etcd_ip'] = etcd_ip

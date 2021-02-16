@@ -31,6 +31,29 @@ describe 'kubernetes::kube_addons', :type => :class do
     it { should contain_exec('Install calico rbac bindings')}
     it { should contain_exec('Install cni network provider')}
     it { should contain_exec('schedule on controller')}
+
+    it { should_not contain_exec('Install cni network (preinstall)')}
+    it { should_not contain_file('/etc/kubernetes/calico-installation.yaml')}
+    it { should_not contain_file_line('Configure calico ipPools.cidr')}
+  end
+
+  context 'with cni_provider => calico' do
+    let(:params) do {
+      'controller' => true,
+      'cni_network_preinstall' => 'https://foo.test/tigera-operator',
+      'cni_network_provider' => 'https://foo.test',
+      'cni_provider' => 'calico',
+      'install_dashboard' => false,
+      'dashboard_version' => 'v1.10.1',
+      'kubernetes_version' => '1.10.2',
+      'node_name' => 'foo',
+      }
+    end
+
+    it { should contain_exec('Install cni network (preinstall)')}
+    it { should contain_file('/etc/kubernetes/calico-installation.yaml')}
+    it { should contain_file_line('Configure calico ipPools.cidr')}
+    it { should contain_exec('Install cni network provider')}
   end
 
   context 'with install_dashboard => false' do
