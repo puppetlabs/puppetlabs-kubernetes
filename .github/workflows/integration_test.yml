@@ -1,4 +1,4 @@
-name: "PR Testing"
+name: "Integration Testing"
 
 on: [pull_request]
 
@@ -25,7 +25,6 @@ jobs:
       run: |
         echo STEP_ID=setup-environment >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Checkout Source
       uses: actions/checkout@v2
       if: ${{ github.repository_owner == 'puppetlabs' }}
@@ -43,29 +42,25 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
-
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
-        echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
+        echo STEP_ID=Setup-Integration-Test-Matrix >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
-    - name: Setup Acceptance Test Matrix
+    - name: Setup Integration Test Matrix
       id: get-matrix
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata
+          echo  "::set-output name=matrix::{'platform':['centos-7'],'collection':['puppet6-nightly', 'puppet7-nightly']}"
         else
           echo  "::set-output name=matrix::{}"
         fi
-
     - name: "Honeycomb: Record Setup Test Matrix time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
-
-  Acceptance:
+  Integration:
     needs:
       - setup_matrix
     if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
@@ -82,7 +77,6 @@ jobs:
     - run: |
         echo 'platform=${{ matrix.platform }}' >> $BUILDEVENT_FILE
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
-
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -95,7 +89,6 @@ jobs:
       run: |
         echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-1 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Checkout Source
       uses: actions/checkout@v2
 
@@ -110,17 +103,20 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
-
+    - name: Create the fixtures directory
+      run: |
+        echo ::group::Create the fixtures directory
+        buildevents cmd $TRACE_ID $STEP_ID 'bundle exec rake spec_prep' -- bundle exec rake spec_prep
+        echo ::endgroup::
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Provision test environment
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision ${{ matrix.platform }}' -- bundle exec rake 'litmus:provision[provision::provision_service,${{ matrix.platform }}]'
+        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_gcp gcp_image=${{ matrix.platform }}
         echo ::group::=== REQUEST ===
         cat request.json || true
         echo
@@ -128,15 +124,20 @@ jobs:
         echo ::group::=== INVENTORY ===
         sed -e 's/password: .*/password: "[redacted]"/' < inventory.yaml || true
         echo ::endgroup::
-
-    - name: Install agent
+    - name: Install module
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_agent ${{ matrix.collection }}' -- bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
+        buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::puppetserver_setup' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::puppetserver_setup -i ./inventory.yaml
+    - name: Install agent
+      uses: nick-invision/retry@v1
+      with:
+        timeout_minutes: 30
+        max_attempts: 5
+        retry_wait_seconds: 60
+        command: buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_agent ${{ matrix.collection }}' -- bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
 
     - name: Install module
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_module' -- bundle exec rake 'litmus:install_module'
-
     - name: "Honeycomb: Record deployment times"
       if: ${{ always() }}
       run: |
@@ -146,17 +147,15 @@ jobs:
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
         echo ::endgroup::
 
-    - name: Run acceptance tests
+    - name: Run integration tests
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:acceptance:parallel' -- bundle exec rake 'litmus:acceptance:parallel'
-
-    - name: "Honeycomb: Record acceptance testing times"
+        buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes:integration' -- bundle exec rake kubernetes:integration
+    - name: "Honeycomb: Record integration testing times"
       if: ${{ always() }}
       run: |
-        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run acceptance tests'
+        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run integration tests'
         echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Remove test environment
       if: ${{ always() }}
       continue-on-error: true
@@ -168,7 +167,6 @@ jobs:
           echo
           echo ::endgroup::
         fi
-
     - name: "Honeycomb: Record removal times"
       if: ${{ always() }}
       run: |

@@ -22,6 +22,15 @@ Gemfile:
 Rakefile:
   changelog_user: puppetlabs
   changelog_since_tag: '4.0.0'
+  extras:
+    - |
+      require 'rspec/core/rake_task'
+      namespace :kubernetes do
+        RSpec::Core::RakeTask.new(:integration) do |t|
+          t.pattern = 'spec/acceptance/**{,/*/**}/*_spec.rb'
+          t.rspec_opts = "--tag integration"
+        end
+      end
 
 .rubocop.yml:
   include_todos:
@@ -51,8 +60,8 @@ spec/spec_helper.rb:
 .gitpod.yml:
   unmanaged: false
 .github/workflows/nightly.yml:
-  unmanaged: false
+  unmanaged: true
 .github/workflows/pr_test.yml:
-  unmanaged: false
+  unmanaged: true
 .github/workflows/auto_release.yml:
   unmanaged: false
