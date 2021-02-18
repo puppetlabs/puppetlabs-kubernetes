@@ -40,7 +40,7 @@ ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
 <% if @etcd_version >= "3.3.0" -%>
     --auto-compaction-mode <%= @etcd_compaction_method %> \
 <% end -%>
-    --max-request-bytes <%= @etcd_max_request_bytes %>
+    --max-request-bytes <%= @etcd_max_request_bytes %> \
 <%- if @etcd_listen_metric_urls -%>
     --listen-metrics-urls <%= @etcd_listen_metric_urls %> \
 <%- end -%>
