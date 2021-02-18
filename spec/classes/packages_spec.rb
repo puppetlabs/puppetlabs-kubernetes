@@ -246,7 +246,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
-    it { should contain_package('containerd.io').with_ensure('1.1.0')}
+    it { should contain_package('containerd.io').with_ensure('1.5.0')}
     it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
@@ -583,7 +583,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
-    it { should contain_package('containerd.io').with_ensure('1.1.0')}
+    it { should contain_package('containerd.io').with_ensure('1.5.0')}
     it { should contain_file('/etc/containerd')}
     it { should contain_file('/etc/containerd/config.toml')}
     it { should contain_file('/etc/apt/preferences.d/containerd')}
