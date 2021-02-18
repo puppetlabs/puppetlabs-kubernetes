@@ -251,7 +251,7 @@ Defaults to `false`.
 
 Specifies the version of the containerd runtime the module installs.
 
-Defaults to `1.1.0`.
+Defaults to `1.5.0`.
 
 ### `containerd_install_method`
 
