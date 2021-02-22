@@ -15,7 +15,7 @@ localAPIEndpoint:
 nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
-  criSocket: /run/containerd/containerd.sock
+  criSocket: unix:///run/containerd/containerd.sock
   <%- end -%>
   kubeletExtraArgs:
     cgroup-driver: <%= @cgroup_driver %>
