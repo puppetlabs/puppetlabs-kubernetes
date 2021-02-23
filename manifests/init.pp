@@ -493,7 +493,7 @@ class kubernetes (
     'RedHat' => $kubernetes::kubernetes_version,
   },
   String $container_runtime                                      = 'docker',
-  Optional[String] $containerd_version                           = '1.5.0',
+  Optional[String] $containerd_version                           = '1.4.3',
   Enum['archive','package'] $containerd_install_method           = 'archive',
   String $containerd_package_name                                = 'containerd.io',
   Optional[String] $docker_package_name                          = 'docker-engine',
