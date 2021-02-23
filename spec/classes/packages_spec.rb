@@ -123,11 +123,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'docker',
         'kubernetes_package_version' => '1.10.2',
         'docker_version' => '17.03.1.ce-1.el7.centos',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'archive',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -210,11 +210,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'cri_containerd',
         'kubernetes_package_version' => '1.10.2',
         'docker_version' => '17.03.1.ce-1.el7.centos',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'package',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -246,7 +246,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_kmod__load('br_netfilter')}
     it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
-    it { should contain_package('containerd.io').with_ensure('1.5.0')}
+    it { should contain_package('containerd.io').with_ensure('1.4.3')}
     it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
@@ -286,11 +286,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'cri_containerd',
         'kubernetes_package_version' => '1.10.2-00',
         'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'archive',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -324,7 +324,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
     it { should contain_archive('/usr/bin/runc')}
     it { should contain_file('/usr/bin/runc')}
-    it { should contain_archive('containerd-1.5.0-beta.1-linux-amd64.tar.gz')}
+    it { should contain_archive('containerd-1.4.3-linux-amd64.tar.gz')}
     it { should_not contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
     it { should contain_package('kubelet').with_ensure('1.10.2-00')}
     it { should contain_package('kubectl').with_ensure('1.10.2-00')}
@@ -373,11 +373,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'docker',
         'kubernetes_package_version' => '1.10.2',
         'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'archive',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -460,11 +460,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'docker',
         'kubernetes_package_version' => '1.10.2',
         'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'archive',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -543,11 +543,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'cri_containerd',
         'kubernetes_package_version' => '1.10.2',
         'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'package',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -583,7 +583,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubelet').with_ensure('1.10.2')}
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
-    it { should contain_package('containerd.io').with_ensure('1.5.0')}
+    it { should contain_package('containerd.io').with_ensure('1.4.3')}
     it { should contain_file('/etc/containerd')}
     it { should contain_file('/etc/containerd/config.toml')}
     it { should contain_file('/etc/apt/preferences.d/containerd')}
@@ -619,11 +619,11 @@ describe 'kubernetes::packages', :type => :class do
         'container_runtime' => 'cri_containerd',
         'kubernetes_package_version' => '1.10.2-00',
         'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-        'containerd_version' => '1.5.0',
+        'containerd_version' => '1.4.3',
         'containerd_install_method' => 'archive',
         'containerd_package_name' => 'containerd.io',
-        'containerd_archive' =>'containerd-1.5.0-beta.1-linux-amd64.tar.gz',
-        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.5.0-beta.1/containerd-1.5.0-beta.1-linux-amd64.tar.gz',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
