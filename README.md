@@ -64,7 +64,7 @@ docker run --rm -v $(pwd):/mnt -e OS=ubuntu -e VERSION=1.10.2 -e CONTAINER_RUNTI
 The above parameters are:
 
 * `OS`: The operating system Kubernetes runs on.
-* `VERSION`: The version of Kubernetes to deploy.
+* `VERSION`: The version of Kubernetes to deploy. Must follow X.Y.Z format. ([Check kubeadm regex rule](https://github.com/kubernetes/kubernetes/blob/master/cmd/kubeadm/app/util/version.go#L43) for more information)
 * `CONTAINER_RUNTIME`: The container runtime Kubernetes uses. Set this value to `docker` (officially supported) or `cri_containerd`. Advanced Kubernetes users can use `cri_containerd`, however this requires an increased understanding of Kubernetes, specifically when running applications in a HA cluster. To run a HA cluster and access your applications, an external load balancer is required in front of your cluster. Setting this up is beyond the scope of this module. For more information, see the Kubernetes [documentation](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/).
 * `CNI_PROVIDER`: The CNI network to install. Set this value to `weave`, `flannel`, `calico` or `cilium`.
 * `CNI_PROVIDER_VERSION` The CNI version to use. `cilium` uses this variable to reference the correct deployment file. Current version `cilium` is `1.4.3`
@@ -592,7 +592,7 @@ Defaults to `undef`.
 
 #### `kubernetes_version`
 
-The version of the Kubernetes containers to install.
+The version of the Kubernetes containers to install. Must follow X.Y.Z format.
 
 Defaults to  `1.10.2`.
 
