@@ -563,7 +563,7 @@
 
 ## Classes
 
-### `kubernetes`
+### <a name="kubernetes"></a>`kubernetes`
 
 Class: kubernetes
 ===========================
@@ -634,10 +634,19 @@ the files if they do not exist.
   The overlay (internal) network range to use.
   Defaults to undef. kube_tool sets this per cni provider.
 
+[*cni_network_preinstall*]
+
+ The URL to install the Tigera operator.
+ Used only by calico.
+
 [*cni_network_provider*]
 
  The URL to get the cni providers yaml file.
  Defaults to `undef`. `kube_tool` sets this value.
+
+[*cni_provider*]
+
+ The NAME of the CNI provider, as provided to kubetool.
 
 [*cni_rbac_binding*]
  The URL get the cni providers rbac rules. This is for use with Calico only.
@@ -756,9 +765,13 @@ the files if they do not exist.
     This will tell etcd how many WAL files to be kept
   Defaults to 5
 
-[*etcd_request_bytes*]
+[*etcd_max_request_bytes*]
     This will tell etcd the maximum size of a request in bytes
   Defaults to 1572864
+
+[*etcd_listen_metric_urls*]
+    The URL(s) to listen on to respond to /metrics and /health for etcd
+  Defaults to undef
 
 [*etcd_ca_key*]
   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
@@ -1049,6 +1062,10 @@ Default to 1h0m0s
 Idle timeout for established TCP connections (0 to leave as-is).
 Default to 24h0m0s
 
+[*tmp_directory*]
+Directory to use when downloading archives for install.
+Default to /var/tmp/puppetlabs-kubernetes
+
 Authors
 -------
 
@@ -1056,9 +1073,128 @@ Puppet cloud and containers team
 
 #### Parameters
 
-The following parameters are available in the `kubernetes` class.
+The following parameters are available in the `kubernetes` class:
 
-##### `kubernetes_version`
+* [`kubernetes_version`](#kubernetes_version)
+* [`kubernetes_cluster_name`](#kubernetes_cluster_name)
+* [`kubernetes_package_version`](#kubernetes_package_version)
+* [`container_runtime`](#container_runtime)
+* [`containerd_version`](#containerd_version)
+* [`containerd_install_method`](#containerd_install_method)
+* [`containerd_package_name`](#containerd_package_name)
+* [`docker_package_name`](#docker_package_name)
+* [`docker_version`](#docker_version)
+* [`pin_packages`](#pin_packages)
+* [`dns_domain`](#dns_domain)
+* [`cni_pod_cidr`](#cni_pod_cidr)
+* [`controller`](#controller)
+* [`worker`](#worker)
+* [`manage_docker`](#manage_docker)
+* [`manage_etcd`](#manage_etcd)
+* [`kube_api_bind_port`](#kube_api_bind_port)
+* [`kube_api_advertise_address`](#kube_api_advertise_address)
+* [`etcd_version`](#etcd_version)
+* [`etcd_hostname`](#etcd_hostname)
+* [`etcd_ip`](#etcd_ip)
+* [`etcd_peers`](#etcd_peers)
+* [`etcd_initial_cluster`](#etcd_initial_cluster)
+* [`etcd_discovery_srv`](#etcd_discovery_srv)
+* [`etcd_initial_cluster_state`](#etcd_initial_cluster_state)
+* [`etcd_compaction_method`](#etcd_compaction_method)
+* [`etcd_compaction_retention`](#etcd_compaction_retention)
+* [`etcd_max_wals`](#etcd_max_wals)
+* [`etcd_max_request_bytes`](#etcd_max_request_bytes)
+* [`etcd_listen_metric_urls`](#etcd_listen_metric_urls)
+* [`etcd_ca_key`](#etcd_ca_key)
+* [`etcd_ca_crt`](#etcd_ca_crt)
+* [`etcdclient_key`](#etcdclient_key)
+* [`etcdclient_crt`](#etcdclient_crt)
+* [`etcdserver_crt`](#etcdserver_crt)
+* [`etcdserver_key`](#etcdserver_key)
+* [`etcdpeer_crt`](#etcdpeer_crt)
+* [`etcdpeer_key`](#etcdpeer_key)
+* [`cni_network_preinstall`](#cni_network_preinstall)
+* [`cni_network_provider`](#cni_network_provider)
+* [`cni_provider`](#cni_provider)
+* [`cni_rbac_binding`](#cni_rbac_binding)
+* [`install_dashboard`](#install_dashboard)
+* [`dashboard_version`](#dashboard_version)
+* [`kubernetes_dashboard_url`](#kubernetes_dashboard_url)
+* [`schedule_on_controller`](#schedule_on_controller)
+* [`api_server_count`](#api_server_count)
+* [`delegated_pki`](#delegated_pki)
+* [`kubernetes_ca_crt`](#kubernetes_ca_crt)
+* [`kubernetes_ca_key`](#kubernetes_ca_key)
+* [`kubernetes_front_proxy_ca_crt`](#kubernetes_front_proxy_ca_crt)
+* [`kubernetes_front_proxy_ca_key`](#kubernetes_front_proxy_ca_key)
+* [`token`](#token)
+* [`ttl_duration`](#ttl_duration)
+* [`discovery_token_hash`](#discovery_token_hash)
+* [`sa_pub`](#sa_pub)
+* [`sa_key`](#sa_key)
+* [`apiserver_cert_extra_sans`](#apiserver_cert_extra_sans)
+* [`apiserver_extra_arguments`](#apiserver_extra_arguments)
+* [`controllermanager_extra_arguments`](#controllermanager_extra_arguments)
+* [`scheduler_extra_arguments`](#scheduler_extra_arguments)
+* [`service_cidr`](#service_cidr)
+* [`node_label`](#node_label)
+* [`controller_address`](#controller_address)
+* [`cloud_provider`](#cloud_provider)
+* [`cloud_config`](#cloud_config)
+* [`apiserver_extra_volumes`](#apiserver_extra_volumes)
+* [`controllermanager_extra_volumes`](#controllermanager_extra_volumes)
+* [`kubeadm_extra_config`](#kubeadm_extra_config)
+* [`kubelet_extra_config`](#kubelet_extra_config)
+* [`kubelet_extra_arguments`](#kubelet_extra_arguments)
+* [`proxy_mode`](#proxy_mode)
+* [`runc_version`](#runc_version)
+* [`runc_source`](#runc_source)
+* [`runc_source_checksum`](#runc_source_checksum)
+* [`containerd_archive`](#containerd_archive)
+* [`containerd_archive_checksum`](#containerd_archive_checksum)
+* [`containerd_source`](#containerd_source)
+* [`etcd_archive`](#etcd_archive)
+* [`etcd_archive_checksum`](#etcd_archive_checksum)
+* [`etcd_package_name`](#etcd_package_name)
+* [`etcd_source`](#etcd_source)
+* [`etcd_install_method`](#etcd_install_method)
+* [`kubernetes_apt_location`](#kubernetes_apt_location)
+* [`kubernetes_apt_release`](#kubernetes_apt_release)
+* [`kubernetes_apt_repos`](#kubernetes_apt_repos)
+* [`kubernetes_key_id`](#kubernetes_key_id)
+* [`kubernetes_key_source`](#kubernetes_key_source)
+* [`kubernetes_yum_baseurl`](#kubernetes_yum_baseurl)
+* [`kubernetes_yum_gpgkey`](#kubernetes_yum_gpgkey)
+* [`docker_apt_location`](#docker_apt_location)
+* [`docker_apt_release`](#docker_apt_release)
+* [`docker_apt_repos`](#docker_apt_repos)
+* [`docker_yum_baseurl`](#docker_yum_baseurl)
+* [`docker_yum_gpgkey`](#docker_yum_gpgkey)
+* [`docker_key_id`](#docker_key_id)
+* [`docker_key_source`](#docker_key_source)
+* [`docker_storage_driver`](#docker_storage_driver)
+* [`docker_storage_opts`](#docker_storage_opts)
+* [`docker_extra_daemon_config`](#docker_extra_daemon_config)
+* [`docker_log_max_file`](#docker_log_max_file)
+* [`docker_log_max_size`](#docker_log_max_size)
+* [`disable_swap`](#disable_swap)
+* [`manage_kernel_modules`](#manage_kernel_modules)
+* [`manage_sysctl_settings`](#manage_sysctl_settings)
+* [`create_repos`](#create_repos)
+* [`image_repository`](#image_repository)
+* [`default_path`](#default_path)
+* [`cgroup_driver`](#cgroup_driver)
+* [`environment`](#environment)
+* [`ignore_preflight_errors`](#ignore_preflight_errors)
+* [`metrics_bind_address`](#metrics_bind_address)
+* [`join_discovery_file`](#join_discovery_file)
+* [`conntrack_max_per_core`](#conntrack_max_per_core)
+* [`conntrack_min`](#conntrack_min)
+* [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
+* [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
+* [`tmp_directory`](#tmp_directory)
+
+##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -1066,7 +1202,7 @@ Data type: `String`
 
 Default value: `'1.10.2'`
 
-##### `kubernetes_cluster_name`
+##### <a name="kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
 Data type: `String`
 
@@ -1074,7 +1210,7 @@ Data type: `String`
 
 Default value: `'kubernetes'`
 
-##### `kubernetes_package_version`
+##### <a name="kubernetes_package_version"></a>`kubernetes_package_version`
 
 Data type: `String`
 
@@ -1082,7 +1218,7 @@ Data type: `String`
 
 Default value: `$facts['os']['family']`
 
-##### `container_runtime`
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -1090,15 +1226,15 @@ Data type: `String`
 
 Default value: `'docker'`
 
-##### `containerd_version`
+##### <a name="containerd_version"></a>`containerd_version`
 
 Data type: `Optional[String]`
 
 
 
-Default value: `'1.1.0'`
+Default value: `'1.4.3'`
 
-##### `containerd_install_method`
+##### <a name="containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Enum['archive','package']`
 
@@ -1106,7 +1242,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `'archive'`
 
-##### `containerd_package_name`
+##### <a name="containerd_package_name"></a>`containerd_package_name`
 
 Data type: `String`
 
@@ -1114,7 +1250,7 @@ Data type: `String`
 
 Default value: `'containerd.io'`
 
-##### `docker_package_name`
+##### <a name="docker_package_name"></a>`docker_package_name`
 
 Data type: `Optional[String]`
 
@@ -1122,7 +1258,7 @@ Data type: `Optional[String]`
 
 Default value: `'docker-engine'`
 
-##### `docker_version`
+##### <a name="docker_version"></a>`docker_version`
 
 Data type: `Optional[String]`
 
@@ -1130,7 +1266,7 @@ Data type: `Optional[String]`
 
 Default value: `$facts['os']['family']`
 
-##### `pin_packages`
+##### <a name="pin_packages"></a>`pin_packages`
 
 Data type: `Boolean`
 
@@ -1138,7 +1274,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `dns_domain`
+##### <a name="dns_domain"></a>`dns_domain`
 
 Data type: `Optional[String]`
 
@@ -1146,7 +1282,7 @@ Data type: `Optional[String]`
 
 Default value: `'cluster.local'`
 
-##### `cni_pod_cidr`
+##### <a name="cni_pod_cidr"></a>`cni_pod_cidr`
 
 Data type: `Optional[String]`
 
@@ -1154,7 +1290,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `controller`
+##### <a name="controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -1162,7 +1298,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `worker`
+##### <a name="worker"></a>`worker`
 
 Data type: `Boolean`
 
@@ -1170,7 +1306,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `manage_docker`
+##### <a name="manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -1178,7 +1314,7 @@ Data type: `Boolean`
 
 Default value: ``true``
 
-##### `manage_etcd`
+##### <a name="manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -1186,7 +1322,7 @@ Data type: `Boolean`
 
 Default value: ``true``
 
-##### `kube_api_bind_port`
+##### <a name="kube_api_bind_port"></a>`kube_api_bind_port`
 
 Data type: `Integer`
 
@@ -1194,7 +1330,7 @@ Data type: `Integer`
 
 Default value: `6443`
 
-##### `kube_api_advertise_address`
+##### <a name="kube_api_advertise_address"></a>`kube_api_advertise_address`
 
 Data type: `Optional[String]`
 
@@ -1202,7 +1338,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcd_version`
+##### <a name="etcd_version"></a>`etcd_version`
 
 Data type: `Optional[String]`
 
@@ -1210,7 +1346,7 @@ Data type: `Optional[String]`
 
 Default value: `'3.2.18'`
 
-##### `etcd_hostname`
+##### <a name="etcd_hostname"></a>`etcd_hostname`
 
 Data type: `Optional[String]`
 
@@ -1218,7 +1354,7 @@ Data type: `Optional[String]`
 
 Default value: `$facts['networking']['hostname']`
 
-##### `etcd_ip`
+##### <a name="etcd_ip"></a>`etcd_ip`
 
 Data type: `Optional[String]`
 
@@ -1226,7 +1362,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcd_peers`
+##### <a name="etcd_peers"></a>`etcd_peers`
 
 Data type: `Optional[Array]`
 
@@ -1234,7 +1370,7 @@ Data type: `Optional[Array]`
 
 Default value: ``undef``
 
-##### `etcd_initial_cluster`
+##### <a name="etcd_initial_cluster"></a>`etcd_initial_cluster`
 
 Data type: `Optional[String]`
 
@@ -1242,7 +1378,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcd_discovery_srv`
+##### <a name="etcd_discovery_srv"></a>`etcd_discovery_srv`
 
 Data type: `Optional[String]`
 
@@ -1250,7 +1386,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcd_initial_cluster_state`
+##### <a name="etcd_initial_cluster_state"></a>`etcd_initial_cluster_state`
 
 Data type: `Optional[Enum['new', 'existing']]`
 
@@ -1258,7 +1394,7 @@ Data type: `Optional[Enum['new', 'existing']]`
 
 Default value: `'new'`
 
-##### `etcd_compaction_method`
+##### <a name="etcd_compaction_method"></a>`etcd_compaction_method`
 
 Data type: `Optional[Enum['periodic', 'revision']]`
 
@@ -1266,7 +1402,7 @@ Data type: `Optional[Enum['periodic', 'revision']]`
 
 Default value: `'periodic'`
 
-##### `etcd_compaction_retention`
+##### <a name="etcd_compaction_retention"></a>`etcd_compaction_retention`
 
 Data type: `Variant[String, Integer]`
 
@@ -1274,7 +1410,7 @@ Data type: `Variant[String, Integer]`
 
 Default value: `0`
 
-##### `etcd_max_wals`
+##### <a name="etcd_max_wals"></a>`etcd_max_wals`
 
 Data type: `Integer`
 
@@ -1282,7 +1418,7 @@ Data type: `Integer`
 
 Default value: `5`
 
-##### `etcd_request_bytes`
+##### <a name="etcd_max_request_bytes"></a>`etcd_max_request_bytes`
 
 Data type: `Integer`
 
@@ -1290,7 +1426,7 @@ Data type: `Integer`
 
 Default value: `1572864`
 
-##### `etcd_ca_key`
+##### <a name="etcd_listen_metric_urls"></a>`etcd_listen_metric_urls`
 
 Data type: `Optional[String]`
 
@@ -1298,7 +1434,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcd_ca_crt`
+##### <a name="etcd_ca_key"></a>`etcd_ca_key`
 
 Data type: `Optional[String]`
 
@@ -1306,7 +1442,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcdclient_key`
+##### <a name="etcd_ca_crt"></a>`etcd_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -1314,7 +1450,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcdclient_crt`
+##### <a name="etcdclient_key"></a>`etcdclient_key`
 
 Data type: `Optional[String]`
 
@@ -1322,7 +1458,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcdserver_crt`
+##### <a name="etcdclient_crt"></a>`etcdclient_crt`
 
 Data type: `Optional[String]`
 
@@ -1330,7 +1466,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcdserver_key`
+##### <a name="etcdserver_crt"></a>`etcdserver_crt`
 
 Data type: `Optional[String]`
 
@@ -1338,7 +1474,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcdpeer_crt`
+##### <a name="etcdserver_key"></a>`etcdserver_key`
 
 Data type: `Optional[String]`
 
@@ -1346,7 +1482,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcdpeer_key`
+##### <a name="etcdpeer_crt"></a>`etcdpeer_crt`
 
 Data type: `Optional[String]`
 
@@ -1354,7 +1490,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `cni_network_provider`
+##### <a name="etcdpeer_key"></a>`etcdpeer_key`
 
 Data type: `Optional[String]`
 
@@ -1362,7 +1498,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `cni_rbac_binding`
+##### <a name="cni_network_preinstall"></a>`cni_network_preinstall`
 
 Data type: `Optional[String]`
 
@@ -1370,7 +1506,31 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `install_dashboard`
+##### <a name="cni_network_provider"></a>`cni_network_provider`
+
+Data type: `Optional[String]`
+
+
+
+Default value: ``undef``
+
+##### <a name="cni_provider"></a>`cni_provider`
+
+Data type: `Optional[String]`
+
+
+
+Default value: ``undef``
+
+##### <a name="cni_rbac_binding"></a>`cni_rbac_binding`
+
+Data type: `Optional[String]`
+
+
+
+Default value: ``undef``
+
+##### <a name="install_dashboard"></a>`install_dashboard`
 
 Data type: `Boolean`
 
@@ -1378,7 +1538,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `dashboard_version`
+##### <a name="dashboard_version"></a>`dashboard_version`
 
 Data type: `String`
 
@@ -1386,7 +1546,7 @@ Data type: `String`
 
 Default value: `'v1.10.1'`
 
-##### `kubernetes_dashboard_url`
+##### <a name="kubernetes_dashboard_url"></a>`kubernetes_dashboard_url`
 
 Data type: `String`
 
@@ -1394,7 +1554,7 @@ Data type: `String`
 
 Default value: `"https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml"`
 
-##### `schedule_on_controller`
+##### <a name="schedule_on_controller"></a>`schedule_on_controller`
 
 Data type: `Boolean`
 
@@ -1402,7 +1562,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `api_server_count`
+##### <a name="api_server_count"></a>`api_server_count`
 
 Data type: `Integer`
 
@@ -1410,7 +1570,7 @@ Data type: `Integer`
 
 Default value: ``undef``
 
-##### `delegated_pki`
+##### <a name="delegated_pki"></a>`delegated_pki`
 
 Data type: `Boolean`
 
@@ -1418,7 +1578,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `kubernetes_ca_crt`
+##### <a name="kubernetes_ca_crt"></a>`kubernetes_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -1426,7 +1586,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_ca_key`
+##### <a name="kubernetes_ca_key"></a>`kubernetes_ca_key`
 
 Data type: `Optional[String]`
 
@@ -1434,7 +1594,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_front_proxy_ca_crt`
+##### <a name="kubernetes_front_proxy_ca_crt"></a>`kubernetes_front_proxy_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -1442,7 +1602,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_front_proxy_ca_key`
+##### <a name="kubernetes_front_proxy_ca_key"></a>`kubernetes_front_proxy_ca_key`
 
 Data type: `Optional[String]`
 
@@ -1450,7 +1610,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `token`
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -1458,7 +1618,7 @@ Data type: `String`
 
 Default value: ``undef``
 
-##### `ttl_duration`
+##### <a name="ttl_duration"></a>`ttl_duration`
 
 Data type: `String`
 
@@ -1466,7 +1626,7 @@ Data type: `String`
 
 Default value: `'24h'`
 
-##### `discovery_token_hash`
+##### <a name="discovery_token_hash"></a>`discovery_token_hash`
 
 Data type: `String`
 
@@ -1474,7 +1634,7 @@ Data type: `String`
 
 Default value: ``undef``
 
-##### `sa_pub`
+##### <a name="sa_pub"></a>`sa_pub`
 
 Data type: `Optional[String]`
 
@@ -1482,7 +1642,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `sa_key`
+##### <a name="sa_key"></a>`sa_key`
 
 Data type: `Optional[String]`
 
@@ -1490,7 +1650,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `apiserver_cert_extra_sans`
+##### <a name="apiserver_cert_extra_sans"></a>`apiserver_cert_extra_sans`
 
 Data type: `Optional[Array]`
 
@@ -1498,7 +1658,7 @@ Data type: `Optional[Array]`
 
 Default value: `[]`
 
-##### `apiserver_extra_arguments`
+##### <a name="apiserver_extra_arguments"></a>`apiserver_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -1506,7 +1666,7 @@ Data type: `Optional[Array]`
 
 Default value: `[]`
 
-##### `controllermanager_extra_arguments`
+##### <a name="controllermanager_extra_arguments"></a>`controllermanager_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -1514,7 +1674,7 @@ Data type: `Optional[Array]`
 
 Default value: `[]`
 
-##### `scheduler_extra_arguments`
+##### <a name="scheduler_extra_arguments"></a>`scheduler_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -1522,7 +1682,7 @@ Data type: `Optional[Array]`
 
 Default value: `[]`
 
-##### `service_cidr`
+##### <a name="service_cidr"></a>`service_cidr`
 
 Data type: `String`
 
@@ -1530,7 +1690,7 @@ Data type: `String`
 
 Default value: `'10.96.0.0/12'`
 
-##### `node_label`
+##### <a name="node_label"></a>`node_label`
 
 Data type: `Optional[String]`
 
@@ -1538,7 +1698,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `controller_address`
+##### <a name="controller_address"></a>`controller_address`
 
 Data type: `Optional[String]`
 
@@ -1546,7 +1706,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `cloud_provider`
+##### <a name="cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -1554,7 +1714,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `cloud_config`
+##### <a name="cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -1562,7 +1722,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `apiserver_extra_volumes`
+##### <a name="apiserver_extra_volumes"></a>`apiserver_extra_volumes`
 
 Data type: `Optional[Hash]`
 
@@ -1570,7 +1730,7 @@ Data type: `Optional[Hash]`
 
 Default value: `{}`
 
-##### `controllermanager_extra_volumes`
+##### <a name="controllermanager_extra_volumes"></a>`controllermanager_extra_volumes`
 
 Data type: `Optional[Hash]`
 
@@ -1578,7 +1738,7 @@ Data type: `Optional[Hash]`
 
 Default value: `{}`
 
-##### `kubeadm_extra_config`
+##### <a name="kubeadm_extra_config"></a>`kubeadm_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -1586,7 +1746,7 @@ Data type: `Optional[Hash]`
 
 Default value: ``undef``
 
-##### `kubelet_extra_config`
+##### <a name="kubelet_extra_config"></a>`kubelet_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -1594,7 +1754,7 @@ Data type: `Optional[Hash]`
 
 Default value: ``undef``
 
-##### `kubelet_extra_arguments`
+##### <a name="kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -1602,7 +1762,7 @@ Data type: `Optional[Array]`
 
 Default value: `[]`
 
-##### `proxy_mode`
+##### <a name="proxy_mode"></a>`proxy_mode`
 
 Data type: `Optional[String]`
 
@@ -1610,7 +1770,7 @@ Data type: `Optional[String]`
 
 Default value: `''`
 
-##### `runc_version`
+##### <a name="runc_version"></a>`runc_version`
 
 Data type: `Optional[String]`
 
@@ -1618,7 +1778,7 @@ Data type: `Optional[String]`
 
 Default value: `'1.0.0-rc5'`
 
-##### `runc_source`
+##### <a name="runc_source"></a>`runc_source`
 
 Data type: `Optional[String]`
 
@@ -1626,7 +1786,7 @@ Data type: `Optional[String]`
 
 Default value: `"https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64"`
 
-##### `runc_source_checksum`
+##### <a name="runc_source_checksum"></a>`runc_source_checksum`
 
 Data type: `Optional[String]`
 
@@ -1634,7 +1794,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `containerd_archive`
+##### <a name="containerd_archive"></a>`containerd_archive`
 
 Data type: `Optional[String]`
 
@@ -1642,7 +1802,7 @@ Data type: `Optional[String]`
 
 Default value: `"containerd-${containerd_version}.linux-amd64.tar.gz"`
 
-##### `containerd_archive_checksum`
+##### <a name="containerd_archive_checksum"></a>`containerd_archive_checksum`
 
 Data type: `Optional[String]`
 
@@ -1650,7 +1810,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `containerd_source`
+##### <a name="containerd_source"></a>`containerd_source`
 
 Data type: `Optional[String]`
 
@@ -1658,7 +1818,7 @@ Data type: `Optional[String]`
 
 Default value: `"https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"`
 
-##### `etcd_archive`
+##### <a name="etcd_archive"></a>`etcd_archive`
 
 Data type: `String`
 
@@ -1666,7 +1826,7 @@ Data type: `String`
 
 Default value: `"etcd-v${etcd_version}-linux-amd64.tar.gz"`
 
-##### `etcd_archive_checksum`
+##### <a name="etcd_archive_checksum"></a>`etcd_archive_checksum`
 
 Data type: `Optional[String]`
 
@@ -1674,7 +1834,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `etcd_package_name`
+##### <a name="etcd_package_name"></a>`etcd_package_name`
 
 Data type: `String`
 
@@ -1682,7 +1842,7 @@ Data type: `String`
 
 Default value: `'etcd-server'`
 
-##### `etcd_source`
+##### <a name="etcd_source"></a>`etcd_source`
 
 Data type: `String`
 
@@ -1690,7 +1850,7 @@ Data type: `String`
 
 Default value: `"https://github.com/etcd-io/etcd/releases/download/v${etcd_version}/${etcd_archive}"`
 
-##### `etcd_install_method`
+##### <a name="etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -1698,7 +1858,7 @@ Data type: `String`
 
 Default value: `'wget'`
 
-##### `kubernetes_apt_location`
+##### <a name="kubernetes_apt_location"></a>`kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
@@ -1706,7 +1866,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_apt_release`
+##### <a name="kubernetes_apt_release"></a>`kubernetes_apt_release`
 
 Data type: `Optional[String]`
 
@@ -1714,7 +1874,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_apt_repos`
+##### <a name="kubernetes_apt_repos"></a>`kubernetes_apt_repos`
 
 Data type: `Optional[String]`
 
@@ -1722,7 +1882,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_key_id`
+##### <a name="kubernetes_key_id"></a>`kubernetes_key_id`
 
 Data type: `Optional[String]`
 
@@ -1730,7 +1890,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_key_source`
+##### <a name="kubernetes_key_source"></a>`kubernetes_key_source`
 
 Data type: `Optional[String]`
 
@@ -1738,7 +1898,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_yum_baseurl`
+##### <a name="kubernetes_yum_baseurl"></a>`kubernetes_yum_baseurl`
 
 Data type: `Optional[String]`
 
@@ -1746,7 +1906,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `kubernetes_yum_gpgkey`
+##### <a name="kubernetes_yum_gpgkey"></a>`kubernetes_yum_gpgkey`
 
 Data type: `Optional[String]`
 
@@ -1754,7 +1914,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_apt_location`
+##### <a name="docker_apt_location"></a>`docker_apt_location`
 
 Data type: `Optional[String]`
 
@@ -1762,7 +1922,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_apt_release`
+##### <a name="docker_apt_release"></a>`docker_apt_release`
 
 Data type: `Optional[String]`
 
@@ -1770,7 +1930,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_apt_repos`
+##### <a name="docker_apt_repos"></a>`docker_apt_repos`
 
 Data type: `Optional[String]`
 
@@ -1778,7 +1938,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_yum_baseurl`
+##### <a name="docker_yum_baseurl"></a>`docker_yum_baseurl`
 
 Data type: `Optional[String]`
 
@@ -1786,7 +1946,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_yum_gpgkey`
+##### <a name="docker_yum_gpgkey"></a>`docker_yum_gpgkey`
 
 Data type: `Optional[String]`
 
@@ -1794,7 +1954,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_key_id`
+##### <a name="docker_key_id"></a>`docker_key_id`
 
 Data type: `Optional[String]`
 
@@ -1802,7 +1962,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_key_source`
+##### <a name="docker_key_source"></a>`docker_key_source`
 
 Data type: `Optional[String]`
 
@@ -1810,7 +1970,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_storage_driver`
+##### <a name="docker_storage_driver"></a>`docker_storage_driver`
 
 Data type: `Optional[String]`
 
@@ -1818,7 +1978,7 @@ Data type: `Optional[String]`
 
 Default value: `'overlay2'`
 
-##### `docker_storage_opts`
+##### <a name="docker_storage_opts"></a>`docker_storage_opts`
 
 Data type: `Optional[Array]`
 
@@ -1826,7 +1986,7 @@ Data type: `Optional[Array]`
 
 Default value: `$facts['os']['family']`
 
-##### `docker_extra_daemon_config`
+##### <a name="docker_extra_daemon_config"></a>`docker_extra_daemon_config`
 
 Data type: `Optional[String]`
 
@@ -1834,7 +1994,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `docker_log_max_file`
+##### <a name="docker_log_max_file"></a>`docker_log_max_file`
 
 Data type: `String`
 
@@ -1842,7 +2002,7 @@ Data type: `String`
 
 Default value: `'1'`
 
-##### `docker_log_max_size`
+##### <a name="docker_log_max_size"></a>`docker_log_max_size`
 
 Data type: `String`
 
@@ -1850,7 +2010,7 @@ Data type: `String`
 
 Default value: `'100m'`
 
-##### `disable_swap`
+##### <a name="disable_swap"></a>`disable_swap`
 
 Data type: `Boolean`
 
@@ -1858,7 +2018,7 @@ Data type: `Boolean`
 
 Default value: ``true``
 
-##### `manage_kernel_modules`
+##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
@@ -1866,7 +2026,7 @@ Data type: `Boolean`
 
 Default value: ``true``
 
-##### `manage_sysctl_settings`
+##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
@@ -1874,7 +2034,7 @@ Data type: `Boolean`
 
 Default value: ``true``
 
-##### `create_repos`
+##### <a name="create_repos"></a>`create_repos`
 
 Data type: `Boolean`
 
@@ -1882,7 +2042,7 @@ Data type: `Boolean`
 
 Default value: ``true``
 
-##### `image_repository`
+##### <a name="image_repository"></a>`image_repository`
 
 Data type: `String`
 
@@ -1890,7 +2050,7 @@ Data type: `String`
 
 Default value: `'k8s.gcr.io'`
 
-##### `default_path`
+##### <a name="default_path"></a>`default_path`
 
 Data type: `Array[String]`
 
@@ -1898,7 +2058,7 @@ Data type: `Array[String]`
 
 Default value: `['/usr/bin', '/usr/sbin', '/bin', '/sbin', '/usr/local/bin']`
 
-##### `cgroup_driver`
+##### <a name="cgroup_driver"></a>`cgroup_driver`
 
 Data type: `String`
 
@@ -1906,7 +2066,7 @@ Data type: `String`
 
 Default value: `$facts['os']['family']`
 
-##### `environment`
+##### <a name="environment"></a>`environment`
 
 Data type: `Array[String]`
 
@@ -1914,7 +2074,7 @@ Data type: `Array[String]`
 
 Default value: `$controller`
 
-##### `ignore_preflight_errors`
+##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -1922,7 +2082,7 @@ Data type: `Optional[Array]`
 
 Default value: ``undef``
 
-##### `metrics_bind_address`
+##### <a name="metrics_bind_address"></a>`metrics_bind_address`
 
 Data type: `Stdlib::IP::Address`
 
@@ -1930,7 +2090,7 @@ Data type: `Stdlib::IP::Address`
 
 Default value: `'127.0.0.1'`
 
-##### `join_discovery_file`
+##### <a name="join_discovery_file"></a>`join_discovery_file`
 
 Data type: `Optional[String]`
 
@@ -1938,7 +2098,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `conntrack_max_per_core`
+##### <a name="conntrack_max_per_core"></a>`conntrack_max_per_core`
 
 Data type: `Integer`
 
@@ -1946,7 +2106,7 @@ Data type: `Integer`
 
 Default value: `32768`
 
-##### `conntrack_min`
+##### <a name="conntrack_min"></a>`conntrack_min`
 
 Data type: `Integer`
 
@@ -1954,7 +2114,7 @@ Data type: `Integer`
 
 Default value: `131072`
 
-##### `conntrack_tcp_wait_timeout`
+##### <a name="conntrack_tcp_wait_timeout"></a>`conntrack_tcp_wait_timeout`
 
 Data type: `String`
 
@@ -1962,7 +2122,7 @@ Data type: `String`
 
 Default value: `'1h0m0s'`
 
-##### `conntrack_tcp_stablished_timeout`
+##### <a name="conntrack_tcp_stablished_timeout"></a>`conntrack_tcp_stablished_timeout`
 
 Data type: `String`
 
@@ -1970,15 +2130,31 @@ Data type: `String`
 
 Default value: `'24h0m0s'`
 
-### `kubernetes::cluster_roles`
+##### <a name="tmp_directory"></a>`tmp_directory`
+
+Data type: `String`
+
+
+
+Default value: `'/var/tmp/puppetlabs-kubernetes'`
+
+### <a name="kubernetescluster_roles"></a>`kubernetes::cluster_roles`
 
 The kubernetes::cluster_roles class.
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::cluster_roles` class.
+The following parameters are available in the `kubernetes::cluster_roles` class:
 
-##### `controller`
+* [`controller`](#controller)
+* [`worker`](#worker)
+* [`node_name`](#node_name)
+* [`container_runtime`](#container_runtime)
+* [`join_discovery_file`](#join_discovery_file)
+* [`ignore_preflight_errors`](#ignore_preflight_errors)
+* [`env`](#env)
+
+##### <a name="controller"></a>`controller`
 
 Data type: `Optional[Boolean]`
 
@@ -1986,7 +2162,7 @@ Data type: `Optional[Boolean]`
 
 Default value: `$kubernetes::controller`
 
-##### `worker`
+##### <a name="worker"></a>`worker`
 
 Data type: `Optional[Boolean]`
 
@@ -1994,7 +2170,7 @@ Data type: `Optional[Boolean]`
 
 Default value: `$kubernetes::worker`
 
-##### `node_name`
+##### <a name="node_name"></a>`node_name`
 
 Data type: `String`
 
@@ -2002,7 +2178,7 @@ Data type: `String`
 
 Default value: `$kubernetes::node_name`
 
-##### `container_runtime`
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -2010,7 +2186,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### `join_discovery_file`
+##### <a name="join_discovery_file"></a>`join_discovery_file`
 
 Data type: `Optional[String]`
 
@@ -2018,7 +2194,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::join_discovery_file`
 
-##### `ignore_preflight_errors`
+##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -2026,7 +2202,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::ignore_preflight_errors`
 
-##### `env`
+##### <a name="env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -2034,15 +2210,79 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-### `kubernetes::config::kubeadm`
+### <a name="kubernetesconfigkubeadm"></a>`kubernetes::config::kubeadm`
 
 Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::config::kubeadm` class.
+The following parameters are available in the `kubernetes::config::kubeadm` class:
 
-##### `config_file`
+* [`config_file`](#config_file)
+* [`controller_address`](#controller_address)
+* [`dns_domain`](#dns_domain)
+* [`manage_etcd`](#manage_etcd)
+* [`delegated_pki`](#delegated_pki)
+* [`etcd_install_method`](#etcd_install_method)
+* [`kubernetes_version`](#kubernetes_version)
+* [`kubernetes_cluster_name`](#kubernetes_cluster_name)
+* [`etcd_ca_key`](#etcd_ca_key)
+* [`etcd_ca_crt`](#etcd_ca_crt)
+* [`etcdclient_key`](#etcdclient_key)
+* [`etcdclient_crt`](#etcdclient_crt)
+* [`etcdserver_crt`](#etcdserver_crt)
+* [`etcdserver_key`](#etcdserver_key)
+* [`etcdpeer_crt`](#etcdpeer_crt)
+* [`etcdpeer_key`](#etcdpeer_key)
+* [`etcd_peers`](#etcd_peers)
+* [`etcd_hostname`](#etcd_hostname)
+* [`etcd_ip`](#etcd_ip)
+* [`cni_pod_cidr`](#cni_pod_cidr)
+* [`kube_api_bind_port`](#kube_api_bind_port)
+* [`kube_api_advertise_address`](#kube_api_advertise_address)
+* [`etcd_initial_cluster`](#etcd_initial_cluster)
+* [`etcd_discovery_srv`](#etcd_discovery_srv)
+* [`etcd_initial_cluster_state`](#etcd_initial_cluster_state)
+* [`etcd_compaction_method`](#etcd_compaction_method)
+* [`etcd_compaction_retention`](#etcd_compaction_retention)
+* [`api_server_count`](#api_server_count)
+* [`etcd_version`](#etcd_version)
+* [`etcd_max_wals`](#etcd_max_wals)
+* [`etcd_max_request_bytes`](#etcd_max_request_bytes)
+* [`etcd_listen_metric_urls`](#etcd_listen_metric_urls)
+* [`token`](#token)
+* [`ttl_duration`](#ttl_duration)
+* [`discovery_token_hash`](#discovery_token_hash)
+* [`kubernetes_ca_crt`](#kubernetes_ca_crt)
+* [`kubernetes_ca_key`](#kubernetes_ca_key)
+* [`kubernetes_front_proxy_ca_crt`](#kubernetes_front_proxy_ca_crt)
+* [`kubernetes_front_proxy_ca_key`](#kubernetes_front_proxy_ca_key)
+* [`container_runtime`](#container_runtime)
+* [`sa_pub`](#sa_pub)
+* [`sa_key`](#sa_key)
+* [`apiserver_cert_extra_sans`](#apiserver_cert_extra_sans)
+* [`apiserver_extra_arguments`](#apiserver_extra_arguments)
+* [`controllermanager_extra_arguments`](#controllermanager_extra_arguments)
+* [`scheduler_extra_arguments`](#scheduler_extra_arguments)
+* [`kubelet_extra_arguments`](#kubelet_extra_arguments)
+* [`service_cidr`](#service_cidr)
+* [`node_name`](#node_name)
+* [`cloud_provider`](#cloud_provider)
+* [`cloud_config`](#cloud_config)
+* [`apiserver_extra_volumes`](#apiserver_extra_volumes)
+* [`controllermanager_extra_volumes`](#controllermanager_extra_volumes)
+* [`kubeadm_extra_config`](#kubeadm_extra_config)
+* [`kubelet_extra_config`](#kubelet_extra_config)
+* [`image_repository`](#image_repository)
+* [`cgroup_driver`](#cgroup_driver)
+* [`proxy_mode`](#proxy_mode)
+* [`metrics_bind_address`](#metrics_bind_address)
+* [`conntrack_max_per_core`](#conntrack_max_per_core)
+* [`conntrack_min`](#conntrack_min)
+* [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
+* [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
+
+##### <a name="config_file"></a>`config_file`
 
 Data type: `String`
 
@@ -2050,7 +2290,7 @@ Data type: `String`
 
 Default value: `$kubernetes::config_file`
 
-##### `controller_address`
+##### <a name="controller_address"></a>`controller_address`
 
 Data type: `String`
 
@@ -2058,7 +2298,7 @@ Data type: `String`
 
 Default value: `$kubernetes::controller_address`
 
-##### `dns_domain`
+##### <a name="dns_domain"></a>`dns_domain`
 
 Data type: `String`
 
@@ -2066,7 +2306,7 @@ Data type: `String`
 
 Default value: `$kubernetes::dns_domain`
 
-##### `manage_etcd`
+##### <a name="manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -2074,7 +2314,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_etcd`
 
-##### `delegated_pki`
+##### <a name="delegated_pki"></a>`delegated_pki`
 
 Data type: `Boolean`
 
@@ -2082,7 +2322,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::delegated_pki`
 
-##### `etcd_install_method`
+##### <a name="etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -2090,7 +2330,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_install_method`
 
-##### `kubernetes_version`
+##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -2098,7 +2338,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### `kubernetes_cluster_name`
+##### <a name="kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
 Data type: `String`
 
@@ -2106,7 +2346,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_cluster_name`
 
-##### `etcd_ca_key`
+##### <a name="etcd_ca_key"></a>`etcd_ca_key`
 
 Data type: `Optional[String]`
 
@@ -2114,7 +2354,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_ca_key`
 
-##### `etcd_ca_crt`
+##### <a name="etcd_ca_crt"></a>`etcd_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -2122,7 +2362,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_ca_crt`
 
-##### `etcdclient_key`
+##### <a name="etcdclient_key"></a>`etcdclient_key`
 
 Data type: `Optional[String]`
 
@@ -2130,7 +2370,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdclient_key`
 
-##### `etcdclient_crt`
+##### <a name="etcdclient_crt"></a>`etcdclient_crt`
 
 Data type: `Optional[String]`
 
@@ -2138,7 +2378,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdclient_crt`
 
-##### `etcdserver_crt`
+##### <a name="etcdserver_crt"></a>`etcdserver_crt`
 
 Data type: `Optional[String]`
 
@@ -2146,7 +2386,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdserver_crt`
 
-##### `etcdserver_key`
+##### <a name="etcdserver_key"></a>`etcdserver_key`
 
 Data type: `Optional[String]`
 
@@ -2154,7 +2394,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdserver_key`
 
-##### `etcdpeer_crt`
+##### <a name="etcdpeer_crt"></a>`etcdpeer_crt`
 
 Data type: `Optional[String]`
 
@@ -2162,7 +2402,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdpeer_crt`
 
-##### `etcdpeer_key`
+##### <a name="etcdpeer_key"></a>`etcdpeer_key`
 
 Data type: `Optional[String]`
 
@@ -2170,7 +2410,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdpeer_key`
 
-##### `etcd_peers`
+##### <a name="etcd_peers"></a>`etcd_peers`
 
 Data type: `Array`
 
@@ -2178,7 +2418,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::etcd_peers`
 
-##### `etcd_hostname`
+##### <a name="etcd_hostname"></a>`etcd_hostname`
 
 Data type: `String`
 
@@ -2186,7 +2426,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_hostname`
 
-##### `etcd_ip`
+##### <a name="etcd_ip"></a>`etcd_ip`
 
 Data type: `String`
 
@@ -2194,7 +2434,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_ip`
 
-##### `cni_pod_cidr`
+##### <a name="cni_pod_cidr"></a>`cni_pod_cidr`
 
 Data type: `String`
 
@@ -2202,7 +2442,7 @@ Data type: `String`
 
 Default value: `$kubernetes::cni_pod_cidr`
 
-##### `kube_api_bind_port`
+##### <a name="kube_api_bind_port"></a>`kube_api_bind_port`
 
 Data type: `Integer`
 
@@ -2210,7 +2450,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::kube_api_bind_port`
 
-##### `kube_api_advertise_address`
+##### <a name="kube_api_advertise_address"></a>`kube_api_advertise_address`
 
 Data type: `String`
 
@@ -2218,7 +2458,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kube_api_advertise_address`
 
-##### `etcd_initial_cluster`
+##### <a name="etcd_initial_cluster"></a>`etcd_initial_cluster`
 
 Data type: `Optional[String]`
 
@@ -2226,7 +2466,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_initial_cluster`
 
-##### `etcd_discovery_srv`
+##### <a name="etcd_discovery_srv"></a>`etcd_discovery_srv`
 
 Data type: `Optional[String]`
 
@@ -2234,7 +2474,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_discovery_srv`
 
-##### `etcd_initial_cluster_state`
+##### <a name="etcd_initial_cluster_state"></a>`etcd_initial_cluster_state`
 
 Data type: `String`
 
@@ -2242,7 +2482,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_initial_cluster_state`
 
-##### `etcd_compaction_method`
+##### <a name="etcd_compaction_method"></a>`etcd_compaction_method`
 
 Data type: `String`
 
@@ -2250,7 +2490,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_compaction_method`
 
-##### `etcd_compaction_retention`
+##### <a name="etcd_compaction_retention"></a>`etcd_compaction_retention`
 
 Data type: `Variant[Integer,String]`
 
@@ -2258,7 +2498,7 @@ Data type: `Variant[Integer,String]`
 
 Default value: `$kubernetes::etcd_compaction_retention`
 
-##### `api_server_count`
+##### <a name="api_server_count"></a>`api_server_count`
 
 Data type: `Integer`
 
@@ -2266,7 +2506,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::api_server_count`
 
-##### `etcd_version`
+##### <a name="etcd_version"></a>`etcd_version`
 
 Data type: `String`
 
@@ -2274,7 +2514,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_version`
 
-##### `etcd_max_wals`
+##### <a name="etcd_max_wals"></a>`etcd_max_wals`
 
 Data type: `Integer`
 
@@ -2282,7 +2522,23 @@ Data type: `Integer`
 
 Default value: `$kubernetes::etcd_max_wals`
 
-##### `token`
+##### <a name="etcd_max_request_bytes"></a>`etcd_max_request_bytes`
+
+Data type: `Integer`
+
+
+
+Default value: `$kubernetes::etcd_max_request_bytes`
+
+##### <a name="etcd_listen_metric_urls"></a>`etcd_listen_metric_urls`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::etcd_listen_metric_urls`
+
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -2290,7 +2546,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `ttl_duration`
+##### <a name="ttl_duration"></a>`ttl_duration`
 
 Data type: `String`
 
@@ -2298,7 +2554,7 @@ Data type: `String`
 
 Default value: `$kubernetes::ttl_duration`
 
-##### `discovery_token_hash`
+##### <a name="discovery_token_hash"></a>`discovery_token_hash`
 
 Data type: `String`
 
@@ -2306,7 +2562,7 @@ Data type: `String`
 
 Default value: `$kubernetes::discovery_token_hash`
 
-##### `kubernetes_ca_crt`
+##### <a name="kubernetes_ca_crt"></a>`kubernetes_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -2314,7 +2570,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_ca_crt`
 
-##### `kubernetes_ca_key`
+##### <a name="kubernetes_ca_key"></a>`kubernetes_ca_key`
 
 Data type: `Optional[String]`
 
@@ -2322,7 +2578,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_ca_key`
 
-##### `kubernetes_front_proxy_ca_crt`
+##### <a name="kubernetes_front_proxy_ca_crt"></a>`kubernetes_front_proxy_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -2330,7 +2586,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_front_proxy_ca_crt`
 
-##### `kubernetes_front_proxy_ca_key`
+##### <a name="kubernetes_front_proxy_ca_key"></a>`kubernetes_front_proxy_ca_key`
 
 Data type: `Optional[String]`
 
@@ -2338,7 +2594,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_front_proxy_ca_key`
 
-##### `container_runtime`
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -2346,7 +2602,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### `sa_pub`
+##### <a name="sa_pub"></a>`sa_pub`
 
 Data type: `Optional[String]`
 
@@ -2354,7 +2610,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::sa_pub`
 
-##### `sa_key`
+##### <a name="sa_key"></a>`sa_key`
 
 Data type: `Optional[String]`
 
@@ -2362,7 +2618,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::sa_key`
 
-##### `apiserver_cert_extra_sans`
+##### <a name="apiserver_cert_extra_sans"></a>`apiserver_cert_extra_sans`
 
 Data type: `Optional[Array]`
 
@@ -2370,7 +2626,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::apiserver_cert_extra_sans`
 
-##### `apiserver_extra_arguments`
+##### <a name="apiserver_extra_arguments"></a>`apiserver_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2378,7 +2634,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::apiserver_extra_arguments`
 
-##### `controllermanager_extra_arguments`
+##### <a name="controllermanager_extra_arguments"></a>`controllermanager_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2386,7 +2642,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::controllermanager_extra_arguments`
 
-##### `scheduler_extra_arguments`
+##### <a name="scheduler_extra_arguments"></a>`scheduler_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2394,7 +2650,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::scheduler_extra_arguments`
 
-##### `kubelet_extra_arguments`
+##### <a name="kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2402,7 +2658,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::kubelet_extra_arguments`
 
-##### `service_cidr`
+##### <a name="service_cidr"></a>`service_cidr`
 
 Data type: `String`
 
@@ -2410,7 +2666,7 @@ Data type: `String`
 
 Default value: `$kubernetes::service_cidr`
 
-##### `node_name`
+##### <a name="node_name"></a>`node_name`
 
 Data type: `String`
 
@@ -2418,7 +2674,7 @@ Data type: `String`
 
 Default value: `$kubernetes::node_name`
 
-##### `cloud_provider`
+##### <a name="cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -2426,7 +2682,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_provider`
 
-##### `cloud_config`
+##### <a name="cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -2434,7 +2690,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_config`
 
-##### `apiserver_extra_volumes`
+##### <a name="apiserver_extra_volumes"></a>`apiserver_extra_volumes`
 
 Data type: `Optional[Hash]`
 
@@ -2442,7 +2698,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::apiserver_extra_volumes`
 
-##### `controllermanager_extra_volumes`
+##### <a name="controllermanager_extra_volumes"></a>`controllermanager_extra_volumes`
 
 Data type: `Optional[Hash]`
 
@@ -2450,7 +2706,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::controllermanager_extra_volumes`
 
-##### `kubeadm_extra_config`
+##### <a name="kubeadm_extra_config"></a>`kubeadm_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -2458,7 +2714,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::kubeadm_extra_config`
 
-##### `kubelet_extra_config`
+##### <a name="kubelet_extra_config"></a>`kubelet_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -2466,7 +2722,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::kubelet_extra_config`
 
-##### `image_repository`
+##### <a name="image_repository"></a>`image_repository`
 
 Data type: `String`
 
@@ -2474,7 +2730,7 @@ Data type: `String`
 
 Default value: `$kubernetes::image_repository`
 
-##### `cgroup_driver`
+##### <a name="cgroup_driver"></a>`cgroup_driver`
 
 Data type: `String`
 
@@ -2482,7 +2738,7 @@ Data type: `String`
 
 Default value: `$kubernetes::cgroup_driver`
 
-##### `proxy_mode`
+##### <a name="proxy_mode"></a>`proxy_mode`
 
 Data type: `String`
 
@@ -2490,7 +2746,7 @@ Data type: `String`
 
 Default value: `$kubernetes::proxy_mode`
 
-##### `metrics_bind_address`
+##### <a name="metrics_bind_address"></a>`metrics_bind_address`
 
 Data type: `Stdlib::IP::Address`
 
@@ -2498,7 +2754,7 @@ Data type: `Stdlib::IP::Address`
 
 Default value: `$kubernetes::metrics_bind_address`
 
-##### `conntrack_max_per_core`
+##### <a name="conntrack_max_per_core"></a>`conntrack_max_per_core`
 
 Data type: `Integer`
 
@@ -2506,7 +2762,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::conntrack_max_per_core`
 
-##### `conntrack_min`
+##### <a name="conntrack_min"></a>`conntrack_min`
 
 Data type: `Integer`
 
@@ -2514,7 +2770,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::conntrack_min`
 
-##### `conntrack_tcp_wait_timeout`
+##### <a name="conntrack_tcp_wait_timeout"></a>`conntrack_tcp_wait_timeout`
 
 Data type: `String`
 
@@ -2522,7 +2778,7 @@ Data type: `String`
 
 Default value: `$kubernetes::conntrack_tcp_wait_timeout`
 
-##### `conntrack_tcp_stablished_timeout`
+##### <a name="conntrack_tcp_stablished_timeout"></a>`conntrack_tcp_stablished_timeout`
 
 Data type: `String`
 
@@ -2530,15 +2786,35 @@ Data type: `String`
 
 Default value: `$kubernetes::conntrack_tcp_stablished_timeout`
 
-### `kubernetes::config::worker`
+### <a name="kubernetesconfigworker"></a>`kubernetes::config::worker`
 
 Class kubernetes config_worker, populates worker config files with joinconfig
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::config::worker` class.
+The following parameters are available in the `kubernetes::config::worker` class:
 
-##### `node_name`
+* [`node_name`](#node_name)
+* [`config_file`](#config_file)
+* [`kubernetes_version`](#kubernetes_version)
+* [`kubernetes_cluster_name`](#kubernetes_cluster_name)
+* [`controller_address`](#controller_address)
+* [`discovery_token_hash`](#discovery_token_hash)
+* [`container_runtime`](#container_runtime)
+* [`discovery_token`](#discovery_token)
+* [`tls_bootstrap_token`](#tls_bootstrap_token)
+* [`token`](#token)
+* [`discovery_file`](#discovery_file)
+* [`feature_gates`](#feature_gates)
+* [`cloud_provider`](#cloud_provider)
+* [`cloud_config`](#cloud_config)
+* [`kubelet_extra_arguments`](#kubelet_extra_arguments)
+* [`kubelet_extra_config`](#kubelet_extra_config)
+* [`ignore_preflight_errors`](#ignore_preflight_errors)
+* [`skip_ca_verification`](#skip_ca_verification)
+* [`cgroup_driver`](#cgroup_driver)
+
+##### <a name="node_name"></a>`node_name`
 
 Data type: `String`
 
@@ -2546,7 +2822,7 @@ Data type: `String`
 
 Default value: `$kubernetes::node_name`
 
-##### `config_file`
+##### <a name="config_file"></a>`config_file`
 
 Data type: `String`
 
@@ -2554,7 +2830,7 @@ Data type: `String`
 
 Default value: `$kubernetes::config_file`
 
-##### `kubernetes_version`
+##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -2562,7 +2838,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### `kubernetes_cluster_name`
+##### <a name="kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
 Data type: `String`
 
@@ -2570,7 +2846,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_cluster_name`
 
-##### `controller_address`
+##### <a name="controller_address"></a>`controller_address`
 
 Data type: `String`
 
@@ -2578,7 +2854,7 @@ Data type: `String`
 
 Default value: `$kubernetes::controller_address`
 
-##### `discovery_token_hash`
+##### <a name="discovery_token_hash"></a>`discovery_token_hash`
 
 Data type: `String`
 
@@ -2586,7 +2862,7 @@ Data type: `String`
 
 Default value: `$kubernetes::discovery_token_hash`
 
-##### `container_runtime`
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -2594,7 +2870,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### `discovery_token`
+##### <a name="discovery_token"></a>`discovery_token`
 
 Data type: `String`
 
@@ -2602,7 +2878,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `tls_bootstrap_token`
+##### <a name="tls_bootstrap_token"></a>`tls_bootstrap_token`
 
 Data type: `String`
 
@@ -2610,7 +2886,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `token`
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -2618,7 +2894,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `discovery_file`
+##### <a name="discovery_file"></a>`discovery_file`
 
 Data type: `Optional[String]`
 
@@ -2626,7 +2902,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `feature_gates`
+##### <a name="feature_gates"></a>`feature_gates`
 
 Data type: `Optional[String]`
 
@@ -2634,7 +2910,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `cloud_provider`
+##### <a name="cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -2642,7 +2918,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_provider`
 
-##### `cloud_config`
+##### <a name="cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -2650,7 +2926,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_config`
 
-##### `kubelet_extra_arguments`
+##### <a name="kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2658,7 +2934,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::kubelet_extra_arguments`
 
-##### `kubelet_extra_config`
+##### <a name="kubelet_extra_config"></a>`kubelet_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -2666,7 +2942,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::kubelet_extra_config`
 
-##### `ignore_preflight_errors`
+##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -2674,7 +2950,7 @@ Data type: `Optional[Array]`
 
 Default value: ``undef``
 
-##### `skip_ca_verification`
+##### <a name="skip_ca_verification"></a>`skip_ca_verification`
 
 Data type: `Boolean`
 
@@ -2682,7 +2958,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `cgroup_driver`
+##### <a name="cgroup_driver"></a>`cgroup_driver`
 
 Data type: `String`
 
@@ -2690,15 +2966,38 @@ Data type: `String`
 
 Default value: `$kubernetes::cgroup_driver`
 
-### `kubernetes::kube_addons`
+### <a name="kuberneteskube_addons"></a>`kubernetes::kube_addons`
 
 Class kubernetes kube_addons
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::kube_addons` class.
+The following parameters are available in the `kubernetes::kube_addons` class:
 
-##### `cni_network_provider`
+* [`cni_network_preinstall`](#cni_network_preinstall)
+* [`cni_network_provider`](#cni_network_provider)
+* [`cni_pod_cidr`](#cni_pod_cidr)
+* [`cni_provider`](#cni_provider)
+* [`cni_rbac_binding`](#cni_rbac_binding)
+* [`install_dashboard`](#install_dashboard)
+* [`dashboard_version`](#dashboard_version)
+* [`kubernetes_version`](#kubernetes_version)
+* [`kubernetes_dashboard_url`](#kubernetes_dashboard_url)
+* [`controller`](#controller)
+* [`schedule_on_controller`](#schedule_on_controller)
+* [`node_name`](#node_name)
+* [`path`](#path)
+* [`env`](#env)
+
+##### <a name="cni_network_preinstall"></a>`cni_network_preinstall`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::cni_network_preinstall`
+
+##### <a name="cni_network_provider"></a>`cni_network_provider`
 
 Data type: `Optional[String]`
 
@@ -2706,7 +3005,23 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_network_provider`
 
-##### `cni_rbac_binding`
+##### <a name="cni_pod_cidr"></a>`cni_pod_cidr`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::cni_pod_cidr`
+
+##### <a name="cni_provider"></a>`cni_provider`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::cni_provider`
+
+##### <a name="cni_rbac_binding"></a>`cni_rbac_binding`
 
 Data type: `Optional[String]`
 
@@ -2714,7 +3029,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_rbac_binding`
 
-##### `install_dashboard`
+##### <a name="install_dashboard"></a>`install_dashboard`
 
 Data type: `Boolean`
 
@@ -2722,7 +3037,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::install_dashboard`
 
-##### `dashboard_version`
+##### <a name="dashboard_version"></a>`dashboard_version`
 
 Data type: `String`
 
@@ -2730,7 +3045,7 @@ Data type: `String`
 
 Default value: `$kubernetes::dashboard_version`
 
-##### `kubernetes_version`
+##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -2738,7 +3053,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### `kubernetes_dashboard_url`
+##### <a name="kubernetes_dashboard_url"></a>`kubernetes_dashboard_url`
 
 Data type: `String`
 
@@ -2746,7 +3061,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_dashboard_url`
 
-##### `controller`
+##### <a name="controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -2754,7 +3069,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
-##### `schedule_on_controller`
+##### <a name="schedule_on_controller"></a>`schedule_on_controller`
 
 Data type: `Optional[Boolean]`
 
@@ -2762,7 +3077,7 @@ Data type: `Optional[Boolean]`
 
 Default value: `$kubernetes::schedule_on_controller`
 
-##### `node_name`
+##### <a name="node_name"></a>`node_name`
 
 Data type: `String`
 
@@ -2770,7 +3085,7 @@ Data type: `String`
 
 Default value: `$kubernetes::node_name`
 
-##### `path`
+##### <a name="path"></a>`path`
 
 Data type: `Array`
 
@@ -2778,7 +3093,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### `env`
+##### <a name="env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -2786,15 +3101,51 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-### `kubernetes::packages`
+### <a name="kubernetespackages"></a>`kubernetes::packages`
 
 The kubernetes::packages class.
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::packages` class.
+The following parameters are available in the `kubernetes::packages` class:
 
-##### `kubernetes_package_version`
+* [`kubernetes_package_version`](#kubernetes_package_version)
+* [`container_runtime`](#container_runtime)
+* [`manage_docker`](#manage_docker)
+* [`manage_etcd`](#manage_etcd)
+* [`docker_version`](#docker_version)
+* [`docker_package_name`](#docker_package_name)
+* [`docker_storage_driver`](#docker_storage_driver)
+* [`docker_cgroup_driver`](#docker_cgroup_driver)
+* [`docker_storage_opts`](#docker_storage_opts)
+* [`docker_extra_daemon_config`](#docker_extra_daemon_config)
+* [`docker_log_max_file`](#docker_log_max_file)
+* [`docker_log_max_size`](#docker_log_max_size)
+* [`controller`](#controller)
+* [`containerd_version`](#containerd_version)
+* [`containerd_install_method`](#containerd_install_method)
+* [`containerd_package_name`](#containerd_package_name)
+* [`containerd_archive`](#containerd_archive)
+* [`containerd_archive_checksum`](#containerd_archive_checksum)
+* [`containerd_source`](#containerd_source)
+* [`etcd_archive`](#etcd_archive)
+* [`etcd_archive_checksum`](#etcd_archive_checksum)
+* [`etcd_version`](#etcd_version)
+* [`etcd_source`](#etcd_source)
+* [`etcd_package_name`](#etcd_package_name)
+* [`etcd_install_method`](#etcd_install_method)
+* [`runc_source`](#runc_source)
+* [`runc_source_checksum`](#runc_source_checksum)
+* [`disable_swap`](#disable_swap)
+* [`manage_kernel_modules`](#manage_kernel_modules)
+* [`manage_sysctl_settings`](#manage_sysctl_settings)
+* [`create_repos`](#create_repos)
+* [`pin_packages`](#pin_packages)
+* [`package_pin_priority`](#package_pin_priority)
+* [`archive_checksum_type`](#archive_checksum_type)
+* [`tmp_directory`](#tmp_directory)
+
+##### <a name="kubernetes_package_version"></a>`kubernetes_package_version`
 
 Data type: `String`
 
@@ -2802,7 +3153,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_package_version`
 
-##### `container_runtime`
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -2810,7 +3161,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### `manage_docker`
+##### <a name="manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -2818,7 +3169,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_docker`
 
-##### `manage_etcd`
+##### <a name="manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -2826,7 +3177,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_etcd`
 
-##### `docker_version`
+##### <a name="docker_version"></a>`docker_version`
 
 Data type: `Optional[String]`
 
@@ -2834,7 +3185,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_version`
 
-##### `docker_package_name`
+##### <a name="docker_package_name"></a>`docker_package_name`
 
 Data type: `Optional[String]`
 
@@ -2842,7 +3193,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_package_name`
 
-##### `docker_storage_driver`
+##### <a name="docker_storage_driver"></a>`docker_storage_driver`
 
 Data type: `Optional[String]`
 
@@ -2850,7 +3201,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_storage_driver`
 
-##### `docker_cgroup_driver`
+##### <a name="docker_cgroup_driver"></a>`docker_cgroup_driver`
 
 Data type: `Optional[String]`
 
@@ -2858,7 +3209,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cgroup_driver`
 
-##### `docker_storage_opts`
+##### <a name="docker_storage_opts"></a>`docker_storage_opts`
 
 Data type: `Optional[Array]`
 
@@ -2866,7 +3217,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::docker_storage_opts`
 
-##### `docker_extra_daemon_config`
+##### <a name="docker_extra_daemon_config"></a>`docker_extra_daemon_config`
 
 Data type: `Optional[String]`
 
@@ -2874,7 +3225,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_extra_daemon_config`
 
-##### `docker_log_max_file`
+##### <a name="docker_log_max_file"></a>`docker_log_max_file`
 
 Data type: `String`
 
@@ -2882,7 +3233,7 @@ Data type: `String`
 
 Default value: `$kubernetes::docker_log_max_file`
 
-##### `docker_log_max_size`
+##### <a name="docker_log_max_size"></a>`docker_log_max_size`
 
 Data type: `String`
 
@@ -2890,7 +3241,7 @@ Data type: `String`
 
 Default value: `$kubernetes::docker_log_max_size`
 
-##### `controller`
+##### <a name="controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -2898,7 +3249,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
-##### `containerd_version`
+##### <a name="containerd_version"></a>`containerd_version`
 
 Data type: `Optional[String]`
 
@@ -2906,7 +3257,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_version`
 
-##### `containerd_install_method`
+##### <a name="containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Enum['archive','package']`
 
@@ -2914,7 +3265,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `$kubernetes::containerd_install_method`
 
-##### `containerd_package_name`
+##### <a name="containerd_package_name"></a>`containerd_package_name`
 
 Data type: `String`
 
@@ -2922,7 +3273,7 @@ Data type: `String`
 
 Default value: `$kubernetes::containerd_package_name`
 
-##### `containerd_archive`
+##### <a name="containerd_archive"></a>`containerd_archive`
 
 Data type: `Optional[String]`
 
@@ -2930,7 +3281,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_archive`
 
-##### `containerd_archive_checksum`
+##### <a name="containerd_archive_checksum"></a>`containerd_archive_checksum`
 
 Data type: `Optional[String]`
 
@@ -2938,7 +3289,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_archive_checksum`
 
-##### `containerd_source`
+##### <a name="containerd_source"></a>`containerd_source`
 
 Data type: `Optional[String]`
 
@@ -2946,7 +3297,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_source`
 
-##### `etcd_archive`
+##### <a name="etcd_archive"></a>`etcd_archive`
 
 Data type: `String`
 
@@ -2954,7 +3305,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_archive`
 
-##### `etcd_archive_checksum`
+##### <a name="etcd_archive_checksum"></a>`etcd_archive_checksum`
 
 Data type: `Optional[String]`
 
@@ -2962,7 +3313,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_archive_checksum`
 
-##### `etcd_version`
+##### <a name="etcd_version"></a>`etcd_version`
 
 Data type: `String`
 
@@ -2970,7 +3321,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_version`
 
-##### `etcd_source`
+##### <a name="etcd_source"></a>`etcd_source`
 
 Data type: `String`
 
@@ -2978,7 +3329,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_source`
 
-##### `etcd_package_name`
+##### <a name="etcd_package_name"></a>`etcd_package_name`
 
 Data type: `String`
 
@@ -2986,7 +3337,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_package_name`
 
-##### `etcd_install_method`
+##### <a name="etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -2994,7 +3345,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_install_method`
 
-##### `runc_source`
+##### <a name="runc_source"></a>`runc_source`
 
 Data type: `Optional[String]`
 
@@ -3002,7 +3353,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::runc_source`
 
-##### `runc_source_checksum`
+##### <a name="runc_source_checksum"></a>`runc_source_checksum`
 
 Data type: `Optional[String]`
 
@@ -3010,7 +3361,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::runc_source_checksum`
 
-##### `disable_swap`
+##### <a name="disable_swap"></a>`disable_swap`
 
 Data type: `Boolean`
 
@@ -3018,7 +3369,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::disable_swap`
 
-##### `manage_kernel_modules`
+##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
@@ -3026,7 +3377,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_kernel_modules`
 
-##### `manage_sysctl_settings`
+##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
@@ -3034,7 +3385,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_sysctl_settings`
 
-##### `create_repos`
+##### <a name="create_repos"></a>`create_repos`
 
 Data type: `Boolean`
 
@@ -3042,7 +3393,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::repos::create_repos`
 
-##### `pin_packages`
+##### <a name="pin_packages"></a>`pin_packages`
 
 Data type: `Boolean`
 
@@ -3050,7 +3401,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::pin_packages`
 
-##### `package_pin_priority`
+##### <a name="package_pin_priority"></a>`package_pin_priority`
 
 Data type: `Integer`
 
@@ -3058,7 +3409,7 @@ Data type: `Integer`
 
 Default value: `32767`
 
-##### `archive_checksum_type`
+##### <a name="archive_checksum_type"></a>`archive_checksum_type`
 
 Data type: `String`
 
@@ -3066,15 +3417,42 @@ Data type: `String`
 
 Default value: `'sha256'`
 
-### `kubernetes::repos`
+##### <a name="tmp_directory"></a>`tmp_directory`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::tmp_directory`
+
+### <a name="kubernetesrepos"></a>`kubernetes::repos`
 
 The kubernetes::repos class.
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::repos` class.
+The following parameters are available in the `kubernetes::repos` class:
 
-##### `container_runtime`
+* [`container_runtime`](#container_runtime)
+* [`kubernetes_apt_location`](#kubernetes_apt_location)
+* [`kubernetes_apt_release`](#kubernetes_apt_release)
+* [`kubernetes_apt_repos`](#kubernetes_apt_repos)
+* [`kubernetes_key_id`](#kubernetes_key_id)
+* [`kubernetes_key_source`](#kubernetes_key_source)
+* [`kubernetes_yum_baseurl`](#kubernetes_yum_baseurl)
+* [`kubernetes_yum_gpgkey`](#kubernetes_yum_gpgkey)
+* [`docker_apt_location`](#docker_apt_location)
+* [`docker_apt_release`](#docker_apt_release)
+* [`docker_apt_repos`](#docker_apt_repos)
+* [`docker_yum_baseurl`](#docker_yum_baseurl)
+* [`docker_yum_gpgkey`](#docker_yum_gpgkey)
+* [`docker_key_id`](#docker_key_id)
+* [`docker_key_source`](#docker_key_source)
+* [`containerd_install_method`](#containerd_install_method)
+* [`manage_docker`](#manage_docker)
+* [`create_repos`](#create_repos)
+
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -3082,7 +3460,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### `kubernetes_apt_location`
+##### <a name="kubernetes_apt_location"></a>`kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
@@ -3090,7 +3468,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_apt_location`
 
-##### `kubernetes_apt_release`
+##### <a name="kubernetes_apt_release"></a>`kubernetes_apt_release`
 
 Data type: `Optional[String]`
 
@@ -3098,7 +3476,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_apt_release`
 
-##### `kubernetes_apt_repos`
+##### <a name="kubernetes_apt_repos"></a>`kubernetes_apt_repos`
 
 Data type: `Optional[String]`
 
@@ -3106,7 +3484,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_apt_repos`
 
-##### `kubernetes_key_id`
+##### <a name="kubernetes_key_id"></a>`kubernetes_key_id`
 
 Data type: `Optional[String]`
 
@@ -3114,7 +3492,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_key_id`
 
-##### `kubernetes_key_source`
+##### <a name="kubernetes_key_source"></a>`kubernetes_key_source`
 
 Data type: `Optional[String]`
 
@@ -3122,7 +3500,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_key_source`
 
-##### `kubernetes_yum_baseurl`
+##### <a name="kubernetes_yum_baseurl"></a>`kubernetes_yum_baseurl`
 
 Data type: `Optional[String]`
 
@@ -3130,7 +3508,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_yum_baseurl`
 
-##### `kubernetes_yum_gpgkey`
+##### <a name="kubernetes_yum_gpgkey"></a>`kubernetes_yum_gpgkey`
 
 Data type: `Optional[String]`
 
@@ -3138,7 +3516,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_yum_gpgkey`
 
-##### `docker_apt_location`
+##### <a name="docker_apt_location"></a>`docker_apt_location`
 
 Data type: `Optional[String]`
 
@@ -3146,7 +3524,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_apt_location`
 
-##### `docker_apt_release`
+##### <a name="docker_apt_release"></a>`docker_apt_release`
 
 Data type: `Optional[String]`
 
@@ -3154,7 +3532,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_apt_release`
 
-##### `docker_apt_repos`
+##### <a name="docker_apt_repos"></a>`docker_apt_repos`
 
 Data type: `Optional[String]`
 
@@ -3162,7 +3540,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_apt_repos`
 
-##### `docker_yum_baseurl`
+##### <a name="docker_yum_baseurl"></a>`docker_yum_baseurl`
 
 Data type: `Optional[String]`
 
@@ -3170,7 +3548,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_yum_baseurl`
 
-##### `docker_yum_gpgkey`
+##### <a name="docker_yum_gpgkey"></a>`docker_yum_gpgkey`
 
 Data type: `Optional[String]`
 
@@ -3178,7 +3556,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_yum_gpgkey`
 
-##### `docker_key_id`
+##### <a name="docker_key_id"></a>`docker_key_id`
 
 Data type: `Optional[String]`
 
@@ -3186,7 +3564,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_key_id`
 
-##### `docker_key_source`
+##### <a name="docker_key_source"></a>`docker_key_source`
 
 Data type: `Optional[String]`
 
@@ -3194,7 +3572,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_key_source`
 
-##### `containerd_install_method`
+##### <a name="containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Optional[String]`
 
@@ -3202,7 +3580,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_install_method`
 
-##### `manage_docker`
+##### <a name="manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -3210,7 +3588,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_docker`
 
-##### `create_repos`
+##### <a name="create_repos"></a>`create_repos`
 
 Data type: `Boolean`
 
@@ -3218,15 +3596,25 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::create_repos`
 
-### `kubernetes::service`
+### <a name="kubernetesservice"></a>`kubernetes::service`
 
 The kubernetes::service class.
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::service` class.
+The following parameters are available in the `kubernetes::service` class:
 
-##### `container_runtime`
+* [`container_runtime`](#container_runtime)
+* [`containerd_install_method`](#containerd_install_method)
+* [`controller`](#controller)
+* [`manage_docker`](#manage_docker)
+* [`manage_etcd`](#manage_etcd)
+* [`etcd_install_method`](#etcd_install_method)
+* [`kubernetes_version`](#kubernetes_version)
+* [`cloud_provider`](#cloud_provider)
+* [`cloud_config`](#cloud_config)
+
+##### <a name="container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -3234,7 +3622,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### `containerd_install_method`
+##### <a name="containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Enum['archive','package']`
 
@@ -3242,7 +3630,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `$kubernetes::containerd_install_method`
 
-##### `controller`
+##### <a name="controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -3250,7 +3638,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
-##### `manage_docker`
+##### <a name="manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -3258,7 +3646,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_docker`
 
-##### `manage_etcd`
+##### <a name="manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -3266,7 +3654,15 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_etcd`
 
-##### `kubernetes_version`
+##### <a name="etcd_install_method"></a>`etcd_install_method`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::etcd_install_method`
+
+##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -3274,7 +3670,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### `cloud_provider`
+##### <a name="cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -3282,7 +3678,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_provider`
 
-##### `cloud_config`
+##### <a name="cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -3292,15 +3688,22 @@ Default value: `$kubernetes::cloud_config`
 
 ## Defined types
 
-### `kubernetes::kubeadm_init`
+### <a name="kuberneteskubeadm_init"></a>`kubernetes::kubeadm_init`
 
 == kubernetes::kubeadm_init
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::kubeadm_init` defined type.
+The following parameters are available in the `kubernetes::kubeadm_init` defined type:
 
-##### `node_name`
+* [`node_name`](#node_name)
+* [`config`](#config)
+* [`dry_run`](#dry_run)
+* [`path`](#path)
+* [`env`](#env)
+* [`ignore_preflight_errors`](#ignore_preflight_errors)
+
+##### <a name="node_name"></a>`node_name`
 
 Data type: `String`
 
@@ -3308,7 +3711,7 @@ Data type: `String`
 
 Default value: `$kubernetes::node_name`
 
-##### `config`
+##### <a name="config"></a>`config`
 
 Data type: `Optional[String]`
 
@@ -3316,7 +3719,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::config_file`
 
-##### `dry_run`
+##### <a name="dry_run"></a>`dry_run`
 
 Data type: `Boolean`
 
@@ -3324,7 +3727,7 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-##### `path`
+##### <a name="path"></a>`path`
 
 Data type: `Array`
 
@@ -3332,7 +3735,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### `env`
+##### <a name="env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -3340,7 +3743,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-##### `ignore_preflight_errors`
+##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -3348,15 +3751,31 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::ignore_preflight_errors`
 
-### `kubernetes::kubeadm_join`
+### <a name="kuberneteskubeadm_join"></a>`kubernetes::kubeadm_join`
 
 == kubernetes::kubeadm_join
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::kubeadm_join` defined type.
+The following parameters are available in the `kubernetes::kubeadm_join` defined type:
 
-##### `node_name`
+* [`node_name`](#node_name)
+* [`kubernetes_version`](#kubernetes_version)
+* [`config`](#config)
+* [`controller_address`](#controller_address)
+* [`ca_cert_hash`](#ca_cert_hash)
+* [`discovery_token`](#discovery_token)
+* [`tls_bootstrap_token`](#tls_bootstrap_token)
+* [`token`](#token)
+* [`feature_gates`](#feature_gates)
+* [`cri_socket`](#cri_socket)
+* [`discovery_file`](#discovery_file)
+* [`env`](#env)
+* [`ignore_preflight_errors`](#ignore_preflight_errors)
+* [`path`](#path)
+* [`skip_ca_verification`](#skip_ca_verification)
+
+##### <a name="node_name"></a>`node_name`
 
 Data type: `String`
 
@@ -3364,7 +3783,7 @@ Data type: `String`
 
 Default value: `$kubernetes::node_name`
 
-##### `kubernetes_version`
+##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -3372,7 +3791,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### `config`
+##### <a name="config"></a>`config`
 
 Data type: `String`
 
@@ -3380,7 +3799,7 @@ Data type: `String`
 
 Default value: `$kubernetes::config_file`
 
-##### `controller_address`
+##### <a name="controller_address"></a>`controller_address`
 
 Data type: `String`
 
@@ -3388,7 +3807,7 @@ Data type: `String`
 
 Default value: `$kubernetes::controller_address`
 
-##### `ca_cert_hash`
+##### <a name="ca_cert_hash"></a>`ca_cert_hash`
 
 Data type: `String`
 
@@ -3396,7 +3815,7 @@ Data type: `String`
 
 Default value: `$kubernetes::discovery_token_hash`
 
-##### `discovery_token`
+##### <a name="discovery_token"></a>`discovery_token`
 
 Data type: `String`
 
@@ -3404,7 +3823,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `tls_bootstrap_token`
+##### <a name="tls_bootstrap_token"></a>`tls_bootstrap_token`
 
 Data type: `String`
 
@@ -3412,7 +3831,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `token`
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -3420,7 +3839,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### `feature_gates`
+##### <a name="feature_gates"></a>`feature_gates`
 
 Data type: `Optional[String]`
 
@@ -3428,7 +3847,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `cri_socket`
+##### <a name="cri_socket"></a>`cri_socket`
 
 Data type: `Optional[String]`
 
@@ -3436,7 +3855,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `discovery_file`
+##### <a name="discovery_file"></a>`discovery_file`
 
 Data type: `Optional[String]`
 
@@ -3444,7 +3863,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `env`
+##### <a name="env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -3452,7 +3871,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-##### `ignore_preflight_errors`
+##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -3460,7 +3879,7 @@ Data type: `Optional[Array]`
 
 Default value: ``undef``
 
-##### `path`
+##### <a name="path"></a>`path`
 
 Data type: `Array`
 
@@ -3468,7 +3887,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### `skip_ca_verification`
+##### <a name="skip_ca_verification"></a>`skip_ca_verification`
 
 Data type: `Boolean`
 
@@ -3476,15 +3895,22 @@ Data type: `Boolean`
 
 Default value: ``false``
 
-### `kubernetes::wait_for_default_sa`
+### <a name="kuberneteswait_for_default_sa"></a>`kubernetes::wait_for_default_sa`
 
 == kubernetes::wait_for_default_sa
 
 #### Parameters
 
-The following parameters are available in the `kubernetes::wait_for_default_sa` defined type.
+The following parameters are available in the `kubernetes::wait_for_default_sa` defined type:
 
-##### `namespace`
+* [`namespace`](#namespace)
+* [`path`](#path)
+* [`timeout`](#timeout)
+* [`tries`](#tries)
+* [`try_sleep`](#try_sleep)
+* [`env`](#env)
+
+##### <a name="namespace"></a>`namespace`
 
 Data type: `String`
 
@@ -3492,7 +3918,7 @@ Data type: `String`
 
 Default value: `$title`
 
-##### `path`
+##### <a name="path"></a>`path`
 
 Data type: `Array`
 
@@ -3500,7 +3926,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### `timeout`
+##### <a name="timeout"></a>`timeout`
 
 Data type: `Optional[Integer]`
 
@@ -3508,7 +3934,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `tries`
+##### <a name="tries"></a>`tries`
 
 Data type: `Optional[Integer]`
 
@@ -3516,7 +3942,7 @@ Data type: `Optional[Integer]`
 
 Default value: `5`
 
-##### `try_sleep`
+##### <a name="try_sleep"></a>`try_sleep`
 
 Data type: `Optional[Integer]`
 
@@ -3524,7 +3950,7 @@ Data type: `Optional[Integer]`
 
 Default value: `6`
 
-##### `env`
+##### <a name="env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -3534,7 +3960,7 @@ Default value: `$kubernetes::environment`
 
 ## Functions
 
-### `kubeadm_init_flags`
+### <a name="kubeadm_init_flags"></a>`kubeadm_init_flags`
 
 Type: Ruby 3.x API
 
@@ -3546,7 +3972,7 @@ Transforms a hash into a string of kubeadm init flags
 
 Returns: `Any`
 
-### `kubeadm_join_flags`
+### <a name="kubeadm_join_flags"></a>`kubeadm_join_flags`
 
 Type: Ruby 3.x API
 
@@ -3560,7 +3986,7 @@ Returns: `Any`
 
 ## Tasks
 
-### `swagger_k8s_create_admissionregistration_v1beta1_mutating_webhook_configuration`
+### <a name="swagger_k8s_create_admissionregistration_v1beta1_mutating_webhook_configuration"></a>`swagger_k8s_create_admissionregistration_v1beta1_mutating_webhook_configuration`
 
 create a MutatingWebhookConfiguration
 
@@ -3634,7 +4060,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_admissionregistration_v1beta1_validating_webhook_configuration`
+### <a name="swagger_k8s_create_admissionregistration_v1beta1_validating_webhook_configuration"></a>`swagger_k8s_create_admissionregistration_v1beta1_validating_webhook_configuration`
 
 create a ValidatingWebhookConfiguration
 
@@ -3708,7 +4134,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_apiextensions_v1beta1_custom_resource_definition`
+### <a name="swagger_k8s_create_apiextensions_v1beta1_custom_resource_definition"></a>`swagger_k8s_create_apiextensions_v1beta1_custom_resource_definition`
 
 create a CustomResourceDefinition
 
@@ -3788,7 +4214,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_apiregistration_v1_api_service`
+### <a name="swagger_k8s_create_apiregistration_v1_api_service"></a>`swagger_k8s_create_apiregistration_v1_api_service`
 
 create an APIService
 
@@ -3868,7 +4294,7 @@ Data type: `Optional[String[1]]`
 
 Spec contains information for locating and communicating with a server
 
-### `swagger_k8s_create_apiregistration_v1beta1_api_service`
+### <a name="swagger_k8s_create_apiregistration_v1beta1_api_service"></a>`swagger_k8s_create_apiregistration_v1beta1_api_service`
 
 create an APIService
 
@@ -3948,7 +4374,7 @@ Data type: `Optional[String[1]]`
 
 Status contains derived information about an API server
 
-### `swagger_k8s_create_apps_v1_namespaced_controller_revision`
+### <a name="swagger_k8s_create_apps_v1_namespaced_controller_revision"></a>`swagger_k8s_create_apps_v1_namespaced_controller_revision`
 
 create a ControllerRevision
 
@@ -4034,7 +4460,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_create_apps_v1_namespaced_daemon_set`
+### <a name="swagger_k8s_create_apps_v1_namespaced_daemon_set"></a>`swagger_k8s_create_apps_v1_namespaced_daemon_set`
 
 create a DaemonSet
 
@@ -4120,7 +4546,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_create_apps_v1_namespaced_deployment`
+### <a name="swagger_k8s_create_apps_v1_namespaced_deployment"></a>`swagger_k8s_create_apps_v1_namespaced_deployment`
 
 create a Deployment
 
@@ -4206,7 +4632,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_create_apps_v1_namespaced_replica_set`
+### <a name="swagger_k8s_create_apps_v1_namespaced_replica_set"></a>`swagger_k8s_create_apps_v1_namespaced_replica_set`
 
 create a ReplicaSet
 
@@ -4292,7 +4718,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_apps_v1_namespaced_stateful_set`
+### <a name="swagger_k8s_create_apps_v1_namespaced_stateful_set"></a>`swagger_k8s_create_apps_v1_namespaced_stateful_set`
 
 create a StatefulSet
 
@@ -4378,7 +4804,7 @@ Data type: `Optional[String[1]]`
 
 Spec defines the desired identities of pods in this set.
 
-### `swagger_k8s_create_apps_v1beta1_namespaced_controller_revision`
+### <a name="swagger_k8s_create_apps_v1beta1_namespaced_controller_revision"></a>`swagger_k8s_create_apps_v1beta1_namespaced_controller_revision`
 
 create a ControllerRevision
 
@@ -4464,7 +4890,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_apps_v1beta1_namespaced_deployment`
+### <a name="swagger_k8s_create_apps_v1beta1_namespaced_deployment"></a>`swagger_k8s_create_apps_v1beta1_namespaced_deployment`
 
 create a Deployment
 
@@ -4550,7 +4976,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_apps_v1beta1_namespaced_deployment_rollback`
+### <a name="swagger_k8s_create_apps_v1beta1_namespaced_deployment_rollback"></a>`swagger_k8s_create_apps_v1beta1_namespaced_deployment_rollback`
 
 create rollback of a Deployment
 
@@ -4660,7 +5086,7 @@ Data type: `Optional[String[1]]`
 
 A human-readable description of the status of this operation.
 
-### `swagger_k8s_create_apps_v1beta1_namespaced_stateful_set`
+### <a name="swagger_k8s_create_apps_v1beta1_namespaced_stateful_set"></a>`swagger_k8s_create_apps_v1beta1_namespaced_stateful_set`
 
 create a StatefulSet
 
@@ -4746,7 +5172,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_apps_v1beta2_namespaced_controller_revision`
+### <a name="swagger_k8s_create_apps_v1beta2_namespaced_controller_revision"></a>`swagger_k8s_create_apps_v1beta2_namespaced_controller_revision`
 
 create a ControllerRevision
 
@@ -4832,7 +5258,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_create_apps_v1beta2_namespaced_daemon_set`
+### <a name="swagger_k8s_create_apps_v1beta2_namespaced_daemon_set"></a>`swagger_k8s_create_apps_v1beta2_namespaced_daemon_set`
 
 create a DaemonSet
 
@@ -4918,7 +5344,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_create_apps_v1beta2_namespaced_deployment`
+### <a name="swagger_k8s_create_apps_v1beta2_namespaced_deployment"></a>`swagger_k8s_create_apps_v1beta2_namespaced_deployment`
 
 create a Deployment
 
@@ -5004,7 +5430,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_apps_v1beta2_namespaced_replica_set`
+### <a name="swagger_k8s_create_apps_v1beta2_namespaced_replica_set"></a>`swagger_k8s_create_apps_v1beta2_namespaced_replica_set`
 
 create a ReplicaSet
 
@@ -5090,7 +5516,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicaSet are empty, they are defaulted to be the same as the Pod(s) that the ReplicaSet manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_create_apps_v1beta2_namespaced_stateful_set`
+### <a name="swagger_k8s_create_apps_v1beta2_namespaced_stateful_set"></a>`swagger_k8s_create_apps_v1beta2_namespaced_stateful_set`
 
 create a StatefulSet
 
@@ -5176,7 +5602,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_auditregistration_v1alpha1_audit_sink`
+### <a name="swagger_k8s_create_auditregistration_v1alpha1_audit_sink"></a>`swagger_k8s_create_auditregistration_v1alpha1_audit_sink`
 
 create an AuditSink
 
@@ -5250,7 +5676,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_authentication_v1_token_review`
+### <a name="swagger_k8s_create_authentication_v1_token_review"></a>`swagger_k8s_create_authentication_v1_token_review`
 
 create a TokenReview
 
@@ -5330,7 +5756,7 @@ Data type: `Optional[String[1]]`
 
 Spec holds information about the request being evaluated
 
-### `swagger_k8s_create_authentication_v1beta1_token_review`
+### <a name="swagger_k8s_create_authentication_v1beta1_token_review"></a>`swagger_k8s_create_authentication_v1beta1_token_review`
 
 create a TokenReview
 
@@ -5410,7 +5836,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_authorization_v1_namespaced_local_subject_access_review`
+### <a name="swagger_k8s_create_authorization_v1_namespaced_local_subject_access_review"></a>`swagger_k8s_create_authorization_v1_namespaced_local_subject_access_review`
 
 create a LocalSubjectAccessReview
 
@@ -5496,7 +5922,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_create_authorization_v1_self_subject_access_review`
+### <a name="swagger_k8s_create_authorization_v1_self_subject_access_review"></a>`swagger_k8s_create_authorization_v1_self_subject_access_review`
 
 create a SelfSubjectAccessReview
 
@@ -5576,7 +6002,7 @@ Data type: `Optional[String[1]]`
 
 Spec holds information about the request being evaluated.  user and groups must be empty
 
-### `swagger_k8s_create_authorization_v1_self_subject_rules_review`
+### <a name="swagger_k8s_create_authorization_v1_self_subject_rules_review"></a>`swagger_k8s_create_authorization_v1_self_subject_rules_review`
 
 create a SelfSubjectRulesReview
 
@@ -5656,7 +6082,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_authorization_v1_subject_access_review`
+### <a name="swagger_k8s_create_authorization_v1_subject_access_review"></a>`swagger_k8s_create_authorization_v1_subject_access_review`
 
 create a SubjectAccessReview
 
@@ -5736,7 +6162,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_authorization_v1beta1_namespaced_local_subject_access_review`
+### <a name="swagger_k8s_create_authorization_v1beta1_namespaced_local_subject_access_review"></a>`swagger_k8s_create_authorization_v1beta1_namespaced_local_subject_access_review`
 
 create a LocalSubjectAccessReview
 
@@ -5822,7 +6248,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_create_authorization_v1beta1_self_subject_access_review`
+### <a name="swagger_k8s_create_authorization_v1beta1_self_subject_access_review"></a>`swagger_k8s_create_authorization_v1beta1_self_subject_access_review`
 
 create a SelfSubjectAccessReview
 
@@ -5902,7 +6328,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_authorization_v1beta1_self_subject_rules_review`
+### <a name="swagger_k8s_create_authorization_v1beta1_self_subject_rules_review"></a>`swagger_k8s_create_authorization_v1beta1_self_subject_rules_review`
 
 create a SelfSubjectRulesReview
 
@@ -5982,7 +6408,7 @@ Data type: `Optional[String[1]]`
 
 Spec holds information about the request being evaluated.
 
-### `swagger_k8s_create_authorization_v1beta1_subject_access_review`
+### <a name="swagger_k8s_create_authorization_v1beta1_subject_access_review"></a>`swagger_k8s_create_authorization_v1beta1_subject_access_review`
 
 create a SubjectAccessReview
 
@@ -6062,7 +6488,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_autoscaling_v1_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_create_autoscaling_v1_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_create_autoscaling_v1_namespaced_horizontal_pod_autoscaler`
 
 create a HorizontalPodAutoscaler
 
@@ -6148,7 +6574,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_create_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_create_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler`
 
 create a HorizontalPodAutoscaler
 
@@ -6234,7 +6660,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_create_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_create_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler`
 
 create a HorizontalPodAutoscaler
 
@@ -6320,7 +6746,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_create_batch_v1_namespaced_job`
+### <a name="swagger_k8s_create_batch_v1_namespaced_job"></a>`swagger_k8s_create_batch_v1_namespaced_job`
 
 create a Job
 
@@ -6406,7 +6832,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_batch_v1beta1_namespaced_cron_job`
+### <a name="swagger_k8s_create_batch_v1beta1_namespaced_cron_job"></a>`swagger_k8s_create_batch_v1beta1_namespaced_cron_job`
 
 create a CronJob
 
@@ -6492,7 +6918,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the desired behavior of a cron job, including the schedule. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_create_batch_v2alpha1_namespaced_cron_job`
+### <a name="swagger_k8s_create_batch_v2alpha1_namespaced_cron_job"></a>`swagger_k8s_create_batch_v2alpha1_namespaced_cron_job`
 
 create a CronJob
 
@@ -6578,7 +7004,7 @@ Data type: `Optional[String[1]]`
 
 Current status of a cron job. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_create_certificates_v1beta1_certificate_signing_request`
+### <a name="swagger_k8s_create_certificates_v1beta1_certificate_signing_request"></a>`swagger_k8s_create_certificates_v1beta1_certificate_signing_request`
 
 create a CertificateSigningRequest
 
@@ -6658,7 +7084,7 @@ Data type: `Optional[String[1]]`
 
 Derived information about the request.
 
-### `swagger_k8s_create_coordination_v1_namespaced_lease`
+### <a name="swagger_k8s_create_coordination_v1_namespaced_lease"></a>`swagger_k8s_create_coordination_v1_namespaced_lease`
 
 create a Lease
 
@@ -6738,7 +7164,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_coordination_v1beta1_namespaced_lease`
+### <a name="swagger_k8s_create_coordination_v1beta1_namespaced_lease"></a>`swagger_k8s_create_coordination_v1beta1_namespaced_lease`
 
 create a Lease
 
@@ -6818,7 +7244,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_create_core_v1_namespace`
+### <a name="swagger_k8s_create_core_v1_namespace"></a>`swagger_k8s_create_core_v1_namespace`
 
 create a Namespace
 
@@ -6898,7 +7324,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_core_v1_namespaced_binding`
+### <a name="swagger_k8s_create_core_v1_namespaced_binding"></a>`swagger_k8s_create_core_v1_namespaced_binding`
 
 create a Binding
 
@@ -6978,7 +7404,7 @@ Data type: `Optional[String[1]]`
 
 The target object that you want to bind to the standard object.
 
-### `swagger_k8s_create_core_v1_namespaced_config_map`
+### <a name="swagger_k8s_create_core_v1_namespaced_config_map"></a>`swagger_k8s_create_core_v1_namespaced_config_map`
 
 create a ConfigMap
 
@@ -7064,7 +7490,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_core_v1_namespaced_endpoints`
+### <a name="swagger_k8s_create_core_v1_namespaced_endpoints"></a>`swagger_k8s_create_core_v1_namespaced_endpoints`
 
 create Endpoints
 
@@ -7144,7 +7570,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_core_v1_namespaced_event`
+### <a name="swagger_k8s_create_core_v1_namespaced_event"></a>`swagger_k8s_create_core_v1_namespaced_event`
 
 create an Event
 
@@ -7302,7 +7728,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_create_core_v1_namespaced_limit_range`
+### <a name="swagger_k8s_create_core_v1_namespaced_limit_range"></a>`swagger_k8s_create_core_v1_namespaced_limit_range`
 
 create a LimitRange
 
@@ -7382,7 +7808,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_core_v1_namespaced_persistent_volume_claim`
+### <a name="swagger_k8s_create_core_v1_namespaced_persistent_volume_claim"></a>`swagger_k8s_create_core_v1_namespaced_persistent_volume_claim`
 
 create a PersistentVolumeClaim
 
@@ -7468,7 +7894,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_core_v1_namespaced_pod`
+### <a name="swagger_k8s_create_core_v1_namespaced_pod"></a>`swagger_k8s_create_core_v1_namespaced_pod`
 
 create a Pod
 
@@ -7554,7 +7980,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_core_v1_namespaced_pod_binding`
+### <a name="swagger_k8s_create_core_v1_namespaced_pod_binding"></a>`swagger_k8s_create_core_v1_namespaced_pod_binding`
 
 create binding of a Pod
 
@@ -7640,7 +8066,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_core_v1_namespaced_pod_eviction`
+### <a name="swagger_k8s_create_core_v1_namespaced_pod_eviction"></a>`swagger_k8s_create_core_v1_namespaced_pod_eviction`
 
 create eviction of a Pod
 
@@ -7726,7 +8152,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_core_v1_namespaced_pod_template`
+### <a name="swagger_k8s_create_core_v1_namespaced_pod_template"></a>`swagger_k8s_create_core_v1_namespaced_pod_template`
 
 create a PodTemplate
 
@@ -7806,7 +8232,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_create_core_v1_namespaced_replication_controller`
+### <a name="swagger_k8s_create_core_v1_namespaced_replication_controller"></a>`swagger_k8s_create_core_v1_namespaced_replication_controller`
 
 create a ReplicationController
 
@@ -7892,7 +8318,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_core_v1_namespaced_resource_quota`
+### <a name="swagger_k8s_create_core_v1_namespaced_resource_quota"></a>`swagger_k8s_create_core_v1_namespaced_resource_quota`
 
 create a ResourceQuota
 
@@ -7978,7 +8404,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_core_v1_namespaced_secret`
+### <a name="swagger_k8s_create_core_v1_namespaced_secret"></a>`swagger_k8s_create_core_v1_namespaced_secret`
 
 create a Secret
 
@@ -8070,7 +8496,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_core_v1_namespaced_service`
+### <a name="swagger_k8s_create_core_v1_namespaced_service"></a>`swagger_k8s_create_core_v1_namespaced_service`
 
 create a Service
 
@@ -8156,7 +8582,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_create_core_v1_namespaced_service_account`
+### <a name="swagger_k8s_create_core_v1_namespaced_service_account"></a>`swagger_k8s_create_core_v1_namespaced_service_account`
 
 create a ServiceAccount
 
@@ -8248,7 +8674,7 @@ Data type: `Optional[String[1]]`
 
 AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. Can be overridden at the pod level.
 
-### `swagger_k8s_create_core_v1_node`
+### <a name="swagger_k8s_create_core_v1_node"></a>`swagger_k8s_create_core_v1_node`
 
 create a Node
 
@@ -8328,7 +8754,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_core_v1_persistent_volume`
+### <a name="swagger_k8s_create_core_v1_persistent_volume"></a>`swagger_k8s_create_core_v1_persistent_volume`
 
 create a PersistentVolume
 
@@ -8408,7 +8834,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_events_v1beta1_namespaced_event`
+### <a name="swagger_k8s_create_events_v1beta1_namespaced_event"></a>`swagger_k8s_create_events_v1beta1_namespaced_event`
 
 create an Event
 
@@ -8566,7 +8992,7 @@ Data type: `Optional[String[1]]`
 
 Deprecated field assuring backward compatibility with core.v1 Event type
 
-### `swagger_k8s_create_extensions_v1beta1_namespaced_daemon_set`
+### <a name="swagger_k8s_create_extensions_v1beta1_namespaced_daemon_set"></a>`swagger_k8s_create_extensions_v1beta1_namespaced_daemon_set`
 
 create a DaemonSet
 
@@ -8652,7 +9078,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_extensions_v1beta1_namespaced_deployment`
+### <a name="swagger_k8s_create_extensions_v1beta1_namespaced_deployment"></a>`swagger_k8s_create_extensions_v1beta1_namespaced_deployment`
 
 create a Deployment
 
@@ -8738,7 +9164,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_extensions_v1beta1_namespaced_deployment_rollback`
+### <a name="swagger_k8s_create_extensions_v1beta1_namespaced_deployment_rollback"></a>`swagger_k8s_create_extensions_v1beta1_namespaced_deployment_rollback`
 
 create rollback of a Deployment
 
@@ -8848,7 +9274,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_extensions_v1beta1_namespaced_ingress`
+### <a name="swagger_k8s_create_extensions_v1beta1_namespaced_ingress"></a>`swagger_k8s_create_extensions_v1beta1_namespaced_ingress`
 
 create an Ingress
 
@@ -8934,7 +9360,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_extensions_v1beta1_namespaced_network_policy`
+### <a name="swagger_k8s_create_extensions_v1beta1_namespaced_network_policy"></a>`swagger_k8s_create_extensions_v1beta1_namespaced_network_policy`
 
 create a NetworkPolicy
 
@@ -9014,7 +9440,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_extensions_v1beta1_namespaced_replica_set`
+### <a name="swagger_k8s_create_extensions_v1beta1_namespaced_replica_set"></a>`swagger_k8s_create_extensions_v1beta1_namespaced_replica_set`
 
 create a ReplicaSet
 
@@ -9100,7 +9526,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_extensions_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_create_extensions_v1beta1_pod_security_policy"></a>`swagger_k8s_create_extensions_v1beta1_pod_security_policy`
 
 create a PodSecurityPolicy
 
@@ -9174,7 +9600,7 @@ Data type: `Optional[String[1]]`
 
 spec defines the policy enforced.
 
-### `swagger_k8s_create_networking_v1_namespaced_network_policy`
+### <a name="swagger_k8s_create_networking_v1_namespaced_network_policy"></a>`swagger_k8s_create_networking_v1_namespaced_network_policy`
 
 create a NetworkPolicy
 
@@ -9254,7 +9680,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the desired behavior for this NetworkPolicy.
 
-### `swagger_k8s_create_networking_v1beta1_namespaced_ingress`
+### <a name="swagger_k8s_create_networking_v1beta1_namespaced_ingress"></a>`swagger_k8s_create_networking_v1beta1_namespaced_ingress`
 
 create an Ingress
 
@@ -9340,7 +9766,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_node_v1alpha1_runtime_class`
+### <a name="swagger_k8s_create_node_v1alpha1_runtime_class"></a>`swagger_k8s_create_node_v1alpha1_runtime_class`
 
 create a RuntimeClass
 
@@ -9414,7 +9840,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_node_v1beta1_runtime_class`
+### <a name="swagger_k8s_create_node_v1beta1_runtime_class"></a>`swagger_k8s_create_node_v1beta1_runtime_class`
 
 create a RuntimeClass
 
@@ -9488,7 +9914,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_policy_v1beta1_namespaced_pod_disruption_budget`
+### <a name="swagger_k8s_create_policy_v1beta1_namespaced_pod_disruption_budget"></a>`swagger_k8s_create_policy_v1beta1_namespaced_pod_disruption_budget`
 
 create a PodDisruptionBudget
 
@@ -9574,7 +10000,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_policy_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_create_policy_v1beta1_pod_security_policy"></a>`swagger_k8s_create_policy_v1beta1_pod_security_policy`
 
 create a PodSecurityPolicy
 
@@ -9648,7 +10074,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_create_rbac_authorization_v1_cluster_role`
+### <a name="swagger_k8s_create_rbac_authorization_v1_cluster_role"></a>`swagger_k8s_create_rbac_authorization_v1_cluster_role`
 
 create a ClusterRole
 
@@ -9728,7 +10154,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_rbac_authorization_v1_cluster_role_binding`
+### <a name="swagger_k8s_create_rbac_authorization_v1_cluster_role_binding"></a>`swagger_k8s_create_rbac_authorization_v1_cluster_role_binding`
 
 create a ClusterRoleBinding
 
@@ -9808,7 +10234,7 @@ Data type: `Optional[String[1]]`
 
 RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.
 
-### `swagger_k8s_create_rbac_authorization_v1_namespaced_role`
+### <a name="swagger_k8s_create_rbac_authorization_v1_namespaced_role"></a>`swagger_k8s_create_rbac_authorization_v1_namespaced_role`
 
 create a Role
 
@@ -9888,7 +10314,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_rbac_authorization_v1_namespaced_role_binding`
+### <a name="swagger_k8s_create_rbac_authorization_v1_namespaced_role_binding"></a>`swagger_k8s_create_rbac_authorization_v1_namespaced_role_binding`
 
 create a RoleBinding
 
@@ -9974,7 +10400,7 @@ Data type: `Optional[String[1]]`
 
 Subjects holds references to the objects the role applies to.
 
-### `swagger_k8s_create_rbac_authorization_v1alpha1_cluster_role`
+### <a name="swagger_k8s_create_rbac_authorization_v1alpha1_cluster_role"></a>`swagger_k8s_create_rbac_authorization_v1alpha1_cluster_role`
 
 create a ClusterRole
 
@@ -10054,7 +10480,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_create_rbac_authorization_v1alpha1_cluster_role_binding`
+### <a name="swagger_k8s_create_rbac_authorization_v1alpha1_cluster_role_binding"></a>`swagger_k8s_create_rbac_authorization_v1alpha1_cluster_role_binding`
 
 create a ClusterRoleBinding
 
@@ -10134,7 +10560,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_rbac_authorization_v1alpha1_namespaced_role`
+### <a name="swagger_k8s_create_rbac_authorization_v1alpha1_namespaced_role"></a>`swagger_k8s_create_rbac_authorization_v1alpha1_namespaced_role`
 
 create a Role
 
@@ -10214,7 +10640,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_create_rbac_authorization_v1alpha1_namespaced_role_binding`
+### <a name="swagger_k8s_create_rbac_authorization_v1alpha1_namespaced_role_binding"></a>`swagger_k8s_create_rbac_authorization_v1alpha1_namespaced_role_binding`
 
 create a RoleBinding
 
@@ -10300,7 +10726,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_rbac_authorization_v1beta1_cluster_role`
+### <a name="swagger_k8s_create_rbac_authorization_v1beta1_cluster_role"></a>`swagger_k8s_create_rbac_authorization_v1beta1_cluster_role`
 
 create a ClusterRole
 
@@ -10380,7 +10806,7 @@ Data type: `Optional[String[1]]`
 
 AggregationRule is an optional field that describes how to build the Rules for this ClusterRole. If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be stomped by the controller.
 
-### `swagger_k8s_create_rbac_authorization_v1beta1_cluster_role_binding`
+### <a name="swagger_k8s_create_rbac_authorization_v1beta1_cluster_role_binding"></a>`swagger_k8s_create_rbac_authorization_v1beta1_cluster_role_binding`
 
 create a ClusterRoleBinding
 
@@ -10460,7 +10886,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_create_rbac_authorization_v1beta1_namespaced_role`
+### <a name="swagger_k8s_create_rbac_authorization_v1beta1_namespaced_role"></a>`swagger_k8s_create_rbac_authorization_v1beta1_namespaced_role`
 
 create a Role
 
@@ -10540,7 +10966,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_rbac_authorization_v1beta1_namespaced_role_binding`
+### <a name="swagger_k8s_create_rbac_authorization_v1beta1_namespaced_role_binding"></a>`swagger_k8s_create_rbac_authorization_v1beta1_namespaced_role_binding`
 
 create a RoleBinding
 
@@ -10626,7 +11052,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_scheduling_v1_priority_class`
+### <a name="swagger_k8s_create_scheduling_v1_priority_class"></a>`swagger_k8s_create_scheduling_v1_priority_class`
 
 create a PriorityClass
 
@@ -10712,7 +11138,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_scheduling_v1alpha1_priority_class`
+### <a name="swagger_k8s_create_scheduling_v1alpha1_priority_class"></a>`swagger_k8s_create_scheduling_v1alpha1_priority_class`
 
 create a PriorityClass
 
@@ -10798,7 +11224,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_scheduling_v1beta1_priority_class`
+### <a name="swagger_k8s_create_scheduling_v1beta1_priority_class"></a>`swagger_k8s_create_scheduling_v1beta1_priority_class`
 
 create a PriorityClass
 
@@ -10884,7 +11310,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_create_settings_v1alpha1_namespaced_pod_preset`
+### <a name="swagger_k8s_create_settings_v1alpha1_namespaced_pod_preset"></a>`swagger_k8s_create_settings_v1alpha1_namespaced_pod_preset`
 
 create a PodPreset
 
@@ -10964,7 +11390,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_storage_v1_storage_class`
+### <a name="swagger_k8s_create_storage_v1_storage_class"></a>`swagger_k8s_create_storage_v1_storage_class`
 
 create a StorageClass
 
@@ -11074,7 +11500,7 @@ Data type: `Optional[String[1]]`
 
 Dynamically provisioned PersistentVolumes of this storage class are created with this reclaimPolicy. Defaults to Delete.
 
-### `swagger_k8s_create_storage_v1_volume_attachment`
+### <a name="swagger_k8s_create_storage_v1_volume_attachment"></a>`swagger_k8s_create_storage_v1_volume_attachment`
 
 create a VolumeAttachment
 
@@ -11154,7 +11580,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_create_storage_v1alpha1_volume_attachment`
+### <a name="swagger_k8s_create_storage_v1alpha1_volume_attachment"></a>`swagger_k8s_create_storage_v1alpha1_volume_attachment`
 
 create a VolumeAttachment
 
@@ -11234,7 +11660,7 @@ Data type: `Optional[String[1]]`
 
 Status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.
 
-### `swagger_k8s_create_storage_v1beta1_csi_driver`
+### <a name="swagger_k8s_create_storage_v1beta1_csi_driver"></a>`swagger_k8s_create_storage_v1beta1_csi_driver`
 
 create a CSIDriver
 
@@ -11308,7 +11734,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_create_storage_v1beta1_csi_node`
+### <a name="swagger_k8s_create_storage_v1beta1_csi_node"></a>`swagger_k8s_create_storage_v1beta1_csi_node`
 
 create a CSINode
 
@@ -11382,7 +11808,7 @@ Data type: `Optional[String[1]]`
 
 metadata.name must be the Kubernetes node name.
 
-### `swagger_k8s_create_storage_v1beta1_storage_class`
+### <a name="swagger_k8s_create_storage_v1beta1_storage_class"></a>`swagger_k8s_create_storage_v1beta1_storage_class`
 
 create a StorageClass
 
@@ -11492,7 +11918,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_create_storage_v1beta1_volume_attachment`
+### <a name="swagger_k8s_create_storage_v1beta1_volume_attachment"></a>`swagger_k8s_create_storage_v1beta1_volume_attachment`
 
 create a VolumeAttachment
 
@@ -11572,7 +11998,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_admissionregistration_v1beta1_collection_mutating_webhook_configuration`
+### <a name="swagger_k8s_delete_admissionregistration_v1beta1_collection_mutating_webhook_configuration"></a>`swagger_k8s_delete_admissionregistration_v1beta1_collection_mutating_webhook_configuration`
 
 delete collection of MutatingWebhookConfiguration
 
@@ -11670,7 +12096,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_admissionregistration_v1beta1_collection_validating_webhook_configuration`
+### <a name="swagger_k8s_delete_admissionregistration_v1beta1_collection_validating_webhook_configuration"></a>`swagger_k8s_delete_admissionregistration_v1beta1_collection_validating_webhook_configuration`
 
 delete collection of ValidatingWebhookConfiguration
 
@@ -11768,7 +12194,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata.
 
-### `swagger_k8s_delete_admissionregistration_v1beta1_mutating_webhook_configuration`
+### <a name="swagger_k8s_delete_admissionregistration_v1beta1_mutating_webhook_configuration"></a>`swagger_k8s_delete_admissionregistration_v1beta1_mutating_webhook_configuration`
 
 delete a MutatingWebhookConfiguration
 
@@ -11860,7 +12286,7 @@ Data type: `Optional[String[1]]`
 
 Webhooks is a list of webhooks and the affected resources and operations.
 
-### `swagger_k8s_delete_admissionregistration_v1beta1_validating_webhook_configuration`
+### <a name="swagger_k8s_delete_admissionregistration_v1beta1_validating_webhook_configuration"></a>`swagger_k8s_delete_admissionregistration_v1beta1_validating_webhook_configuration`
 
 delete a ValidatingWebhookConfiguration
 
@@ -11952,7 +12378,7 @@ Data type: `Optional[String[1]]`
 
 name of the ValidatingWebhookConfiguration
 
-### `swagger_k8s_delete_apiextensions_v1beta1_collection_custom_resource_definition`
+### <a name="swagger_k8s_delete_apiextensions_v1beta1_collection_custom_resource_definition"></a>`swagger_k8s_delete_apiextensions_v1beta1_collection_custom_resource_definition`
 
 delete collection of CustomResourceDefinition
 
@@ -12056,7 +12482,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_apiextensions_v1beta1_custom_resource_definition`
+### <a name="swagger_k8s_delete_apiextensions_v1beta1_custom_resource_definition"></a>`swagger_k8s_delete_apiextensions_v1beta1_custom_resource_definition`
 
 delete a CustomResourceDefinition
 
@@ -12154,7 +12580,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_delete_apiregistration_v1_api_service`
+### <a name="swagger_k8s_delete_apiregistration_v1_api_service"></a>`swagger_k8s_delete_apiregistration_v1_api_service`
 
 delete an APIService
 
@@ -12252,7 +12678,7 @@ Data type: `Optional[String[1]]`
 
 Status contains derived information about an API server
 
-### `swagger_k8s_delete_apiregistration_v1_collection_api_service`
+### <a name="swagger_k8s_delete_apiregistration_v1_collection_api_service"></a>`swagger_k8s_delete_apiregistration_v1_collection_api_service`
 
 delete collection of APIService
 
@@ -12356,7 +12782,7 @@ Data type: `Optional[String[1]]`
 
 Spec contains information for locating and communicating with a server
 
-### `swagger_k8s_delete_apiregistration_v1beta1_api_service`
+### <a name="swagger_k8s_delete_apiregistration_v1beta1_api_service"></a>`swagger_k8s_delete_apiregistration_v1beta1_api_service`
 
 delete an APIService
 
@@ -12454,7 +12880,7 @@ Data type: `Optional[String[1]]`
 
 Status contains derived information about an API server
 
-### `swagger_k8s_delete_apiregistration_v1beta1_collection_api_service`
+### <a name="swagger_k8s_delete_apiregistration_v1beta1_collection_api_service"></a>`swagger_k8s_delete_apiregistration_v1beta1_collection_api_service`
 
 delete collection of APIService
 
@@ -12558,7 +12984,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_apps_v1_collection_namespaced_controller_revision`
+### <a name="swagger_k8s_delete_apps_v1_collection_namespaced_controller_revision"></a>`swagger_k8s_delete_apps_v1_collection_namespaced_controller_revision`
 
 delete collection of ControllerRevision
 
@@ -12668,7 +13094,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_apps_v1_collection_namespaced_daemon_set`
+### <a name="swagger_k8s_delete_apps_v1_collection_namespaced_daemon_set"></a>`swagger_k8s_delete_apps_v1_collection_namespaced_daemon_set`
 
 delete collection of DaemonSet
 
@@ -12778,7 +13204,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_delete_apps_v1_collection_namespaced_deployment`
+### <a name="swagger_k8s_delete_apps_v1_collection_namespaced_deployment"></a>`swagger_k8s_delete_apps_v1_collection_namespaced_deployment`
 
 delete collection of Deployment
 
@@ -12888,7 +13314,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_apps_v1_collection_namespaced_replica_set`
+### <a name="swagger_k8s_delete_apps_v1_collection_namespaced_replica_set"></a>`swagger_k8s_delete_apps_v1_collection_namespaced_replica_set`
 
 delete collection of ReplicaSet
 
@@ -12998,7 +13424,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicaSet are empty, they are defaulted to be the same as the Pod(s) that the ReplicaSet manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_apps_v1_collection_namespaced_stateful_set`
+### <a name="swagger_k8s_delete_apps_v1_collection_namespaced_stateful_set"></a>`swagger_k8s_delete_apps_v1_collection_namespaced_stateful_set`
 
 delete collection of StatefulSet
 
@@ -13108,7 +13534,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_apps_v1_namespaced_controller_revision`
+### <a name="swagger_k8s_delete_apps_v1_namespaced_controller_revision"></a>`swagger_k8s_delete_apps_v1_namespaced_controller_revision`
 
 delete a ControllerRevision
 
@@ -13212,7 +13638,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_apps_v1_namespaced_daemon_set`
+### <a name="swagger_k8s_delete_apps_v1_namespaced_daemon_set"></a>`swagger_k8s_delete_apps_v1_namespaced_daemon_set`
 
 delete a DaemonSet
 
@@ -13316,7 +13742,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_apps_v1_namespaced_deployment`
+### <a name="swagger_k8s_delete_apps_v1_namespaced_deployment"></a>`swagger_k8s_delete_apps_v1_namespaced_deployment`
 
 delete a Deployment
 
@@ -13420,7 +13846,7 @@ Data type: `Optional[String[1]]`
 
 Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.
 
-### `swagger_k8s_delete_apps_v1_namespaced_replica_set`
+### <a name="swagger_k8s_delete_apps_v1_namespaced_replica_set"></a>`swagger_k8s_delete_apps_v1_namespaced_replica_set`
 
 delete a ReplicaSet
 
@@ -13524,7 +13950,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_apps_v1_namespaced_stateful_set`
+### <a name="swagger_k8s_delete_apps_v1_namespaced_stateful_set"></a>`swagger_k8s_delete_apps_v1_namespaced_stateful_set`
 
 delete a StatefulSet
 
@@ -13628,7 +14054,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_apps_v1beta1_collection_namespaced_controller_revision`
+### <a name="swagger_k8s_delete_apps_v1beta1_collection_namespaced_controller_revision"></a>`swagger_k8s_delete_apps_v1beta1_collection_namespaced_controller_revision`
 
 delete collection of ControllerRevision
 
@@ -13738,7 +14164,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_delete_apps_v1beta1_collection_namespaced_deployment`
+### <a name="swagger_k8s_delete_apps_v1beta1_collection_namespaced_deployment"></a>`swagger_k8s_delete_apps_v1beta1_collection_namespaced_deployment`
 
 delete collection of Deployment
 
@@ -13848,7 +14274,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_apps_v1beta1_collection_namespaced_stateful_set`
+### <a name="swagger_k8s_delete_apps_v1beta1_collection_namespaced_stateful_set"></a>`swagger_k8s_delete_apps_v1beta1_collection_namespaced_stateful_set`
 
 delete collection of StatefulSet
 
@@ -13958,7 +14384,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_delete_apps_v1beta1_namespaced_controller_revision`
+### <a name="swagger_k8s_delete_apps_v1beta1_namespaced_controller_revision"></a>`swagger_k8s_delete_apps_v1beta1_namespaced_controller_revision`
 
 delete a ControllerRevision
 
@@ -14062,7 +14488,7 @@ Data type: `Optional[String[1]]`
 
 Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
 
-### `swagger_k8s_delete_apps_v1beta1_namespaced_deployment`
+### <a name="swagger_k8s_delete_apps_v1beta1_namespaced_deployment"></a>`swagger_k8s_delete_apps_v1beta1_namespaced_deployment`
 
 delete a Deployment
 
@@ -14166,7 +14592,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata.
 
-### `swagger_k8s_delete_apps_v1beta1_namespaced_stateful_set`
+### <a name="swagger_k8s_delete_apps_v1beta1_namespaced_stateful_set"></a>`swagger_k8s_delete_apps_v1beta1_namespaced_stateful_set`
 
 delete a StatefulSet
 
@@ -14270,7 +14696,7 @@ Data type: `Optional[String[1]]`
 
 The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
 
-### `swagger_k8s_delete_apps_v1beta2_collection_namespaced_controller_revision`
+### <a name="swagger_k8s_delete_apps_v1beta2_collection_namespaced_controller_revision"></a>`swagger_k8s_delete_apps_v1beta2_collection_namespaced_controller_revision`
 
 delete collection of ControllerRevision
 
@@ -14380,7 +14806,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_delete_apps_v1beta2_collection_namespaced_daemon_set`
+### <a name="swagger_k8s_delete_apps_v1beta2_collection_namespaced_daemon_set"></a>`swagger_k8s_delete_apps_v1beta2_collection_namespaced_daemon_set`
 
 delete collection of DaemonSet
 
@@ -14490,7 +14916,7 @@ Data type: `Optional[String[1]]`
 
 The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_apps_v1beta2_collection_namespaced_deployment`
+### <a name="swagger_k8s_delete_apps_v1beta2_collection_namespaced_deployment"></a>`swagger_k8s_delete_apps_v1beta2_collection_namespaced_deployment`
 
 delete collection of Deployment
 
@@ -14600,7 +15026,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata.
 
-### `swagger_k8s_delete_apps_v1beta2_collection_namespaced_replica_set`
+### <a name="swagger_k8s_delete_apps_v1beta2_collection_namespaced_replica_set"></a>`swagger_k8s_delete_apps_v1beta2_collection_namespaced_replica_set`
 
 delete collection of ReplicaSet
 
@@ -14710,7 +15136,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicaSet are empty, they are defaulted to be the same as the Pod(s) that the ReplicaSet manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_delete_apps_v1beta2_collection_namespaced_stateful_set`
+### <a name="swagger_k8s_delete_apps_v1beta2_collection_namespaced_stateful_set"></a>`swagger_k8s_delete_apps_v1beta2_collection_namespaced_stateful_set`
 
 delete collection of StatefulSet
 
@@ -14820,7 +15246,7 @@ Data type: `Optional[String[1]]`
 
 When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.
 
-### `swagger_k8s_delete_apps_v1beta2_namespaced_controller_revision`
+### <a name="swagger_k8s_delete_apps_v1beta2_namespaced_controller_revision"></a>`swagger_k8s_delete_apps_v1beta2_namespaced_controller_revision`
 
 delete a ControllerRevision
 
@@ -14924,7 +15350,7 @@ Data type: `Optional[String[1]]`
 
 Revision indicates the revision of the state represented by Data.
 
-### `swagger_k8s_delete_apps_v1beta2_namespaced_daemon_set`
+### <a name="swagger_k8s_delete_apps_v1beta2_namespaced_daemon_set"></a>`swagger_k8s_delete_apps_v1beta2_namespaced_daemon_set`
 
 delete a DaemonSet
 
@@ -15028,7 +15454,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_apps_v1beta2_namespaced_deployment`
+### <a name="swagger_k8s_delete_apps_v1beta2_namespaced_deployment"></a>`swagger_k8s_delete_apps_v1beta2_namespaced_deployment`
 
 delete a Deployment
 
@@ -15132,7 +15558,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_delete_apps_v1beta2_namespaced_replica_set`
+### <a name="swagger_k8s_delete_apps_v1beta2_namespaced_replica_set"></a>`swagger_k8s_delete_apps_v1beta2_namespaced_replica_set`
 
 delete a ReplicaSet
 
@@ -15236,7 +15662,7 @@ Data type: `Optional[String[1]]`
 
 Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.
 
-### `swagger_k8s_delete_apps_v1beta2_namespaced_stateful_set`
+### <a name="swagger_k8s_delete_apps_v1beta2_namespaced_stateful_set"></a>`swagger_k8s_delete_apps_v1beta2_namespaced_stateful_set`
 
 delete a StatefulSet
 
@@ -15340,7 +15766,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_auditregistration_v1alpha1_audit_sink`
+### <a name="swagger_k8s_delete_auditregistration_v1alpha1_audit_sink"></a>`swagger_k8s_delete_auditregistration_v1alpha1_audit_sink`
 
 delete an AuditSink
 
@@ -15432,7 +15858,7 @@ Data type: `Optional[String[1]]`
 
 Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
 
-### `swagger_k8s_delete_auditregistration_v1alpha1_collection_audit_sink`
+### <a name="swagger_k8s_delete_auditregistration_v1alpha1_collection_audit_sink"></a>`swagger_k8s_delete_auditregistration_v1alpha1_collection_audit_sink`
 
 delete collection of AuditSink
 
@@ -15530,7 +15956,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_delete_autoscaling_v1_collection_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_delete_autoscaling_v1_collection_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_delete_autoscaling_v1_collection_namespaced_horizontal_pod_autoscaler`
 
 delete collection of HorizontalPodAutoscaler
 
@@ -15640,7 +16066,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_autoscaling_v1_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_delete_autoscaling_v1_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_delete_autoscaling_v1_namespaced_horizontal_pod_autoscaler`
 
 delete a HorizontalPodAutoscaler
 
@@ -15744,7 +16170,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_autoscaling_v2beta1_collection_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_delete_autoscaling_v2beta1_collection_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_delete_autoscaling_v2beta1_collection_namespaced_horizontal_pod_autoscaler`
 
 delete collection of HorizontalPodAutoscaler
 
@@ -15854,7 +16280,7 @@ Data type: `Optional[String[1]]`
 
 spec is the specification for the behaviour of the autoscaler. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_delete_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_delete_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_delete_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler`
 
 delete a HorizontalPodAutoscaler
 
@@ -15958,7 +16384,7 @@ Data type: `Optional[String[1]]`
 
 name of the HorizontalPodAutoscaler
 
-### `swagger_k8s_delete_autoscaling_v2beta2_collection_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_delete_autoscaling_v2beta2_collection_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_delete_autoscaling_v2beta2_collection_namespaced_horizontal_pod_autoscaler`
 
 delete collection of HorizontalPodAutoscaler
 
@@ -16068,7 +16494,7 @@ Data type: `Optional[String[1]]`
 
 The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
 
-### `swagger_k8s_delete_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_delete_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_delete_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler`
 
 delete a HorizontalPodAutoscaler
 
@@ -16172,7 +16598,7 @@ Data type: `Optional[String[1]]`
 
 status is the current information about the autoscaler.
 
-### `swagger_k8s_delete_batch_v1_collection_namespaced_job`
+### <a name="swagger_k8s_delete_batch_v1_collection_namespaced_job"></a>`swagger_k8s_delete_batch_v1_collection_namespaced_job`
 
 delete collection of Job
 
@@ -16282,7 +16708,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_delete_batch_v1_namespaced_job`
+### <a name="swagger_k8s_delete_batch_v1_namespaced_job"></a>`swagger_k8s_delete_batch_v1_namespaced_job`
 
 delete a Job
 
@@ -16386,7 +16812,7 @@ Data type: `Optional[String[1]]`
 
 Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.
 
-### `swagger_k8s_delete_batch_v1beta1_collection_namespaced_cron_job`
+### <a name="swagger_k8s_delete_batch_v1beta1_collection_namespaced_cron_job"></a>`swagger_k8s_delete_batch_v1beta1_collection_namespaced_cron_job`
 
 delete collection of CronJob
 
@@ -16496,7 +16922,7 @@ Data type: `Optional[String[1]]`
 
 Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
 
-### `swagger_k8s_delete_batch_v1beta1_namespaced_cron_job`
+### <a name="swagger_k8s_delete_batch_v1beta1_namespaced_cron_job"></a>`swagger_k8s_delete_batch_v1beta1_namespaced_cron_job`
 
 delete a CronJob
 
@@ -16600,7 +17026,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_batch_v2alpha1_collection_namespaced_cron_job`
+### <a name="swagger_k8s_delete_batch_v2alpha1_collection_namespaced_cron_job"></a>`swagger_k8s_delete_batch_v2alpha1_collection_namespaced_cron_job`
 
 delete collection of CronJob
 
@@ -16710,7 +17136,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_batch_v2alpha1_namespaced_cron_job`
+### <a name="swagger_k8s_delete_batch_v2alpha1_namespaced_cron_job"></a>`swagger_k8s_delete_batch_v2alpha1_namespaced_cron_job`
 
 delete a CronJob
 
@@ -16814,7 +17240,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_certificates_v1beta1_certificate_signing_request`
+### <a name="swagger_k8s_delete_certificates_v1beta1_certificate_signing_request"></a>`swagger_k8s_delete_certificates_v1beta1_certificate_signing_request`
 
 delete a CertificateSigningRequest
 
@@ -16912,7 +17338,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_certificates_v1beta1_collection_certificate_signing_request`
+### <a name="swagger_k8s_delete_certificates_v1beta1_collection_certificate_signing_request"></a>`swagger_k8s_delete_certificates_v1beta1_collection_certificate_signing_request`
 
 delete collection of CertificateSigningRequest
 
@@ -17016,7 +17442,7 @@ Data type: `Optional[String[1]]`
 
 Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
 
-### `swagger_k8s_delete_coordination_v1_collection_namespaced_lease`
+### <a name="swagger_k8s_delete_coordination_v1_collection_namespaced_lease"></a>`swagger_k8s_delete_coordination_v1_collection_namespaced_lease`
 
 delete collection of Lease
 
@@ -17120,7 +17546,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the Lease. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_coordination_v1_namespaced_lease`
+### <a name="swagger_k8s_delete_coordination_v1_namespaced_lease"></a>`swagger_k8s_delete_coordination_v1_namespaced_lease`
 
 delete a Lease
 
@@ -17218,7 +17644,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the Lease. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_coordination_v1beta1_collection_namespaced_lease`
+### <a name="swagger_k8s_delete_coordination_v1beta1_collection_namespaced_lease"></a>`swagger_k8s_delete_coordination_v1beta1_collection_namespaced_lease`
 
 delete collection of Lease
 
@@ -17322,7 +17748,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the Lease. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_coordination_v1beta1_namespaced_lease`
+### <a name="swagger_k8s_delete_coordination_v1beta1_namespaced_lease"></a>`swagger_k8s_delete_coordination_v1beta1_namespaced_lease`
 
 delete a Lease
 
@@ -17420,7 +17846,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_config_map`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_config_map"></a>`swagger_k8s_delete_core_v1_collection_namespaced_config_map`
 
 delete collection of ConfigMap
 
@@ -17530,7 +17956,7 @@ Data type: `Optional[String[1]]`
 
 Data contains the configuration data. Each key must consist of alphanumeric characters, '-', '_' or '.'. Values with non-UTF-8 byte sequences must use the BinaryData field. The keys stored in Data must not overlap with the keys in the BinaryData field, this is enforced during validation process.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_endpoints`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_endpoints"></a>`swagger_k8s_delete_core_v1_collection_namespaced_endpoints`
 
 delete collection of Endpoints
 
@@ -17634,7 +18060,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_event`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_event"></a>`swagger_k8s_delete_core_v1_collection_namespaced_event`
 
 delete collection of Event
 
@@ -17816,7 +18242,7 @@ Data type: `Optional[String[1]]`
 
 This should be a short, machine understandable string that gives the reason for the transition into the object's current status.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_limit_range`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_limit_range"></a>`swagger_k8s_delete_core_v1_collection_namespaced_limit_range`
 
 delete collection of LimitRange
 
@@ -17920,7 +18346,7 @@ Data type: `Optional[String[1]]`
 
 Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_persistent_volume_claim`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_persistent_volume_claim"></a>`swagger_k8s_delete_core_v1_collection_namespaced_persistent_volume_claim`
 
 delete collection of PersistentVolumeClaim
 
@@ -18030,7 +18456,7 @@ Data type: `Optional[String[1]]`
 
 Status represents the current information/status of a persistent volume claim. Read-only. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_pod`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_pod"></a>`swagger_k8s_delete_core_v1_collection_namespaced_pod`
 
 delete collection of Pod
 
@@ -18140,7 +18566,7 @@ Data type: `Optional[String[1]]`
 
 Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_pod_template`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_pod_template"></a>`swagger_k8s_delete_core_v1_collection_namespaced_pod_template`
 
 delete collection of PodTemplate
 
@@ -18244,7 +18670,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_replication_controller`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_replication_controller"></a>`swagger_k8s_delete_core_v1_collection_namespaced_replication_controller`
 
 delete collection of ReplicationController
 
@@ -18354,7 +18780,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_resource_quota`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_resource_quota"></a>`swagger_k8s_delete_core_v1_collection_namespaced_resource_quota`
 
 delete collection of ResourceQuota
 
@@ -18464,7 +18890,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_secret`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_secret"></a>`swagger_k8s_delete_core_v1_collection_namespaced_secret`
 
 delete collection of Secret
 
@@ -18580,7 +19006,7 @@ Data type: `Optional[String[1]]`
 
 When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.
 
-### `swagger_k8s_delete_core_v1_collection_namespaced_service_account`
+### <a name="swagger_k8s_delete_core_v1_collection_namespaced_service_account"></a>`swagger_k8s_delete_core_v1_collection_namespaced_service_account`
 
 delete collection of ServiceAccount
 
@@ -18696,7 +19122,7 @@ Data type: `Optional[String[1]]`
 
 ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount. ImagePullSecrets are distinct from Secrets because Secrets can be mounted in the pod, but ImagePullSecrets are only accessed by the kubelet. More info: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
 
-### `swagger_k8s_delete_core_v1_collection_node`
+### <a name="swagger_k8s_delete_core_v1_collection_node"></a>`swagger_k8s_delete_core_v1_collection_node`
 
 delete collection of Node
 
@@ -18800,7 +19226,7 @@ Data type: `Optional[String[1]]`
 
 When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.
 
-### `swagger_k8s_delete_core_v1_collection_persistent_volume`
+### <a name="swagger_k8s_delete_core_v1_collection_persistent_volume"></a>`swagger_k8s_delete_core_v1_collection_persistent_volume`
 
 delete collection of PersistentVolume
 
@@ -18904,7 +19330,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their fields. Defaults to everything.
 
-### `swagger_k8s_delete_core_v1_namespace`
+### <a name="swagger_k8s_delete_core_v1_namespace"></a>`swagger_k8s_delete_core_v1_namespace`
 
 delete a Namespace
 
@@ -19002,7 +19428,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_core_v1_namespaced_config_map`
+### <a name="swagger_k8s_delete_core_v1_namespaced_config_map"></a>`swagger_k8s_delete_core_v1_namespaced_config_map`
 
 delete a ConfigMap
 
@@ -19106,7 +19532,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_delete_core_v1_namespaced_endpoints`
+### <a name="swagger_k8s_delete_core_v1_namespaced_endpoints"></a>`swagger_k8s_delete_core_v1_namespaced_endpoints`
 
 delete Endpoints
 
@@ -19204,7 +19630,7 @@ Data type: `Optional[String[1]]`
 
 name of the Endpoints
 
-### `swagger_k8s_delete_core_v1_namespaced_event`
+### <a name="swagger_k8s_delete_core_v1_namespaced_event"></a>`swagger_k8s_delete_core_v1_namespaced_event`
 
 delete an Event
 
@@ -19380,7 +19806,7 @@ Data type: `Optional[String[1]]`
 
 The object that this event is about.
 
-### `swagger_k8s_delete_core_v1_namespaced_limit_range`
+### <a name="swagger_k8s_delete_core_v1_namespaced_limit_range"></a>`swagger_k8s_delete_core_v1_namespaced_limit_range`
 
 delete a LimitRange
 
@@ -19478,7 +19904,7 @@ Data type: `Optional[String[1]]`
 
 Spec defines the limits enforced. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_core_v1_namespaced_persistent_volume_claim`
+### <a name="swagger_k8s_delete_core_v1_namespaced_persistent_volume_claim"></a>`swagger_k8s_delete_core_v1_namespaced_persistent_volume_claim`
 
 delete a PersistentVolumeClaim
 
@@ -19582,7 +20008,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_delete_core_v1_namespaced_pod`
+### <a name="swagger_k8s_delete_core_v1_namespaced_pod"></a>`swagger_k8s_delete_core_v1_namespaced_pod`
 
 delete a Pod
 
@@ -19686,7 +20112,7 @@ Data type: `Optional[String[1]]`
 
 Most recently observed status of the pod. This data may not be up to date. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_core_v1_namespaced_pod_template`
+### <a name="swagger_k8s_delete_core_v1_namespaced_pod_template"></a>`swagger_k8s_delete_core_v1_namespaced_pod_template`
 
 delete a PodTemplate
 
@@ -19784,7 +20210,7 @@ Data type: `Optional[String[1]]`
 
 name of the PodTemplate
 
-### `swagger_k8s_delete_core_v1_namespaced_replication_controller`
+### <a name="swagger_k8s_delete_core_v1_namespaced_replication_controller"></a>`swagger_k8s_delete_core_v1_namespaced_replication_controller`
 
 delete a ReplicationController
 
@@ -19888,7 +20314,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicationController are empty, they are defaulted to be the same as the Pod(s) that the replication controller manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_core_v1_namespaced_resource_quota`
+### <a name="swagger_k8s_delete_core_v1_namespaced_resource_quota"></a>`swagger_k8s_delete_core_v1_namespaced_resource_quota`
 
 delete a ResourceQuota
 
@@ -19992,7 +20418,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_core_v1_namespaced_secret`
+### <a name="swagger_k8s_delete_core_v1_namespaced_secret"></a>`swagger_k8s_delete_core_v1_namespaced_secret`
 
 delete a Secret
 
@@ -20102,7 +20528,7 @@ Data type: `Optional[String[1]]`
 
 Used to facilitate programmatic handling of secret data.
 
-### `swagger_k8s_delete_core_v1_namespaced_service`
+### <a name="swagger_k8s_delete_core_v1_namespaced_service"></a>`swagger_k8s_delete_core_v1_namespaced_service`
 
 delete a Service
 
@@ -20206,7 +20632,7 @@ Data type: `Optional[String[1]]`
 
 name of the Service
 
-### `swagger_k8s_delete_core_v1_namespaced_service_account`
+### <a name="swagger_k8s_delete_core_v1_namespaced_service_account"></a>`swagger_k8s_delete_core_v1_namespaced_service_account`
 
 delete a ServiceAccount
 
@@ -20316,7 +20742,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_core_v1_node`
+### <a name="swagger_k8s_delete_core_v1_node"></a>`swagger_k8s_delete_core_v1_node`
 
 delete a Node
 
@@ -20414,7 +20840,7 @@ Data type: `Optional[String[1]]`
 
 Spec defines the behavior of a node. https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_core_v1_persistent_volume`
+### <a name="swagger_k8s_delete_core_v1_persistent_volume"></a>`swagger_k8s_delete_core_v1_persistent_volume`
 
 delete a PersistentVolume
 
@@ -20512,7 +20938,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_events_v1beta1_collection_namespaced_event`
+### <a name="swagger_k8s_delete_events_v1beta1_collection_namespaced_event"></a>`swagger_k8s_delete_events_v1beta1_collection_namespaced_event`
 
 delete collection of Event
 
@@ -20694,7 +21120,7 @@ Data type: `Optional[String[1]]`
 
 Deprecated field assuring backward compatibility with core.v1 Event type
 
-### `swagger_k8s_delete_events_v1beta1_namespaced_event`
+### <a name="swagger_k8s_delete_events_v1beta1_namespaced_event"></a>`swagger_k8s_delete_events_v1beta1_namespaced_event`
 
 delete an Event
 
@@ -20870,7 +21296,7 @@ Data type: `Optional[String[1]]`
 
 The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
 
-### `swagger_k8s_delete_extensions_v1beta1_collection_namespaced_daemon_set`
+### <a name="swagger_k8s_delete_extensions_v1beta1_collection_namespaced_daemon_set"></a>`swagger_k8s_delete_extensions_v1beta1_collection_namespaced_daemon_set`
 
 delete collection of DaemonSet
 
@@ -20980,7 +21406,7 @@ Data type: `Optional[String[1]]`
 
 The current status of this daemon set. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_extensions_v1beta1_collection_namespaced_deployment`
+### <a name="swagger_k8s_delete_extensions_v1beta1_collection_namespaced_deployment"></a>`swagger_k8s_delete_extensions_v1beta1_collection_namespaced_deployment`
 
 delete collection of Deployment
 
@@ -21090,7 +21516,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_delete_extensions_v1beta1_collection_namespaced_ingress`
+### <a name="swagger_k8s_delete_extensions_v1beta1_collection_namespaced_ingress"></a>`swagger_k8s_delete_extensions_v1beta1_collection_namespaced_ingress`
 
 delete collection of Ingress
 
@@ -21200,7 +21626,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_extensions_v1beta1_collection_namespaced_network_policy`
+### <a name="swagger_k8s_delete_extensions_v1beta1_collection_namespaced_network_policy"></a>`swagger_k8s_delete_extensions_v1beta1_collection_namespaced_network_policy`
 
 delete collection of NetworkPolicy
 
@@ -21304,7 +21730,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the desired behavior for this NetworkPolicy.
 
-### `swagger_k8s_delete_extensions_v1beta1_collection_namespaced_replica_set`
+### <a name="swagger_k8s_delete_extensions_v1beta1_collection_namespaced_replica_set"></a>`swagger_k8s_delete_extensions_v1beta1_collection_namespaced_replica_set`
 
 delete collection of ReplicaSet
 
@@ -21414,7 +21840,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_extensions_v1beta1_collection_pod_security_policy`
+### <a name="swagger_k8s_delete_extensions_v1beta1_collection_pod_security_policy"></a>`swagger_k8s_delete_extensions_v1beta1_collection_pod_security_policy`
 
 delete collection of PodSecurityPolicy
 
@@ -21512,7 +21938,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_extensions_v1beta1_namespaced_daemon_set`
+### <a name="swagger_k8s_delete_extensions_v1beta1_namespaced_daemon_set"></a>`swagger_k8s_delete_extensions_v1beta1_namespaced_daemon_set`
 
 delete a DaemonSet
 
@@ -21616,7 +22042,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_delete_extensions_v1beta1_namespaced_deployment`
+### <a name="swagger_k8s_delete_extensions_v1beta1_namespaced_deployment"></a>`swagger_k8s_delete_extensions_v1beta1_namespaced_deployment`
 
 delete a Deployment
 
@@ -21720,7 +22146,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_extensions_v1beta1_namespaced_ingress`
+### <a name="swagger_k8s_delete_extensions_v1beta1_namespaced_ingress"></a>`swagger_k8s_delete_extensions_v1beta1_namespaced_ingress`
 
 delete an Ingress
 
@@ -21824,7 +22250,7 @@ Data type: `Optional[String[1]]`
 
 name of the Ingress
 
-### `swagger_k8s_delete_extensions_v1beta1_namespaced_network_policy`
+### <a name="swagger_k8s_delete_extensions_v1beta1_namespaced_network_policy"></a>`swagger_k8s_delete_extensions_v1beta1_namespaced_network_policy`
 
 delete a NetworkPolicy
 
@@ -21922,7 +22348,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_delete_extensions_v1beta1_namespaced_replica_set`
+### <a name="swagger_k8s_delete_extensions_v1beta1_namespaced_replica_set"></a>`swagger_k8s_delete_extensions_v1beta1_namespaced_replica_set`
 
 delete a ReplicaSet
 
@@ -22026,7 +22452,7 @@ Data type: `Optional[String[1]]`
 
 The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
 
-### `swagger_k8s_delete_extensions_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_delete_extensions_v1beta1_pod_security_policy"></a>`swagger_k8s_delete_extensions_v1beta1_pod_security_policy`
 
 delete a PodSecurityPolicy
 
@@ -22118,7 +22544,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_delete_networking_v1_collection_namespaced_network_policy`
+### <a name="swagger_k8s_delete_networking_v1_collection_namespaced_network_policy"></a>`swagger_k8s_delete_networking_v1_collection_namespaced_network_policy`
 
 delete collection of NetworkPolicy
 
@@ -22222,7 +22648,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the desired behavior for this NetworkPolicy.
 
-### `swagger_k8s_delete_networking_v1_namespaced_network_policy`
+### <a name="swagger_k8s_delete_networking_v1_namespaced_network_policy"></a>`swagger_k8s_delete_networking_v1_namespaced_network_policy`
 
 delete a NetworkPolicy
 
@@ -22320,7 +22746,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_delete_networking_v1beta1_collection_namespaced_ingress`
+### <a name="swagger_k8s_delete_networking_v1beta1_collection_namespaced_ingress"></a>`swagger_k8s_delete_networking_v1beta1_collection_namespaced_ingress`
 
 delete collection of Ingress
 
@@ -22430,7 +22856,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_delete_networking_v1beta1_namespaced_ingress`
+### <a name="swagger_k8s_delete_networking_v1beta1_namespaced_ingress"></a>`swagger_k8s_delete_networking_v1beta1_namespaced_ingress`
 
 delete an Ingress
 
@@ -22534,7 +22960,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_node_v1alpha1_collection_runtime_class`
+### <a name="swagger_k8s_delete_node_v1alpha1_collection_runtime_class"></a>`swagger_k8s_delete_node_v1alpha1_collection_runtime_class`
 
 delete collection of RuntimeClass
 
@@ -22632,7 +23058,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the RuntimeClass More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_delete_node_v1alpha1_runtime_class`
+### <a name="swagger_k8s_delete_node_v1alpha1_runtime_class"></a>`swagger_k8s_delete_node_v1alpha1_runtime_class`
 
 delete a RuntimeClass
 
@@ -22724,7 +23150,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_delete_node_v1beta1_collection_runtime_class`
+### <a name="swagger_k8s_delete_node_v1beta1_collection_runtime_class"></a>`swagger_k8s_delete_node_v1beta1_collection_runtime_class`
 
 delete collection of RuntimeClass
 
@@ -22822,7 +23248,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_delete_node_v1beta1_runtime_class`
+### <a name="swagger_k8s_delete_node_v1beta1_runtime_class"></a>`swagger_k8s_delete_node_v1beta1_runtime_class`
 
 delete a RuntimeClass
 
@@ -22914,7 +23340,7 @@ Data type: `Optional[String[1]]`
 
 More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_policy_v1beta1_collection_namespaced_pod_disruption_budget`
+### <a name="swagger_k8s_delete_policy_v1beta1_collection_namespaced_pod_disruption_budget"></a>`swagger_k8s_delete_policy_v1beta1_collection_namespaced_pod_disruption_budget`
 
 delete collection of PodDisruptionBudget
 
@@ -23024,7 +23450,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_policy_v1beta1_collection_pod_security_policy`
+### <a name="swagger_k8s_delete_policy_v1beta1_collection_pod_security_policy"></a>`swagger_k8s_delete_policy_v1beta1_collection_pod_security_policy`
 
 delete collection of PodSecurityPolicy
 
@@ -23122,7 +23548,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_delete_policy_v1beta1_namespaced_pod_disruption_budget`
+### <a name="swagger_k8s_delete_policy_v1beta1_namespaced_pod_disruption_budget"></a>`swagger_k8s_delete_policy_v1beta1_namespaced_pod_disruption_budget`
 
 delete a PodDisruptionBudget
 
@@ -23226,7 +23652,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_policy_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_delete_policy_v1beta1_pod_security_policy"></a>`swagger_k8s_delete_policy_v1beta1_pod_security_policy`
 
 delete a PodSecurityPolicy
 
@@ -23318,7 +23744,7 @@ Data type: `Optional[String[1]]`
 
 Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
 
-### `swagger_k8s_delete_rbac_authorization_v1_cluster_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_cluster_role"></a>`swagger_k8s_delete_rbac_authorization_v1_cluster_role`
 
 delete a ClusterRole
 
@@ -23416,7 +23842,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_delete_rbac_authorization_v1_cluster_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_cluster_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1_cluster_role_binding`
 
 delete a ClusterRoleBinding
 
@@ -23514,7 +23940,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_delete_rbac_authorization_v1_collection_cluster_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_collection_cluster_role"></a>`swagger_k8s_delete_rbac_authorization_v1_collection_cluster_role`
 
 delete collection of ClusterRole
 
@@ -23618,7 +24044,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_delete_rbac_authorization_v1_collection_cluster_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_collection_cluster_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1_collection_cluster_role_binding`
 
 delete collection of ClusterRoleBinding
 
@@ -23722,7 +24148,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their fields. Defaults to everything.
 
-### `swagger_k8s_delete_rbac_authorization_v1_collection_namespaced_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_collection_namespaced_role"></a>`swagger_k8s_delete_rbac_authorization_v1_collection_namespaced_role`
 
 delete collection of Role
 
@@ -23826,7 +24252,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_delete_rbac_authorization_v1_collection_namespaced_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_collection_namespaced_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1_collection_namespaced_role_binding`
 
 delete collection of RoleBinding
 
@@ -23936,7 +24362,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_delete_rbac_authorization_v1_namespaced_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_namespaced_role"></a>`swagger_k8s_delete_rbac_authorization_v1_namespaced_role`
 
 delete a Role
 
@@ -24034,7 +24460,7 @@ Data type: `Optional[String[1]]`
 
 The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
 
-### `swagger_k8s_delete_rbac_authorization_v1_namespaced_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1_namespaced_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1_namespaced_role_binding`
 
 delete a RoleBinding
 
@@ -24138,7 +24564,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_cluster_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_cluster_role"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_cluster_role`
 
 delete a ClusterRole
 
@@ -24236,7 +24662,7 @@ Data type: `Optional[String[1]]`
 
 Rules holds all the PolicyRules for this ClusterRole
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_cluster_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_cluster_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_cluster_role_binding`
 
 delete a ClusterRoleBinding
 
@@ -24334,7 +24760,7 @@ Data type: `Optional[String[1]]`
 
 Subjects holds references to the objects the role applies to.
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_collection_cluster_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_collection_cluster_role"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_collection_cluster_role`
 
 delete collection of ClusterRole
 
@@ -24438,7 +24864,7 @@ Data type: `Optional[String[1]]`
 
 AggregationRule is an optional field that describes how to build the Rules for this ClusterRole. If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be stomped by the controller.
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_collection_cluster_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_collection_cluster_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_collection_cluster_role_binding`
 
 delete collection of ClusterRoleBinding
 
@@ -24542,7 +24968,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_collection_namespaced_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_collection_namespaced_role"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_collection_namespaced_role`
 
 delete collection of Role
 
@@ -24646,7 +25072,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_collection_namespaced_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_collection_namespaced_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_collection_namespaced_role_binding`
 
 delete collection of RoleBinding
 
@@ -24756,7 +25182,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_namespaced_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_namespaced_role"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_namespaced_role`
 
 delete a Role
 
@@ -24854,7 +25280,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_rbac_authorization_v1alpha1_namespaced_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1alpha1_namespaced_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1alpha1_namespaced_role_binding`
 
 delete a RoleBinding
 
@@ -24958,7 +25384,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_cluster_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_cluster_role"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_cluster_role`
 
 delete a ClusterRole
 
@@ -25056,7 +25482,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_cluster_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_cluster_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_cluster_role_binding`
 
 delete a ClusterRoleBinding
 
@@ -25154,7 +25580,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_collection_cluster_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_collection_cluster_role"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_collection_cluster_role`
 
 delete collection of ClusterRole
 
@@ -25258,7 +25684,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their fields. Defaults to everything.
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_collection_cluster_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_collection_cluster_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_collection_cluster_role_binding`
 
 delete collection of ClusterRoleBinding
 
@@ -25362,7 +25788,7 @@ Data type: `Optional[String[1]]`
 
 Subjects holds references to the objects the role applies to.
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_collection_namespaced_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_collection_namespaced_role"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_collection_namespaced_role`
 
 delete collection of Role
 
@@ -25466,7 +25892,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_collection_namespaced_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_collection_namespaced_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_collection_namespaced_role_binding`
 
 delete collection of RoleBinding
 
@@ -25576,7 +26002,7 @@ Data type: `Optional[String[1]]`
 
 Subjects holds references to the objects the role applies to.
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_namespaced_role`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_namespaced_role"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_namespaced_role`
 
 delete a Role
 
@@ -25674,7 +26100,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_delete_rbac_authorization_v1beta1_namespaced_role_binding`
+### <a name="swagger_k8s_delete_rbac_authorization_v1beta1_namespaced_role_binding"></a>`swagger_k8s_delete_rbac_authorization_v1beta1_namespaced_role_binding`
 
 delete a RoleBinding
 
@@ -25778,7 +26204,7 @@ Data type: `Optional[String[1]]`
 
 Subjects holds references to the objects the role applies to.
 
-### `swagger_k8s_delete_scheduling_v1_collection_priority_class`
+### <a name="swagger_k8s_delete_scheduling_v1_collection_priority_class"></a>`swagger_k8s_delete_scheduling_v1_collection_priority_class`
 
 delete collection of PriorityClass
 
@@ -25888,7 +26314,7 @@ Data type: `Optional[String[1]]`
 
 Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
 
-### `swagger_k8s_delete_scheduling_v1_priority_class`
+### <a name="swagger_k8s_delete_scheduling_v1_priority_class"></a>`swagger_k8s_delete_scheduling_v1_priority_class`
 
 delete a PriorityClass
 
@@ -25992,7 +26418,7 @@ Data type: `Optional[String[1]]`
 
 name of the PriorityClass
 
-### `swagger_k8s_delete_scheduling_v1alpha1_collection_priority_class`
+### <a name="swagger_k8s_delete_scheduling_v1alpha1_collection_priority_class"></a>`swagger_k8s_delete_scheduling_v1alpha1_collection_priority_class`
 
 delete collection of PriorityClass
 
@@ -26102,7 +26528,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_scheduling_v1alpha1_priority_class`
+### <a name="swagger_k8s_delete_scheduling_v1alpha1_priority_class"></a>`swagger_k8s_delete_scheduling_v1alpha1_priority_class`
 
 delete a PriorityClass
 
@@ -26206,7 +26632,7 @@ Data type: `Optional[String[1]]`
 
 Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the 'orphan' finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.
 
-### `swagger_k8s_delete_scheduling_v1beta1_collection_priority_class`
+### <a name="swagger_k8s_delete_scheduling_v1beta1_collection_priority_class"></a>`swagger_k8s_delete_scheduling_v1beta1_collection_priority_class`
 
 delete collection of PriorityClass
 
@@ -26316,7 +26742,7 @@ Data type: `Optional[String[1]]`
 
 description is an arbitrary string that usually provides guidelines on when this priority class should be used.
 
-### `swagger_k8s_delete_scheduling_v1beta1_priority_class`
+### <a name="swagger_k8s_delete_scheduling_v1beta1_priority_class"></a>`swagger_k8s_delete_scheduling_v1beta1_priority_class`
 
 delete a PriorityClass
 
@@ -26420,7 +26846,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_settings_v1alpha1_collection_namespaced_pod_preset`
+### <a name="swagger_k8s_delete_settings_v1alpha1_collection_namespaced_pod_preset"></a>`swagger_k8s_delete_settings_v1alpha1_collection_namespaced_pod_preset`
 
 delete collection of PodPreset
 
@@ -26524,7 +26950,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_delete_settings_v1alpha1_namespaced_pod_preset`
+### <a name="swagger_k8s_delete_settings_v1alpha1_namespaced_pod_preset"></a>`swagger_k8s_delete_settings_v1alpha1_namespaced_pod_preset`
 
 delete a PodPreset
 
@@ -26622,7 +27048,7 @@ Data type: `Optional[String[1]]`
 
 Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
 
-### `swagger_k8s_delete_storage_v1_collection_storage_class`
+### <a name="swagger_k8s_delete_storage_v1_collection_storage_class"></a>`swagger_k8s_delete_storage_v1_collection_storage_class`
 
 delete collection of StorageClass
 
@@ -26756,7 +27182,7 @@ Data type: `Optional[String[1]]`
 
 AllowVolumeExpansion shows whether the storage class allow volume expand
 
-### `swagger_k8s_delete_storage_v1_collection_volume_attachment`
+### <a name="swagger_k8s_delete_storage_v1_collection_volume_attachment"></a>`swagger_k8s_delete_storage_v1_collection_volume_attachment`
 
 delete collection of VolumeAttachment
 
@@ -26860,7 +27286,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_storage_v1_storage_class`
+### <a name="swagger_k8s_delete_storage_v1_storage_class"></a>`swagger_k8s_delete_storage_v1_storage_class`
 
 delete a StorageClass
 
@@ -26988,7 +27414,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_delete_storage_v1_volume_attachment`
+### <a name="swagger_k8s_delete_storage_v1_volume_attachment"></a>`swagger_k8s_delete_storage_v1_volume_attachment`
 
 delete a VolumeAttachment
 
@@ -27086,7 +27512,7 @@ Data type: `Optional[String[1]]`
 
 Status of the VolumeAttachment request. Populated by the entity completing the attach or detach operation, i.e. the external-attacher.
 
-### `swagger_k8s_delete_storage_v1alpha1_collection_volume_attachment`
+### <a name="swagger_k8s_delete_storage_v1alpha1_collection_volume_attachment"></a>`swagger_k8s_delete_storage_v1alpha1_collection_volume_attachment`
 
 delete collection of VolumeAttachment
 
@@ -27190,7 +27616,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_delete_storage_v1alpha1_volume_attachment`
+### <a name="swagger_k8s_delete_storage_v1alpha1_volume_attachment"></a>`swagger_k8s_delete_storage_v1alpha1_volume_attachment`
 
 delete a VolumeAttachment
 
@@ -27288,7 +27714,7 @@ Data type: `Optional[String[1]]`
 
 The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
 
-### `swagger_k8s_delete_storage_v1beta1_collection_csi_driver`
+### <a name="swagger_k8s_delete_storage_v1beta1_collection_csi_driver"></a>`swagger_k8s_delete_storage_v1beta1_collection_csi_driver`
 
 delete collection of CSIDriver
 
@@ -27386,7 +27812,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata. metadata.Name indicates the name of the CSI driver that this object refers to; it MUST be the same name returned by the CSI GetPluginName() call for that driver. The driver name must be 63 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), dots (.), and alphanumerics between. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_storage_v1beta1_collection_csi_node`
+### <a name="swagger_k8s_delete_storage_v1beta1_collection_csi_node"></a>`swagger_k8s_delete_storage_v1beta1_collection_csi_node`
 
 delete collection of CSINode
 
@@ -27484,7 +27910,7 @@ Data type: `Optional[String[1]]`
 
 metadata.name must be the Kubernetes node name.
 
-### `swagger_k8s_delete_storage_v1beta1_collection_storage_class`
+### <a name="swagger_k8s_delete_storage_v1beta1_collection_storage_class"></a>`swagger_k8s_delete_storage_v1beta1_collection_storage_class`
 
 delete collection of StorageClass
 
@@ -27618,7 +28044,7 @@ Data type: `Optional[String[1]]`
 
 Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. ['ro', 'soft']. Not validated - mount of the PVs will simply fail if one is invalid.
 
-### `swagger_k8s_delete_storage_v1beta1_collection_volume_attachment`
+### <a name="swagger_k8s_delete_storage_v1beta1_collection_volume_attachment"></a>`swagger_k8s_delete_storage_v1beta1_collection_volume_attachment`
 
 delete collection of VolumeAttachment
 
@@ -27722,7 +28148,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_storage_v1beta1_csi_driver`
+### <a name="swagger_k8s_delete_storage_v1beta1_csi_driver"></a>`swagger_k8s_delete_storage_v1beta1_csi_driver`
 
 delete a CSIDriver
 
@@ -27814,7 +28240,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the CSI Driver.
 
-### `swagger_k8s_delete_storage_v1beta1_csi_node`
+### <a name="swagger_k8s_delete_storage_v1beta1_csi_node"></a>`swagger_k8s_delete_storage_v1beta1_csi_node`
 
 delete a CSINode
 
@@ -27906,7 +28332,7 @@ Data type: `Optional[String[1]]`
 
 Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
 
-### `swagger_k8s_delete_storage_v1beta1_storage_class`
+### <a name="swagger_k8s_delete_storage_v1beta1_storage_class"></a>`swagger_k8s_delete_storage_v1beta1_storage_class`
 
 delete a StorageClass
 
@@ -28034,7 +28460,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_delete_storage_v1beta1_volume_attachment`
+### <a name="swagger_k8s_delete_storage_v1beta1_volume_attachment"></a>`swagger_k8s_delete_storage_v1beta1_volume_attachment`
 
 delete a VolumeAttachment
 
@@ -28132,7 +28558,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_get_admissionregistration_api_group`
+### <a name="swagger_k8s_get_admissionregistration_api_group"></a>`swagger_k8s_get_admissionregistration_api_group`
 
 get information of a group
 
@@ -28170,7 +28596,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_admissionregistration_v1beta1_api_resources`
+### <a name="swagger_k8s_get_admissionregistration_v1beta1_api_resources"></a>`swagger_k8s_get_admissionregistration_v1beta1_api_resources`
 
 get available resources
 
@@ -28256,7 +28682,7 @@ Data type: `Optional[String[1]]`
 
 version is the preferred version of the resource.  Empty implies the version of the containing resource list For subresources, this may have a different value, for example: v1 (while inside a v1beta1 version of the core resource's group)'.
 
-### `swagger_k8s_get_api_versions`
+### <a name="swagger_k8s_get_api_versions"></a>`swagger_k8s_get_api_versions`
 
 get available API versions
 
@@ -28318,7 +28744,7 @@ Data type: `Optional[String[1]]`
 
 a map of client CIDR to server address that is serving this group. This is to help clients reach servers in the most network-efficient way possible. Clients can use the appropriate server address as per the CIDR that they match. In case of multiple matches, clients should use the longest matching CIDR. The server returns only those CIDRs that it thinks that the client can match. For example: the control plane will return an internal IP CIDR only, if the client reaches the server using an internal IP. Server looks at X-Forwarded-For header or X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
 
-### `swagger_k8s_get_apiextensions_api_group`
+### <a name="swagger_k8s_get_apiextensions_api_group"></a>`swagger_k8s_get_apiextensions_api_group`
 
 get information of a group
 
@@ -28356,7 +28782,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_apiextensions_v1beta1_api_resources`
+### <a name="swagger_k8s_get_apiextensions_v1beta1_api_resources"></a>`swagger_k8s_get_apiextensions_v1beta1_api_resources`
 
 get available resources
 
@@ -28442,7 +28868,7 @@ Data type: `Optional[String[1]]`
 
 The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
 
-### `swagger_k8s_get_apiregistration_api_group`
+### <a name="swagger_k8s_get_apiregistration_api_group"></a>`swagger_k8s_get_apiregistration_api_group`
 
 get information of a group
 
@@ -28480,7 +28906,7 @@ Data type: `Optional[String[1]]`
 
 groupVersion specifies the API group and version in the form 'group/version'
 
-### `swagger_k8s_get_apiregistration_v1_api_resources`
+### <a name="swagger_k8s_get_apiregistration_v1_api_resources"></a>`swagger_k8s_get_apiregistration_v1_api_resources`
 
 get available resources
 
@@ -28566,7 +28992,7 @@ Data type: `Optional[String[1]]`
 
 namespaced indicates if a resource is namespaced or not.
 
-### `swagger_k8s_get_apiregistration_v1beta1_api_resources`
+### <a name="swagger_k8s_get_apiregistration_v1beta1_api_resources"></a>`swagger_k8s_get_apiregistration_v1beta1_api_resources`
 
 get available resources
 
@@ -28652,7 +29078,7 @@ Data type: `Optional[String[1]]`
 
 namespaced indicates if a resource is namespaced or not.
 
-### `swagger_k8s_get_apps_api_group`
+### <a name="swagger_k8s_get_apps_api_group"></a>`swagger_k8s_get_apps_api_group`
 
 get information of a group
 
@@ -28690,7 +29116,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_apps_v1_api_resources`
+### <a name="swagger_k8s_get_apps_v1_api_resources"></a>`swagger_k8s_get_apps_v1_api_resources`
 
 get available resources
 
@@ -28776,7 +29202,7 @@ Data type: `Optional[String[1]]`
 
 verbs is a list of supported kube verbs (this includes get, list, watch, create, update, patch, delete, deletecollection, and proxy)
 
-### `swagger_k8s_get_apps_v1beta1_api_resources`
+### <a name="swagger_k8s_get_apps_v1beta1_api_resources"></a>`swagger_k8s_get_apps_v1beta1_api_resources`
 
 get available resources
 
@@ -28862,7 +29288,7 @@ Data type: `Optional[String[1]]`
 
 name is the plural name of the resource.
 
-### `swagger_k8s_get_apps_v1beta2_api_resources`
+### <a name="swagger_k8s_get_apps_v1beta2_api_resources"></a>`swagger_k8s_get_apps_v1beta2_api_resources`
 
 get available resources
 
@@ -28948,7 +29374,7 @@ Data type: `Optional[String[1]]`
 
 The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
 
-### `swagger_k8s_get_auditregistration_api_group`
+### <a name="swagger_k8s_get_auditregistration_api_group"></a>`swagger_k8s_get_auditregistration_api_group`
 
 get information of a group
 
@@ -28986,7 +29412,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_auditregistration_v1alpha1_api_resources`
+### <a name="swagger_k8s_get_auditregistration_v1alpha1_api_resources"></a>`swagger_k8s_get_auditregistration_v1alpha1_api_resources`
 
 get available resources
 
@@ -29072,7 +29498,7 @@ Data type: `Optional[String[1]]`
 
 namespaced indicates if a resource is namespaced or not.
 
-### `swagger_k8s_get_authentication_api_group`
+### <a name="swagger_k8s_get_authentication_api_group"></a>`swagger_k8s_get_authentication_api_group`
 
 get information of a group
 
@@ -29110,7 +29536,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_authentication_v1_api_resources`
+### <a name="swagger_k8s_get_authentication_v1_api_resources"></a>`swagger_k8s_get_authentication_v1_api_resources`
 
 get available resources
 
@@ -29196,7 +29622,7 @@ Data type: `Optional[String[1]]`
 
 group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale'.
 
-### `swagger_k8s_get_authentication_v1beta1_api_resources`
+### <a name="swagger_k8s_get_authentication_v1beta1_api_resources"></a>`swagger_k8s_get_authentication_v1beta1_api_resources`
 
 get available resources
 
@@ -29282,7 +29708,7 @@ Data type: `Optional[String[1]]`
 
 categories is a list of the grouped resources this resource belongs to (e.g. 'all')
 
-### `swagger_k8s_get_authorization_api_group`
+### <a name="swagger_k8s_get_authorization_api_group"></a>`swagger_k8s_get_authorization_api_group`
 
 get information of a group
 
@@ -29320,7 +29746,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_authorization_v1_api_resources`
+### <a name="swagger_k8s_get_authorization_v1_api_resources"></a>`swagger_k8s_get_authorization_v1_api_resources`
 
 get available resources
 
@@ -29406,7 +29832,7 @@ Data type: `Optional[String[1]]`
 
 verbs is a list of supported kube verbs (this includes get, list, watch, create, update, patch, delete, deletecollection, and proxy)
 
-### `swagger_k8s_get_authorization_v1beta1_api_resources`
+### <a name="swagger_k8s_get_authorization_v1beta1_api_resources"></a>`swagger_k8s_get_authorization_v1beta1_api_resources`
 
 get available resources
 
@@ -29492,7 +29918,7 @@ Data type: `Optional[String[1]]`
 
 namespaced indicates if a resource is namespaced or not.
 
-### `swagger_k8s_get_autoscaling_api_group`
+### <a name="swagger_k8s_get_autoscaling_api_group"></a>`swagger_k8s_get_autoscaling_api_group`
 
 get information of a group
 
@@ -29530,7 +29956,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_autoscaling_v1_api_resources`
+### <a name="swagger_k8s_get_autoscaling_v1_api_resources"></a>`swagger_k8s_get_autoscaling_v1_api_resources`
 
 get available resources
 
@@ -29616,7 +30042,7 @@ Data type: `Optional[String[1]]`
 
 The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
 
-### `swagger_k8s_get_autoscaling_v2beta1_api_resources`
+### <a name="swagger_k8s_get_autoscaling_v2beta1_api_resources"></a>`swagger_k8s_get_autoscaling_v2beta1_api_resources`
 
 get available resources
 
@@ -29702,7 +30128,7 @@ Data type: `Optional[String[1]]`
 
 version is the preferred version of the resource.  Empty implies the version of the containing resource list For subresources, this may have a different value, for example: v1 (while inside a v1beta1 version of the core resource's group)'.
 
-### `swagger_k8s_get_autoscaling_v2beta2_api_resources`
+### <a name="swagger_k8s_get_autoscaling_v2beta2_api_resources"></a>`swagger_k8s_get_autoscaling_v2beta2_api_resources`
 
 get available resources
 
@@ -29788,7 +30214,7 @@ Data type: `Optional[String[1]]`
 
 name is the plural name of the resource.
 
-### `swagger_k8s_get_batch_api_group`
+### <a name="swagger_k8s_get_batch_api_group"></a>`swagger_k8s_get_batch_api_group`
 
 get information of a group
 
@@ -29826,7 +30252,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_batch_v1_api_resources`
+### <a name="swagger_k8s_get_batch_v1_api_resources"></a>`swagger_k8s_get_batch_v1_api_resources`
 
 get available resources
 
@@ -29912,7 +30338,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_get_batch_v1beta1_api_resources`
+### <a name="swagger_k8s_get_batch_v1beta1_api_resources"></a>`swagger_k8s_get_batch_v1beta1_api_resources`
 
 get available resources
 
@@ -29998,7 +30424,7 @@ Data type: `Optional[String[1]]`
 
 The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
 
-### `swagger_k8s_get_batch_v2alpha1_api_resources`
+### <a name="swagger_k8s_get_batch_v2alpha1_api_resources"></a>`swagger_k8s_get_batch_v2alpha1_api_resources`
 
 get available resources
 
@@ -30084,7 +30510,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_get_certificates_api_group`
+### <a name="swagger_k8s_get_certificates_api_group"></a>`swagger_k8s_get_certificates_api_group`
 
 get information of a group
 
@@ -30122,7 +30548,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_certificates_v1beta1_api_resources`
+### <a name="swagger_k8s_get_certificates_v1beta1_api_resources"></a>`swagger_k8s_get_certificates_v1beta1_api_resources`
 
 get available resources
 
@@ -30208,7 +30634,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_get_coordination_api_group`
+### <a name="swagger_k8s_get_coordination_api_group"></a>`swagger_k8s_get_coordination_api_group`
 
 get information of a group
 
@@ -30246,7 +30672,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_coordination_v1_api_resources`
+### <a name="swagger_k8s_get_coordination_v1_api_resources"></a>`swagger_k8s_get_coordination_v1_api_resources`
 
 get available resources
 
@@ -30332,7 +30758,7 @@ Data type: `Optional[String[1]]`
 
 The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
 
-### `swagger_k8s_get_coordination_v1beta1_api_resources`
+### <a name="swagger_k8s_get_coordination_v1beta1_api_resources"></a>`swagger_k8s_get_coordination_v1beta1_api_resources`
 
 get available resources
 
@@ -30418,7 +30844,7 @@ Data type: `Optional[String[1]]`
 
 version is the preferred version of the resource.  Empty implies the version of the containing resource list For subresources, this may have a different value, for example: v1 (while inside a v1beta1 version of the core resource's group)'.
 
-### `swagger_k8s_get_core_api_versions`
+### <a name="swagger_k8s_get_core_api_versions"></a>`swagger_k8s_get_core_api_versions`
 
 get available API versions
 
@@ -30456,7 +30882,7 @@ Data type: `Optional[String[1]]`
 
 Address of this server, suitable for a client that matches the above CIDR. This can be a hostname, hostname:port, IP or IP:port.
 
-### `swagger_k8s_get_core_v1_api_resources`
+### <a name="swagger_k8s_get_core_v1_api_resources"></a>`swagger_k8s_get_core_v1_api_resources`
 
 get available resources
 
@@ -30542,7 +30968,7 @@ Data type: `Optional[String[1]]`
 
 group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale'.
 
-### `swagger_k8s_get_events_api_group`
+### <a name="swagger_k8s_get_events_api_group"></a>`swagger_k8s_get_events_api_group`
 
 get information of a group
 
@@ -30580,7 +31006,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_events_v1beta1_api_resources`
+### <a name="swagger_k8s_get_events_v1beta1_api_resources"></a>`swagger_k8s_get_events_v1beta1_api_resources`
 
 get available resources
 
@@ -30666,7 +31092,7 @@ Data type: `Optional[String[1]]`
 
 shortNames is a list of suggested short names of the resource.
 
-### `swagger_k8s_get_extensions_api_group`
+### <a name="swagger_k8s_get_extensions_api_group"></a>`swagger_k8s_get_extensions_api_group`
 
 get information of a group
 
@@ -30704,7 +31130,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_extensions_v1beta1_api_resources`
+### <a name="swagger_k8s_get_extensions_v1beta1_api_resources"></a>`swagger_k8s_get_extensions_v1beta1_api_resources`
 
 get available resources
 
@@ -30790,7 +31216,7 @@ Data type: `Optional[String[1]]`
 
 kind is the kind for the resource (e.g. 'Foo' is the kind for a resource 'foo')
 
-### `swagger_k8s_get_networking_api_group`
+### <a name="swagger_k8s_get_networking_api_group"></a>`swagger_k8s_get_networking_api_group`
 
 get information of a group
 
@@ -30828,7 +31254,7 @@ Data type: `Optional[String[1]]`
 
 groupVersion specifies the API group and version in the form 'group/version'
 
-### `swagger_k8s_get_networking_v1_api_resources`
+### <a name="swagger_k8s_get_networking_v1_api_resources"></a>`swagger_k8s_get_networking_v1_api_resources`
 
 get available resources
 
@@ -30914,7 +31340,7 @@ Data type: `Optional[String[1]]`
 
 group is the preferred group of the resource.  Empty implies the group of the containing resource list. For subresources, this may have a different value, for example: Scale'.
 
-### `swagger_k8s_get_networking_v1beta1_api_resources`
+### <a name="swagger_k8s_get_networking_v1beta1_api_resources"></a>`swagger_k8s_get_networking_v1beta1_api_resources`
 
 get available resources
 
@@ -31000,7 +31426,7 @@ Data type: `Optional[String[1]]`
 
 namespaced indicates if a resource is namespaced or not.
 
-### `swagger_k8s_get_node_api_group`
+### <a name="swagger_k8s_get_node_api_group"></a>`swagger_k8s_get_node_api_group`
 
 get information of a group
 
@@ -31038,7 +31464,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_node_v1alpha1_api_resources`
+### <a name="swagger_k8s_get_node_v1alpha1_api_resources"></a>`swagger_k8s_get_node_v1alpha1_api_resources`
 
 get available resources
 
@@ -31124,7 +31550,7 @@ Data type: `Optional[String[1]]`
 
 kind is the kind for the resource (e.g. 'Foo' is the kind for a resource 'foo')
 
-### `swagger_k8s_get_node_v1beta1_api_resources`
+### <a name="swagger_k8s_get_node_v1beta1_api_resources"></a>`swagger_k8s_get_node_v1beta1_api_resources`
 
 get available resources
 
@@ -31210,7 +31636,7 @@ Data type: `Optional[String[1]]`
 
 namespaced indicates if a resource is namespaced or not.
 
-### `swagger_k8s_get_policy_api_group`
+### <a name="swagger_k8s_get_policy_api_group"></a>`swagger_k8s_get_policy_api_group`
 
 get information of a group
 
@@ -31248,7 +31674,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_policy_v1beta1_api_resources`
+### <a name="swagger_k8s_get_policy_v1beta1_api_resources"></a>`swagger_k8s_get_policy_v1beta1_api_resources`
 
 get available resources
 
@@ -31334,7 +31760,7 @@ Data type: `Optional[String[1]]`
 
 name is the plural name of the resource.
 
-### `swagger_k8s_get_rbac_authorization_api_group`
+### <a name="swagger_k8s_get_rbac_authorization_api_group"></a>`swagger_k8s_get_rbac_authorization_api_group`
 
 get information of a group
 
@@ -31372,7 +31798,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_rbac_authorization_v1_api_resources`
+### <a name="swagger_k8s_get_rbac_authorization_v1_api_resources"></a>`swagger_k8s_get_rbac_authorization_v1_api_resources`
 
 get available resources
 
@@ -31458,7 +31884,7 @@ Data type: `Optional[String[1]]`
 
 verbs is a list of supported kube verbs (this includes get, list, watch, create, update, patch, delete, deletecollection, and proxy)
 
-### `swagger_k8s_get_rbac_authorization_v1alpha1_api_resources`
+### <a name="swagger_k8s_get_rbac_authorization_v1alpha1_api_resources"></a>`swagger_k8s_get_rbac_authorization_v1alpha1_api_resources`
 
 get available resources
 
@@ -31544,7 +31970,7 @@ Data type: `Optional[String[1]]`
 
 name is the plural name of the resource.
 
-### `swagger_k8s_get_rbac_authorization_v1beta1_api_resources`
+### <a name="swagger_k8s_get_rbac_authorization_v1beta1_api_resources"></a>`swagger_k8s_get_rbac_authorization_v1beta1_api_resources`
 
 get available resources
 
@@ -31630,7 +32056,7 @@ Data type: `Optional[String[1]]`
 
 shortNames is a list of suggested short names of the resource.
 
-### `swagger_k8s_get_scheduling_api_group`
+### <a name="swagger_k8s_get_scheduling_api_group"></a>`swagger_k8s_get_scheduling_api_group`
 
 get information of a group
 
@@ -31668,7 +32094,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_scheduling_v1_api_resources`
+### <a name="swagger_k8s_get_scheduling_v1_api_resources"></a>`swagger_k8s_get_scheduling_v1_api_resources`
 
 get available resources
 
@@ -31754,7 +32180,7 @@ Data type: `Optional[String[1]]`
 
 kind is the kind for the resource (e.g. 'Foo' is the kind for a resource 'foo')
 
-### `swagger_k8s_get_scheduling_v1alpha1_api_resources`
+### <a name="swagger_k8s_get_scheduling_v1alpha1_api_resources"></a>`swagger_k8s_get_scheduling_v1alpha1_api_resources`
 
 get available resources
 
@@ -31840,7 +32266,7 @@ Data type: `Optional[String[1]]`
 
 name is the plural name of the resource.
 
-### `swagger_k8s_get_scheduling_v1beta1_api_resources`
+### <a name="swagger_k8s_get_scheduling_v1beta1_api_resources"></a>`swagger_k8s_get_scheduling_v1beta1_api_resources`
 
 get available resources
 
@@ -31926,7 +32352,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_get_settings_api_group`
+### <a name="swagger_k8s_get_settings_api_group"></a>`swagger_k8s_get_settings_api_group`
 
 get information of a group
 
@@ -31964,7 +32390,7 @@ Data type: `Optional[String[1]]`
 
 version specifies the version in the form of 'version'. This is to save the clients the trouble of splitting the GroupVersion.
 
-### `swagger_k8s_get_settings_v1alpha1_api_resources`
+### <a name="swagger_k8s_get_settings_v1alpha1_api_resources"></a>`swagger_k8s_get_settings_v1alpha1_api_resources`
 
 get available resources
 
@@ -32050,7 +32476,7 @@ Data type: `Optional[String[1]]`
 
 The hash value of the storage version, the version this resource is converted to when written to the data store. Value must be treated as opaque by clients. Only equality comparison on the value is valid. This is an alpha feature and may change or be removed in the future. The field is populated by the apiserver only if the StorageVersionHash feature gate is enabled. This field will remain optional even if it graduates.
 
-### `swagger_k8s_get_storage_api_group`
+### <a name="swagger_k8s_get_storage_api_group"></a>`swagger_k8s_get_storage_api_group`
 
 get information of a group
 
@@ -32088,7 +32514,7 @@ Data type: `Optional[String[1]]`
 
 groupVersion specifies the API group and version in the form 'group/version'
 
-### `swagger_k8s_get_storage_v1_api_resources`
+### <a name="swagger_k8s_get_storage_v1_api_resources"></a>`swagger_k8s_get_storage_v1_api_resources`
 
 get available resources
 
@@ -32174,7 +32600,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_get_storage_v1alpha1_api_resources`
+### <a name="swagger_k8s_get_storage_v1alpha1_api_resources"></a>`swagger_k8s_get_storage_v1alpha1_api_resources`
 
 get available resources
 
@@ -32260,7 +32686,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_get_storage_v1beta1_api_resources`
+### <a name="swagger_k8s_get_storage_v1beta1_api_resources"></a>`swagger_k8s_get_storage_v1beta1_api_resources`
 
 get available resources
 
@@ -32346,7 +32772,7 @@ Data type: `Optional[String[1]]`
 
 singularName is the singular name of the resource.  This allows clients to handle plural and singular opaquely. The singularName is more correct for reporting status on a single item and both singular and plural are allowed from the kubectl CLI interface.
 
-### `swagger_k8s_list_admissionregistration_v1beta1_mutating_webhook_configuration`
+### <a name="swagger_k8s_list_admissionregistration_v1beta1_mutating_webhook_configuration"></a>`swagger_k8s_list_admissionregistration_v1beta1_mutating_webhook_configuration`
 
 list or watch objects of kind MutatingWebhookConfiguration
 
@@ -32444,7 +32870,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_admissionregistration_v1beta1_validating_webhook_configuration`
+### <a name="swagger_k8s_list_admissionregistration_v1beta1_validating_webhook_configuration"></a>`swagger_k8s_list_admissionregistration_v1beta1_validating_webhook_configuration`
 
 list or watch objects of kind ValidatingWebhookConfiguration
 
@@ -32542,7 +32968,7 @@ Data type: `Optional[String[1]]`
 
 The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
 
-### `swagger_k8s_list_apiextensions_v1beta1_custom_resource_definition`
+### <a name="swagger_k8s_list_apiextensions_v1beta1_custom_resource_definition"></a>`swagger_k8s_list_apiextensions_v1beta1_custom_resource_definition`
 
 list or watch objects of kind CustomResourceDefinition
 
@@ -32646,7 +33072,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_list_apiregistration_v1_api_service`
+### <a name="swagger_k8s_list_apiregistration_v1_api_service"></a>`swagger_k8s_list_apiregistration_v1_api_service`
 
 list or watch objects of kind APIService
 
@@ -32750,7 +33176,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_list_apiregistration_v1beta1_api_service`
+### <a name="swagger_k8s_list_apiregistration_v1beta1_api_service"></a>`swagger_k8s_list_apiregistration_v1beta1_api_service`
 
 list or watch objects of kind APIService
 
@@ -32854,7 +33280,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_list_apps_v1_controller_revision_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1_controller_revision_for_all_namespaces"></a>`swagger_k8s_list_apps_v1_controller_revision_for_all_namespaces`
 
 list or watch objects of kind ControllerRevision
 
@@ -32958,7 +33384,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_apps_v1_daemon_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1_daemon_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1_daemon_set_for_all_namespaces`
 
 list or watch objects of kind DaemonSet
 
@@ -33062,7 +33488,7 @@ Data type: `Optional[String[1]]`
 
 The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_list_apps_v1_deployment_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1_deployment_for_all_namespaces"></a>`swagger_k8s_list_apps_v1_deployment_for_all_namespaces`
 
 list or watch objects of kind Deployment
 
@@ -33166,7 +33592,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_apps_v1_replica_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1_replica_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1_replica_set_for_all_namespaces`
 
 list or watch objects of kind ReplicaSet
 
@@ -33270,7 +33696,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_apps_v1_stateful_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1_stateful_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1_stateful_set_for_all_namespaces`
 
 list or watch objects of kind StatefulSet
 
@@ -33374,7 +33800,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_apps_v1beta1_controller_revision_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta1_controller_revision_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta1_controller_revision_for_all_namespaces`
 
 list or watch objects of kind ControllerRevision
 
@@ -33478,7 +33904,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_list_apps_v1beta1_deployment_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta1_deployment_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta1_deployment_for_all_namespaces`
 
 list or watch objects of kind Deployment
 
@@ -33582,7 +34008,7 @@ Data type: `Optional[String[1]]`
 
 Most recently observed status of the Deployment.
 
-### `swagger_k8s_list_apps_v1beta1_stateful_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta1_stateful_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta1_stateful_set_for_all_namespaces`
 
 list or watch objects of kind StatefulSet
 
@@ -33686,7 +34112,7 @@ Data type: `Optional[String[1]]`
 
 Status is the current status of Pods in this StatefulSet. This data may be out of date by some window of time.
 
-### `swagger_k8s_list_apps_v1beta2_controller_revision_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta2_controller_revision_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta2_controller_revision_for_all_namespaces`
 
 list or watch objects of kind ControllerRevision
 
@@ -33790,7 +34216,7 @@ Data type: `Optional[String[1]]`
 
 Revision indicates the revision of the state represented by Data.
 
-### `swagger_k8s_list_apps_v1beta2_daemon_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta2_daemon_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta2_daemon_set_for_all_namespaces`
 
 list or watch objects of kind DaemonSet
 
@@ -33894,7 +34320,7 @@ Data type: `Optional[String[1]]`
 
 The current status of this daemon set. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_list_apps_v1beta2_deployment_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta2_deployment_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta2_deployment_for_all_namespaces`
 
 list or watch objects of kind Deployment
 
@@ -33998,7 +34424,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_apps_v1beta2_replica_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta2_replica_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta2_replica_set_for_all_namespaces`
 
 list or watch objects of kind ReplicaSet
 
@@ -34102,7 +34528,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_list_apps_v1beta2_stateful_set_for_all_namespaces`
+### <a name="swagger_k8s_list_apps_v1beta2_stateful_set_for_all_namespaces"></a>`swagger_k8s_list_apps_v1beta2_stateful_set_for_all_namespaces`
 
 list or watch objects of kind StatefulSet
 
@@ -34206,7 +34632,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_auditregistration_v1alpha1_audit_sink`
+### <a name="swagger_k8s_list_auditregistration_v1alpha1_audit_sink"></a>`swagger_k8s_list_auditregistration_v1alpha1_audit_sink`
 
 list or watch objects of kind AuditSink
 
@@ -34304,7 +34730,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_autoscaling_v1_horizontal_pod_autoscaler_for_all_namespaces`
+### <a name="swagger_k8s_list_autoscaling_v1_horizontal_pod_autoscaler_for_all_namespaces"></a>`swagger_k8s_list_autoscaling_v1_horizontal_pod_autoscaler_for_all_namespaces`
 
 list or watch objects of kind HorizontalPodAutoscaler
 
@@ -34408,7 +34834,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_autoscaling_v2beta1_horizontal_pod_autoscaler_for_all_namespaces`
+### <a name="swagger_k8s_list_autoscaling_v2beta1_horizontal_pod_autoscaler_for_all_namespaces"></a>`swagger_k8s_list_autoscaling_v2beta1_horizontal_pod_autoscaler_for_all_namespaces`
 
 list or watch objects of kind HorizontalPodAutoscaler
 
@@ -34512,7 +34938,7 @@ Data type: `Optional[String[1]]`
 
 spec is the specification for the behaviour of the autoscaler. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_list_autoscaling_v2beta2_horizontal_pod_autoscaler_for_all_namespaces`
+### <a name="swagger_k8s_list_autoscaling_v2beta2_horizontal_pod_autoscaler_for_all_namespaces"></a>`swagger_k8s_list_autoscaling_v2beta2_horizontal_pod_autoscaler_for_all_namespaces`
 
 list or watch objects of kind HorizontalPodAutoscaler
 
@@ -34616,7 +35042,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_list_batch_v1_job_for_all_namespaces`
+### <a name="swagger_k8s_list_batch_v1_job_for_all_namespaces"></a>`swagger_k8s_list_batch_v1_job_for_all_namespaces`
 
 list or watch objects of kind Job
 
@@ -34720,7 +35146,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_batch_v1beta1_cron_job_for_all_namespaces`
+### <a name="swagger_k8s_list_batch_v1beta1_cron_job_for_all_namespaces"></a>`swagger_k8s_list_batch_v1beta1_cron_job_for_all_namespaces`
 
 list or watch objects of kind CronJob
 
@@ -34824,7 +35250,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_list_batch_v2alpha1_cron_job_for_all_namespaces`
+### <a name="swagger_k8s_list_batch_v2alpha1_cron_job_for_all_namespaces"></a>`swagger_k8s_list_batch_v2alpha1_cron_job_for_all_namespaces`
 
 list or watch objects of kind CronJob
 
@@ -34928,7 +35354,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the desired behavior of a cron job, including the schedule. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_list_certificates_v1beta1_certificate_signing_request`
+### <a name="swagger_k8s_list_certificates_v1beta1_certificate_signing_request"></a>`swagger_k8s_list_certificates_v1beta1_certificate_signing_request`
 
 list or watch objects of kind CertificateSigningRequest
 
@@ -35032,7 +35458,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_coordination_v1_lease_for_all_namespaces`
+### <a name="swagger_k8s_list_coordination_v1_lease_for_all_namespaces"></a>`swagger_k8s_list_coordination_v1_lease_for_all_namespaces`
 
 list or watch objects of kind Lease
 
@@ -35130,7 +35556,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_coordination_v1beta1_lease_for_all_namespaces`
+### <a name="swagger_k8s_list_coordination_v1beta1_lease_for_all_namespaces"></a>`swagger_k8s_list_coordination_v1beta1_lease_for_all_namespaces`
 
 list or watch objects of kind Lease
 
@@ -35228,7 +35654,7 @@ Data type: `Optional[String[1]]`
 
 Specification of the Lease. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_list_core_v1_component_status`
+### <a name="swagger_k8s_list_core_v1_component_status"></a>`swagger_k8s_list_core_v1_component_status`
 
 list objects of kind ComponentStatus
 
@@ -35326,7 +35752,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_core_v1_config_map_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_config_map_for_all_namespaces"></a>`swagger_k8s_list_core_v1_config_map_for_all_namespaces`
 
 list or watch objects of kind ConfigMap
 
@@ -35430,7 +35856,7 @@ Data type: `Optional[String[1]]`
 
 BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.
 
-### `swagger_k8s_list_core_v1_endpoints_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_endpoints_for_all_namespaces"></a>`swagger_k8s_list_core_v1_endpoints_for_all_namespaces`
 
 list or watch objects of kind Endpoints
 
@@ -35528,7 +35954,7 @@ Data type: `Optional[String[1]]`
 
 When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.
 
-### `swagger_k8s_list_core_v1_event_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_event_for_all_namespaces"></a>`swagger_k8s_list_core_v1_event_for_all_namespaces`
 
 list or watch objects of kind Event
 
@@ -35704,7 +36130,7 @@ Data type: `Optional[String[1]]`
 
 Type of this event (Normal, Warning), new types could be added in the future
 
-### `swagger_k8s_list_core_v1_limit_range_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_limit_range_for_all_namespaces"></a>`swagger_k8s_list_core_v1_limit_range_for_all_namespaces`
 
 list or watch objects of kind LimitRange
 
@@ -35802,7 +36228,7 @@ Data type: `Optional[String[1]]`
 
 When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.
 
-### `swagger_k8s_list_core_v1_namespace`
+### <a name="swagger_k8s_list_core_v1_namespace"></a>`swagger_k8s_list_core_v1_namespace`
 
 list or watch objects of kind Namespace
 
@@ -35906,7 +36332,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_core_v1_node`
+### <a name="swagger_k8s_list_core_v1_node"></a>`swagger_k8s_list_core_v1_node`
 
 list or watch objects of kind Node
 
@@ -36010,7 +36436,7 @@ Data type: `Optional[String[1]]`
 
 Spec defines the behavior of a node. https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_list_core_v1_persistent_volume`
+### <a name="swagger_k8s_list_core_v1_persistent_volume"></a>`swagger_k8s_list_core_v1_persistent_volume`
 
 list or watch objects of kind PersistentVolume
 
@@ -36114,7 +36540,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_list_core_v1_persistent_volume_claim_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_persistent_volume_claim_for_all_namespaces"></a>`swagger_k8s_list_core_v1_persistent_volume_claim_for_all_namespaces`
 
 list or watch objects of kind PersistentVolumeClaim
 
@@ -36218,7 +36644,7 @@ Data type: `Optional[String[1]]`
 
 The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
 
-### `swagger_k8s_list_core_v1_pod_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_pod_for_all_namespaces"></a>`swagger_k8s_list_core_v1_pod_for_all_namespaces`
 
 list or watch objects of kind Pod
 
@@ -36322,7 +36748,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_list_core_v1_pod_template_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_pod_template_for_all_namespaces"></a>`swagger_k8s_list_core_v1_pod_template_for_all_namespaces`
 
 list or watch objects of kind PodTemplate
 
@@ -36420,7 +36846,7 @@ Data type: `Optional[String[1]]`
 
 The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
 
-### `swagger_k8s_list_core_v1_replication_controller_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_replication_controller_for_all_namespaces"></a>`swagger_k8s_list_core_v1_replication_controller_for_all_namespaces`
 
 list or watch objects of kind ReplicationController
 
@@ -36524,7 +36950,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicationController are empty, they are defaulted to be the same as the Pod(s) that the replication controller manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_list_core_v1_resource_quota_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_resource_quota_for_all_namespaces"></a>`swagger_k8s_list_core_v1_resource_quota_for_all_namespaces`
 
 list or watch objects of kind ResourceQuota
 
@@ -36628,7 +37054,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_list_core_v1_secret_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_secret_for_all_namespaces"></a>`swagger_k8s_list_core_v1_secret_for_all_namespaces`
 
 list or watch objects of kind Secret
 
@@ -36738,7 +37164,7 @@ Data type: `Optional[String[1]]`
 
 Data contains the secret data. Each key must consist of alphanumeric characters, '-', '_' or '.'. The serialized form of the secret data is a base64 encoded string, representing the arbitrary (possibly non-string) data value here. Described in https://tools.ietf.org/html/rfc4648#section-4
 
-### `swagger_k8s_list_core_v1_service_account_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_service_account_for_all_namespaces"></a>`swagger_k8s_list_core_v1_service_account_for_all_namespaces`
 
 list or watch objects of kind ServiceAccount
 
@@ -36848,7 +37274,7 @@ Data type: `Optional[String[1]]`
 
 Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount. More info: https://kubernetes.io/docs/concepts/configuration/secret
 
-### `swagger_k8s_list_core_v1_service_for_all_namespaces`
+### <a name="swagger_k8s_list_core_v1_service_for_all_namespaces"></a>`swagger_k8s_list_core_v1_service_for_all_namespaces`
 
 list or watch objects of kind Service
 
@@ -36952,7 +37378,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_list_events_v1beta1_event_for_all_namespaces`
+### <a name="swagger_k8s_list_events_v1beta1_event_for_all_namespaces"></a>`swagger_k8s_list_events_v1beta1_event_for_all_namespaces`
 
 list or watch objects of kind Event
 
@@ -37128,7 +37554,7 @@ Data type: `Optional[String[1]]`
 
 Type of this event (Normal, Warning), new types could be added in the future.
 
-### `swagger_k8s_list_extensions_v1beta1_daemon_set_for_all_namespaces`
+### <a name="swagger_k8s_list_extensions_v1beta1_daemon_set_for_all_namespaces"></a>`swagger_k8s_list_extensions_v1beta1_daemon_set_for_all_namespaces`
 
 list or watch objects of kind DaemonSet
 
@@ -37232,7 +37658,7 @@ Data type: `Optional[String[1]]`
 
 The current status of this daemon set. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_list_extensions_v1beta1_deployment_for_all_namespaces`
+### <a name="swagger_k8s_list_extensions_v1beta1_deployment_for_all_namespaces"></a>`swagger_k8s_list_extensions_v1beta1_deployment_for_all_namespaces`
 
 list or watch objects of kind Deployment
 
@@ -37336,7 +37762,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata.
 
-### `swagger_k8s_list_extensions_v1beta1_ingress_for_all_namespaces`
+### <a name="swagger_k8s_list_extensions_v1beta1_ingress_for_all_namespaces"></a>`swagger_k8s_list_extensions_v1beta1_ingress_for_all_namespaces`
 
 list or watch objects of kind Ingress
 
@@ -37440,7 +37866,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_list_extensions_v1beta1_network_policy_for_all_namespaces`
+### <a name="swagger_k8s_list_extensions_v1beta1_network_policy_for_all_namespaces"></a>`swagger_k8s_list_extensions_v1beta1_network_policy_for_all_namespaces`
 
 list or watch objects of kind NetworkPolicy
 
@@ -37538,7 +37964,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_extensions_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_list_extensions_v1beta1_pod_security_policy"></a>`swagger_k8s_list_extensions_v1beta1_pod_security_policy`
 
 list or watch objects of kind PodSecurityPolicy
 
@@ -37636,7 +38062,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_extensions_v1beta1_replica_set_for_all_namespaces`
+### <a name="swagger_k8s_list_extensions_v1beta1_replica_set_for_all_namespaces"></a>`swagger_k8s_list_extensions_v1beta1_replica_set_for_all_namespaces`
 
 list or watch objects of kind ReplicaSet
 
@@ -37740,7 +38166,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicaSet are empty, they are defaulted to be the same as the Pod(s) that the ReplicaSet manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_list_networking_v1_network_policy_for_all_namespaces`
+### <a name="swagger_k8s_list_networking_v1_network_policy_for_all_namespaces"></a>`swagger_k8s_list_networking_v1_network_policy_for_all_namespaces`
 
 list or watch objects of kind NetworkPolicy
 
@@ -37838,7 +38264,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_networking_v1beta1_ingress_for_all_namespaces`
+### <a name="swagger_k8s_list_networking_v1beta1_ingress_for_all_namespaces"></a>`swagger_k8s_list_networking_v1beta1_ingress_for_all_namespaces`
 
 list or watch objects of kind Ingress
 
@@ -37942,7 +38368,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_list_node_v1alpha1_runtime_class`
+### <a name="swagger_k8s_list_node_v1alpha1_runtime_class"></a>`swagger_k8s_list_node_v1alpha1_runtime_class`
 
 list or watch objects of kind RuntimeClass
 
@@ -38040,7 +38466,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_list_node_v1beta1_runtime_class`
+### <a name="swagger_k8s_list_node_v1beta1_runtime_class"></a>`swagger_k8s_list_node_v1beta1_runtime_class`
 
 list or watch objects of kind RuntimeClass
 
@@ -38138,7 +38564,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_policy_v1beta1_pod_disruption_budget_for_all_namespaces`
+### <a name="swagger_k8s_list_policy_v1beta1_pod_disruption_budget_for_all_namespaces"></a>`swagger_k8s_list_policy_v1beta1_pod_disruption_budget_for_all_namespaces`
 
 list or watch objects of kind PodDisruptionBudget
 
@@ -38242,7 +38668,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_list_policy_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_list_policy_v1beta1_pod_security_policy"></a>`swagger_k8s_list_policy_v1beta1_pod_security_policy`
 
 list or watch objects of kind PodSecurityPolicy
 
@@ -38340,7 +38766,7 @@ Data type: `Optional[String[1]]`
 
 spec defines the policy enforced.
 
-### `swagger_k8s_list_rbac_authorization_v1_cluster_role`
+### <a name="swagger_k8s_list_rbac_authorization_v1_cluster_role"></a>`swagger_k8s_list_rbac_authorization_v1_cluster_role`
 
 list or watch objects of kind ClusterRole
 
@@ -38444,7 +38870,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their fields. Defaults to everything.
 
-### `swagger_k8s_list_rbac_authorization_v1_cluster_role_binding`
+### <a name="swagger_k8s_list_rbac_authorization_v1_cluster_role_binding"></a>`swagger_k8s_list_rbac_authorization_v1_cluster_role_binding`
 
 list or watch objects of kind ClusterRoleBinding
 
@@ -38548,7 +38974,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their fields. Defaults to everything.
 
-### `swagger_k8s_list_rbac_authorization_v1_role_binding_for_all_namespaces`
+### <a name="swagger_k8s_list_rbac_authorization_v1_role_binding_for_all_namespaces"></a>`swagger_k8s_list_rbac_authorization_v1_role_binding_for_all_namespaces`
 
 list or watch objects of kind RoleBinding
 
@@ -38652,7 +39078,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_rbac_authorization_v1_role_for_all_namespaces`
+### <a name="swagger_k8s_list_rbac_authorization_v1_role_for_all_namespaces"></a>`swagger_k8s_list_rbac_authorization_v1_role_for_all_namespaces`
 
 list or watch objects of kind Role
 
@@ -38750,7 +39176,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their fields. Defaults to everything.
 
-### `swagger_k8s_list_rbac_authorization_v1alpha1_cluster_role`
+### <a name="swagger_k8s_list_rbac_authorization_v1alpha1_cluster_role"></a>`swagger_k8s_list_rbac_authorization_v1alpha1_cluster_role`
 
 list or watch objects of kind ClusterRole
 
@@ -38854,7 +39280,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_list_rbac_authorization_v1alpha1_cluster_role_binding`
+### <a name="swagger_k8s_list_rbac_authorization_v1alpha1_cluster_role_binding"></a>`swagger_k8s_list_rbac_authorization_v1alpha1_cluster_role_binding`
 
 list or watch objects of kind ClusterRoleBinding
 
@@ -38958,7 +39384,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_list_rbac_authorization_v1alpha1_role_binding_for_all_namespaces`
+### <a name="swagger_k8s_list_rbac_authorization_v1alpha1_role_binding_for_all_namespaces"></a>`swagger_k8s_list_rbac_authorization_v1alpha1_role_binding_for_all_namespaces`
 
 list or watch objects of kind RoleBinding
 
@@ -39062,7 +39488,7 @@ Data type: `Optional[String[1]]`
 
 Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
 
-### `swagger_k8s_list_rbac_authorization_v1alpha1_role_for_all_namespaces`
+### <a name="swagger_k8s_list_rbac_authorization_v1alpha1_role_for_all_namespaces"></a>`swagger_k8s_list_rbac_authorization_v1alpha1_role_for_all_namespaces`
 
 list or watch objects of kind Role
 
@@ -39160,7 +39586,7 @@ Data type: `Optional[String[1]]`
 
 Rules holds all the PolicyRules for this Role
 
-### `swagger_k8s_list_rbac_authorization_v1beta1_cluster_role`
+### <a name="swagger_k8s_list_rbac_authorization_v1beta1_cluster_role"></a>`swagger_k8s_list_rbac_authorization_v1beta1_cluster_role`
 
 list or watch objects of kind ClusterRole
 
@@ -39264,7 +39690,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_list_rbac_authorization_v1beta1_cluster_role_binding`
+### <a name="swagger_k8s_list_rbac_authorization_v1beta1_cluster_role_binding"></a>`swagger_k8s_list_rbac_authorization_v1beta1_cluster_role_binding`
 
 list or watch objects of kind ClusterRoleBinding
 
@@ -39368,7 +39794,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_list_rbac_authorization_v1beta1_role_binding_for_all_namespaces`
+### <a name="swagger_k8s_list_rbac_authorization_v1beta1_role_binding_for_all_namespaces"></a>`swagger_k8s_list_rbac_authorization_v1beta1_role_binding_for_all_namespaces`
 
 list or watch objects of kind RoleBinding
 
@@ -39472,7 +39898,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_list_rbac_authorization_v1beta1_role_for_all_namespaces`
+### <a name="swagger_k8s_list_rbac_authorization_v1beta1_role_for_all_namespaces"></a>`swagger_k8s_list_rbac_authorization_v1beta1_role_for_all_namespaces`
 
 list or watch objects of kind Role
 
@@ -39570,7 +39996,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_scheduling_v1_priority_class`
+### <a name="swagger_k8s_list_scheduling_v1_priority_class"></a>`swagger_k8s_list_scheduling_v1_priority_class`
 
 list or watch objects of kind PriorityClass
 
@@ -39680,7 +40106,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_scheduling_v1alpha1_priority_class`
+### <a name="swagger_k8s_list_scheduling_v1alpha1_priority_class"></a>`swagger_k8s_list_scheduling_v1alpha1_priority_class`
 
 list or watch objects of kind PriorityClass
 
@@ -39790,7 +40216,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_scheduling_v1beta1_priority_class`
+### <a name="swagger_k8s_list_scheduling_v1beta1_priority_class"></a>`swagger_k8s_list_scheduling_v1beta1_priority_class`
 
 list or watch objects of kind PriorityClass
 
@@ -39900,7 +40326,7 @@ Data type: `Optional[String[1]]`
 
 Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
 
-### `swagger_k8s_list_settings_v1alpha1_pod_preset_for_all_namespaces`
+### <a name="swagger_k8s_list_settings_v1alpha1_pod_preset_for_all_namespaces"></a>`swagger_k8s_list_settings_v1alpha1_pod_preset_for_all_namespaces`
 
 list or watch objects of kind PodPreset
 
@@ -39998,7 +40424,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_list_storage_v1_storage_class`
+### <a name="swagger_k8s_list_storage_v1_storage_class"></a>`swagger_k8s_list_storage_v1_storage_class`
 
 list or watch objects of kind StorageClass
 
@@ -40132,7 +40558,7 @@ Data type: `Optional[String[1]]`
 
 AllowVolumeExpansion shows whether the storage class allow volume expand
 
-### `swagger_k8s_list_storage_v1_volume_attachment`
+### <a name="swagger_k8s_list_storage_v1_volume_attachment"></a>`swagger_k8s_list_storage_v1_volume_attachment`
 
 list or watch objects of kind VolumeAttachment
 
@@ -40236,7 +40662,7 @@ Data type: `Optional[String[1]]`
 
 A selector to restrict the list of returned objects by their labels. Defaults to everything.
 
-### `swagger_k8s_list_storage_v1alpha1_volume_attachment`
+### <a name="swagger_k8s_list_storage_v1alpha1_volume_attachment"></a>`swagger_k8s_list_storage_v1alpha1_volume_attachment`
 
 list or watch objects of kind VolumeAttachment
 
@@ -40340,7 +40766,7 @@ Data type: `Optional[String[1]]`
 
 limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
 
-### `swagger_k8s_list_storage_v1beta1_csi_driver`
+### <a name="swagger_k8s_list_storage_v1beta1_csi_driver"></a>`swagger_k8s_list_storage_v1beta1_csi_driver`
 
 list or watch objects of kind CSIDriver
 
@@ -40438,7 +40864,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_list_storage_v1beta1_csi_node`
+### <a name="swagger_k8s_list_storage_v1beta1_csi_node"></a>`swagger_k8s_list_storage_v1beta1_csi_node`
 
 list or watch objects of kind CSINode
 
@@ -40536,7 +40962,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_list_storage_v1beta1_storage_class`
+### <a name="swagger_k8s_list_storage_v1beta1_storage_class"></a>`swagger_k8s_list_storage_v1beta1_storage_class`
 
 list or watch objects of kind StorageClass
 
@@ -40670,7 +41096,7 @@ Data type: `Optional[String[1]]`
 
 Dynamically provisioned PersistentVolumes of this storage class are created with these mountOptions, e.g. ['ro', 'soft']. Not validated - mount of the PVs will simply fail if one is invalid.
 
-### `swagger_k8s_list_storage_v1beta1_volume_attachment`
+### <a name="swagger_k8s_list_storage_v1beta1_volume_attachment"></a>`swagger_k8s_list_storage_v1beta1_volume_attachment`
 
 list or watch objects of kind VolumeAttachment
 
@@ -40774,7 +41200,7 @@ Data type: `Optional[String[1]]`
 
 The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the 'next key'.This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
 
-### `swagger_k8s_read_admissionregistration_v1beta1_mutating_webhook_configuration`
+### <a name="swagger_k8s_read_admissionregistration_v1beta1_mutating_webhook_configuration"></a>`swagger_k8s_read_admissionregistration_v1beta1_mutating_webhook_configuration`
 
 read the specified MutatingWebhookConfiguration
 
@@ -40866,7 +41292,7 @@ Data type: `Optional[String[1]]`
 
 FailurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail. Defaults to Ignore.
 
-### `swagger_k8s_read_admissionregistration_v1beta1_validating_webhook_configuration`
+### <a name="swagger_k8s_read_admissionregistration_v1beta1_validating_webhook_configuration"></a>`swagger_k8s_read_admissionregistration_v1beta1_validating_webhook_configuration`
 
 read the specified ValidatingWebhookConfiguration
 
@@ -40958,7 +41384,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_read_core_v1_namespaced_service_account`
+### <a name="swagger_k8s_read_core_v1_namespaced_service_account"></a>`swagger_k8s_read_core_v1_namespaced_service_account`
 
 read the specified ServiceAccount
 
@@ -41044,7 +41470,7 @@ Data type: `Optional[String[1]]`
 
 Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_read_rbac_authorization_v1_cluster_role_binding`
+### <a name="swagger_k8s_read_rbac_authorization_v1_cluster_role_binding"></a>`swagger_k8s_read_rbac_authorization_v1_cluster_role_binding`
 
 read the specified ClusterRoleBinding
 
@@ -41100,7 +41526,7 @@ Data type: `Optional[String[1]]`
 
 APIGroup holds the API group of the referenced subject. Defaults to '' for ServiceAccount subjects. Defaults to 'rbac.authorization.k8s.io' for User and Group subjects.
 
-### `swagger_k8s_read_rbac_authorization_v1_namespaced_role_binding`
+### <a name="swagger_k8s_read_rbac_authorization_v1_namespaced_role_binding"></a>`swagger_k8s_read_rbac_authorization_v1_namespaced_role_binding`
 
 read the specified RoleBinding
 
@@ -41156,7 +41582,7 @@ Data type: `Optional[String[1]]`
 
 APIGroup holds the API group of the referenced subject. Defaults to '' for ServiceAccount subjects. Defaults to 'rbac.authorization.k8s.io' for User and Group subjects.
 
-### `swagger_k8s_read_rbac_authorization_v1alpha1_cluster_role_binding`
+### <a name="swagger_k8s_read_rbac_authorization_v1alpha1_cluster_role_binding"></a>`swagger_k8s_read_rbac_authorization_v1alpha1_cluster_role_binding`
 
 read the specified ClusterRoleBinding
 
@@ -41212,7 +41638,7 @@ Data type: `Optional[String[1]]`
 
 Kind of object being referenced. Values defined by this API group are 'User', 'Group', and 'ServiceAccount'. If the Authorizer does not recognized the kind value, the Authorizer should report an error.
 
-### `swagger_k8s_read_rbac_authorization_v1alpha1_namespaced_role_binding`
+### <a name="swagger_k8s_read_rbac_authorization_v1alpha1_namespaced_role_binding"></a>`swagger_k8s_read_rbac_authorization_v1alpha1_namespaced_role_binding`
 
 read the specified RoleBinding
 
@@ -41268,7 +41694,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_read_rbac_authorization_v1beta1_cluster_role_binding`
+### <a name="swagger_k8s_read_rbac_authorization_v1beta1_cluster_role_binding"></a>`swagger_k8s_read_rbac_authorization_v1beta1_cluster_role_binding`
 
 read the specified ClusterRoleBinding
 
@@ -41324,7 +41750,7 @@ Data type: `Optional[String[1]]`
 
 Kind of object being referenced. Values defined by this API group are 'User', 'Group', and 'ServiceAccount'. If the Authorizer does not recognized the kind value, the Authorizer should report an error.
 
-### `swagger_k8s_read_rbac_authorization_v1beta1_namespaced_role_binding`
+### <a name="swagger_k8s_read_rbac_authorization_v1beta1_namespaced_role_binding"></a>`swagger_k8s_read_rbac_authorization_v1beta1_namespaced_role_binding`
 
 read the specified RoleBinding
 
@@ -41380,7 +41806,7 @@ Data type: `Optional[String[1]]`
 
 Kind of object being referenced. Values defined by this API group are 'User', 'Group', and 'ServiceAccount'. If the Authorizer does not recognized the kind value, the Authorizer should report an error.
 
-### `swagger_k8s_replace_admissionregistration_v1beta1_mutating_webhook_configuration`
+### <a name="swagger_k8s_replace_admissionregistration_v1beta1_mutating_webhook_configuration"></a>`swagger_k8s_replace_admissionregistration_v1beta1_mutating_webhook_configuration`
 
 replace the specified MutatingWebhookConfiguration
 
@@ -41460,7 +41886,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_admissionregistration_v1beta1_validating_webhook_configuration`
+### <a name="swagger_k8s_replace_admissionregistration_v1beta1_validating_webhook_configuration"></a>`swagger_k8s_replace_admissionregistration_v1beta1_validating_webhook_configuration`
 
 replace the specified ValidatingWebhookConfiguration
 
@@ -41540,7 +41966,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_apiextensions_v1beta1_custom_resource_definition`
+### <a name="swagger_k8s_replace_apiextensions_v1beta1_custom_resource_definition"></a>`swagger_k8s_replace_apiextensions_v1beta1_custom_resource_definition`
 
 replace the specified CustomResourceDefinition
 
@@ -41626,7 +42052,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_apiextensions_v1beta1_custom_resource_definition_status`
+### <a name="swagger_k8s_replace_apiextensions_v1beta1_custom_resource_definition_status"></a>`swagger_k8s_replace_apiextensions_v1beta1_custom_resource_definition_status`
 
 replace status of the specified CustomResourceDefinition
 
@@ -41712,7 +42138,7 @@ Data type: `Optional[String[1]]`
 
 Spec describes how the user wants the resources to appear
 
-### `swagger_k8s_replace_apiregistration_v1_api_service`
+### <a name="swagger_k8s_replace_apiregistration_v1_api_service"></a>`swagger_k8s_replace_apiregistration_v1_api_service`
 
 replace the specified APIService
 
@@ -41798,7 +42224,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_apiregistration_v1_api_service_status`
+### <a name="swagger_k8s_replace_apiregistration_v1_api_service_status"></a>`swagger_k8s_replace_apiregistration_v1_api_service_status`
 
 replace status of the specified APIService
 
@@ -41884,7 +42310,7 @@ Data type: `Optional[String[1]]`
 
 Status contains derived information about an API server
 
-### `swagger_k8s_replace_apiregistration_v1beta1_api_service`
+### <a name="swagger_k8s_replace_apiregistration_v1beta1_api_service"></a>`swagger_k8s_replace_apiregistration_v1beta1_api_service`
 
 replace the specified APIService
 
@@ -41970,7 +42396,7 @@ Data type: `Optional[String[1]]`
 
 Spec contains information for locating and communicating with a server
 
-### `swagger_k8s_replace_apiregistration_v1beta1_api_service_status`
+### <a name="swagger_k8s_replace_apiregistration_v1beta1_api_service_status"></a>`swagger_k8s_replace_apiregistration_v1beta1_api_service_status`
 
 replace status of the specified APIService
 
@@ -42056,7 +42482,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_apps_v1_namespaced_controller_revision`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_controller_revision"></a>`swagger_k8s_replace_apps_v1_namespaced_controller_revision`
 
 replace the specified ControllerRevision
 
@@ -42148,7 +42574,7 @@ Data type: `Optional[String[1]]`
 
 name of the ControllerRevision
 
-### `swagger_k8s_replace_apps_v1_namespaced_daemon_set`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_daemon_set"></a>`swagger_k8s_replace_apps_v1_namespaced_daemon_set`
 
 replace the specified DaemonSet
 
@@ -42240,7 +42666,7 @@ Data type: `Optional[String[1]]`
 
 The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_apps_v1_namespaced_daemon_set_status`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_daemon_set_status"></a>`swagger_k8s_replace_apps_v1_namespaced_daemon_set_status`
 
 replace status of the specified DaemonSet
 
@@ -42332,7 +42758,7 @@ Data type: `Optional[String[1]]`
 
 The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_apps_v1_namespaced_deployment`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_deployment"></a>`swagger_k8s_replace_apps_v1_namespaced_deployment`
 
 replace the specified Deployment
 
@@ -42424,7 +42850,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_apps_v1_namespaced_deployment_scale`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_deployment_scale"></a>`swagger_k8s_replace_apps_v1_namespaced_deployment_scale`
 
 replace scale of the specified Deployment
 
@@ -42516,7 +42942,7 @@ Data type: `Optional[String[1]]`
 
 defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_replace_apps_v1_namespaced_deployment_status`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_deployment_status"></a>`swagger_k8s_replace_apps_v1_namespaced_deployment_status`
 
 replace status of the specified Deployment
 
@@ -42608,7 +43034,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_apps_v1_namespaced_replica_set`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_replica_set"></a>`swagger_k8s_replace_apps_v1_namespaced_replica_set`
 
 replace the specified ReplicaSet
 
@@ -42700,7 +43126,7 @@ Data type: `Optional[String[1]]`
 
 Status is the most recently observed status of the ReplicaSet. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_apps_v1_namespaced_replica_set_scale`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_replica_set_scale"></a>`swagger_k8s_replace_apps_v1_namespaced_replica_set_scale`
 
 replace scale of the specified ReplicaSet
 
@@ -42792,7 +43218,7 @@ Data type: `Optional[String[1]]`
 
 current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.
 
-### `swagger_k8s_replace_apps_v1_namespaced_replica_set_status`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_replica_set_status"></a>`swagger_k8s_replace_apps_v1_namespaced_replica_set_status`
 
 replace status of the specified ReplicaSet
 
@@ -42884,7 +43310,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_apps_v1_namespaced_stateful_set`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_stateful_set"></a>`swagger_k8s_replace_apps_v1_namespaced_stateful_set`
 
 replace the specified StatefulSet
 
@@ -42976,7 +43402,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_apps_v1_namespaced_stateful_set_scale`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_stateful_set_scale"></a>`swagger_k8s_replace_apps_v1_namespaced_stateful_set_scale`
 
 replace scale of the specified StatefulSet
 
@@ -43068,7 +43494,7 @@ Data type: `Optional[String[1]]`
 
 current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.
 
-### `swagger_k8s_replace_apps_v1_namespaced_stateful_set_status`
+### <a name="swagger_k8s_replace_apps_v1_namespaced_stateful_set_status"></a>`swagger_k8s_replace_apps_v1_namespaced_stateful_set_status`
 
 replace status of the specified StatefulSet
 
@@ -43160,7 +43586,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_controller_revision`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_controller_revision"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_controller_revision`
 
 replace the specified ControllerRevision
 
@@ -43252,7 +43678,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_deployment`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_deployment"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_deployment`
 
 replace the specified Deployment
 
@@ -43344,7 +43770,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_deployment_scale`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_deployment_scale"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_deployment_scale`
 
 replace scale of the specified Deployment
 
@@ -43436,7 +43862,7 @@ Data type: `Optional[String[1]]`
 
 current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_deployment_status`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_deployment_status"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_deployment_status`
 
 replace status of the specified Deployment
 
@@ -43528,7 +43954,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set`
 
 replace the specified StatefulSet
 
@@ -43620,7 +44046,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set_scale`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set_scale"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set_scale`
 
 replace scale of the specified StatefulSet
 
@@ -43712,7 +44138,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set_status`
+### <a name="swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set_status"></a>`swagger_k8s_replace_apps_v1beta1_namespaced_stateful_set_status`
 
 replace status of the specified StatefulSet
 
@@ -43804,7 +44230,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_controller_revision`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_controller_revision"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_controller_revision`
 
 replace the specified ControllerRevision
 
@@ -43896,7 +44322,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_daemon_set`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_daemon_set"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_daemon_set`
 
 replace the specified DaemonSet
 
@@ -43988,7 +44414,7 @@ Data type: `Optional[String[1]]`
 
 The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_daemon_set_status`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_daemon_set_status"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_daemon_set_status`
 
 replace status of the specified DaemonSet
 
@@ -44080,7 +44506,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_deployment`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_deployment"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_deployment`
 
 replace the specified Deployment
 
@@ -44172,7 +44598,7 @@ Data type: `Optional[String[1]]`
 
 Standard object metadata.
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_deployment_scale`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_deployment_scale"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_deployment_scale`
 
 replace scale of the specified Deployment
 
@@ -44264,7 +44690,7 @@ Data type: `Optional[String[1]]`
 
 defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_deployment_status`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_deployment_status"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_deployment_status`
 
 replace status of the specified Deployment
 
@@ -44356,7 +44782,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_replica_set`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_replica_set"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_replica_set`
 
 replace the specified ReplicaSet
 
@@ -44448,7 +44874,7 @@ Data type: `Optional[String[1]]`
 
 Status is the most recently observed status of the ReplicaSet. This data may be out of date by some window of time. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_replica_set_scale`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_replica_set_scale"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_replica_set_scale`
 
 replace scale of the specified ReplicaSet
 
@@ -44540,7 +44966,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_replica_set_status`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_replica_set_status"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_replica_set_status`
 
 replace status of the specified ReplicaSet
 
@@ -44632,7 +45058,7 @@ Data type: `Optional[String[1]]`
 
 If the Labels of a ReplicaSet are empty, they are defaulted to be the same as the Pod(s) that the ReplicaSet manages. Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set`
 
 replace the specified StatefulSet
 
@@ -44724,7 +45150,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set_scale`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set_scale"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set_scale`
 
 replace scale of the specified StatefulSet
 
@@ -44816,7 +45242,7 @@ Data type: `Optional[String[1]]`
 
 defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set_status`
+### <a name="swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set_status"></a>`swagger_k8s_replace_apps_v1beta2_namespaced_stateful_set_status`
 
 replace status of the specified StatefulSet
 
@@ -44908,7 +45334,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_auditregistration_v1alpha1_audit_sink`
+### <a name="swagger_k8s_replace_auditregistration_v1alpha1_audit_sink"></a>`swagger_k8s_replace_auditregistration_v1alpha1_audit_sink`
 
 replace the specified AuditSink
 
@@ -44988,7 +45414,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_autoscaling_v1_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_replace_autoscaling_v1_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_replace_autoscaling_v1_namespaced_horizontal_pod_autoscaler`
 
 replace the specified HorizontalPodAutoscaler
 
@@ -45080,7 +45506,7 @@ Data type: `Optional[String[1]]`
 
 current information about the autoscaler.
 
-### `swagger_k8s_replace_autoscaling_v1_namespaced_horizontal_pod_autoscaler_status`
+### <a name="swagger_k8s_replace_autoscaling_v1_namespaced_horizontal_pod_autoscaler_status"></a>`swagger_k8s_replace_autoscaling_v1_namespaced_horizontal_pod_autoscaler_status`
 
 replace status of the specified HorizontalPodAutoscaler
 
@@ -45172,7 +45598,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_replace_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_replace_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler`
 
 replace the specified HorizontalPodAutoscaler
 
@@ -45264,7 +45690,7 @@ Data type: `Optional[String[1]]`
 
 spec is the specification for the behaviour of the autoscaler. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_replace_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler_status`
+### <a name="swagger_k8s_replace_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler_status"></a>`swagger_k8s_replace_autoscaling_v2beta1_namespaced_horizontal_pod_autoscaler_status`
 
 replace status of the specified HorizontalPodAutoscaler
 
@@ -45356,7 +45782,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler`
+### <a name="swagger_k8s_replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler"></a>`swagger_k8s_replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler`
 
 replace the specified HorizontalPodAutoscaler
 
@@ -45448,7 +45874,7 @@ Data type: `Optional[String[1]]`
 
 status is the current information about the autoscaler.
 
-### `swagger_k8s_replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler_status`
+### <a name="swagger_k8s_replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler_status"></a>`swagger_k8s_replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler_status`
 
 replace status of the specified HorizontalPodAutoscaler
 
@@ -45540,7 +45966,7 @@ Data type: `Optional[String[1]]`
 
 spec is the specification for the behaviour of the autoscaler. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
 
-### `swagger_k8s_replace_batch_v1_namespaced_job`
+### <a name="swagger_k8s_replace_batch_v1_namespaced_job"></a>`swagger_k8s_replace_batch_v1_namespaced_job`
 
 replace the specified Job
 
@@ -45632,7 +46058,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_batch_v1_namespaced_job_status`
+### <a name="swagger_k8s_replace_batch_v1_namespaced_job_status"></a>`swagger_k8s_replace_batch_v1_namespaced_job_status`
 
 replace status of the specified Job
 
@@ -45724,7 +46150,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_batch_v1beta1_namespaced_cron_job`
+### <a name="swagger_k8s_replace_batch_v1beta1_namespaced_cron_job"></a>`swagger_k8s_replace_batch_v1beta1_namespaced_cron_job`
 
 replace the specified CronJob
 
@@ -45816,7 +46242,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_batch_v1beta1_namespaced_cron_job_status`
+### <a name="swagger_k8s_replace_batch_v1beta1_namespaced_cron_job_status"></a>`swagger_k8s_replace_batch_v1beta1_namespaced_cron_job_status`
 
 replace status of the specified CronJob
 
@@ -45908,7 +46334,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_batch_v2alpha1_namespaced_cron_job`
+### <a name="swagger_k8s_replace_batch_v2alpha1_namespaced_cron_job"></a>`swagger_k8s_replace_batch_v2alpha1_namespaced_cron_job`
 
 replace the specified CronJob
 
@@ -46000,7 +46426,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_batch_v2alpha1_namespaced_cron_job_status`
+### <a name="swagger_k8s_replace_batch_v2alpha1_namespaced_cron_job_status"></a>`swagger_k8s_replace_batch_v2alpha1_namespaced_cron_job_status`
 
 replace status of the specified CronJob
 
@@ -46092,7 +46518,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_certificates_v1beta1_certificate_signing_request`
+### <a name="swagger_k8s_replace_certificates_v1beta1_certificate_signing_request"></a>`swagger_k8s_replace_certificates_v1beta1_certificate_signing_request`
 
 replace the specified CertificateSigningRequest
 
@@ -46178,7 +46604,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_certificates_v1beta1_certificate_signing_request_approval`
+### <a name="swagger_k8s_replace_certificates_v1beta1_certificate_signing_request_approval"></a>`swagger_k8s_replace_certificates_v1beta1_certificate_signing_request_approval`
 
 replace approval of the specified CertificateSigningRequest
 
@@ -46264,7 +46690,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_certificates_v1beta1_certificate_signing_request_status`
+### <a name="swagger_k8s_replace_certificates_v1beta1_certificate_signing_request_status"></a>`swagger_k8s_replace_certificates_v1beta1_certificate_signing_request_status`
 
 replace status of the specified CertificateSigningRequest
 
@@ -46350,7 +46776,7 @@ Data type: `Optional[String[1]]`
 
 The certificate request itself and any additional information.
 
-### `swagger_k8s_replace_coordination_v1_namespaced_lease`
+### <a name="swagger_k8s_replace_coordination_v1_namespaced_lease"></a>`swagger_k8s_replace_coordination_v1_namespaced_lease`
 
 replace the specified Lease
 
@@ -46436,7 +46862,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_coordination_v1beta1_namespaced_lease`
+### <a name="swagger_k8s_replace_coordination_v1beta1_namespaced_lease"></a>`swagger_k8s_replace_coordination_v1beta1_namespaced_lease`
 
 replace the specified Lease
 
@@ -46522,7 +46948,7 @@ Data type: `Optional[String[1]]`
 
 More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_replace_core_v1_namespace`
+### <a name="swagger_k8s_replace_core_v1_namespace"></a>`swagger_k8s_replace_core_v1_namespace`
 
 replace the specified Namespace
 
@@ -46608,7 +47034,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_core_v1_namespace_finalize`
+### <a name="swagger_k8s_replace_core_v1_namespace_finalize"></a>`swagger_k8s_replace_core_v1_namespace_finalize`
 
 replace finalize of the specified Namespace
 
@@ -46694,7 +47120,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_core_v1_namespace_status`
+### <a name="swagger_k8s_replace_core_v1_namespace_status"></a>`swagger_k8s_replace_core_v1_namespace_status`
 
 replace status of the specified Namespace
 
@@ -46780,7 +47206,7 @@ Data type: `Optional[String[1]]`
 
 Status describes the current status of a Namespace. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_core_v1_namespaced_config_map`
+### <a name="swagger_k8s_replace_core_v1_namespaced_config_map"></a>`swagger_k8s_replace_core_v1_namespaced_config_map`
 
 replace the specified ConfigMap
 
@@ -46872,7 +47298,7 @@ Data type: `Optional[String[1]]`
 
 BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.
 
-### `swagger_k8s_replace_core_v1_namespaced_endpoints`
+### <a name="swagger_k8s_replace_core_v1_namespaced_endpoints"></a>`swagger_k8s_replace_core_v1_namespaced_endpoints`
 
 replace the specified Endpoints
 
@@ -46958,7 +47384,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_core_v1_namespaced_event`
+### <a name="swagger_k8s_replace_core_v1_namespaced_event"></a>`swagger_k8s_replace_core_v1_namespaced_event`
 
 replace the specified Event
 
@@ -47122,7 +47548,7 @@ Data type: `Optional[String[1]]`
 
 The object that this event is about.
 
-### `swagger_k8s_replace_core_v1_namespaced_limit_range`
+### <a name="swagger_k8s_replace_core_v1_namespaced_limit_range"></a>`swagger_k8s_replace_core_v1_namespaced_limit_range`
 
 replace the specified LimitRange
 
@@ -47208,7 +47634,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_core_v1_namespaced_persistent_volume_claim`
+### <a name="swagger_k8s_replace_core_v1_namespaced_persistent_volume_claim"></a>`swagger_k8s_replace_core_v1_namespaced_persistent_volume_claim`
 
 replace the specified PersistentVolumeClaim
 
@@ -47300,7 +47726,7 @@ Data type: `Optional[String[1]]`
 
 Status represents the current information/status of a persistent volume claim. Read-only. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
 
-### `swagger_k8s_replace_core_v1_namespaced_persistent_volume_claim_status`
+### <a name="swagger_k8s_replace_core_v1_namespaced_persistent_volume_claim_status"></a>`swagger_k8s_replace_core_v1_namespaced_persistent_volume_claim_status`
 
 replace status of the specified PersistentVolumeClaim
 
@@ -47392,7 +47818,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_core_v1_namespaced_pod`
+### <a name="swagger_k8s_replace_core_v1_namespaced_pod"></a>`swagger_k8s_replace_core_v1_namespaced_pod`
 
 replace the specified Pod
 
@@ -47484,7 +47910,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_core_v1_namespaced_pod_status`
+### <a name="swagger_k8s_replace_core_v1_namespaced_pod_status"></a>`swagger_k8s_replace_core_v1_namespaced_pod_status`
 
 replace status of the specified Pod
 
@@ -47576,7 +48002,7 @@ Data type: `Optional[String[1]]`
 
 object name and auth scope, such as for teams and projects
 
-### `swagger_k8s_replace_core_v1_namespaced_pod_template`
+### <a name="swagger_k8s_replace_core_v1_namespaced_pod_template"></a>`swagger_k8s_replace_core_v1_namespaced_pod_template`
 
 replace the specified PodTemplate
 
@@ -47662,7 +48088,7 @@ Data type: `Optional[String[1]]`
 
 Template defines the pods that will be created from this pod template. https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_core_v1_namespaced_replication_controller`
+### <a name="swagger_k8s_replace_core_v1_namespaced_replication_controller"></a>`swagger_k8s_replace_core_v1_namespaced_replication_controller`
 
 replace the specified ReplicationController
 
@@ -47754,7 +48180,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_core_v1_namespaced_replication_controller_scale`
+### <a name="swagger_k8s_replace_core_v1_namespaced_replication_controller_scale"></a>`swagger_k8s_replace_core_v1_namespaced_replication_controller_scale`
 
 replace scale of the specified ReplicationController
 
@@ -47846,7 +48272,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_core_v1_namespaced_replication_controller_status`
+### <a name="swagger_k8s_replace_core_v1_namespaced_replication_controller_status"></a>`swagger_k8s_replace_core_v1_namespaced_replication_controller_status`
 
 replace status of the specified ReplicationController
 
@@ -47938,7 +48364,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_core_v1_namespaced_resource_quota`
+### <a name="swagger_k8s_replace_core_v1_namespaced_resource_quota"></a>`swagger_k8s_replace_core_v1_namespaced_resource_quota`
 
 replace the specified ResourceQuota
 
@@ -48030,7 +48456,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_core_v1_namespaced_resource_quota_status`
+### <a name="swagger_k8s_replace_core_v1_namespaced_resource_quota_status"></a>`swagger_k8s_replace_core_v1_namespaced_resource_quota_status`
 
 replace status of the specified ResourceQuota
 
@@ -48122,7 +48548,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_core_v1_namespaced_secret`
+### <a name="swagger_k8s_replace_core_v1_namespaced_secret"></a>`swagger_k8s_replace_core_v1_namespaced_secret`
 
 replace the specified Secret
 
@@ -48220,7 +48646,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_core_v1_namespaced_service`
+### <a name="swagger_k8s_replace_core_v1_namespaced_service"></a>`swagger_k8s_replace_core_v1_namespaced_service`
 
 replace the specified Service
 
@@ -48312,7 +48738,7 @@ Data type: `Optional[String[1]]`
 
 Most recently observed status of the service. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_core_v1_namespaced_service_account`
+### <a name="swagger_k8s_replace_core_v1_namespaced_service_account"></a>`swagger_k8s_replace_core_v1_namespaced_service_account`
 
 replace the specified ServiceAccount
 
@@ -48410,7 +48836,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_core_v1_namespaced_service_status`
+### <a name="swagger_k8s_replace_core_v1_namespaced_service_status"></a>`swagger_k8s_replace_core_v1_namespaced_service_status`
 
 replace status of the specified Service
 
@@ -48502,7 +48928,7 @@ Data type: `Optional[String[1]]`
 
 Most recently observed status of the service. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_core_v1_node`
+### <a name="swagger_k8s_replace_core_v1_node"></a>`swagger_k8s_replace_core_v1_node`
 
 replace the specified Node
 
@@ -48588,7 +49014,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_core_v1_node_status`
+### <a name="swagger_k8s_replace_core_v1_node_status"></a>`swagger_k8s_replace_core_v1_node_status`
 
 replace status of the specified Node
 
@@ -48674,7 +49100,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_replace_core_v1_persistent_volume`
+### <a name="swagger_k8s_replace_core_v1_persistent_volume"></a>`swagger_k8s_replace_core_v1_persistent_volume`
 
 replace the specified PersistentVolume
 
@@ -48760,7 +49186,7 @@ Data type: `Optional[String[1]]`
 
 Spec defines a specification of a persistent volume owned by the cluster. Provisioned by an administrator. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
 
-### `swagger_k8s_replace_core_v1_persistent_volume_status`
+### <a name="swagger_k8s_replace_core_v1_persistent_volume_status"></a>`swagger_k8s_replace_core_v1_persistent_volume_status`
 
 replace status of the specified PersistentVolume
 
@@ -48846,7 +49272,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_replace_events_v1beta1_namespaced_event`
+### <a name="swagger_k8s_replace_events_v1beta1_namespaced_event"></a>`swagger_k8s_replace_events_v1beta1_namespaced_event`
 
 replace the specified Event
 
@@ -49010,7 +49436,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_daemon_set`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_daemon_set"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_daemon_set`
 
 replace the specified DaemonSet
 
@@ -49102,7 +49528,7 @@ Data type: `Optional[String[1]]`
 
 The desired behavior of this daemon set. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_daemon_set_status`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_daemon_set_status"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_daemon_set_status`
 
 replace status of the specified DaemonSet
 
@@ -49194,7 +49620,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_deployment`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_deployment"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_deployment`
 
 replace the specified Deployment
 
@@ -49286,7 +49712,7 @@ Data type: `Optional[String[1]]`
 
 Most recently observed status of the Deployment.
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_deployment_scale`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_deployment_scale"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_deployment_scale`
 
 replace scale of the specified Deployment
 
@@ -49378,7 +49804,7 @@ Data type: `Optional[String[1]]`
 
 current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_deployment_status`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_deployment_status"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_deployment_status`
 
 replace status of the specified Deployment
 
@@ -49470,7 +49896,7 @@ Data type: `Optional[String[1]]`
 
 When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_ingress`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_ingress"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_ingress`
 
 replace the specified Ingress
 
@@ -49562,7 +49988,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_ingress_status`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_ingress_status"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_ingress_status`
 
 replace status of the specified Ingress
 
@@ -49654,7 +50080,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_network_policy`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_network_policy"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_network_policy`
 
 replace the specified NetworkPolicy
 
@@ -49740,7 +50166,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set`
 
 replace the specified ReplicaSet
 
@@ -49832,7 +50258,7 @@ Data type: `Optional[String[1]]`
 
 Spec defines the specification of the desired behavior of the ReplicaSet. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set_scale`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set_scale"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set_scale`
 
 replace scale of the specified ReplicaSet
 
@@ -49924,7 +50350,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set_status`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set_status"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_replica_set_status`
 
 replace status of the specified ReplicaSet
 
@@ -50016,7 +50442,7 @@ Data type: `Optional[String[1]]`
 
 
 
-### `swagger_k8s_replace_extensions_v1beta1_namespaced_replication_controller_dummy_scale`
+### <a name="swagger_k8s_replace_extensions_v1beta1_namespaced_replication_controller_dummy_scale"></a>`swagger_k8s_replace_extensions_v1beta1_namespaced_replication_controller_dummy_scale`
 
 replace scale of the specified ReplicationControllerDummy
 
@@ -50108,7 +50534,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_extensions_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_replace_extensions_v1beta1_pod_security_policy"></a>`swagger_k8s_replace_extensions_v1beta1_pod_security_policy`
 
 replace the specified PodSecurityPolicy
 
@@ -50188,7 +50614,7 @@ Data type: `Optional[String[1]]`
 
 spec defines the policy enforced.
 
-### `swagger_k8s_replace_networking_v1_namespaced_network_policy`
+### <a name="swagger_k8s_replace_networking_v1_namespaced_network_policy"></a>`swagger_k8s_replace_networking_v1_namespaced_network_policy`
 
 replace the specified NetworkPolicy
 
@@ -50274,7 +50700,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_networking_v1beta1_namespaced_ingress`
+### <a name="swagger_k8s_replace_networking_v1beta1_namespaced_ingress"></a>`swagger_k8s_replace_networking_v1beta1_namespaced_ingress`
 
 replace the specified Ingress
 
@@ -50366,7 +50792,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_networking_v1beta1_namespaced_ingress_status`
+### <a name="swagger_k8s_replace_networking_v1beta1_namespaced_ingress_status"></a>`swagger_k8s_replace_networking_v1beta1_namespaced_ingress_status`
 
 replace status of the specified Ingress
 
@@ -50458,7 +50884,7 @@ Data type: `Optional[String[1]]`
 
 name of the Ingress
 
-### `swagger_k8s_replace_node_v1alpha1_runtime_class`
+### <a name="swagger_k8s_replace_node_v1alpha1_runtime_class"></a>`swagger_k8s_replace_node_v1alpha1_runtime_class`
 
 replace the specified RuntimeClass
 
@@ -50538,7 +50964,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_node_v1beta1_runtime_class`
+### <a name="swagger_k8s_replace_node_v1beta1_runtime_class"></a>`swagger_k8s_replace_node_v1beta1_runtime_class`
 
 replace the specified RuntimeClass
 
@@ -50618,7 +51044,7 @@ Data type: `Optional[String[1]]`
 
 Handler specifies the underlying runtime and configuration that the CRI implementation will use to handle pods of this class. The possible values are specific to the node & CRI configuration.  It is assumed that all handlers are available on every node, and handlers of the same name are equivalent on every node. For example, a handler called 'runc' might specify that the runc OCI runtime (using native Linux containers) will be used to run the containers in a pod. The Handler must conform to the DNS Label (RFC 1123) requirements, and is immutable.
 
-### `swagger_k8s_replace_policy_v1beta1_namespaced_pod_disruption_budget`
+### <a name="swagger_k8s_replace_policy_v1beta1_namespaced_pod_disruption_budget"></a>`swagger_k8s_replace_policy_v1beta1_namespaced_pod_disruption_budget`
 
 replace the specified PodDisruptionBudget
 
@@ -50710,7 +51136,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_policy_v1beta1_namespaced_pod_disruption_budget_status`
+### <a name="swagger_k8s_replace_policy_v1beta1_namespaced_pod_disruption_budget_status"></a>`swagger_k8s_replace_policy_v1beta1_namespaced_pod_disruption_budget_status`
 
 replace status of the specified PodDisruptionBudget
 
@@ -50802,7 +51228,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_policy_v1beta1_pod_security_policy`
+### <a name="swagger_k8s_replace_policy_v1beta1_pod_security_policy"></a>`swagger_k8s_replace_policy_v1beta1_pod_security_policy`
 
 replace the specified PodSecurityPolicy
 
@@ -50882,7 +51308,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_replace_rbac_authorization_v1_cluster_role`
+### <a name="swagger_k8s_replace_rbac_authorization_v1_cluster_role"></a>`swagger_k8s_replace_rbac_authorization_v1_cluster_role`
 
 replace the specified ClusterRole
 
@@ -50968,7 +51394,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_replace_rbac_authorization_v1_cluster_role_binding`
+### <a name="swagger_k8s_replace_rbac_authorization_v1_cluster_role_binding"></a>`swagger_k8s_replace_rbac_authorization_v1_cluster_role_binding`
 
 replace the specified ClusterRoleBinding
 
@@ -51054,7 +51480,7 @@ Data type: `Optional[String[1]]`
 
 name of the ClusterRoleBinding
 
-### `swagger_k8s_replace_rbac_authorization_v1_namespaced_role`
+### <a name="swagger_k8s_replace_rbac_authorization_v1_namespaced_role"></a>`swagger_k8s_replace_rbac_authorization_v1_namespaced_role`
 
 replace the specified Role
 
@@ -51140,7 +51566,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_rbac_authorization_v1_namespaced_role_binding`
+### <a name="swagger_k8s_replace_rbac_authorization_v1_namespaced_role_binding"></a>`swagger_k8s_replace_rbac_authorization_v1_namespaced_role_binding`
 
 replace the specified RoleBinding
 
@@ -51232,7 +51658,7 @@ Data type: `Optional[String[1]]`
 
 RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.
 
-### `swagger_k8s_replace_rbac_authorization_v1alpha1_cluster_role`
+### <a name="swagger_k8s_replace_rbac_authorization_v1alpha1_cluster_role"></a>`swagger_k8s_replace_rbac_authorization_v1alpha1_cluster_role`
 
 replace the specified ClusterRole
 
@@ -51318,7 +51744,7 @@ Data type: `Optional[String[1]]`
 
 fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
 
-### `swagger_k8s_replace_rbac_authorization_v1alpha1_cluster_role_binding`
+### <a name="swagger_k8s_replace_rbac_authorization_v1alpha1_cluster_role_binding"></a>`swagger_k8s_replace_rbac_authorization_v1alpha1_cluster_role_binding`
 
 replace the specified ClusterRoleBinding
 
@@ -51404,7 +51830,7 @@ Data type: `Optional[String[1]]`
 
 name of the ClusterRoleBinding
 
-### `swagger_k8s_replace_rbac_authorization_v1alpha1_namespaced_role`
+### <a name="swagger_k8s_replace_rbac_authorization_v1alpha1_namespaced_role"></a>`swagger_k8s_replace_rbac_authorization_v1alpha1_namespaced_role`
 
 replace the specified Role
 
@@ -51490,7 +51916,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_rbac_authorization_v1alpha1_namespaced_role_binding`
+### <a name="swagger_k8s_replace_rbac_authorization_v1alpha1_namespaced_role_binding"></a>`swagger_k8s_replace_rbac_authorization_v1alpha1_namespaced_role_binding`
 
 replace the specified RoleBinding
 
@@ -51582,7 +52008,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_rbac_authorization_v1beta1_cluster_role`
+### <a name="swagger_k8s_replace_rbac_authorization_v1beta1_cluster_role"></a>`swagger_k8s_replace_rbac_authorization_v1beta1_cluster_role`
 
 replace the specified ClusterRole
 
@@ -51668,7 +52094,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_rbac_authorization_v1beta1_cluster_role_binding`
+### <a name="swagger_k8s_replace_rbac_authorization_v1beta1_cluster_role_binding"></a>`swagger_k8s_replace_rbac_authorization_v1beta1_cluster_role_binding`
 
 replace the specified ClusterRoleBinding
 
@@ -51754,7 +52180,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_rbac_authorization_v1beta1_namespaced_role`
+### <a name="swagger_k8s_replace_rbac_authorization_v1beta1_namespaced_role"></a>`swagger_k8s_replace_rbac_authorization_v1beta1_namespaced_role`
 
 replace the specified Role
 
@@ -51840,7 +52266,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_replace_rbac_authorization_v1beta1_namespaced_role_binding`
+### <a name="swagger_k8s_replace_rbac_authorization_v1beta1_namespaced_role_binding"></a>`swagger_k8s_replace_rbac_authorization_v1beta1_namespaced_role_binding`
 
 replace the specified RoleBinding
 
@@ -51932,7 +52358,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata.
 
-### `swagger_k8s_replace_scheduling_v1_priority_class`
+### <a name="swagger_k8s_replace_scheduling_v1_priority_class"></a>`swagger_k8s_replace_scheduling_v1_priority_class`
 
 replace the specified PriorityClass
 
@@ -52024,7 +52450,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_scheduling_v1alpha1_priority_class`
+### <a name="swagger_k8s_replace_scheduling_v1alpha1_priority_class"></a>`swagger_k8s_replace_scheduling_v1alpha1_priority_class`
 
 replace the specified PriorityClass
 
@@ -52116,7 +52542,7 @@ Data type: `Optional[String[1]]`
 
 Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 
-### `swagger_k8s_replace_scheduling_v1beta1_priority_class`
+### <a name="swagger_k8s_replace_scheduling_v1beta1_priority_class"></a>`swagger_k8s_replace_scheduling_v1beta1_priority_class`
 
 replace the specified PriorityClass
 
@@ -52208,7 +52634,7 @@ Data type: `Optional[String[1]]`
 
 description is an arbitrary string that usually provides guidelines on when this priority class should be used.
 
-### `swagger_k8s_replace_settings_v1alpha1_namespaced_pod_preset`
+### <a name="swagger_k8s_replace_settings_v1alpha1_namespaced_pod_preset"></a>`swagger_k8s_replace_settings_v1alpha1_namespaced_pod_preset`
 
 replace the specified PodPreset
 
@@ -52294,7 +52720,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_storage_v1_storage_class`
+### <a name="swagger_k8s_replace_storage_v1_storage_class"></a>`swagger_k8s_replace_storage_v1_storage_class`
 
 replace the specified StorageClass
 
@@ -52410,7 +52836,7 @@ Data type: `Optional[String[1]]`
 
 name of the StorageClass
 
-### `swagger_k8s_replace_storage_v1_volume_attachment`
+### <a name="swagger_k8s_replace_storage_v1_volume_attachment"></a>`swagger_k8s_replace_storage_v1_volume_attachment`
 
 replace the specified VolumeAttachment
 
@@ -52496,7 +52922,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_storage_v1_volume_attachment_status`
+### <a name="swagger_k8s_replace_storage_v1_volume_attachment_status"></a>`swagger_k8s_replace_storage_v1_volume_attachment_status`
 
 replace status of the specified VolumeAttachment
 
@@ -52582,7 +53008,7 @@ Data type: `Optional[String[1]]`
 
 Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 
-### `swagger_k8s_replace_storage_v1alpha1_volume_attachment`
+### <a name="swagger_k8s_replace_storage_v1alpha1_volume_attachment"></a>`swagger_k8s_replace_storage_v1alpha1_volume_attachment`
 
 replace the specified VolumeAttachment
 
@@ -52668,7 +53094,7 @@ Data type: `Optional[String[1]]`
 
 If 'true', then the output is pretty printed.
 
-### `swagger_k8s_replace_storage_v1beta1_csi_driver`
+### <a name="swagger_k8s_replace_storage_v1beta1_csi_driver"></a>`swagger_k8s_replace_storage_v1beta1_csi_driver`
 
 replace the specified CSIDriver
 
@@ -52748,7 +53174,7 @@ Data type: `Optional[String[1]]`
 
 APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
 
-### `swagger_k8s_replace_storage_v1beta1_csi_node`
+### <a name="swagger_k8s_replace_storage_v1beta1_csi_node"></a>`swagger_k8s_replace_storage_v1beta1_csi_node`
 
 replace the specified CSINode
 
@@ -52828,7 +53254,7 @@ Data type: `Optional[String[1]]`
 
 metadata.name must be the Kubernetes node name.
 
-### `swagger_k8s_replace_storage_v1beta1_storage_class`
+### <a name="swagger_k8s_replace_storage_v1beta1_storage_class"></a>`swagger_k8s_replace_storage_v1beta1_storage_class`
 
 replace the specified StorageClass
 
@@ -52944,7 +53370,7 @@ Data type: `Optional[String[1]]`
 
 Provisioner indicates the type of the provisioner.
 
-### `swagger_k8s_replace_storage_v1beta1_volume_attachment`
+### <a name="swagger_k8s_replace_storage_v1beta1_volume_attachment"></a>`swagger_k8s_replace_storage_v1beta1_volume_attachment`
 
 replace the specified VolumeAttachment
 
@@ -53032,7 +53458,7 @@ Status of the VolumeAttachment request. Populated by the entity completing the a
 
 ## Plans
 
-### `k8s::deploy`
+### <a name="k8sdeploy"></a>`k8s::deploy`
 
 This plan is meant to create a deployment and a service on Kubernetes
 To run this plan you will have to enable the anonymous user access to you Kubernetes environment or add the necessary authentication parameters (token and ca_file for each task)
@@ -53040,39 +53466,46 @@ Command to system:anonymous rights: kubectl create clusterrolebinding cluster-sy
 
 #### Parameters
 
-The following parameters are available in the `k8s::deploy` plan.
+The following parameters are available in the `k8s::deploy` plan:
 
-##### `name`
+* [`name`](#name)
+* [`namespace`](#namespace)
+* [`replicas`](#replicas)
+* [`image`](#image)
+* [`container_port`](#container_port)
+* [`endpoint`](#endpoint)
+
+##### <a name="name"></a>`name`
 
 Data type: `String[1]`
 
 
 
-##### `namespace`
+##### <a name="namespace"></a>`namespace`
 
 Data type: `String[1]`
 
 
 
-##### `replicas`
+##### <a name="replicas"></a>`replicas`
 
 Data type: `Integer`
 
 
 
-##### `image`
+##### <a name="image"></a>`image`
 
 Data type: `String[1]`
 
 
 
-##### `container_port`
+##### <a name="container_port"></a>`container_port`
 
 Data type: `Integer`
 
 
 
-##### `endpoint`
+##### <a name="endpoint"></a>`endpoint`
 
 Data type: `String[1]`
 
