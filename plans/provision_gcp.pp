@@ -9,9 +9,9 @@ plan kubernetes::provision_gcp(
 ) {
   #provision server machine, set role
   run_task('provision::provision_service', 'localhost',
-    action => 'provision', platform => $gcp_image, vars => 'role: master')
-  run_task('provision::provision_service', 'localhost',
     action => 'provision', platform => $gcp_image, vars => 'role: controller')
   run_task('provision::provision_service', 'localhost',
-    action => 'provision', platform => $gcp_image, vars => 'role: worker')
+    action => 'provision', platform => $gcp_image, vars => 'role: worker1')
+  run_task('provision::provision_service', 'localhost',
+    action => 'provision', platform => $gcp_image, vars => 'role: worker2')
 }

@@ -63,19 +63,19 @@ def reset_target_host
   ENV['TARGET_HOST'] = @orig_target_host
 end
 
-def configure_puppet_server(master, controller, worker)
+def configure_puppet_server(controller, worker1, worker2)
   # Configure the puppet server
-  ENV['TARGET_HOST'] = target_roles('master')[0][:name]
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('systemctl start puppetserver')
   run_shell('systemctl enable puppetserver')
-  execute_agent('master')
+  execute_agent('controller')
   # Configure the puppet agents
-  configure_puppet_agent('controller', master, controller)
-  configure_puppet_agent('worker', master, worker)
+  configure_puppet_agent('worker1', controller, worker1)
+  configure_puppet_agent('worker2', controller, worker2)
   puppet_cert_sign
   # Create site.pp
   site_pp = <<-EOS
-  node /#{master}/ {
+  node /#{controller}/ {
     class {'kubernetes':
       kubernetes_version => '1.16.6',
       kubernetes_package_version => '1.16.6',
@@ -89,7 +89,7 @@ def configure_puppet_server(master, controller, worker)
       cgroup_driver => 'cgroupfs',
     }
   }
-  node /#{controller}/ {
+  node /#{worker1}/ {
     class {'kubernetes':
       worker => true,
       ignore_preflight_errors => ['FileAvailable'],
@@ -97,7 +97,7 @@ def configure_puppet_server(master, controller, worker)
       cgroup_driver => 'cgroupfs',
     }
   }
-  node /#{worker}/  {
+  node /#{worker2}/  {
     class {'kubernetes':
       worker => true,
       ignore_preflight_errors => ['FileAvailable'],
@@ -106,12 +106,12 @@ def configure_puppet_server(master, controller, worker)
     }
   }
   EOS
-  ENV['TARGET_HOST'] = target_roles('master')[0][:name]
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   create_remote_file("site","/etc/puppetlabs/code/environments/production/manifests/site.pp", site_pp)
   run_shell('chmod 644 /etc/puppetlabs/code/environments/production/manifests/site.pp')
 end
 
-def configure_puppet_agent(role, master, agent)
+def configure_puppet_agent(role, controller, agent)
   # Configure the puppet agents
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   run_shell('systemctl start puppet')
@@ -121,7 +121,7 @@ end
 
 def puppet_cert_sign
   # Sign the certs
-  ENV['TARGET_HOST'] = target_roles('master')[0][:name]
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell("puppetserver ca sign --all", expect_failures: true)
 end
 
@@ -138,12 +138,12 @@ end
 RSpec.configure do |c|
   c.before :suite do
     # Fetch hostname and  ip adress for each node
-    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('master')
-    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('controller')
-    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker')
+    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
+    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
+    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
     if c.filter.rules.key? :integration
-      ENV['TARGET_HOST'] = target_roles('master')[0][:name]
-      ['master', 'controller', 'worker'].each { |node|
+      ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+      ['controller', 'worker1', 'worker2'].each { |node|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
       }
@@ -151,7 +151,7 @@ RSpec.configure do |c|
     else
       c.filter_run_excluding :integration
     end
-    ENV['TARGET_HOST'] = target_roles('master')[0][:name]
+    ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
     family = fetch_platform_by_node(ENV['TARGET_HOST'])
 
     puts "Running acceptance test on #{hostname1} with address #{ipaddr1} and OS #{family}"
@@ -266,7 +266,7 @@ EOS
   if family =~ /redhat|centos/
     runtime = 'docker'
     cni = 'flannel'
-    ['master', 'controller', 'worker'].each { |node|
+    ['controller', 'worker1', 'worker2'].each { |node|
       ENV['TARGET_HOST'] = target_roles(node)[0][:name]
       run_shell('setenforce 0 || true')
       run_shell('swapoff -a')
@@ -284,7 +284,7 @@ EOS
     }
   end
 
-  ENV['TARGET_HOST'] = target_roles('master')[0][:name]
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('docker build -t kubetool:latest /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
   run_shell("docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} -e VERSION=1.16.6 -e CONTAINER_RUNTIME=#{runtime} -e CNI_PROVIDER=#{cni} -e ETCD_INITIAL_CLUSTER=#{hostname1}:#{int_ipaddr1} -e ETCD_IP=#{int_ipaddr1} -e ETCD_PEERS=[#{int_ipaddr1},#{int_ipaddr2},#{int_ipaddr3}] -e KUBE_API_ADVERTISE_ADDRESS=#{int_ipaddr1} -e INSTALL_DASHBOARD=true kubetool:latest")
   create_remote_file("nginx","/tmp/nginx.yml", nginx)
@@ -309,8 +309,8 @@ EOS
   run_shell("echo 'kubernetes::taint_master: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
   run_shell("echo 'kubernetes::manage_docker: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
   run_shell("export KUBECONFIG=\'/etc/kubernetes/admin.conf\'")
-  execute_agent('master')
   execute_agent('controller')
-  execute_agent('worker')
+  execute_agent('worker1')
+  execute_agent('worker2')
 end
 end
