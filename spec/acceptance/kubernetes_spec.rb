@@ -58,8 +58,8 @@ describe 'the Kubernetes module' do
         end
 
         it 'can access the deployed service' do
-          sleep(180)
-          run_shell('curl -s 10.96.188.5', expect_failures: true) do |r|
+          run_shell('sleep 60')
+          run_shell('curl --retry 10 --retry-delay 15 -s 10.96.188.5') do |r|
             expect(r.stdout).to match (/Welcome to nginx!/)
           end
         end

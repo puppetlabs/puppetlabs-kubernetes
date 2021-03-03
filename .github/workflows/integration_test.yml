@@ -116,7 +116,7 @@ jobs:
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
     - name: Provision test environment
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_gcp gcp_image=${{ matrix.platform }}
+        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_cluster gcp_image=${{ matrix.platform }}
         echo ::group::=== REQUEST ===
         cat request.json || true
         echo
@@ -124,7 +124,7 @@ jobs:
         echo ::group::=== INVENTORY ===
         sed -e 's/password: .*/password: "[redacted]"/' < inventory.yaml || true
         echo ::endgroup::
-    - name: Install module
+    - name: Puppet server setup
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::puppetserver_setup' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::puppetserver_setup -i ./inventory.yaml
     - name: Install agent

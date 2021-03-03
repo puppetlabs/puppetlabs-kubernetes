@@ -118,7 +118,7 @@ jobs:
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
     - name: Provision test environment
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_gcp gcp_image=${{ matrix.platform }}
+        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_cluster gcp_image=${{ matrix.platform }}
         echo ::group::=== REQUEST ===
         cat request.json || true
         echo

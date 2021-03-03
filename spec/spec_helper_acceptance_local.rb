@@ -70,6 +70,7 @@ def configure_puppet_server(controller, worker1, worker2)
   execute_agent('controller')
   # Configure the puppet agents
   configure_puppet_agent('worker1')
+  puppet_cert_sign
   configure_puppet_agent('worker2')
   puppet_cert_sign
   # Create site.pp
