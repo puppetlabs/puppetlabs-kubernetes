@@ -4,7 +4,7 @@
 #
 # @example
 #   kubernetes::provision_integration
-plan kubernetes::provision_gcp(
+plan kubernetes::provision_cluster(
   Optional[String] $gcp_image = 'centos-7',
 ) {
   #provision server machine, set role
