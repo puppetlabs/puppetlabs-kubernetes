@@ -2,11 +2,14 @@ fixtures:
   forge_modules:
     stdlib: 'puppetlabs-stdlib'
     apt: 'puppetlabs-apt'
+    puppet_conf: 'puppetlabs-puppet_conf'
     archive: "puppet-archive"
     translate: "puppetlabs-translate"
     augeasproviders_sysctl: "herculesteam-augeasproviders_sysctl"
     augeasproviders_core: "herculesteam-augeasproviders_core"
     kmod: "camptocamp-kmod"
+    helm: 'puppetlabs-helm'
+    rook: 'puppetlabs-rook'
   repositories:
     facts: 'git://github.com/puppetlabs/puppetlabs-facts.git'
     puppet_agent: 'git://github.com/puppetlabs/puppetlabs-puppet_agent.git'
