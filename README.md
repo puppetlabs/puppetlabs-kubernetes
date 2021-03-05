@@ -32,9 +32,6 @@ This module installs and configures [Kubernetes](https://kubernetes.io/) which i
 
 To bootstrap a Kubernetes cluster in a secure and extensible way, this module uses the [kubeadm](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/) toolkit.
 
-
-
-
 ## Setup
 
 [Install](https://puppet.com/docs/puppet/5.5/modules_installing.html) this module, [generate the configuration](#generating-the-module-configuration), [add the OS and hostname yaml files to Hiera](#adding-the-`{$OS}.yaml`-and-`{$hostname}.yaml`-files-to-Hiera), and [configure your node](#configuring-your-node).
@@ -51,13 +48,13 @@ The Kubetool Docker image takes each parameter as an environment variable.
 
 To output a yaml file into your working directory that corresponds to the operating system you want Kubernetes to run on, and for each controller node, run either of these `docker run` commands:
 
-```
+```console
 docker run --rm -v $(pwd):/mnt --env-file env puppet/kubetool:{$module_version}
 ```
 
 The `docker run` command above includes an `env` file which is included in the root folder of this repo.
 
-```
+```console
 docker run --rm -v $(pwd):/mnt -e OS=ubuntu -e VERSION=1.10.2 -e CONTAINER_RUNTIME=docker -e CNI_PROVIDER=cilium -e CNI_PROVIDER_VERSION=1.4.3 -e ETCD_INITIAL_CLUSTER=kube-control-plane:172.17.10.101,kube-replica-control-plane-01:172.17.10.210,kube-replica-control-plane-02:172.17.10.220 -e ETCD_IP="%{networking.ip}" -e KUBE_API_ADVERTISE_ADDRESS="%{networking.ip}" -e INSTALL_DASHBOARD=true puppet/kubetool:{$module-version}
 ```
 
@@ -83,13 +80,36 @@ Kubetool creates:
 
 Add the `{$OS}.yaml` file to the same [control repo](https://puppet.com/docs/pe/2018.1/control_repo.html) where your [Hiera](https://puppet.com/docs/hiera) data is, usually the `data` directory. By leveraging location facts, such as the [pp_datacenter](https://puppet.com/docs/puppet/5.5/ssl_attributes_extensions.html#reference-5482) [trusted fact](https://puppet.com/docs/puppet/5.5/lang_facts_and_builtin_vars.html#trusted-facts), each cluster can be allocated its own configuration.
 
+#### Possible Error fetching hiera data
+
+If the below error is encounterd
+
+```console
+Error: Could not retrieve catalog from remote server: Error 500 on SERVER: Server Error: Evaluation Error: Error while evaluating a Resource Statement, Class[Kubernetes]:
+  parameter 'api_server_count' expects an Integer value, got Undef
+  parameter 'token' expects a String value, got Undef
+  parameter 'discovery_token_hash' expects a String value, got Undef (file: /etc/puppetlabs/code/environments/production/manifests/site.pp, line: 138, column: 3) on node xxx.example.local
+```
+
+It means that hiera is not getting the values from the associated yaml files stored in the [data folder](./data) so it sets some of the required values as Undefined.
+
+Check your [hiera.yaml](./hiera.yaml) file and ensure that it contains entries for `{OS}.yaml` and `{$hostname}.yaml`
+
+```ruby
+hierarchy:
+  - name: "Family"
+    path: Debian.yaml
+  - name: "Host"
+    path: xxx.example.local.yaml  
+```
+
 ### Configuring your node
 
 After the `{$OS}.yaml` and `{$hostname}.yaml` files have been added to the Hiera directory on your Puppet server, configure your node as the controller or worker.
 
 A controller node contains the control plane and etcd. In a production cluster, you should have three, five, or seven controllers. A worker node runs your applications. You can add as many worker nodes as Kubernetes can handle. For information about nodes in Kubernetes, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/architecture/nodes/#what-is-a-node).
 
-**Note:**: A node cannot be a controller and a worker. It must be one or the other.
+**Note:** A node cannot be a controller and a worker. It must be one or the other.
 
 To make a node a controller, add the following code to the manifest:
 
@@ -107,6 +127,27 @@ class {'kubernetes':
 }
 ```
 
+#### Installing Kubernetes on different OS
+
+Currently, `puppetlab-kubernetes` is compatible with Ubuntu Xenial. For different OS, below parameters can be assigned.
+
+For instance, installing `kubernetes` version `1.20.0` on Debian `buster`
+
+```puppet
+# Docker repo and key as documented in
+# https://docs.docker.com/install/linux/docker-ce/debian/
+  docker_apt_location => 'https://download.docker.com/linux/debian',
+  docker_apt_repos    => 'stable',
+  docker_apt_release  => 'buster',
+  docker_key_id       => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+  docker_key_source   => 'https://download.docker.com/linux/debian/gpg',
+# Different available version can be found by apt-cache madison docker-ce
+  docker_version => '5:20.10.5~3-0~debian-buster',
+  docker_package_name => 'docker-ce',
+# Kubernetes Version
+  kubernetes_version  => '1.20.0',
+```
+
 ### Validating and unit testing the module
 
 This module is compliant with the Puppet Development Kit [(PDK)](https://puppet.com/docs/pdk/1.x/pdk.html), which provides tools to help run unit tests on the module and validate the modules's metadata, syntax, and style.
@@ -116,13 +157,13 @@ unit tests against this module using the [`pdk validate`](https://puppet.com/doc
 
 To validate the metadata.json file, run the following command:
 
-```
+```console
 pdk validate metadata --puppet-version='5.3.6'
 ```
 
 To validate the Puppet code and syntax, run the following command:
 
-```
+```console
 pdk validate puppet --puppet-version='5.3.6'
 ```
 
@@ -130,13 +171,13 @@ pdk validate puppet --puppet-version='5.3.6'
 
 In the following example we validate the Ruby code contained in the lib directory:
 
-```
+```console
 pdk validate ruby lib --puppet-version='5.3.6'
 ```
 
 To unit test the module, run the following command:
 
-```
+```console
 pdk test unit --puppet-version='5.3.6'
 ```
 
@@ -331,7 +372,7 @@ Valid values are `true`, `false`.
 Defaults to `true`.
 
 #### `manage_kernel_modules`
- 
+
 Specifies whether to manage the kernel modules needed for kubernetes
 
 Valid values are `true`, `false`.
@@ -375,8 +416,9 @@ Defaults to `main`.
 Specifies the version of the Docker runtime to install.
 
 Defaults to:
-- `17.03.0.ce-1.el7.centos` on RedHat.
-- `17.03.0~ce-0~ubuntu-xenial` on Ubuntu.
+
+* `17.03.0.ce-1.el7.centos` on RedHat.
+* `17.03.0~ce-0~ubuntu-xenial` on Ubuntu.
 
 #### `docker_package_name`
 
@@ -445,6 +487,7 @@ The download URL for the etcd archive.
 Defaults to `https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}`.
 
 #### `etcd_install_method`
+
 The method on how to install etcd. Can be either `wget` (using etcd_source) or `package` (using $etcd_package_name)
 
 Defaults to `wget`.
@@ -490,6 +533,7 @@ Defaults to `new`
 Specifies how etcd lists the peers to connect to the cluster.
 
 A Hiera example is `kubernetes::etcd_peers`:
+
 * 172.17.10.101
 * 172.17.10.102
 * 172.17.10.103
@@ -757,7 +801,8 @@ Docker is the supported container runtime for this module.
 If you would like to contribute to this module, please follow the rules in the [CONTRIBUTING.md](https://github.com/puppetlabs/puppetlabs-kubernetes/blob/main/CONTRIBUTING.md). For more information, see our [module contribution guide.](https://puppet.com/docs/puppet/latest/contributing.html)
 
 To run the acceptance tests you can use Puppet Litmus with the Vagrant provider by using the following commands:
-```
+
+```console
 # install rvm with and ruby >2.5
 rvm install "ruby-2.5.1"
 gem install bundler
@@ -767,6 +812,7 @@ bundle exec rake 'litmus:install_agent[puppet5]'
 bundle exec rake 'litmus:install_module'
 bundle exec rake 'litmus:acceptance:parallel'
 ```
+
 For more information about Litmus please see [the wiki](https://github.com/puppetlabs/puppet_litmus/wiki).
 
 As currently Litmus does not allow memory size and cpu size parameters for the Vagrant provisioner task we recommend to manually update the Vagrantfile used by the provisioner and add at least the following specifications for the puppetlabs-kubernetes module acceptance tests:
