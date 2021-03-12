@@ -90,8 +90,49 @@ oom_score = 0
       conf_template = ""
     [plugins."io.containerd.grpc.v1.cri".registry]
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-          endpoint = ["https://registry-1.docker.io"]
+      <%- @containerd_plugins_registry.each do |registry, sections| -%>
+      <%- if sections['mirrors'] and not sections['mirrors'].empty? -%>
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."<%= registry %>"]
+        <%- if sections['mirrors']['endpoint'] -%>
+          endpoint = ["<%= sections['mirrors']['endpoint'] %>"]
+        <%- end -%>
+      <%- end -%>
+      <%- end -%>
+      [plugins."io.containerd.grpc.v1.cri".registry.configs]
+      <%- @containerd_plugins_registry.each do |registry, sections| -%>
+      <%- if sections['auth'] and not sections['auth'].empty? -%>
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= registry %>".auth]
+        <%- if sections['auth']['username'] -%>
+          username = "<%= sections['auth']['username'] %>"
+        <%- end -%>
+        <%- if sections['auth']['password'] -%>
+          password = "<%= sections['auth']['password'] %>"
+        <%- end -%>
+        <%- if sections['auth']['auth'] -%>
+          auth = "<%= sections['auth']['auth'] %>"
+        <%- end -%>
+        <%- if sections['auth']['identitytoken'] -%>
+          identitytoken = "<%= sections['auth']['identitytoken'] %>"
+        <%- end -%>
+      <%- end -%>
+      <%- end -%>
+      <%- @containerd_plugins_registry.each do |registry, sections| -%>
+      <%- if sections['tls'] and not sections['tls'].empty? -%>
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= registry %>".tls]
+        <%- if sections['tls']['ca_file'] -%>
+          ca_file = "<%= sections['tls']['ca_file'] %>"
+        <%- end -%>
+        <%- if sections['tls']['cert_file'] -%>
+          cert_file = "<%= sections['tls']['cert_file'] %>"
+        <%- end -%>
+        <%- if sections['tls']['key_file'] -%>
+          key_file = "<%= sections['tls']['key_file'] %>"
+        <%- end -%>
+        <%- if sections['tls']['insecure_skip_verify'] -%>
+          insecure_skip_verify = <%= sections['tls']['insecure_skip_verify'] %>
+        <%- end -%>
+      <%- end -%>
+      <%- end -%>
     [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
       tls_cert_file = ""
       tls_key_file = ""

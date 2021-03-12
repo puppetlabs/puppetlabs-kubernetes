@@ -318,6 +318,52 @@ The download URL for the containerd archive.
 
 Defaults to `https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}`.
 
+#### `containerd_plugins_registry`
+
+The configuration for the image registries used by containerd.
+
+See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
+
+Defaults to `{'docker.io' => {'mirrors' => {'endpoint' => 'https://registry-1.docker.io'}}}`.
+
+For example,
+
+```puppet
+'containerd_plugins_registry' => {
+    'docker.io' => {
+        'mirrors' => {
+            'endpoint' => 'https://registry-1.docker.io'
+        },
+    },
+    'docker.private.example.com' => {
+        'mirrors' => {
+            'endpoint' => 'docker.private.example.com'
+        },
+        'tls' => {
+            'ca_file' => 'ca.pem',
+            'cert_file' => 'cert.pem',
+            'key_file' => 'key.pem',
+            'insecure_skip_verify' => true,
+        },
+        'auth' => {
+            'auth' => '1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT==',
+        },
+    },
+    'docker.private.example2.com' => {
+        'mirrors' => {
+            'endpoint' => 'docker.private.example2.com'
+        },
+        'tls' => {
+            'insecure_skip_verify' => true,
+        },
+        'auth' => {
+            'username' => 'user2',
+            'password' => 'secret2',
+        },
+    },
+}
+```
+
 #### `controller_address`
 
 The IP address and port for the controller the worker node joins. For example `172.17.10.101:6443`.
