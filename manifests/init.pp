@@ -590,7 +590,7 @@ class kubernetes (
   Optional[String] $runc_source                                  =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
   Optional[String] $runc_source_checksum                         = undef,
-  Optional[String] $containerd_archive                           = "containerd-${containerd_version}.linux-amd64.tar.gz",
+  Optional[String] $containerd_archive                           = "containerd-${containerd_version}-linux-amd64.tar.gz",
   Optional[String] $containerd_archive_checksum                  = undef,
   Optional[String] $containerd_source                            =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
