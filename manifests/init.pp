@@ -51,7 +51,7 @@
 #  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 #
 # [*containerd_plugins_registry*]
-#  The configuration for the image registries used by containerd
+#  The configuration for the image registries used by containerd when containerd_install_method is package.
 #  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
 #  Defaults to `undef`
 #
