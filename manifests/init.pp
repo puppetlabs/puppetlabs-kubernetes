@@ -664,7 +664,7 @@ class kubernetes (
 
   if $controller {
     if $worker {
-      fail(translate('A node can not be both a controller and a node'))
+      fail('A node can not be both a controller and a node')
     }
   }
 
