@@ -2,13 +2,23 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v6.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.0.0) (2021-02-27)
+## [v6.0.1](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.0.1) (2021-03-20)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.5.0...v6.0.0)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.0.0...v6.0.1)
 
 ### Changed
 
 - pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#480](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/480) ([carabasdaniel](https://github.com/carabasdaniel))
+
+### Fixed
+
+- \(IAC-1497\) - Removal of unsupported `translate` dependency [\#501](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/501) ([david22swan](https://github.com/david22swan))
+- Repair containerd archive [\#497](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/497) ([daianamezdrea](https://github.com/daianamezdrea))
+- Added information about Hiera YAML Lookup; installing a updated version. [\#494](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/494) ([bitvijays](https://github.com/bitvijays))
+
+## [v6.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.0.0) (2021-02-27)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.5.0...v6.0.0)
 
 ### Added
 
@@ -129,10 +139,6 @@ All notable changes to this project will be documented in this file. The format 
 - cluster name missing tag brackets in worker config [\#280](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/280) ([jorhett](https://github.com/jorhett))
 - Avoid log message about waiting for SA when it already exists [\#278](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/278) ([jorhett](https://github.com/jorhett))
 - MODULES-8947 fixing bugs and tests [\#274](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/274) ([sheenaajay](https://github.com/sheenaajay))
-
-### UNCATEGORIZED PRS; LABEL THEM ON GITHUB
-
-- Add kubeadm v1beta1 [\#272](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/272) ([carabasdaniel](https://github.com/carabasdaniel))
 
 # Version 4.0.0
 
