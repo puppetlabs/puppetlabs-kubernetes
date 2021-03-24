@@ -157,7 +157,6 @@ RSpec.configure do |c|
     run_shell('puppet module install puppetlabs-stdlib')
     run_shell('puppet module install puppetlabs-apt')
     run_shell('puppet module install maestrodev-wget')
-    run_shell('puppet module install puppetlabs-translate')
     run_shell('puppet module install puppet-archive')
     run_shell('puppet module install herculesteam-augeasproviders_sysctl')
     run_shell('puppet module install herculesteam-augeasproviders_core')
