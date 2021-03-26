@@ -11,7 +11,11 @@ plan kubernetes::provision_cluster(
   run_task('provision::provision_service', 'localhost',
     action => 'provision', platform => $gcp_image, vars => 'role: controller')
   run_task('provision::provision_service', 'localhost',
+    action => 'provision', platform => $gcp_image, vars => 'role: controller1')
+  run_task('provision::provision_service', 'localhost',
     action => 'provision', platform => $gcp_image, vars => 'role: worker1')
   run_task('provision::provision_service', 'localhost',
     action => 'provision', platform => $gcp_image, vars => 'role: worker2')
+  run_task('provision::provision_service', 'localhost',
+    action => 'provision', platform => $gcp_image, vars => 'role: worker3')
 }
