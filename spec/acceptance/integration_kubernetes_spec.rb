@@ -62,18 +62,20 @@ describe 'we are able to setup a controller and workers', :integration do
   context 'verify the k8 nodes' do
     before(:all) { change_target_host('controller') }
     hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
-    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller1')
+    hostname4, ipaddr4, int_ipaddr4 =  fetch_ip_hostname_by_role('controller1')
     hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
     hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
-    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker3')
+    hostname5, ipaddr5, int_ipaddr5 =  fetch_ip_hostname_by_role('worker3')
 
     after(:all) { reset_target_host }
     describe 'verify the k8 nodes' do
       it 'verify the k8 nodes' do
         run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get nodes') do |r|
           expect(r.stdout).to match(/#{hostname1}   Ready    master/)
+          expect(r.stdout).to match(/#{hostname4}   Ready    master/)
           expect(r.stdout).to match(/#{hostname2}   Ready/)
           expect(r.stdout).to match(/#{hostname3}   Ready/)
+          expect(r.stdout).to match(/#{hostname5}   Ready/)
         end
       end
     end
