@@ -178,7 +178,7 @@ jobs:
     if: always()
     name: Post Workflow Status To Slack
     needs:
-      - Acceptance
+      - Integration
     runs-on: ubuntu-20.04
     steps:
       - name: Slack Workflow Notification
