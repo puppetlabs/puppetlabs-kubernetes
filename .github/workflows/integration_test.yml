@@ -146,6 +146,12 @@ jobs:
         echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-3 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
         echo ::endgroup::
+        
+    - name: Start SSH session
+      uses: luchihoratiu/debug-via-ssh@main
+      with:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        SSH_PASS: ${{ secrets.SSH_PA
 
     - name: Run integration tests
       run: |
