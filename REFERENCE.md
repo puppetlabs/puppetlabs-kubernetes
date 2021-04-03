@@ -560,6 +560,8 @@
 ### Plans
 
 * [`k8s::deploy`](#k8sdeploy): This plan is meant to create a deployment and a service on Kubernetes To run this plan you will have to enable the anonymous user access to y
+* [`kubernetes::provision_cluster`](#kubernetesprovision_cluster): Provisions machines
+* [`kubernetes::puppetserver_setup`](#kubernetespuppetserver_setup)
 
 ## Classes
 
@@ -1800,7 +1802,7 @@ Data type: `Optional[String]`
 
 
 
-Default value: `"containerd-${containerd_version}.linux-amd64.tar.gz"`
+Default value: `"containerd-${containerd_version}-linux-amd64.tar.gz"`
 
 ##### <a name="containerd_archive_checksum"></a>`containerd_archive_checksum`
 
@@ -53510,4 +53512,34 @@ Data type: `Integer`
 Data type: `String[1]`
 
 
+
+### <a name="kubernetesprovision_cluster"></a>`kubernetes::provision_cluster`
+
+Provisions machines for integration testing
+
+#### Examples
+
+##### 
+
+```puppet
+kubernetes::provision_integration
+```
+
+#### Parameters
+
+The following parameters are available in the `kubernetes::provision_cluster` plan:
+
+* [`gcp_image`](#gcp_image)
+
+##### <a name="gcp_image"></a>`gcp_image`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `'centos-7'`
+
+### <a name="kubernetespuppetserver_setup"></a>`kubernetes::puppetserver_setup`
+
+The kubernetes::puppetserver_setup class.
 
