@@ -25,6 +25,7 @@ jobs:
       run: |
         echo STEP_ID=setup-environment >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
     - name: Checkout Source
       uses: actions/checkout@v2
       if: ${{ github.repository_owner == 'puppetlabs' }}
@@ -42,12 +43,14 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
+
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=Setup-Integration-Test-Matrix >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
     - name: Setup Integration Test Matrix
       id: get-matrix
       run: |
@@ -56,10 +59,12 @@ jobs:
         else
           echo  "::set-output name=matrix::{}"
         fi
+
     - name: "Honeycomb: Record Setup Test Matrix time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
+
   Integration:
     needs:
       - setup_matrix
@@ -116,35 +121,33 @@ jobs:
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
     - name: Provision test environment
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_cluster gcp_image=${{ matrix.platform }}
+        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_cluster image_type=${{ matrix.platform }}
         echo ::group::=== REQUEST ===
         cat request.json || true
         echo
         echo ::endgroup::
         echo ::group::=== INVENTORY ===
-        sed -e 's/password: .*/password: "[redacted]"/' < inventory.yaml || true
+        if [ -f 'spec/fixtures/litmus_inventory.yaml' ]; then
+          FILE='spec/fixtures/litmus_inventory.yaml'
+        elif [ -f 'inventory.yaml' ]; then
+          FILE='inventory.yaml'
+        fi
+        sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
         echo ::endgroup::
-    - name: Disable gpg check google-cloud.repo
-      uses: nick-invision/retry@v1
-      with:
-        timeout_minutes: 30
-        max_attempts: 5
-        retry_wait_seconds: 60
-        command: buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::disable_gpg' -- bundle exec bolt --modulepath spec/fixtures/modules command run "sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/google-cloud.repo" --targets '*' -i ./inventory.yaml
+        echo INVENTORY_PATH=$FILE >> $GITHUB_ENV
+
     - name: Puppet server setup
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::puppetserver_setup' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::puppetserver_setup -i ./inventory.yaml
+        buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::puppetserver_setup' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::puppetserver_setup collection='${{ matrix.collection }}' -i ./$INVENTORY_PATH
+
     - name: Install agent
-      uses: nick-invision/retry@v1
-      with:
-        timeout_minutes: 30
-        max_attempts: 5
-        retry_wait_seconds: 60
-        command: buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_agent ${{ matrix.collection }}' -- bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
+      run:  |
+        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_agent ${{ matrix.collection }}' -- bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
 
     - name: Install module
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_module' -- bundle exec rake 'litmus:install_module'
+
     - name: "Honeycomb: Record deployment times"
       if: ${{ always() }}
       run: |
@@ -157,23 +160,26 @@ jobs:
     - name: Run integration tests
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes:integration' -- bundle exec rake kubernetes:integration
+
     - name: "Honeycomb: Record integration testing times"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run integration tests'
         echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
     - name: Remove test environment
       if: ${{ always() }}
       continue-on-error: true
       run: |
-        if [ -f inventory.yaml ]; then
+        if [ -f inventory.yaml || -f spec/fixtures/litmus_inventory.yaml ]; then
           buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:tear_down' -- bundle exec rake 'litmus:tear_down'
           echo ::group::=== REQUEST ===
           cat request.json || true
           echo
           echo ::endgroup::
         fi
+
     - name: "Honeycomb: Record removal times"
       if: ${{ always() }}
       run: |
