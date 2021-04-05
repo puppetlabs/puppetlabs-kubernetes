@@ -124,6 +124,13 @@ jobs:
         echo ::group::=== INVENTORY ===
         sed -e 's/password: .*/password: "[redacted]"/' < inventory.yaml || true
         echo ::endgroup::
+    - name: Disable gpg check google-cloud.repo
+      uses: nick-invision/retry@v1
+      with:
+        timeout_minutes: 30
+        max_attempts: 5
+        retry_wait_seconds: 60
+        command: buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::disable_gpg' -- bundle exec bolt --modulepath spec/fixtures/modules command run "sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/google-cloud.repo" --targets '*' -i ./inventory.yaml
     - name: Puppet server setup
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake kubernetes::puppetserver_setup' -- bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::puppetserver_setup -i ./inventory.yaml
