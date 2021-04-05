@@ -1,0 +1,84 @@
+---
+version: 2
+groups:
+- name: docker_nodes
+  targets: []
+- name: ssh_nodes
+  targets:
+  - uri: blue-demolition.delivery.puppetlabs.net
+    config:
+      transport: ssh
+      ssh:
+        user: root
+        password: Qu@lity!
+        host-key-check: false
+    facts:
+      provisioner: abs
+      platform: centos-7-x86_64
+      job_id: iac-task-pid-79215-1624532586106
+    vars:
+      role: controller
+    features:
+    - puppet-agent
+  - uri: commit-formula.delivery.puppetlabs.net
+    config:
+      transport: ssh
+      ssh:
+        user: root
+        password: Qu@lity!
+        host-key-check: false
+    facts:
+      provisioner: abs
+      platform: centos-7-x86_64
+      job_id: iac-task-pid-79365-1624532630690
+    vars:
+      role: worker1
+    features:
+    - puppet-agent
+  - uri: calm-employment.delivery.puppetlabs.net
+    config:
+      transport: ssh
+      ssh:
+        user: root
+        password: Qu@lity!
+        host-key-check: false
+    facts:
+      provisioner: abs
+      platform: centos-7-x86_64
+      job_id: iac-task-pid-79530-1624532695961
+    vars:
+      role: worker2
+    features:
+    - puppet-agent
+  - uri: deductible-cord.delivery.puppetlabs.net
+    config:
+      transport: ssh
+      ssh:
+        user: root
+        password: Qu@lity!
+        host-key-check: false
+    facts:
+      provisioner: abs
+      platform: centos-7-x86_64
+      job_id: iac-task-pid-86447-1624535089104
+    vars:
+      role: controller
+    features:
+    - puppet-agent
+  - uri: silver-czarina.delivery.puppetlabs.net
+    config:
+      transport: ssh
+      ssh:
+        user: root
+        password: Qu@lity!
+        host-key-check: false
+    facts:
+      provisioner: abs
+      platform: centos-7-x86_64
+      job_id: iac-task-pid-86719-1624535154583
+    vars:
+      role: worker1
+    features:
+    - puppet-agent
+- name: winrm_nodes
+  targets: []
