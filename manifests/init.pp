@@ -55,6 +55,10 @@
 #  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
 #  Defaults to `undef`
 #
+# [*containerd_default_runtime_name*]
+#   The default runtime to use with containerd
+#   Defaults to runc
+#
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
 #   Default cluster.local
@@ -610,6 +614,7 @@ class kubernetes (
       },
     },
   },
+  Enum['runc','nvidia'] $containerd_default_runtime_name         = 'runc',
   String $etcd_archive                                           = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                        = undef,
   String $etcd_package_name                                      = 'etcd-server',
