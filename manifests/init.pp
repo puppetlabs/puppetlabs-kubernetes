@@ -504,6 +504,10 @@
 # Directory to use when downloading archives for install.
 # Default to /var/tmp/puppetlabs-kubernetes
 #
+# [*skip_phases*]
+# Allow kubeadm init skip some phases
+# Default: none phases skipped
+#
 # Authors
 # -------
 #
@@ -650,6 +654,7 @@ class kubernetes (
   Optional[Array] $ignore_preflight_errors                       = undef,
   Stdlib::IP::Address $metrics_bind_address                      = '127.0.0.1',
   Optional[String] $join_discovery_file                          = undef,
+  Optional[String] $skip_phases                                  = undef,
   Integer $conntrack_max_per_core                                = 32768,
   Integer $conntrack_min                                         = 131072,
   String $conntrack_tcp_wait_timeout                             = '1h0m0s',
