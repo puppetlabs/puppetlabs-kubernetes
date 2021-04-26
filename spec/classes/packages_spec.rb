@@ -65,6 +65,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -154,6 +161,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -242,6 +256,47 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+            'docker.private.example.com' => {
+                'mirrors' => {},
+                'tls' => {
+                    'ca_file' => 'ca1.pem',
+                    'cert_file' => 'cert1.pem',
+                    'key_file' => 'key1.pem',
+                },
+                'auth' => {
+                    'auth' => '1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT==',
+                },
+            },
+            'docker.more-private.example.com' => {
+                'mirrors' => {
+                    'endpoint' => 'https://docker.more-private.example.com'
+                },
+                'tls' => {
+                    'insecure_skip_verify' => true,
+                },
+                'auth' => {
+                    'username' => 'user2',
+                    'password' => 'secret2',
+                },
+            },
+            'docker.even-more-private.example.com' => {
+                'mirrors' => {
+                    'endpoint' => 'https://docker.even-more-private.example.com'
+                },
+                'tls' => {
+                    'ca_file' => 'ca2.pem',
+                },
+                'auth' => {
+                    'identitytoken' => 'azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT',
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -255,7 +310,54 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     it { should contain_file('/etc/containerd')}
-    it { should contain_file('/etc/containerd/config.toml')}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*endpoint = \["https:\/\/registry-1.docker.io"\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').without_content(
+        /\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.private.example.com"\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.even-more-private.example.com"\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*endpoint = \["https:\/\/docker.even-more-private.example.com"\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*\[plugins."io.containerd.grpc.v1.cri".registry.configs."docker.private.example.com".auth\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*auth = "1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT=="\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*username = "user2"\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*password = "secret2"\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*identitytoken = "azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT"\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*\[plugins."io.containerd.grpc.v1.cri".registry.configs."docker.private.example.com".tls\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*ca_file = "ca1.pem"\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*cert_file = "cert1.pem"\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*key_file = "key1.pem"\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*insecure_skip_verify = true\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*ca_file = "ca2.pem"\s*/
+    )}
     it { should_not contain_file('/etc/apt/preferences.d/containerd')}
   end
 
@@ -319,6 +421,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -407,6 +516,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -495,6 +611,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -579,6 +702,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}
@@ -593,7 +723,13 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('containerd.io').with_ensure('1.4.3')}
     it { should contain_file('/etc/containerd')}
     it { should contain_file('/etc/containerd/config.toml')}
-    it { should contain_file('/etc/apt/preferences.d/containerd')}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*/
+    )}
+    it { should contain_file('/etc/containerd/config.toml').with_content(
+        /\s*endpoint = \["https:\/\/registry-1.docker.io"\]\s*/
+    )}
+    # it { should contain_file('/etc/apt/preferences.d/containerd')}
   end
 
   context 'with disable_swap => true' do
@@ -656,6 +792,13 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
         'runc_source_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
         }
     end
     it { should contain_file_line('remove swap in /etc/fstab')}

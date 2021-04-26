@@ -50,6 +50,11 @@
 #  The URL to download the containerd archive
 #  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 #
+# [*containerd_plugins_registry*]
+#  The configuration for the image registries used by containerd when containerd_install_method is package.
+#  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
+#  Defaults to `undef`
+#
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
 #   Default cluster.local
@@ -594,6 +599,13 @@ class kubernetes (
   Optional[String] $containerd_archive_checksum                  = undef,
   Optional[String] $containerd_source                            =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
+  Optional[Hash] $containerd_plugins_registry                    = {
+    'docker.io' => {
+      'mirrors' => {
+        'endpoint' => 'https://registry-1.docker.io'
+      },
+    },
+  },
   String $etcd_archive                                           = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                        = undef,
   String $etcd_package_name                                      = 'etcd-server',
