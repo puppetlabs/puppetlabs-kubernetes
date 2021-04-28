@@ -271,6 +271,24 @@ class kubernetes::packages (
       mode => '0700',
     }
 
+    file { '/etc/containerd':
+      ensure => 'directory',
+      mode   => '0644',
+      owner  => 'root',
+      group  => 'root',
+    }
+
+    # Generate using 'containerd config default'
+    file { '/etc/containerd/config.toml':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template('kubernetes/containerd/config.toml.erb'),
+      require => [File['/etc/containerd'], Archive[$containerd_archive]],
+      notify  => Service['containerd'],
+    }
+
     if $containerd_archive_checksum and $containerd_archive_checksum =~ /.+/ {
       $containerd_archive_checksum_verify = true
       $containerd_archive_creates = undef
