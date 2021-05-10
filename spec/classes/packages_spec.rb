@@ -24,6 +24,7 @@ describe 'kubernetes::packages', :type => :class do
     end
     let(:pre_condition) {
        '
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'docker\': }
        service { \'etcd\': }
@@ -40,6 +41,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -120,6 +123,7 @@ describe 'kubernetes::packages', :type => :class do
     end
     let(:pre_condition) {
        '
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'docker\': }
        service { \'etcd\': }
@@ -136,6 +140,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -216,6 +222,7 @@ describe 'kubernetes::packages', :type => :class do
     end
     let(:pre_condition) {
        '
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'etcd\': }
        service { \'containerd\': }
@@ -231,6 +238,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -310,6 +319,7 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_package('kubectl').with_ensure('1.10.2')}
     it { should contain_package('kubeadm').with_ensure('1.10.2')}
     it { should contain_file('/etc/containerd')}
+    it { should contain_file('/etc/containerd/config.toml').without_source }
     it { should contain_file('/etc/containerd/config.toml').with_content(
         /\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*/
     )}
@@ -361,6 +371,84 @@ describe 'kubernetes::packages', :type => :class do
     it { should_not contain_file('/etc/apt/preferences.d/containerd')}
   end
 
+  context 'with osfamily => RedHat and container_runtime => cri_containerd and containerd_install_method => package and containerd_default_runtime_name => nvidia and manage_etcd => true' do
+    let(:facts) do
+      {
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "RedHat",
+          :name    => 'RedHat',
+          :release => {
+            :full => '7.4',
+          },
+        },
+      }
+    end
+    let(:pre_condition) {
+       '
+       include kubernetes
+       exec { \'kubernetes-systemd-reload\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
+       '
+    }
+    let(:params) do
+        {
+        'container_runtime' => 'cri_containerd',
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.1.ce-1.el7.centos',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'package',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' =>'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'nvidia',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true','dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages'  => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        }
+    end
+    it { should contain_file_line('remove swap in /etc/fstab')}
+    it { should contain_kmod__load('overlay')}
+    it { should contain_kmod__load('br_netfilter')}
+    it { should contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { should contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
+    it { should contain_package('containerd.io').with_ensure('1.4.3')}
+    it { should contain_archive('etcd-v3.1.12-linux-amd64.tar.gz')}
+    it { should contain_package('kubelet').with_ensure('1.10.2')}
+    it { should contain_package('kubectl').with_ensure('1.10.2')}
+    it { should contain_package('kubeadm').with_ensure('1.10.2')}
+    it { should contain_file('/etc/containerd')}
+    it { should contain_file('/etc/containerd/config.toml').without_source }
+    it { should contain_file('/etc/containerd/config.toml').with_content(%r{default_runtime_name = "nvidia"}) }
+    it { should contain_file('/etc/containerd/config.toml').with_content(%r{plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia}) }
+    it { should_not contain_file('/etc/apt/preferences.d/containerd')}
+  end
+
   context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
     let(:facts) do
       {
@@ -381,6 +469,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        include apt
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'etcd\': }
        service { \'containerd\': }
@@ -396,6 +485,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -474,6 +565,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        include apt
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'docker\': }
        service { \'etcd\': }
@@ -491,6 +583,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -570,6 +664,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        include apt
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'etcd\': }
        service { \'containerd\': }
@@ -586,6 +681,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -661,6 +758,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        include apt
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'etcd\': }
        service { \'containerd\': }
@@ -677,6 +775,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
@@ -752,6 +852,7 @@ describe 'kubernetes::packages', :type => :class do
     let(:pre_condition) {
        '
        include apt
+       include kubernetes
        exec { \'kubernetes-systemd-reload\': }
        service { \'etcd\': }
        service { \'containerd\': }
@@ -767,6 +868,8 @@ describe 'kubernetes::packages', :type => :class do
         'containerd_package_name' => 'containerd.io',
         'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
         'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
         'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
         'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
         'runc_source' => 'https://github.com/runcsource',
