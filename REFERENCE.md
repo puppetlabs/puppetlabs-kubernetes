@@ -1223,6 +1223,8 @@ The following parameters are available in the `kubernetes` class:
 * [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
 * [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
 * [`tmp_directory`](#tmp_directory)
+* [`wait_for_default_sa_tries`](#wait_for_default_sa_tries)
+* [`wait_for_default_sa_try_sleep`](#wait_for_default_sa_try_sleep)
 
 ##### <a name="kubernetes_version"></a>`kubernetes_version`
 
@@ -2213,6 +2215,22 @@ Data type: `String`
 
 
 Default value: `'/var/tmp/puppetlabs-kubernetes'`
+
+##### <a name="wait_for_default_sa_tries"></a>`wait_for_default_sa_tries`
+
+Data type: `Integer`
+
+
+
+Default value: `5`
+
+##### <a name="wait_for_default_sa_try_sleep"></a>`wait_for_default_sa_try_sleep`
+
+Data type: `Integer`
+
+
+
+Default value: `6`
 
 ### <a name="kubernetescluster_roles"></a>`kubernetes::cluster_roles`
 
@@ -4070,7 +4088,7 @@ Data type: `Optional[Integer]`
 
 
 
-Default value: `5`
+Default value: `$kubernetes::wait_for_default_sa_tries`
 
 ##### <a name="try_sleep"></a>`try_sleep`
 
@@ -4078,7 +4096,7 @@ Data type: `Optional[Integer]`
 
 
 
-Default value: `6`
+Default value: `$kubernetes::wait_for_default_sa_try_sleep`
 
 ##### <a name="env"></a>`env`
 
