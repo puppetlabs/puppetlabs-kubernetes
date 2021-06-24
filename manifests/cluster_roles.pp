@@ -8,6 +8,7 @@ class kubernetes::cluster_roles (
   Optional[String] $join_discovery_file = $kubernetes::join_discovery_file,
   Optional[Array] $ignore_preflight_errors = $kubernetes::ignore_preflight_errors,
   Optional[Array] $env = $kubernetes::environment,
+  Optional[String] $skip_phases = $kubernetes::skip_phases,
 ) {
   if $container_runtime == 'cri_containerd' {
     $preflight_errors = flatten(['Service-Docker',$ignore_preflight_errors])
@@ -21,6 +22,7 @@ class kubernetes::cluster_roles (
     kubernetes::kubeadm_init { $node_name:
       ignore_preflight_errors => $preflight_errors,
       env                     => $env,
+      skip_phases             => $skip_phases,
     }
   }
 

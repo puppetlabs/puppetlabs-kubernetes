@@ -50,6 +50,25 @@
 #  The URL to download the containerd archive
 #  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 #
+# [*containerd_config_template*]
+#   The template to use for containerd configuration
+#   This value is ignored if containerd_config_source is defined
+#   Default to 'kubernetes/containerd/config.toml.erb'
+#
+# [*containerd_config_source*]
+#   The source of the containerd configuration
+#   This value overrides containerd_config_template
+#   Default to undef
+#
+# [*containerd_plugins_registry*]
+#  The configuration for the image registries used by containerd when containerd_install_method is package.
+#  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
+#  Defaults to `undef`
+#
+# [*containerd_default_runtime_name*]
+#   The default runtime to use with containerd
+#   Defaults to runc
+#
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
 #   Default cluster.local
@@ -499,6 +518,10 @@
 # Directory to use when downloading archives for install.
 # Default to /var/tmp/puppetlabs-kubernetes
 #
+# [*skip_phases*]
+# Allow kubeadm init skip some phases
+# Default: none phases skipped
+#
 # Authors
 # -------
 #
@@ -594,6 +617,16 @@ class kubernetes (
   Optional[String] $containerd_archive_checksum                  = undef,
   Optional[String] $containerd_source                            =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
+  String $containerd_config_template                             = 'kubernetes/containerd/config.toml.erb',
+  Optional[String] $containerd_config_source                     = undef,
+  Optional[Hash] $containerd_plugins_registry                    = {
+    'docker.io' => {
+      'mirrors' => {
+        'endpoint' => 'https://registry-1.docker.io'
+      },
+    },
+  },
+  Enum['runc','nvidia'] $containerd_default_runtime_name         = 'runc',
   String $etcd_archive                                           = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                        = undef,
   String $etcd_package_name                                      = 'etcd-server',
@@ -638,11 +671,14 @@ class kubernetes (
   Optional[Array] $ignore_preflight_errors                       = undef,
   Stdlib::IP::Address $metrics_bind_address                      = '127.0.0.1',
   Optional[String] $join_discovery_file                          = undef,
+  Optional[String] $skip_phases                                  = undef,
   Integer $conntrack_max_per_core                                = 32768,
   Integer $conntrack_min                                         = 131072,
   String $conntrack_tcp_wait_timeout                             = '1h0m0s',
   String $conntrack_tcp_stablished_timeout                       = '24h0m0s',
   String $tmp_directory                                          = '/var/tmp/puppetlabs-kubernetes',
+  Integer $wait_for_default_sa_tries                             = 5,
+  Integer $wait_for_default_sa_try_sleep                         = 6,
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }

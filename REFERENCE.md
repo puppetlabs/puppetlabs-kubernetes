@@ -560,6 +560,8 @@
 ### Plans
 
 * [`k8s::deploy`](#k8sdeploy): This plan is meant to create a deployment and a service on Kubernetes To run this plan you will have to enable the anonymous user access to y
+* [`kubernetes::provision_cluster`](#kubernetesprovision_cluster): Provisions machines
+* [`kubernetes::puppetserver_setup`](#kubernetespuppetserver_setup): Provisions machines
 
 ## Classes
 
@@ -616,6 +618,25 @@ the files if they do not exist.
 [*containerd_source*]
  The URL to download the containerd archive
  Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
+
+[*containerd_config_template*]
+  The template to use for containerd configuration
+  This value is ignored if containerd_config_source is defined
+  Default to 'kubernetes/containerd/config.toml.erb'
+
+[*containerd_config_source*]
+  The source of the containerd configuration
+  This value overrides containerd_config_template
+  Default to undef
+
+[*containerd_plugins_registry*]
+ The configuration for the image registries used by containerd when containerd_install_method is package.
+ See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
+ Defaults to `undef`
+
+[*containerd_default_runtime_name*]
+  The default runtime to use with containerd
+  Defaults to runc
 
 [*dns_domain*]
   This is a string that sets the dns domain in kubernetes cluster
@@ -1066,6 +1087,10 @@ Default to 24h0m0s
 Directory to use when downloading archives for install.
 Default to /var/tmp/puppetlabs-kubernetes
 
+[*skip_phases*]
+Allow kubeadm init skip some phases
+Default: none phases skipped
+
 Authors
 -------
 
@@ -1153,6 +1178,10 @@ The following parameters are available in the `kubernetes` class:
 * [`containerd_archive`](#containerd_archive)
 * [`containerd_archive_checksum`](#containerd_archive_checksum)
 * [`containerd_source`](#containerd_source)
+* [`containerd_config_template`](#containerd_config_template)
+* [`containerd_config_source`](#containerd_config_source)
+* [`containerd_plugins_registry`](#containerd_plugins_registry)
+* [`containerd_default_runtime_name`](#containerd_default_runtime_name)
 * [`etcd_archive`](#etcd_archive)
 * [`etcd_archive_checksum`](#etcd_archive_checksum)
 * [`etcd_package_name`](#etcd_package_name)
@@ -1188,11 +1217,14 @@ The following parameters are available in the `kubernetes` class:
 * [`ignore_preflight_errors`](#ignore_preflight_errors)
 * [`metrics_bind_address`](#metrics_bind_address)
 * [`join_discovery_file`](#join_discovery_file)
+* [`skip_phases`](#skip_phases)
 * [`conntrack_max_per_core`](#conntrack_max_per_core)
 * [`conntrack_min`](#conntrack_min)
 * [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
 * [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
 * [`tmp_directory`](#tmp_directory)
+* [`wait_for_default_sa_tries`](#wait_for_default_sa_tries)
+* [`wait_for_default_sa_try_sleep`](#wait_for_default_sa_try_sleep)
 
 ##### <a name="kubernetes_version"></a>`kubernetes_version`
 
@@ -1800,7 +1832,7 @@ Data type: `Optional[String]`
 
 
 
-Default value: `"containerd-${containerd_version}.linux-amd64.tar.gz"`
+Default value: `"containerd-${containerd_version}-linux-amd64.tar.gz"`
 
 ##### <a name="containerd_archive_checksum"></a>`containerd_archive_checksum`
 
@@ -1817,6 +1849,44 @@ Data type: `Optional[String]`
 
 
 Default value: `"https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"`
+
+##### <a name="containerd_config_template"></a>`containerd_config_template`
+
+Data type: `String`
+
+
+
+Default value: `'kubernetes/containerd/config.toml.erb'`
+
+##### <a name="containerd_config_source"></a>`containerd_config_source`
+
+Data type: `Optional[String]`
+
+
+
+Default value: ``undef``
+
+##### <a name="containerd_plugins_registry"></a>`containerd_plugins_registry`
+
+Data type: `Optional[Hash]`
+
+
+
+Default value: `{
+    'docker.io' => {
+      'mirrors' => {
+        'endpoint' => 'https://registry-1.docker.io'
+      },
+    },
+  }`
+
+##### <a name="containerd_default_runtime_name"></a>`containerd_default_runtime_name`
+
+Data type: `Enum['runc','nvidia']`
+
+
+
+Default value: `'runc'`
 
 ##### <a name="etcd_archive"></a>`etcd_archive`
 
@@ -2098,6 +2168,14 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
+##### <a name="skip_phases"></a>`skip_phases`
+
+Data type: `Optional[String]`
+
+
+
+Default value: ``undef``
+
 ##### <a name="conntrack_max_per_core"></a>`conntrack_max_per_core`
 
 Data type: `Integer`
@@ -2138,6 +2216,22 @@ Data type: `String`
 
 Default value: `'/var/tmp/puppetlabs-kubernetes'`
 
+##### <a name="wait_for_default_sa_tries"></a>`wait_for_default_sa_tries`
+
+Data type: `Integer`
+
+
+
+Default value: `5`
+
+##### <a name="wait_for_default_sa_try_sleep"></a>`wait_for_default_sa_try_sleep`
+
+Data type: `Integer`
+
+
+
+Default value: `6`
+
 ### <a name="kubernetescluster_roles"></a>`kubernetes::cluster_roles`
 
 The kubernetes::cluster_roles class.
@@ -2153,6 +2247,7 @@ The following parameters are available in the `kubernetes::cluster_roles` class:
 * [`join_discovery_file`](#join_discovery_file)
 * [`ignore_preflight_errors`](#ignore_preflight_errors)
 * [`env`](#env)
+* [`skip_phases`](#skip_phases)
 
 ##### <a name="controller"></a>`controller`
 
@@ -2209,6 +2304,14 @@ Data type: `Optional[Array]`
 
 
 Default value: `$kubernetes::environment`
+
+##### <a name="skip_phases"></a>`skip_phases`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::skip_phases`
 
 ### <a name="kubernetesconfigkubeadm"></a>`kubernetes::config::kubeadm`
 
@@ -3128,6 +3231,10 @@ The following parameters are available in the `kubernetes::packages` class:
 * [`containerd_archive`](#containerd_archive)
 * [`containerd_archive_checksum`](#containerd_archive_checksum)
 * [`containerd_source`](#containerd_source)
+* [`containerd_config_template`](#containerd_config_template)
+* [`containerd_config_source`](#containerd_config_source)
+* [`containerd_plugins_registry`](#containerd_plugins_registry)
+* [`containerd_default_runtime_name`](#containerd_default_runtime_name)
 * [`etcd_archive`](#etcd_archive)
 * [`etcd_archive_checksum`](#etcd_archive_checksum)
 * [`etcd_version`](#etcd_version)
@@ -3296,6 +3403,38 @@ Data type: `Optional[String]`
 
 
 Default value: `$kubernetes::containerd_source`
+
+##### <a name="containerd_config_template"></a>`containerd_config_template`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::containerd_config_template`
+
+##### <a name="containerd_config_source"></a>`containerd_config_source`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::containerd_config_source`
+
+##### <a name="containerd_plugins_registry"></a>`containerd_plugins_registry`
+
+Data type: `Optional[Hash]`
+
+
+
+Default value: `$kubernetes::containerd_plugins_registry`
+
+##### <a name="containerd_default_runtime_name"></a>`containerd_default_runtime_name`
+
+Data type: `Enum['runc','nvidia']`
+
+
+
+Default value: `$kubernetes::containerd_default_runtime_name`
 
 ##### <a name="etcd_archive"></a>`etcd_archive`
 
@@ -3702,6 +3841,7 @@ The following parameters are available in the `kubernetes::kubeadm_init` defined
 * [`path`](#path)
 * [`env`](#env)
 * [`ignore_preflight_errors`](#ignore_preflight_errors)
+* [`skip_phases`](#skip_phases)
 
 ##### <a name="node_name"></a>`node_name`
 
@@ -3750,6 +3890,14 @@ Data type: `Optional[Array]`
 
 
 Default value: `$kubernetes::ignore_preflight_errors`
+
+##### <a name="skip_phases"></a>`skip_phases`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::skip_phases`
 
 ### <a name="kuberneteskubeadm_join"></a>`kubernetes::kubeadm_join`
 
@@ -3940,7 +4088,7 @@ Data type: `Optional[Integer]`
 
 
 
-Default value: `5`
+Default value: `$kubernetes::wait_for_default_sa_tries`
 
 ##### <a name="try_sleep"></a>`try_sleep`
 
@@ -3948,7 +4096,7 @@ Data type: `Optional[Integer]`
 
 
 
-Default value: `6`
+Default value: `$kubernetes::wait_for_default_sa_try_sleep`
 
 ##### <a name="env"></a>`env`
 
@@ -53510,4 +53658,65 @@ Data type: `Integer`
 Data type: `String[1]`
 
 
+
+### <a name="kubernetesprovision_cluster"></a>`kubernetes::provision_cluster`
+
+Provisions machines for integration testing
+
+#### Examples
+
+##### 
+
+```puppet
+kubernetes::provision_cluster
+```
+
+#### Parameters
+
+The following parameters are available in the `kubernetes::provision_cluster` plan:
+
+* [`image_type`](#image_type)
+* [`provision_type`](#provision_type)
+
+##### <a name="image_type"></a>`image_type`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `'centos-7'`
+
+##### <a name="provision_type"></a>`provision_type`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `'provision_service'`
+
+### <a name="kubernetespuppetserver_setup"></a>`kubernetes::puppetserver_setup`
+
+Puppet Server Setup
+
+#### Examples
+
+##### 
+
+```puppet
+kubernetes::puppetserver_setup
+```
+
+#### Parameters
+
+The following parameters are available in the `kubernetes::puppetserver_setup` plan:
+
+* [`collection`](#collection)
+
+##### <a name="collection"></a>`collection`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `'puppet7-nightly'`
 

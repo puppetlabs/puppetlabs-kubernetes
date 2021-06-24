@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v6.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.1.0) (2021-05-11)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.0.0...v6.1.0)
+
+### Added
+
+- Add config.toml for containerd installed with 'archive' [\#516](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/516) ([danifr](https://github.com/danifr))
+- Improvements to containerd configs when using a package [\#510](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/510) ([treydock](https://github.com/treydock))
+- Add kubeadm skip-phases option [\#507](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/507) ([BaronMsk](https://github.com/BaronMsk))
+- Configure image registry settings for  containerd when installed via package [\#500](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/500) ([andeman](https://github.com/andeman))
+
+### Fixed
+
+- \(IAC-1497\) - Removal of unsupported `translate` dependency [\#501](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/501) ([david22swan](https://github.com/david22swan))
+- Repair containerd archive [\#497](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/497) ([daianamezdrea](https://github.com/daianamezdrea))
+- Added information about Hiera YAML Lookup; installing a updated version. [\#494](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/494) ([bitvijays](https://github.com/bitvijays))
+
 ## [v6.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.0.0) (2021-02-27)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v5.5.0...v6.0.0)
@@ -115,7 +132,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - Manage front-proxy ca certs - fixes \#275 [\#321](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/321) ([nickperry](https://github.com/nickperry))
-- Expose ttl duration parameter [\#313](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/313) ([carabasdaniel](https://github.com/carabasdaniel))
+- \(IAC-181\) Expose ttl duration parameter [\#313](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/313) ([carabasdaniel](https://github.com/carabasdaniel))
 - make proxy mode configurable [\#297](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/297) ([mrwulf](https://github.com/mrwulf))
 - Fixed duplicate tlsBootstrapToken in config\_worker.yaml.erb for kubernetes 1.14 [\#287](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/287) ([Hillkorn](https://github.com/Hillkorn))
 
@@ -129,10 +146,6 @@ All notable changes to this project will be documented in this file. The format 
 - cluster name missing tag brackets in worker config [\#280](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/280) ([jorhett](https://github.com/jorhett))
 - Avoid log message about waiting for SA when it already exists [\#278](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/278) ([jorhett](https://github.com/jorhett))
 - MODULES-8947 fixing bugs and tests [\#274](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/274) ([sheenaajay](https://github.com/sheenaajay))
-
-### UNCATEGORIZED PRS; LABEL THEM ON GITHUB
-
-- Add kubeadm v1beta1 [\#272](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/272) ([carabasdaniel](https://github.com/carabasdaniel))
 
 # Version 4.0.0
 
