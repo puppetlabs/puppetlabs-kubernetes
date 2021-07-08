@@ -35,7 +35,7 @@ class kubernetes::kube_addons (
   }
 
   if $cni_network_provider {
-    if $cni_provider == 'calico' {
+    if $cni_provider == 'calico-tigera' {
       if $cni_network_preinstall {
         $shellsafe_preinstall = shell_escape($cni_network_preinstall)
         exec { 'Install cni network (preinstall)':
@@ -72,7 +72,7 @@ class kubernetes::kube_addons (
       exec { 'Install cni network provider':
         command     => "kubectl apply -f ${shellsafe_provider}",
         onlyif      => 'kubectl get nodes',
-        unless      => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|cilium)'",
+        unless      => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'",
         environment => $env,
       }
     }
