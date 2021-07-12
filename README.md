@@ -818,6 +818,12 @@ The string used to join nodes to the cluster. This value must be in the form of 
 
 Defaults to `undef`.
 
+#### `ttl_duration`
+
+The duration before the bootstrap token is automatically deleted (e.g. 1s, 2m, 3h). If set to '0', the token will never expire
+
+Defaults to `24h`
+
 #### `worker`
 
 Specifies whether to set the node as a Kubernetes worker.
