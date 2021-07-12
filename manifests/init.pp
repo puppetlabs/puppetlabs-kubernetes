@@ -157,7 +157,7 @@
 #
 # [*runc_version*]
 #  The version of runc to install
-#  Defaults to 1.0.0-rc5
+#  Defaults to 1.0.0
 #
 # [*runc_source*]
 #  The URL to download runc
@@ -609,7 +609,7 @@ class kubernetes (
   Optional[Hash] $kubelet_extra_config                           = undef,
   Optional[Array] $kubelet_extra_arguments                       = [],
   Optional[String] $proxy_mode                                   = '',
-  Optional[String] $runc_version                                 = '1.0.0-rc5',
+  Optional[String] $runc_version                                 = '1.0.0',
   Optional[String] $runc_source                                  =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
   Optional[String] $runc_source_checksum                         = undef,

@@ -784,7 +784,7 @@ Defaults to `https://github.com/opencontainers/runc/releases/download/v${runc_ve
 
 Specifies the version of `runc` to install.
 
-Defaults to `1.0.0-rc5`.
+Defaults to `1.0.0`.
 
 #### `sa_key`
 
