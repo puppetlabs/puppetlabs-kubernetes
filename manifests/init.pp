@@ -328,11 +328,11 @@
 #
 # [*kubernetes_dashboard_url*]
 #   The URL to get the Kubernetes Dashboard yaml file.
-#   Defaults to the upstream source. `kube_tool` sets this value.
+#   Default is based on dashboard_version.
 #
 # [*dashboard_version*]
 #   The version of Kubernetes dashboard you want to install.
-#   Defaults to v1.10.1
+#   Defaults to 1.10.1
 #
 # [*schedule_on_controller*]
 #   A flag to remove the control plane role and allow pod scheduling on controllers
@@ -579,9 +579,8 @@ class kubernetes (
   Optional[String] $cni_provider                                 = undef,
   Optional[String] $cni_rbac_binding                             = undef,
   Boolean $install_dashboard                                     = false,
-  String $dashboard_version                                      = 'v1.10.1',
-  String $kubernetes_dashboard_url                               =
-    "https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml",
+  String $dashboard_version                                      = '1.10.1',
+  String $kubernetes_dashboard_url                               = undef,
   Boolean $schedule_on_controller                                = false,
   Integer $api_server_count                                      = undef,
   Boolean $delegated_pki                                         = false,
@@ -682,6 +681,12 @@ class kubernetes (
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }
+  }
+
+  if versioncmp($dashboard_version, '2.0.0') >= 0 {
+    $dashboard_url = pick($kubernetes_dashboard_url, "https://raw.githubusercontent.com/kubernetes/dashboard/v${dashboard_version}/aio/deploy/recommended.yaml")
+  } else {
+    $dashboard_url = pick($kubernetes_dashboard_url, "https://raw.githubusercontent.com/kubernetes/dashboard/v${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml")
   }
 
   # Some cloud providers override or fix the node name, so we can't override
