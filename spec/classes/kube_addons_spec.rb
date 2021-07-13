@@ -21,7 +21,6 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_rbac_binding' => 'foo',
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
-      'dashboard_version' => 'v1.10.1',
       'kubernetes_version' => '1.10.2',
       'schedule_on_controller' => true,
       'node_name' => 'foo',
@@ -43,7 +42,6 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_network_provider' => 'https://foo.test',
       'cni_provider' => 'calico',
       'install_dashboard' => false,
-      'dashboard_version' => 'v1.10.1',
       'kubernetes_version' => '1.10.2',
       'node_name' => 'foo',
       }
@@ -63,7 +61,6 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_network_provider' => 'https://foo.test',
       'cni_provider' => 'calico-tigera',
       'install_dashboard' => false,
-      'dashboard_version' => 'v1.10.1',
       'kubernetes_version' => '1.10.2',
       'node_name' => 'foo',
       }
@@ -82,7 +79,6 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => false,
       'kubernetes_version' => '1.10.2',
-      'dashboard_version' => 'v1.10.1',
       'schedule_on_controller' => false,
       'node_name' => 'foo',
       }
@@ -97,7 +93,7 @@ describe 'kubernetes::kube_addons', :type => :class do
       'cni_network_provider' => 'https://foo.test',
       'install_dashboard' => true,
       'kubernetes_version' => '1.10.2',
-      'dashboard_version' => 'v1.10.1',
+      'dashboard_version' => '1.10.1',
       'schedule_on_controller' => false,
       'node_name' => 'foo',
       }

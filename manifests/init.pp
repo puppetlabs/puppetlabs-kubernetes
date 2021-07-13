@@ -580,7 +580,7 @@ class kubernetes (
   Optional[String] $cni_rbac_binding                             = undef,
   Boolean $install_dashboard                                     = false,
   String $dashboard_version                                      = '1.10.1',
-  String $kubernetes_dashboard_url                               = undef,
+  Optional[String] $kubernetes_dashboard_url                     = undef,
   Boolean $schedule_on_controller                                = false,
   Integer $api_server_count                                      = undef,
   Boolean $delegated_pki                                         = false,
