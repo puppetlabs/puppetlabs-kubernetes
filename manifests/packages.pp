@@ -359,29 +359,35 @@ class kubernetes::packages (
     }
   }
 
-  if $create_repos and $facts['os']['family'] == 'Debian' {
-    package { $kube_packages:
-      ensure  => $kubernetes_package_version,
-      require => Class['Apt::Update'],
-    }
-    if $pin_packages {
-      file { '/etc/apt/preferences.d/kubernetes':
-        mode    => '0444',
-        owner   => 'root',
-        group   => 'root',
-        content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+  if $create_repos {
+    case $facts['os']['family'] {
+      'Debian': {
+        package { $kube_packages:
+          ensure => $kubernetes_package_version,
+          notify => Class['apt::update'],
+        }
+        if $pin_packages {
+          file { '/etc/apt/preferences.d/kubernetes':
+            mode    => '0444',
+            owner   => 'root',
+            group   => 'root',
+            content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+          }
+        } else {
+          file { '/etc/apt/preferences.d/kubernetes':
+            ensure => absent,
+          }
+        }
       }
-    }else {
-      file { '/etc/apt/preferences.d/kubernetes':
-        ensure => absent,
+      'RedHat': {
+        package { $kube_packages:
+          ensure => $kubernetes_package_version,
+        }
+        if $pin_packages {
+          fail('package pinning is not implemented on this platform')
+        }
       }
-    }
-  }else {
-    package { $kube_packages:
-      ensure => $kubernetes_package_version,
-    }
-    if $pin_packages {
-      fail('package pinning is not implemented on this platform')
+      default: { notify { "The OS family ${facts['os']['family']} is not supported by this module. ${kube_packages} NOT installed": } }
     }
   }
 }

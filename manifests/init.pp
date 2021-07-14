@@ -708,12 +708,6 @@ class kubernetes (
   $config_file = '/etc/kubernetes/config.yaml'
 
   if $controller {
-    include kubernetes::repos
-    include kubernetes::packages
-    include kubernetes::config::kubeadm
-    include kubernetes::service
-    include kubernetes::cluster_roles
-    include kubernetes::kube_addons
     contain kubernetes::repos
     contain kubernetes::packages
     contain kubernetes::config::kubeadm
@@ -727,6 +721,8 @@ class kubernetes (
     -> Class['kubernetes::service']
     -> Class['kubernetes::cluster_roles']
     -> Class['kubernetes::kube_addons']
+
+    Class[kubernetes::packages]~>Class['kubernetes::service']
   }
 
   if $worker {
@@ -744,5 +740,7 @@ class kubernetes (
     -> Class['kubernetes::packages']
     -> Class['kubernetes::service']
     -> Class['kubernetes::cluster_roles']
+
+    Class[kubernetes::packages]~>Class['kubernetes::service']
   }
 }
