@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v6.2.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.2.0) (2021-07-19)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.1.0...v6.2.0)
+
+### Added
+
+- Allow configuring of waiting times during sa creation [\#519](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/519) ([ZloeSabo](https://github.com/ZloeSabo))
+
+### Fixed
+
+- Support for kubernetes dashboard version 2.0.0 and onwards [\#528](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/528) ([danifr](https://github.com/danifr))
+- Support both standard Calico and Calico Tigera [\#511](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/511) ([treydock](https://github.com/treydock))
+
 ## [v6.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.1.0) (2021-05-11)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.0.0...v6.1.0)
