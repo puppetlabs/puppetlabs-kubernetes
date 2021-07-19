@@ -726,7 +726,7 @@ the files if they do not exist.
 
 [*runc_version*]
  The version of runc to install
- Defaults to 1.0.0-rc5
+ Defaults to 1.0.0
 
 [*runc_source*]
  The URL to download runc
@@ -897,11 +897,11 @@ the files if they do not exist.
 
 [*kubernetes_dashboard_url*]
   The URL to get the Kubernetes Dashboard yaml file.
-  Defaults to the upstream source. `kube_tool` sets this value.
+  Default is based on dashboard_version.
 
 [*dashboard_version*]
   The version of Kubernetes dashboard you want to install.
-  Defaults to v1.10.1
+  Defaults to 1.10.1
 
 [*schedule_on_controller*]
   A flag to remove the control plane role and allow pod scheduling on controllers
@@ -1576,15 +1576,15 @@ Data type: `String`
 
 
 
-Default value: `'v1.10.1'`
+Default value: `'1.10.1'`
 
 ##### <a name="kubernetes_dashboard_url"></a>`kubernetes_dashboard_url`
 
-Data type: `String`
+Data type: `Optional[String]`
 
 
 
-Default value: `"https://raw.githubusercontent.com/kubernetes/dashboard/${dashboard_version}/src/deploy/recommended/kubernetes-dashboard.yaml"`
+Default value: ``undef``
 
 ##### <a name="schedule_on_controller"></a>`schedule_on_controller`
 
@@ -1808,7 +1808,7 @@ Data type: `Optional[String]`
 
 
 
-Default value: `'1.0.0-rc5'`
+Default value: `'1.0.0'`
 
 ##### <a name="runc_source"></a>`runc_source`
 
@@ -3084,8 +3084,8 @@ The following parameters are available in the `kubernetes::kube_addons` class:
 * [`cni_rbac_binding`](#cni_rbac_binding)
 * [`install_dashboard`](#install_dashboard)
 * [`dashboard_version`](#dashboard_version)
+* [`dashboard_url`](#dashboard_url)
 * [`kubernetes_version`](#kubernetes_version)
-* [`kubernetes_dashboard_url`](#kubernetes_dashboard_url)
 * [`controller`](#controller)
 * [`schedule_on_controller`](#schedule_on_controller)
 * [`node_name`](#node_name)
@@ -3148,6 +3148,14 @@ Data type: `String`
 
 Default value: `$kubernetes::dashboard_version`
 
+##### <a name="dashboard_url"></a>`dashboard_url`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::dashboard_url`
+
 ##### <a name="kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
@@ -3155,14 +3163,6 @@ Data type: `String`
 
 
 Default value: `$kubernetes::kubernetes_version`
-
-##### <a name="kubernetes_dashboard_url"></a>`kubernetes_dashboard_url`
-
-Data type: `String`
-
-
-
-Default value: `$kubernetes::kubernetes_dashboard_url`
 
 ##### <a name="controller"></a>`controller`
 
