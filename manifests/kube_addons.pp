@@ -8,8 +8,8 @@ class kubernetes::kube_addons (
   Optional[String] $cni_rbac_binding        = $kubernetes::cni_rbac_binding,
   Boolean $install_dashboard                = $kubernetes::install_dashboard,
   String $dashboard_version                 = $kubernetes::dashboard_version,
+  String $dashboard_url                     = $kubernetes::dashboard_url,
   String $kubernetes_version                = $kubernetes::kubernetes_version,
-  String $kubernetes_dashboard_url          = $kubernetes::kubernetes_dashboard_url,
   Boolean $controller                       = $kubernetes::controller,
   Optional[Boolean] $schedule_on_controller = $kubernetes::schedule_on_controller,
   String $node_name                         = $kubernetes::node_name,
@@ -86,7 +86,7 @@ class kubernetes::kube_addons (
   }
 
   if $install_dashboard {
-    $shellsafe_source = shell_escape($kubernetes_dashboard_url)
+    $shellsafe_source = shell_escape($dashboard_url)
     exec { 'Install Kubernetes dashboard':
       command     => "kubectl apply -f ${shellsafe_source}",
       onlyif      => 'kubectl get nodes',
