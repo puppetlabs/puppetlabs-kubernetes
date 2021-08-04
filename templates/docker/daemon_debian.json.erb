@@ -1,5 +1,6 @@
 {
   "exec-opts": ["native.cgroupdriver=<%= @docker_cgroup_driver %>"],
+  "live-restore": true,
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "<%= @docker_log_max_size %>",
