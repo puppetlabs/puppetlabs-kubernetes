@@ -522,6 +522,11 @@
 # Allow kubeadm init skip some phases
 # Default: none phases skipped
 #
+# [*skip_phases_join*]
+# Allow kubeadm join to skip some phases
+# Only works with Kubernetes 1.22+
+# Default: no phases skipped
+#
 # Authors
 # -------
 #
@@ -671,6 +676,7 @@ class kubernetes (
   Stdlib::IP::Address $metrics_bind_address                      = '127.0.0.1',
   Optional[String] $join_discovery_file                          = undef,
   Optional[String] $skip_phases                                  = undef,
+  Optional[Array] $skip_phases_join                              = undef,
   Integer $conntrack_max_per_core                                = 32768,
   Integer $conntrack_min                                         = 131072,
   String $conntrack_tcp_wait_timeout                             = '1h0m0s',

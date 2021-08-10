@@ -13,8 +13,8 @@ describe 'the Kubernetes module' do
         pp = <<-MANIFEST
         if $facts['os']['family'] == 'redhat'{
           class {'kubernetes':
-                  kubernetes_version => '1.20.6',
-                  kubernetes_package_version => '1.20.6',
+                  kubernetes_version => '1.22.0',
+                  kubernetes_package_version => '1.22.0',
                   controller_address => "$::ipaddress:6443",
                   container_runtime => 'docker',
                   manage_docker => false,
