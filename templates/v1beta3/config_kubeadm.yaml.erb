@@ -101,6 +101,12 @@ etcd:
 <% end -%>
         keyFile: /etc/kubernetes/pki/etcd/client.key
 imageRepository:  <%= @image_repository %>
+<% unless @feature_gates.empty? -%>
+featureGates:
+<% @feature_gates.each_pair do |key,value| -%>
+  <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
 kind: ClusterConfiguration
 kubernetesVersion: v<%= @kubernetes_version %>
 networking:

@@ -63,6 +63,7 @@ class kubernetes::config::kubeadm (
   Integer $conntrack_min = $kubernetes::conntrack_min,
   String $conntrack_tcp_wait_timeout = $kubernetes::conntrack_tcp_wait_timeout,
   String $conntrack_tcp_stablished_timeout = $kubernetes::conntrack_tcp_stablished_timeout,
+  Hash[String[1], Boolean] $feature_gates = $kubernetes::feature_gates,
 ) {
   if !($proxy_mode in ['', 'userspace', 'iptables', 'ipvs', 'kernelspace']) {
     fail('Invalid kube-proxy mode! Must be one of "", userspace, iptables, ipvs, kernelspace.')

@@ -527,6 +527,12 @@
 # Only works with Kubernetes 1.22+
 # Default: no phases skipped
 #
+# [*feature_gates*]
+# Feature gate hash to be added to kubeadm configuration
+# Example:
+#   {'RootlessControlPlane' => true}
+# Default: undefined, no feature gates
+#
 # Authors
 # -------
 #
@@ -684,6 +690,7 @@ class kubernetes (
   String $tmp_directory                                          = '/var/tmp/puppetlabs-kubernetes',
   Integer $wait_for_default_sa_tries                             = 5,
   Integer $wait_for_default_sa_try_sleep                         = 6,
+  Hash[String[1], Boolean] $feature_gates                        = {},
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }
