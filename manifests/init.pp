@@ -522,6 +522,17 @@
 # Allow kubeadm init skip some phases
 # Default: none phases skipped
 #
+# [*skip_phases_join*]
+# Allow kubeadm join to skip some phases
+# Only works with Kubernetes 1.22+
+# Default: no phases skipped
+#
+# [*feature_gates*]
+# Feature gate hash to be added to kubeadm configuration
+# Example:
+#   {'RootlessControlPlane' => true}
+# Default: undefined, no feature gates
+#
 # Authors
 # -------
 #
@@ -671,6 +682,7 @@ class kubernetes (
   Stdlib::IP::Address $metrics_bind_address                      = '127.0.0.1',
   Optional[String] $join_discovery_file                          = undef,
   Optional[String] $skip_phases                                  = undef,
+  Optional[Array] $skip_phases_join                              = undef,
   Integer $conntrack_max_per_core                                = 32768,
   Integer $conntrack_min                                         = 131072,
   String $conntrack_tcp_wait_timeout                             = '1h0m0s',
@@ -678,6 +690,7 @@ class kubernetes (
   String $tmp_directory                                          = '/var/tmp/puppetlabs-kubernetes',
   Integer $wait_for_default_sa_tries                             = 5,
   Integer $wait_for_default_sa_try_sleep                         = 6,
+  Hash[String[1], Boolean] $feature_gates                        = {},
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }

@@ -19,14 +19,16 @@ class kubernetes::config::worker (
   Optional[Array] $ignore_preflight_errors = undef,
   Boolean $skip_ca_verification            = false,
   String $cgroup_driver                    = $kubernetes::cgroup_driver,
+  Optional[Array] $skip_phases_join        = $kubernetes::skip_phases_join,
 ) {
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
   $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')
 
   $template = $kubernetes_version ? {
-    /1\.12/              => 'v1alpha3',
-    /1\.1(3|4|5\.[012])/ => 'v1beta1',
-    default              => 'v1beta2',
+    /1\.12/                  => 'v1alpha3',
+    /1\.1(3|4|5\.[012])/     => 'v1beta1',
+    /1\.(16|17|18|19|20|21)/ => 'v1beta2',
+    default                  => 'v1beta3',
   }
 
   file { '/etc/kubernetes':

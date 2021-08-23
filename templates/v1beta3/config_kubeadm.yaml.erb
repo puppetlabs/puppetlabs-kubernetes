@@ -1,0 +1,154 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+bootstrapTokens:
+- groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  token: <%= @token %>
+  ttl: <%= @ttl_duration %>
+  usages:
+  - signing
+  - authentication
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: <%= @kube_api_advertise_address %>
+  bindPort: <%= @kube_api_bind_port %>
+nodeRegistration:
+  name: <%= @node_name %>
+  <%- if @container_runtime == "cri_containerd" -%>
+  criSocket: unix:///run/containerd/containerd.sock
+  <%- end -%>
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  kubeletExtraArgs:
+    cgroup-driver: <%= @cgroup_driver %>
+    <%- if @cloud_provider -%>
+    cloud-provider: <%= @cloud_provider %>
+    <%- end -%>
+    <%- if @cloud_config -%>
+    cloud-config: <%= @cloud_config %>
+    <%- end -%>
+    <%- @kubelet_extra_arguments.each do |arg| -%>
+    <%= arg %>
+    <%- end -%>
+<% if @skip_phases -%>
+skipPhases:
+<% @skip_phases.split(',').each do |skip_phase| -%>
+- <%= skip_phase %>
+<% end -%>
+<% end -%>
+---
+apiServer:
+  timeoutForControlPlane: 4m0s
+<%- if @apiserver_cert_extra_sans -%>
+  certSANs:
+  <%- @apiserver_cert_extra_sans.each do |san| -%>
+  - <%= san %>
+  <%- end -%>
+<%- end -%>
+<%- if @apiserver_merged_extra_arguments -%>
+  extraArgs:
+  <%- @apiserver_merged_extra_arguments.each do |arg| -%>
+    <%= arg %>
+  <%- end -%>
+<%- end -%>
+<%- if @apiserver_merged_extra_volumes -%>
+  extraVolumes:
+  <%- @apiserver_merged_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+    readOnly: <%= config['readOnly'] %>
+    pathType: <%= config['pathType'] %>
+  <%- end -%>
+<%- end -%>
+apiVersion: kubeadm.k8s.io/v1beta3
+certificatesDir: /etc/kubernetes/pki
+<%- if @kubernetes_cluster_name != "kubernetes"  -%>
+clusterName: <%= @kubernetes_cluster_name %>
+<%- end -%>
+controlPlaneEndpoint: "<%= @controller_address %>"
+controllerManager:
+<%- if @controllermanager_merged_extra_arguments -%>
+  extraArgs:
+  <%- @controllermanager_merged_extra_arguments.each do |arg| -%>
+    <%= arg %>
+  <%- end -%>
+<%- end -%>
+<%- if @controllermanager_merged_extra_volumes -%>
+  extraVolumes:
+  <%- @controllermanager_merged_extra_volumes.each do |name, config| -%>
+  - name: <%= name %>
+    hostPath: <%= config['hostPath'] %>
+    mountPath: <%= config['mountPath'] %>
+    readOnly: <%= config['readOnly'] %>
+    pathType: <%= config['pathType'] %>
+  <%- end -%>
+<%- end -%>
+scheduler:
+<%- if @scheduler_merged_extra_arguments -%>
+  extraArgs:
+  <%- @scheduler_merged_extra_arguments.each do |arg| -%>
+    <%= arg %>
+  <%- end -%>
+<%- end -%>
+etcd:
+    external:
+        caFile: /etc/kubernetes/pki/etcd/ca.crt
+        certFile: /etc/kubernetes/pki/etcd/client.crt
+        endpoints:
+<% @etcd_peers.each do |peer| -%>
+          - https://<%= peer %>:2379
+<% end -%>
+        keyFile: /etc/kubernetes/pki/etcd/client.key
+imageRepository:  <%= @image_repository %>
+<% unless @feature_gates.empty? -%>
+featureGates:
+<% @feature_gates.each_pair do |key,value| -%>
+  <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+kind: ClusterConfiguration
+kubernetesVersion: v<%= @kubernetes_version %>
+networking:
+  dnsDomain: <%= @dns_domain %>
+  podSubnet: <%= @cni_pod_cidr %>
+  serviceSubnet: <%= @service_cidr %>
+<%- if @kubeadm_extra_config  -%>
+<%= @kubeadm_extra_config_yaml %>
+<%- end -%>
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+bindAddress: 0.0.0.0
+clientConnection:
+  acceptContentTypes: ""
+  burst: 10
+  contentType: application/vnd.kubernetes.protobuf
+  kubeconfig: /var/lib/kube-proxy/kubeconfig.conf
+  qps: 5
+clusterCIDR: <%= @cni_pod_cidr %>
+configSyncPeriod: 15m0s
+conntrack:
+  maxPerCore: <%= @conntrack_max_per_core %>
+  min: <%= @conntrack_min %>
+  tcpCloseWaitTimeout: <%= @conntrack_tcp_wait_timeout %>
+  tcpEstablishedTimeout: <%= @conntrack_tcp_stablished_timeout %>
+enableProfiling: false
+healthzBindAddress: 0.0.0.0:10256
+hostnameOverride: ""
+iptables:
+  masqueradeAll: false
+  masqueradeBit: 14
+  minSyncPeriod: 0s
+  syncPeriod: 30s
+ipvs:
+  excludeCIDRs: null
+  minSyncPeriod: 0s
+  scheduler: ""
+  syncPeriod: 30s
+kind: KubeProxyConfiguration
+metricsBindAddress: <%= @metrics_bind_address %>:10249
+mode: "<%= @proxy_mode %>"
+nodePortAddresses: null
+oomScoreAdj: -999
+portRange: ""
+udpIdleTimeout: 250ms
