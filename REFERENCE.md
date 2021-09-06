@@ -1091,6 +1091,17 @@ Default to /var/tmp/puppetlabs-kubernetes
 Allow kubeadm init skip some phases
 Default: none phases skipped
 
+[*skip_phases_join*]
+Allow kubeadm join to skip some phases
+Only works with Kubernetes 1.22+
+Default: no phases skipped
+
+[*feature_gates*]
+Feature gate hash to be added to kubeadm configuration
+Example:
+  {'RootlessControlPlane' => true}
+Default: undefined, no feature gates
+
 Authors
 -------
 
@@ -1218,6 +1229,7 @@ The following parameters are available in the `kubernetes` class:
 * [`metrics_bind_address`](#metrics_bind_address)
 * [`join_discovery_file`](#join_discovery_file)
 * [`skip_phases`](#skip_phases)
+* [`skip_phases_join`](#skip_phases_join)
 * [`conntrack_max_per_core`](#conntrack_max_per_core)
 * [`conntrack_min`](#conntrack_min)
 * [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
@@ -1225,6 +1237,7 @@ The following parameters are available in the `kubernetes` class:
 * [`tmp_directory`](#tmp_directory)
 * [`wait_for_default_sa_tries`](#wait_for_default_sa_tries)
 * [`wait_for_default_sa_try_sleep`](#wait_for_default_sa_try_sleep)
+* [`feature_gates`](#feature_gates)
 
 ##### <a name="kubernetes_version"></a>`kubernetes_version`
 
@@ -2176,6 +2189,14 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
+##### <a name="skip_phases_join"></a>`skip_phases_join`
+
+Data type: `Optional[Array]`
+
+
+
+Default value: ``undef``
+
 ##### <a name="conntrack_max_per_core"></a>`conntrack_max_per_core`
 
 Data type: `Integer`
@@ -2231,6 +2252,14 @@ Data type: `Integer`
 
 
 Default value: `6`
+
+##### <a name="feature_gates"></a>`feature_gates`
+
+Data type: `Hash[String[1], Boolean]`
+
+
+
+Default value: `{}`
 
 ### <a name="kubernetescluster_roles"></a>`kubernetes::cluster_roles`
 
@@ -2384,6 +2413,7 @@ The following parameters are available in the `kubernetes::config::kubeadm` clas
 * [`conntrack_min`](#conntrack_min)
 * [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
 * [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
+* [`feature_gates`](#feature_gates)
 
 ##### <a name="config_file"></a>`config_file`
 
@@ -2889,6 +2919,14 @@ Data type: `String`
 
 Default value: `$kubernetes::conntrack_tcp_stablished_timeout`
 
+##### <a name="feature_gates"></a>`feature_gates`
+
+Data type: `Hash[String[1], Boolean]`
+
+
+
+Default value: `$kubernetes::feature_gates`
+
 ### <a name="kubernetesconfigworker"></a>`kubernetes::config::worker`
 
 Class kubernetes config_worker, populates worker config files with joinconfig
@@ -2916,6 +2954,7 @@ The following parameters are available in the `kubernetes::config::worker` class
 * [`ignore_preflight_errors`](#ignore_preflight_errors)
 * [`skip_ca_verification`](#skip_ca_verification)
 * [`cgroup_driver`](#cgroup_driver)
+* [`skip_phases_join`](#skip_phases_join)
 
 ##### <a name="node_name"></a>`node_name`
 
@@ -3068,6 +3107,14 @@ Data type: `String`
 
 
 Default value: `$kubernetes::cgroup_driver`
+
+##### <a name="skip_phases_join"></a>`skip_phases_join`
+
+Data type: `Optional[Array]`
+
+
+
+Default value: `$kubernetes::skip_phases_join`
 
 ### <a name="kuberneteskube_addons"></a>`kubernetes::kube_addons`
 
