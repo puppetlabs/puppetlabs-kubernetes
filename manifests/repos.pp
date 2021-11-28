@@ -38,12 +38,12 @@ class kubernetes::repos (
         if ($container_runtime == 'docker' and $manage_docker == true) or
             ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           apt::source { 'docker':
-            location => pick($docker_apt_location,'https://apt.dockerproject.org/repo'),
-            repos    => pick($docker_apt_repos,'main'),
-            release  => pick($docker_apt_release,"ubuntu-${codename}"),
+            location => pick($docker_apt_location,'https://download.docker.com/linux/ubuntu/'),
+            repos    => pick($docker_apt_repos,'stable'),
+            release  => pick($docker_apt_release,$codename),
             key      => {
-              'id'     => pick($docker_key_id,'58118E89F3A912897C070ADBF76221572C52609D'),
-              'source' => pick($docker_key_source,'https://apt.dockerproject.org/gpg'),
+              'id'     => pick($docker_key_id,'9DC858229FC7DD38854AE2D88D81803C0EBFCD88'),
+              'source' => pick($docker_key_source,'https://download.docker.com/linux/ubuntu/gpg'),
             },
           }
         }

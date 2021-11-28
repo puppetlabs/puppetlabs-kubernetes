@@ -76,7 +76,7 @@
 # [*docker_version*]
 #   This is the version of the docker runtime that you want to install.
 #   Defaults to 17.03.0.ce-1.el7.centos on RedHat
-#   Defaults to 17.03.0~ce-0~ubuntu-xenial on Ubuntu
+#   Defaults to 5:20.10.11~3-0~ubuntu-(distro codename) on Ubuntu
 #
 # [*docker_package_name*]
 #  The docker package name to download from an upstream repo
@@ -417,7 +417,7 @@
 #
 # [*docker_apt_release*]
 #  The release name for the APT repo for the Docker packages.
-#  Defaults to 'ubuntu-${facts.os.distro.codename}'
+#  Defaults to $facts.os.distro.codename
 #
 # [*docker_apt_repos*]
 #  The repos to install from the Docker APT url
@@ -553,7 +553,7 @@ class kubernetes (
   String $containerd_package_name                                = 'containerd.io',
   Optional[String] $docker_package_name                          = 'docker-engine',
   Optional[String] $docker_version                               = $facts['os']['family'] ? {
-    'Debian' => '17.03.0~ce-0~ubuntu-xenial',
+    'Debian' => '5:20.10.11~3-0~ubuntu-' + $facts['os']['distro']['codename'],
     'RedHat' => '17.03.1.ce-1.el7.centos',
   },
   Boolean $pin_packages                                          = false,
