@@ -19,7 +19,6 @@ nodeRegistration:
   taints: null
   <%- end -%>
   kubeletExtraArgs:
-    cgroup-driver: <%= @cgroup_driver %>
     <%- if @cloud_provider -%>
     cloud-provider: <%= @cloud_provider %>
     <%- if @cloud_config -%>

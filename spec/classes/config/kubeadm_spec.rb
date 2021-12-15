@@ -259,9 +259,6 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it 'has node_name==foo in first YAML document (InitConfig)' do
       expect(config_yaml[0]['nodeRegistration']).to include('name' => params['node_name'])
     end
-    it 'has cgroup-driver==cgroupfs in first YAML document (InitConfig) NodeRegistration' do
-      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cgroup-driver' => 'cgroupfs')
-    end
     it 'has cloud-provider==aws in first YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => params['cloud_provider'])
     end
@@ -286,9 +283,6 @@ describe 'kubernetes::config::kubeadm', :type => :class do
 
     it 'has API Server extra volumes in YAML document' do
       expect(config_yaml[1]).to include('apiServerExtraVolumes')
-    end
-    it 'has cgroup-driver==systemd in first YAML document (InitConfig) NodeRegistration' do
-      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cgroup-driver' => 'systemd')
     end
   end
 
