@@ -11,7 +11,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
       {
-        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "RedHat",
@@ -110,7 +110,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => RedHat and container_runtime => Docker and manage_docker => true and manage_etcd => true and etcd_install_method => package' do
     let(:facts) do
       {
-        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "RedHat",
@@ -209,7 +209,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => RedHat and container_runtime => cri_containerd and containerd_install_method => package and manage_etcd => true' do
     let(:facts) do
       {
-        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "RedHat",
@@ -374,7 +374,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => RedHat and container_runtime => cri_containerd and containerd_install_method => package and containerd_default_runtime_name => nvidia and manage_etcd => true' do
     let(:facts) do
       {
-        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'RedHat', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "RedHat",
@@ -452,7 +452,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => Debian and container_runtime => cri_containerd and manage_etcd => false' do
     let(:facts) do
       {
-        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",
@@ -548,7 +548,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => true and manage_etcd => true' do
     let(:facts) do
       {
-        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",
@@ -647,7 +647,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
     let(:facts) do
       {
-        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",
@@ -741,7 +741,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with osfamily => Debian and container_runtime => cri_containerd and containerd_install_method => package and manage_etcd => true' do
     let(:facts) do
       {
-        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",
@@ -835,7 +835,7 @@ describe 'kubernetes::packages', :type => :class do
   context 'with disable_swap => true' do
     let(:facts) do
       {
-        :osfamily         => 'Debian', #needed to run dependent tests from fixtures camptocamp-kmod
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
         :kernel           => 'Linux',
         :os               => {
           :family => "Debian",

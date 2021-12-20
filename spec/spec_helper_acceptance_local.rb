@@ -160,7 +160,7 @@ RSpec.configure do |c|
     run_shell('puppet module install puppet-archive')
     run_shell('puppet module install herculesteam-augeasproviders_sysctl')
     run_shell('puppet module install herculesteam-augeasproviders_core')
-    run_shell('puppet module install camptocamp-kmod')
+    run_shell('puppet module install puppet-kmod')
     run_shell('puppet module install puppetlabs-docker')
     run_shell('puppet module install puppetlabs-helm')
     run_shell('puppet module install puppetlabs-rook --ignore-dependencies')

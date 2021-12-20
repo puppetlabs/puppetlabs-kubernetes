@@ -6,7 +6,7 @@ fixtures:
     archive: "puppet-archive"
     augeasproviders_sysctl: "herculesteam-augeasproviders_sysctl"
     augeasproviders_core: "herculesteam-augeasproviders_core"
-    kmod: "camptocamp-kmod"
+    kmod: "puppet-kmod"
     helm: 'puppetlabs-helm'
     rook: 'puppetlabs-rook'
   repositories:
