@@ -553,7 +553,7 @@ class kubernetes (
   String $containerd_package_name                                = 'containerd.io',
   Optional[String] $docker_package_name                          = 'docker-engine',
   Optional[String] $docker_version                               = $facts['os']['family'] ? {
-    'Debian' => '5:20.10.11~3-0~ubuntu-' + $facts['os']['distro']['codename'],
+    'Debian' => '17.03.0~ce-0~ubuntu-xenial',
     'RedHat' => '17.03.1.ce-1.el7.centos',
   },
   Boolean $pin_packages                                          = false,
