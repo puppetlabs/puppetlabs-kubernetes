@@ -1,6 +1,17 @@
 # Class kubernetes packages
 
 class kubernetes::packages (
+  Enum['archive','package'] $kubernetes_install_method  = $kubernetes::kubernetes_install_method,
+  Optional[String] $kubernetes_archive                  = $kubernetes::kubernetes_archive,
+  Optional[String] $kubernetes_archive_checksum         = $kubernetes::kubernetes_archive_checksum,
+  Optional[String] $kubernetes_source                   = $kubernetes::kubernetes_source,
+  Optional[String] $crictl_archive                  = $kubernetes::crictl_archive,
+  Optional[String] $crictl_archive_checksum         = $kubernetes::crictl_archive_checksum,
+  Optional[String] $crictl_source                   = $kubernetes::crictl_source,
+  Optional[String] $cni_plugins_archive                  = $kubernetes::cni_plugins_archive,
+  Optional[String] $cni_plugins_archive_checksum         = $kubernetes::cni_plugins_archive_checksum,
+  Optional[String] $cni_plugins_source                   = $kubernetes::cni_plugins_source,
+  String $image_repository  = $kubernetes::image_repository,
   String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
   String $container_runtime                             = $kubernetes::container_runtime,
   Boolean $manage_docker                                = $kubernetes::manage_docker,
@@ -358,30 +369,115 @@ class kubernetes::packages (
       }
     }
   }
-
-  if $create_repos and $facts['os']['family'] == 'Debian' {
-    package { $kube_packages:
-      ensure  => $kubernetes_package_version,
-      require => Class['Apt::Update'],
-    }
-    if $pin_packages {
-      file { '/etc/apt/preferences.d/kubernetes':
-        mode    => '0444',
-        owner   => 'root',
-        group   => 'root',
-        content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+  # support defining new install methods for kubeadm components
+  if $kubernetes_install_method == "package" {
+    if $create_repos and $facts['os']['family'] == 'Debian' {
+      package { $kube_packages:
+        ensure  => $kubernetes_package_version,
+        require => Class['Apt::Update'],
+      }
+      if $pin_packages {
+        file { '/etc/apt/preferences.d/kubernetes':
+          mode    => '0444',
+          owner   => 'root',
+          group   => 'root',
+          content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+        }
+      }else {
+        file { '/etc/apt/preferences.d/kubernetes':
+          ensure => absent,
+        }
       }
     }else {
-      file { '/etc/apt/preferences.d/kubernetes':
-        ensure => absent,
+      package { $kube_packages:
+        ensure => $kubernetes_package_version,
+      }
+      if $pin_packages {
+        fail('package pinning is not implemented on this platform')
       }
     }
-  }else {
-    package { $kube_packages:
-      ensure => $kubernetes_package_version,
+  } else {
+    # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl 
+    # see Installing Without a Package Manager
+    package { 'conntrack-tools':
+      ensure => installed,
     }
-    if $pin_packages {
-      fail('package pinning is not implemented on this platform')
+    if $cni_plugins_archive_checksum and $cni_plugins_archive_checksum =~ /.+/ {
+      $cni_plugins_archive_checksum_verify = true
+      $cni_plugins_archive_creates = undef
+    }else {
+      $cni_plugins_archive_checksum_verify = false
+      $cni_plugins_archive_creates = ['/opt/cni/bin/loopback']
+    }
+    file { '/opt/cni':
+      ensure => directory
+    } ->
+    file { '/opt/cni/bin/':
+      ensure => directory
+    }
+    archive { $cni_plugins_archive:
+      path => "${tmp_directory}/${cni_plugins_archive}",
+      source          => $cni_plugins_source,
+      checksum_type   => $archive_checksum_type,
+      checksum        => $cni_plugins_archive_checksum,
+      checksum_verify => $cni_plugins_archive_checksum_verify,
+      extract         => true,
+      extract_command => 'tar xfz %s -C /opt/cni/bin/',
+      extract_path    => '/opt/cni/bin',
+      cleanup         => true,
+      creates         => $cni_plugins_archive_creates,
+      require         => File[$tmp_directory],
+    }
+
+    if $crictl_archive_checksum and $crictl_archive_checksum =~ /.+/ {
+      $crictl_archive_checksum_verify = true
+      $crictl_archive_creates = undef
+    }else {
+      $crictl_archive_checksum_verify = false
+      $crictl_archive_creates = ['/usr/bin/crictl']
+    }
+    archive { $crictl_archive:
+      path => "${tmp_directory}/${crictl_archive}",
+      source          => $crictl_source,
+      checksum_type   => $archive_checksum_type,
+      checksum        => $crictl_archive_checksum,
+      checksum_verify => $crictl_archive_checksum_verify,
+      extract         => true,
+      extract_command => 'tar xfz %s -C /usr/bin/',
+      extract_path    => '/usr/bin',
+      cleanup         => true,
+      creates         => $crictl_archive_creates,
+      require         => File[$tmp_directory],
+    }
+
+    if $kubernetes_archive_checksum and $kubernetes_archive_checksum =~ /.+/ {
+      $kubernetes_archive_checksum_verify = true
+      $kubernetes_archive_creates = undef
+    }else {
+      $kubernetes_archive_checksum_verify = false
+      $kubernetes_archive_creates = ['/usr/bin/kubectl']
+    }
+    archive { $kubernetes_archive:
+      path => "${tmp_directory}/${kubernetes_archive}",
+      source          => $kubernetes_source,
+      checksum_type   => $archive_checksum_type,
+      checksum        => $kubernetes_archive_checksum,
+      checksum_verify => $kubernetes_archive_checksum_verify,
+      extract         => true,
+      extract_command => 'tar xfz %s -C /usr/bin/',
+      extract_path    => '/usr/bin',
+      cleanup         => true,
+      creates         => $kubernetes_archive_creates,
+      notify => Exec["chmod bins"],
+      require         => File[$tmp_directory],
+    }
+    exec { "chmod bins":
+      command => "/bin/chmod +x /usr/bin/{kubeadm,kubectl,kubelet}",
+      refreshonly => true
+    }
+    file { '/etc/systemd/system/kubelet.service' :
+      ensure => file,
+      source => 'puppet:///modules/kubernetes/kubelet.service',
     }
   }
 }

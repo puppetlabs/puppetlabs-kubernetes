@@ -541,6 +541,17 @@
 #
 #
 class kubernetes (
+  Enum['archive','package'] $kubernetes_install_method  = 'package',
+  Optional[String] $kubernetes_archive                  = "kube-bins-${kubernetes_version}.tar.gz",
+  Optional[String] $kubernetes_archive_checksum                  = undef,
+  Optional[String] $kubernetes_source                   = undef,
+  Optional[String] $crictl_archive                  = "crictl-v1.22.0-linux-amd64.tar.gz",
+  Optional[String] $crictl_archive_checksum         = undef,
+  Optional[String] $crictl_source                   = undef,
+  Optional[String] $cni_plugins_archive                  = "cni-plugins-linux-amd64-v0.8.2.tgz",
+  Optional[String] $cni_plugins_archive_checksum         = undef,
+  Optional[String] $cni_plugins_source                   = undef,
+  String $image_repository  = "k8s.gcr.io"
   String $kubernetes_version                                     = '1.10.2',
   String $kubernetes_cluster_name                                = 'kubernetes',
   String $kubernetes_package_version                             = $facts['os']['family'] ? {
