@@ -551,7 +551,6 @@ class kubernetes (
   Optional[String] $cni_plugins_archive                  = "cni-plugins-linux-amd64-v0.8.2.tgz",
   Optional[String] $cni_plugins_archive_checksum         = undef,
   Optional[String] $cni_plugins_source                   = undef,
-  String $image_repository  = "k8s.gcr.io"
   String $kubernetes_version                                     = '1.10.2',
   String $kubernetes_cluster_name                                = 'kubernetes',
   String $kubernetes_package_version                             = $facts['os']['family'] ? {
