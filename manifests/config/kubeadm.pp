@@ -168,10 +168,10 @@ class kubernetes::config::kubeadm (
   $kubelet_extra_config_alpha1_yaml = regsubst(to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
 
   $config_version = $kubernetes_version ? {
-    /1\.1(0|1)/              => 'v1alpha1',
-    /1\.12/                  => 'v1alpha3',
-    /1\.1(3|4|5\.[012])/     => 'v1beta1',
-    /1\.(16|17|18|19|20|21)/ => 'v1beta2',
+    /^1\.1(0|1)/              => 'v1alpha1',
+    /^1\.12/                  => 'v1alpha3',
+    /^1\.1(3|4|5\.[012])/     => 'v1beta1',
+    /^1\.(16|17|18|19|20|21)/ => 'v1beta2',
     default                  => 'v1beta3',
   }
 
