@@ -9,10 +9,7 @@ plan kubernetes::provision_cluster(
   Optional[String] $provision_type = 'provision_service',
 ) {
   #provision server machine, set role
-  run_task("provision::$provision_type", 'localhost',
-    action => 'provision', platform => $image_type, vars => 'role: controller')
-  run_task("provision::$provision_type", 'localhost',
-    action => 'provision', platform => $image_type, vars => 'role: worker1')
-  run_task("provision::$provision_type", 'localhost',
-    action => 'provision', platform => $image_type, vars => 'role: worker2')
+  run_task("provision::$provision_type", 'localhost', action => 'provision', platform => $image_type, vars => 'role: controller')
+  run_task("provision::$provision_type", 'localhost', action => 'provision', platform => $image_type, vars => 'role: worker1')
+  run_task("provision::$provision_type", 'localhost', action => 'provision', platform => $image_type, vars => 'role: worker2')
 }
