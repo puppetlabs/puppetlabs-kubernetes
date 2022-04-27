@@ -624,7 +624,7 @@ class kubernetes (
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
   Optional[String] $runc_source_checksum                  = undef,
   String $containerd_archive                              = "containerd-${containerd_version}-linux-amd64.tar.gz",
-  String $containerd_archive_checksum                     = undef,
+  Optional[String] $containerd_archive_checksum           = undef,
   String $containerd_source                               =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $containerd_config_template                      = 'kubernetes/containerd/config.toml.erb',
