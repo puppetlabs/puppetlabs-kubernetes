@@ -74,9 +74,9 @@ class kubernetes::service (
       enable => true,
     }
     File <|
-      path == '/etc/systemd/system/kubelet.service.d' or
-      path == '/etc/default/etcd' or
-      path == '/etc/systemd/system/etcd.service'
+    path == '/etc/systemd/system/kubelet.service.d' or
+    path == '/etc/default/etcd' or
+    path == '/etc/systemd/system/etcd.service'
     |> ~> Service['etcd']
 
     if $etcd_install_method == 'wget' {

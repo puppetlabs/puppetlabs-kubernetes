@@ -21,5 +21,3 @@ plan kubernetes::puppetserver_setup(
     { 'collection' => $collection, 'platform' => $platform }
   )
 }
-
-
