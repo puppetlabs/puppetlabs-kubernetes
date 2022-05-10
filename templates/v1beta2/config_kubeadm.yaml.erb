@@ -20,7 +20,6 @@ nodeRegistration:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
   kubeletExtraArgs:
-    cgroup-driver: <%= @cgroup_driver %>
     <%- if @cloud_provider -%>
     cloud-provider: <%= @cloud_provider %>
     <%- end -%>
