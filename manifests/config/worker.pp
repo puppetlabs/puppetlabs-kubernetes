@@ -33,8 +33,8 @@ class kubernetes::config::worker (
 
   file { '/etc/kubernetes':
     ensure  => directory,
-    mode    => '0600',
-    recurse => true,
+    mode    => '0700',
+    recurse => false,
   }
 
   file { $config_file:

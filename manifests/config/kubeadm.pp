@@ -79,8 +79,8 @@ class kubernetes::config::kubeadm (
   $kube_dirs.each | String $dir | {
     file { $dir :
       ensure  => directory,
-      mode    => '0600',
-      recurse => true,
+      mode    => '0700',
+      recurse => false,
     }
   }
 
