@@ -35,7 +35,7 @@ class kubernetes::packages (
   Optional[String] $containerd_config_source            = $kubernetes::containerd_config_source,
   Optional[Hash] $containerd_plugins_registry           = $kubernetes::containerd_plugins_registry,
   Enum['runc','nvidia']
-    $containerd_default_runtime_name                    = $kubernetes::containerd_default_runtime_name,
+  $containerd_default_runtime_name                      = $kubernetes::containerd_default_runtime_name,
   String $etcd_archive                                  = $kubernetes::etcd_archive,
   Optional[String] $etcd_archive_checksum               = $kubernetes::etcd_archive_checksum,
   String $etcd_version                                  = $kubernetes::etcd_version,
@@ -125,12 +125,12 @@ class kubernetes::packages (
               content => template('kubernetes/docker_apt_package_pins.erb'),
               notify  => Service['docker'],
             }
-          }else {
+          } else {
             file { '/etc/apt/preferences.d/docker':
               ensure => absent,
             }
           }
-        }else {
+        } else {
           package { $docker_package_name:
             ensure => $docker_version,
           }
@@ -207,12 +207,12 @@ class kubernetes::packages (
               content => template('kubernetes/containerd_apt_package_pins.erb'),
               notify  => Service['containerd'],
             }
-          }else {
+          } else {
             file { '/etc/apt/preferences.d/containerd':
               ensure => absent,
             }
           }
-        }else {
+        } else {
           package { $containerd_package_name:
             ensure => $containerd_version,
           }
@@ -281,7 +281,7 @@ class kubernetes::packages (
     if $runc_source_checksum and $runc_source_checksum =~ /.+/ {
       $runc_source_checksum_verify = true
       $runc_source_creates = undef
-    }else {
+    } else {
       $runc_source_checksum_verify = false
       $runc_source_creates = ['/usr/bin/runc']
     }
@@ -319,7 +319,7 @@ class kubernetes::packages (
     if $containerd_archive_checksum and $containerd_archive_checksum =~ /.+/ {
       $containerd_archive_checksum_verify = true
       $containerd_archive_creates = undef
-    }else {
+    } else {
       $containerd_archive_checksum_verify = false
       $containerd_archive_creates = ['/usr/bin/containerd']
     }
@@ -344,7 +344,7 @@ class kubernetes::packages (
       if $etcd_archive_checksum and $etcd_archive_checksum =~ /.+/ {
         $etcd_archive_checksum_verify = true
         $etcd_archive_creates = undef
-      }else {
+      } else {
         $etcd_archive_checksum_verify = false
         $etcd_archive_creates = ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
       }

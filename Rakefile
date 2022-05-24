@@ -42,6 +42,10 @@ def changelog_future_release
 end
 
 PuppetLint.configuration.send('disable_relative')
+PuppetLint.configuration.send('disable_parameter_documentation')
+PuppetLint.configuration.send('disable_params_empty_string_assignment')
+PuppetLint.configuration.send('disable_file_ensure')
+PuppetLint.configuration.send('disable_variables_not_enclosed')
 
 
 if Bundler.rubygems.find_name('github_changelog_generator').any?

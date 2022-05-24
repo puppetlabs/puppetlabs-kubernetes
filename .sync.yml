@@ -22,6 +22,11 @@ Rakefile:
           t.rspec_opts = "--tag integration"
         end
       end
+  extra_disabled_lint_checks:
+    - parameter_documentation
+    - params_empty_string_assignment
+    - file_ensure
+    - variables_not_enclosed
 
 .rubocop.yml:
   include_todos:

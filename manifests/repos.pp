@@ -36,7 +36,7 @@ class kubernetes::repos (
         }
 
         if ($container_runtime == 'docker' and $manage_docker == true) or
-            ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
+        ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           apt::source { 'docker':
             location => pick($docker_apt_location,'https://download.docker.com/linux/ubuntu/'),
             repos    => pick($docker_apt_repos,'stable'),
@@ -50,7 +50,7 @@ class kubernetes::repos (
       }
       'RedHat': {
         if ($container_runtime == 'docker' and $manage_docker == true) or
-            ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
+        ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           yumrepo { 'docker':
             descr    => 'docker',
             baseurl  => pick($docker_yum_baseurl,'https://download.docker.com/linux/centos/7/x86_64/stable'),
