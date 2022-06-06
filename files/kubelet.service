@@ -1,3 +1,4 @@
+# THIS FILE IS MANAGED BY PUPPET
 [Unit]
 Description=kubelet: The Kubernetes Node Agent
 Documentation=https://kubernetes.io/docs/home/
