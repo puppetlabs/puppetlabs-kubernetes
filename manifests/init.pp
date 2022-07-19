@@ -552,10 +552,7 @@ class kubernetes (
   Enum['archive','package'] $containerd_install_method    = 'archive',
   String $containerd_package_name                         = 'containerd.io',
   String $docker_package_name                             = 'docker-engine',
-  Optional[String] $docker_version                        = $facts['os']['family'] ? {
-    'Debian' => '5:20.10.11~3-0~ubuntu-' + $facts['os']['distro']['codename'],
-    'RedHat' => '17.03.1.ce-1.el7.centos',
-  },
+  Optional[String] $docker_version                        = undef,
   Boolean $pin_packages                                   = false,
   String $dns_domain                                      = 'cluster.local',
   Optional[String] $cni_pod_cidr                          = undef,
