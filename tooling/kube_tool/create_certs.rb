@@ -6,7 +6,7 @@ require 'base64'
 #TODO fix repeatitive code after inital internal release
 
 class CreateCerts
-  def CreateCerts.etcd_ca
+  def CreateCerts.etcd_ca(key_size)
     puts "Creating etcd ca"
     files = ['ca-conf.json', 'ca-csr.json', 'ca-key.pem', 'ca-key.pem']
     files.each do |x|
@@ -14,7 +14,7 @@ class CreateCerts
         FileUtils.rm_f(x)
       end
     end
-    csr = { "CN": "etcd", "key": {"algo": "rsa", "size": 2048 }}
+    csr = { "CN": "etcd", "key": {"algo": "rsa", "size": key_size }}
     conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
     File.open("ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("ca-conf.json", "w+") { |file| file.write(conf.to_json) }
@@ -28,9 +28,9 @@ class CreateCerts
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
   end
 
-  def CreateCerts.etcd_clients
+  def CreateCerts.etcd_clients(key_size)
     puts "Creating etcd client certs"
-    csr = { "CN": "client", "hosts": [""], "key": { "algo": "rsa", "size": 2048 } }
+    csr = { "CN": "client", "hosts": [""], "key": { "algo": "rsa", "size": key_size } }
     File.open("kube-etcd-csr.json", "w+") { |file| file.write(csr.to_json) }
     system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile client kube-etcd-csr.json | cfssljson -bare client")
     FileUtils.rm_f('kube-etcd-csr.csr')
@@ -42,7 +42,7 @@ class CreateCerts
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
   end
 
-  def CreateCerts.etcd_certificates(etcd_initial_cluster)
+  def CreateCerts.etcd_certificates(etcd_initial_cluster, key_size)
     etcd_servers = etcd_initial_cluster.split(",")
     etcd_server_ips = []
     etcd_servers.each do | servers |
@@ -56,9 +56,9 @@ class CreateCerts
       ip = server[1]
       if File.exist?("#{hostname}.yaml")
         FileUtils.rm_f("#{hostname}.yaml")
-      end  
+      end
         puts "Creating etcd peer and server certificates"
-        csr = { "CN": "etcd-#{hostname}", "hosts": etcd_server_ips, "key": { "algo": "rsa", "size": 2048 }}
+        csr = { "CN": "etcd-#{hostname}", "hosts": etcd_server_ips, "key": { "algo": "rsa", "size": key_size }}
         File.open("config.json", "w+") { |file| file.write(csr.to_json) }
         system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile server --hostname=#{etcd_server_ips * ","},#{hostname} config.json | cfssljson -bare #{hostname}-server")
         system("cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-conf.json -profile peer --hostname=#{ip},#{hostname} config.json | cfssljson -bare #{hostname}-peer")
@@ -81,7 +81,7 @@ class CreateCerts
     end
   end
 
-  def CreateCerts.kube_ca
+  def CreateCerts.kube_ca(key_size)
     puts "Creating kube ca"
     files = ['ca-conf.json', 'ca-csr.json', 'ca-key.pem', 'ca-key.pem']
     files.each do |x|
@@ -89,7 +89,7 @@ class CreateCerts
         FileUtils.rm_f(x)
       end
     end
-    csr = { "CN": "kubernetes", "key": {"algo": "rsa", "size": 2048 }}
+    csr = { "CN": "kubernetes", "key": {"algo": "rsa", "size": key_size }}
     conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
     File.open("ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("ca-conf.json", "w+") { |file| file.write(conf.to_json) }
@@ -104,10 +104,10 @@ class CreateCerts
     data['kubernetes::kubernetes_ca_key'] = key
     data['kubernetes::discovery_token_hash'] = discovery_token_hash
     FileUtils.rm_f('discovery_token_hash.csr')
-    File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) } 
+    File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
   end
 
-  def CreateCerts.kube_front_proxy_ca
+  def CreateCerts.kube_front_proxy_ca(key_size)
     puts "Creating kube front-proxy ca"
     files = ['front-proxy-ca-conf.json', 'front-proxy-ca-csr.json', 'front-proxy-ca-key.pem', 'front-proxy-ca-key.pem']
     files.each do |x|
@@ -115,7 +115,7 @@ class CreateCerts
         FileUtils.rm_f(x)
       end
     end
-    csr = { "CN": "front-proxy-ca", "key": {"algo": "rsa", "size": 2048 }}
+    csr = { "CN": "front-proxy-ca", "key": {"algo": "rsa", "size": key_size }}
     conf = { "signing": { "default": { "expiry": "87600h" }}}
     File.open("front-proxy-ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("front-proxy-ca-conf.json", "w+") { |file| file.write(conf.to_json) }
@@ -128,10 +128,10 @@ class CreateCerts
     data['kubernetes::kubernetes_front_proxy_ca_key'] = key
     File.open("kubernetes.yaml", "a") { |file| file.write(data.to_yaml) }
   end
-  
-  def CreateCerts.sa
+
+  def CreateCerts.sa(key_size)
     puts "Creating service account certs"
-    key = OpenSSL::PKey::RSA.new 2048
+    key = OpenSSL::PKey::RSA.new key_size
     open 'sa-key.pem', 'w' do |io|
       io.write key.to_pem
     end
@@ -148,5 +148,3 @@ class CreateCerts
 
 
 end
-
-

@@ -13,7 +13,8 @@ options = {:os                         => nil,
            :cni_provider_version       => nil,
            :etcd_initial_cluster       => nil,
            :kube_api_advertise_address => nil,
-      	   :install_dashboard          => nil,
+           :install_dashboard          => nil,
+           :key_size                   => nil,
           }
 
 parser = OptionParser.new do|opts|
@@ -49,6 +50,10 @@ parser = OptionParser.new do|opts|
     options[:kube_api_advertise_address] = api_address;
   end
 
+  opts.on('-b', '--key-size key_size', 'Specifies the number of bits in the key to create') do |key_size|
+    options[:key_size] = key_size
+  end
+
   opts.on('-d', '--install-dashboard dashboard', 'install the kube dashboard') do |dashboard|
     options[:install_dashboard] = dashboard;
   end
@@ -64,16 +69,17 @@ parser.parse!
 
 class Kube_tool
   def build_hiera(hash)
+    key_size = hash[:key_size].to_i
     OtherParams.create( hash[:os], hash[:version], hash[:container_runtime], hash[:cni_provider], hash[:cni_provider_version], hash[:etcd_initial_cluster], hash[:etcd_ip], hash[:kube_api_advertise_address], hash[:install_dashboard])
     PreChecks.checks
-    CreateCerts.etcd_ca
-    CreateCerts.etcd_clients
-    CreateCerts.etcd_certificates( hash[:etcd_initial_cluster])
-    CreateCerts.kube_ca
-    CreateCerts.kube_front_proxy_ca
-    CreateCerts.sa    
+    CreateCerts.etcd_ca(key_size)
+    CreateCerts.etcd_clients(key_size)
+    CreateCerts.etcd_certificates(hash[:etcd_initial_cluster], key_size)
+    CreateCerts.kube_ca(key_size)
+    CreateCerts.kube_front_proxy_ca(key_size)
+    CreateCerts.sa(key_size)
     CleanUp.remove_files
-    CleanUp.clean_yaml( hash[:os])
+    CleanUp.clean_yaml(hash[:os])
   end
 end
 
