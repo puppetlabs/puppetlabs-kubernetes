@@ -94,6 +94,9 @@ oom_score = 0
           privileged_without_host_devices = false
           base_runtime_spec = ""
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+<%- if @docker_cgroup_driver == 'systemd' -%>
+            SystemdCgroup = true
+<%- end -%>
 <%- if @containerd_default_runtime_name == 'nvidia' -%>
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
           runtime_type = "io.containerd.runc.v2"

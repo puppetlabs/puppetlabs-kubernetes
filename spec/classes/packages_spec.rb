@@ -1007,4 +1007,77 @@ describe 'kubernetes::packages', :type => :class do
     it { should contain_file('/etc/apt/preferences.d/kubernetes')}
     it { should_not contain_file('/etc/systemd/system/docker.service.d')}
   end
+
+  context 'on Debian 11' do
+    let(:facts) do
+      {
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "Debian",
+          :name    => 'Debian',
+          :release => {
+            :full => '11.4',
+            :major => '11'
+          },
+          :distro => {
+            :codename => "bullseye",
+          },
+        },
+      }
+    end
+    let(:pre_condition) {
+       '
+       include apt
+       include kubernetes
+       exec { \'kubernetes-systemd-reload\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
+       '
+    }
+    let(:params) do
+        {
+        'container_runtime' => 'cri_containerd',
+        'kubernetes_package_version' => '1.24.3-00',
+        'containerd_version' => '1.6.6',
+        'etcd_version' => '3.4.19',
+        'runc_source' => 'https://github.com/opencontainers/runc/releases/download/v1.1.3/runc.amd64',
+        'containerd_install_method' => 'archive',
+        'containerd_default_runtime_name' => 'runc',
+        'controller' => true,
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => false,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'create_repos' => true,
+        'pin_packages'  => true,
+        'containerd_archive_checksum' => '0212869675742081d70600a1afc6cea4388435cc52bf5dc21f4efdcb9a92d2ef',
+        'etcd_archive_checksum' => '9ba70e27c17a1faf6d3de89040432189d8071fa27ca156d09d3503989ecd9ccd',
+        'runc_source_checksum' => '6e8b24be90fffce6b025d254846da9d2ca6d65125f9139b6354bab0272253d01',
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        }
+    end
+    it { is_expected.to contain_file_line('remove swap in /etc/fstab')}
+    it { is_expected.to contain_kmod__load('overlay')}
+    it { is_expected.to contain_kmod__load('br_netfilter')}
+    it { is_expected.to contain_sysctl('net.bridge.bridge-nf-call-iptables').with_ensure('present').with_value('1')}
+    it { is_expected.to contain_sysctl('net.ipv4.ip_forward').with_ensure('present').with_value('1')}
+    it { is_expected.to contain_exec('disable swap')}
+    it { is_expected.to contain_file('/etc/containerd/config.toml').with_content(/\s*SystemdCgroup = true\s*/)}
+    it { is_expected.to contain_file('/usr/bin/runc').with_mode('0700')}
+    it { is_expected.not_to contain_file('/etc/docker')}
+    it { is_expected.not_to contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-driver": "overlay2",\s*/)}
+    it { is_expected.not_to contain_file('/etc/docker/daemon.json').with_content(/\s*"storage-opts"\s*/)}
+    it { is_expected.not_to contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_removal=true",\s*/)}
+    it { is_expected.not_to contain_file('/etc/docker/daemon.json').with_content(/\s*"dm.use_deferred_deletion=true"\s*/)}
+    it { is_expected.not_to contain_file('/etc/docker/daemon.json').with_content(/\s*"default-runtime": "runc"\s*/)}
+    it { is_expected.not_to contain_file('/etc/docker/daemon.json').with_content(/\s*"native.cgroupdriver=systemd"\s*/)}
+    it { is_expected.not_to contain_file('/etc/apt/preferences.d/docker')}
+    it { is_expected.to contain_file('/etc/apt/preferences.d/kubernetes')}
+    it { is_expected.not_to contain_file('/etc/systemd/system/docker.service.d')}
+  end
 end
