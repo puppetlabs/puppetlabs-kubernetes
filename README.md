@@ -280,6 +280,14 @@ Valid values are `cri_containerd` or `docker`.
 
 Defaults to `docker`.
 
+#### `container_runtime_use_proxy`
+
+When set to true will cause the new proxy variables to be applied to the container runtime. Currently only implemented for Docker.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
+
 #### `controller`
 
 Specifies whether to set the node as a Kubernetes controller.
@@ -634,6 +642,18 @@ The peer certificate key data for the etcd cluster. This value must be passed as
 
 Defaults to `undef`.
 
+#### `http_proxy`
+
+The string value to set for the HTTP_PROXY environment variable.
+
+Defaults to `undef`.
+
+#### `https_proxy`
+
+The string value to set for the HTTPS_PROXY environment variable.
+
+Defaults to `undef`.
+
 #### image_repository
 
 The container registry to pull control plane images from.
@@ -740,6 +760,14 @@ The URL for the APT repo gpg key.
 
 Defaults to `https://packages.cloud.google.com/apt/doc/apt-key.gpg`.
 
+#### `kubelet_use_proxy`
+
+When set to true will cause the new proxy variables to be applied to the Kubelet.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
+
 #### `kubernetes_yum_baseurl`
 
 The YUM repo URL for the Kubernetes packages.
@@ -767,6 +795,12 @@ Specifies whether to install an external Etcd via this module.
 Valid values are `true`, `false`.
 
 Defaults to `true`.
+
+#### `no_proxy`
+
+The string value to set for the NO_PROXY environment variable.
+
+Defaults to `undef`.
 
 #### `node_label`
 

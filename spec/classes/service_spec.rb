@@ -142,4 +142,49 @@ describe 'kubernetes::service', :type => :class do
     end
     it { is_expected.to_not contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf')}
   end
+
+  context 'with container_runtime => cri_containerd and container_runtime_use_proxy => true' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.10.2',
+        'container_runtime' => 'cri_containerd',
+        'container_runtime_use_proxy' => true,
+        'http_proxy' => 'foo',
+        'https_proxy' => 'bar',
+        'no_proxy' => 'baz',
+        'controller' => true,
+        'cloud_provider' => '',
+        'cloud_config' => '',
+        'manage_docker' => true,
+        'manage_etcd' => true,
+      }
+    end
+    it { should contain_file('/etc/systemd/system/containerd.service.d')}
+    it { should contain_file('/etc/systemd/system/containerd.service.d/http-proxy.conf').with_content(/\s*Environment="HTTP_PROXY=foo"\s*/)}
+    it { should contain_file('/etc/systemd/system/containerd.service.d/http-proxy.conf').with_content(/\s*Environment="HTTPS_PROXY=bar"\s*/)}
+    it { should contain_file('/etc/systemd/system/containerd.service.d/http-proxy.conf').with_content(/\s*Environment="NO_PROXY=baz"\s*/)}
+    it { should_not contain_file('/etc/systemd/system/docker.service.d/http-proxy.conf')}
+  end
+
+  context 'with kubelet_use_proxy => true' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.10.2',
+        'container_runtime' => 'cri_containerd',
+        'kubelet_use_proxy' => true,
+        'http_proxy' => 'foo',
+        'https_proxy' => 'bar',
+        'no_proxy' => 'baz',
+        'controller' => true,
+        'cloud_provider' => '',
+        'cloud_config' => '',
+        'manage_docker' => true,
+        'manage_etcd' => true,
+      }
+    end
+    it { should contain_file('/etc/systemd/system/kubelet.service.d')}
+    it { should contain_file('/etc/systemd/system/kubelet.service.d/http-proxy.conf').with_content(/\s*Environment="HTTP_PROXY=foo"\s*/)}
+    it { should contain_file('/etc/systemd/system/kubelet.service.d/http-proxy.conf').with_content(/\s*Environment="HTTPS_PROXY=bar"\s*/)}
+    it { should contain_file('/etc/systemd/system/kubelet.service.d/http-proxy.conf').with_content(/\s*Environment="NO_PROXY=baz"\s*/)}
+  end
 end

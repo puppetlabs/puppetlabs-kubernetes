@@ -41,6 +41,10 @@ class kubernetes::packages (
   Integer $package_pin_priority                         = 32767,
   String $archive_checksum_type                         = 'sha256',
   String $tmp_directory                                 = $kubernetes::tmp_directory,
+  Optional[String] $http_proxy                          = $kubernetes::http_proxy,
+  Optional[String] $https_proxy                         = $kubernetes::https_proxy,
+  Optional[String] $no_proxy                            = $kubernetes::no_proxy,
+  Boolean $container_runtime_use_proxy                  = $kubernetes::container_runtime_use_proxy,
 ) {
   # Download directory for archives
   file { $tmp_directory:
@@ -177,6 +181,17 @@ class kubernetes::packages (
       mode    => '0755',
       require => File['/etc/docker/daemon.json'],
       notify  => Exec['kubernetes-systemd-reload'],
+    }
+
+    if $container_runtime_use_proxy {
+      file { '/etc/systemd/system/docker.service.d/http-proxy.conf':
+        ensure  => present,
+        notify  => [Exec['kubernetes-systemd-reload'], Service['docker']],
+        owner   => root,
+        group   => root,
+        mode    => '0644',
+        content => template("${module_name}/http-proxy.conf.erb"),
+      }
     }
   }
   elsif $container_runtime == 'cri_containerd' and $containerd_install_method == 'package' {

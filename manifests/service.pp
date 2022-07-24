@@ -2,6 +2,7 @@
 
 class kubernetes::service (
   String $container_runtime                             = $kubernetes::container_runtime,
+  Boolean $container_runtime_use_proxy                  = $kubernetes::container_runtime_use_proxy,
   Enum['archive','package'] $containerd_install_method  = $kubernetes::containerd_install_method,
   Boolean $controller                                   = $kubernetes::controller,
   Boolean $manage_docker                                = $kubernetes::manage_docker,
@@ -10,6 +11,10 @@ class kubernetes::service (
   String $kubernetes_version                            = $kubernetes::kubernetes_version,
   Optional[String] $cloud_provider                      = $kubernetes::cloud_provider,
   Optional[String] $cloud_config                        = $kubernetes::cloud_config,
+  Optional[String] $http_proxy                          = $kubernetes::http_proxy,
+  Optional[String] $https_proxy                         = $kubernetes::https_proxy,
+  Optional[String] $no_proxy                            = $kubernetes::no_proxy,
+  Boolean $kubelet_use_proxy                            = $kubernetes::kubelet_use_proxy,
 ) {
   file { '/etc/systemd/system/kubelet.service.d':
     ensure => directory,
@@ -25,17 +30,16 @@ class kubernetes::service (
     'docker': {
       if $manage_docker == true {
         service { 'docker':
-          ensure => running,
-          enable => true,
+          ensure  => running,
+          enable  => true,
+          require => Exec['kubernetes-systemd-reload'],
         }
       }
     }
 
     'cri_containerd': {
-      if $containerd_install_method == 'package' {
-        $containerd_service_require = undef
-      } else {
-        $containerd_service_require = Exec['kubernetes-systemd-reload']
+      $containerd_service_require = Exec['kubernetes-systemd-reload']
+      unless $containerd_install_method == 'package' {
         file { '/etc/systemd/system/kubelet.service.d/0-containerd.conf':
           ensure  => file,
           owner   => 'root',
@@ -53,6 +57,25 @@ class kubernetes::service (
           mode    => '0644',
           content => template('kubernetes/containerd.service.erb'),
           notify  => [Exec['kubernetes-systemd-reload'], Service['containerd']],
+        }
+      }
+
+      file { '/etc/systemd/system/containerd.service.d':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        notify  => Exec['kubernetes-systemd-reload'],
+      }
+
+      if $container_runtime_use_proxy {
+        file { '/etc/systemd/system/containerd.service.d/http-proxy.conf':
+          ensure  => present,
+          notify  => [Exec['kubernetes-systemd-reload'], Service['containerd']],
+          owner   => root,
+          group   => root,
+          mode    => '0644',
+          content => template("${module_name}/http-proxy.conf.erb"),
         }
       }
 
@@ -122,7 +145,19 @@ class kubernetes::service (
     }
   }
 
+  if $kubelet_use_proxy {
+    file { '/etc/systemd/system/kubelet.service.d/http-proxy.conf':
+      ensure  => present,
+      notify  => [Exec['kubernetes-systemd-reload'], Service['kubelet']],
+      owner   => root,
+      group   => root,
+      mode    => '0644',
+      content => template("${module_name}/http-proxy.conf.erb"),
+    }
+  }
+
   service { 'kubelet':
-    enable => true,
+    enable  => true,
+    require => Exec['kubernetes-systemd-reload'],
   }
 }
