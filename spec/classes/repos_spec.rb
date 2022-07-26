@@ -52,7 +52,7 @@ describe 'kubernetes::repos', :type => :class do
 
     it { should contain_apt__source('docker').with(
       :ensure   => 'present',
-      :location => 'https://apt.dockerproject.org/repo',
+      :location => 'https://download.docker.com/linux/ubuntu',
       :repos    => 'main',
       :release  => 'xenial',
       :key      => { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' }
@@ -109,7 +109,7 @@ describe 'kubernetes::repos', :type => :class do
 
     it { should contain_apt__source('docker').with(
       :ensure   => 'present',
-      :location => 'https://apt.dockerproject.org/repo',
+      :location => 'https://download.docker.com/linux/ubuntu',
       :repos    => 'main',
       :release  => 'xenial',
       :key      => { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' }
