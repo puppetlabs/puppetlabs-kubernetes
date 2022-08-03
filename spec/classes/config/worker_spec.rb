@@ -72,4 +72,29 @@ describe 'kubernetes::config::worker', :type => :class do
       expect(config_yaml['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => 'aws')
     end
   end
+
+  context 'with version => 1.24.3 and node_role defined' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.24.3',
+        'node_role' => 'edge',
+      }
+    end
+
+    let(:config_yaml) { YAML.safe_load(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{key: node-role.kubernetes.io\/edge\n}) }
+  end
+
+  context 'with version => 1.21.1 without node_role defined' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.21.1',
+      }
+    end
+
+    let(:config_yaml) { YAML.safe_load(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{taints:(\s+)\[\]\n}) }
+  end
 end

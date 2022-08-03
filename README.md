@@ -809,6 +809,12 @@ An override to the label of a node.
 
 Defaults to `hostname`.
 
+#### `node_role`
+
+Sets label `node-role.kubernetes.io/{node_role}`
+
+Defaults to `undef`.
+
 #### `runc_source`
 
 The download URL for `runc`.

@@ -16,8 +16,12 @@ nodeRegistration:
   name: <%= @node_name %>
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: unix:///run/containerd/containerd.sock
-  taints: null
   <%- end -%>
+  taints: <% if @node_role.nil? -%>[]
+    <% else %>
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/<%= @node_role %>
+    <% end %>
   kubeletExtraArgs:
     <%- if @cloud_provider -%>
     cloud-provider: <%= @cloud_provider %>
