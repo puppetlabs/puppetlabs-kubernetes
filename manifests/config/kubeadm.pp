@@ -173,6 +173,13 @@ class kubernetes::config::kubeadm (
     default                  => 'v1beta3',
   }
 
+  # master role is DEPRECATED
+  if versioncmp($kubernetes_version, '1.20.0') >= 0 {
+    $node_role = 'control-plane'
+  } else {
+    $node_role = 'master'
+  }
+
   file { $config_file:
     ensure  => file,
     content => template("kubernetes/${config_version}/config_kubeadm.yaml.erb"),

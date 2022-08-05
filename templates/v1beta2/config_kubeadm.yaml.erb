@@ -18,7 +18,7 @@ nodeRegistration:
   <%- end -%>
   taints:
   - effect: NoSchedule
-    key: node-role.kubernetes.io/master
+    key: node-role.kubernetes.io/<%= @node_role %>
   kubeletExtraArgs:
     <%- if @cloud_provider -%>
     cloud-provider: <%= @cloud_provider %>
