@@ -555,4 +555,19 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
   end
+
+  context 'set role control-plane' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.20.0',
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it {
+      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+        .with_content(%r{key: node-role.kubernetes.io/control-plane\n})
+    }
+  end
 end
