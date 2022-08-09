@@ -644,6 +644,92 @@ describe 'kubernetes::packages', :type => :class do
     end
   end
 
+  context 'container_runtime => Docker and manage_docker => true and container_runtime_use_proxy => true' do
+    let(:facts) do
+      {
+        :osfamily         => 'Debian', #needed to run dependent tests from fixtures puppet-kmod
+        :kernel           => 'Linux',
+        :os               => {
+          :family => "Debian",
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '16.04',
+          },
+          :distro => {
+            :codename => "xenial",
+          },
+        },
+      }
+    end
+    let(:pre_condition) {
+       '
+       include apt
+       include kubernetes
+       exec { \'kubernetes-systemd-reload\': }
+       service { \'docker\': }
+       service { \'etcd\': }
+       service { \'containerd\': }
+       '
+    }
+
+    let(:params) do
+        {
+        'container_runtime' => 'docker',
+        'container_runtime_use_proxy' => true,
+        'http_proxy' => 'foo',
+        'https_proxy' => 'bar',
+        'no_proxy' => 'baz',
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' =>'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => [],
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages'  => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+            'docker.io' => {
+                'mirrors' => {
+                    'endpoint' => 'https://registry-1.docker.io'
+                },
+            },
+          },
+        }
+    end
+    it { should contain_file('/etc/systemd/system/docker.service.d')}
+    it { should contain_file('/etc/systemd/system/docker.service.d/http-proxy.conf').with_content(/\s*Environment="HTTP_PROXY=foo"\s*/)}
+    it { should contain_file('/etc/systemd/system/docker.service.d/http-proxy.conf').with_content(/\s*Environment="HTTPS_PROXY=bar"\s*/)}
+    it { should contain_file('/etc/systemd/system/docker.service.d/http-proxy.conf').with_content(/\s*Environment="NO_PROXY=baz"\s*/)}
+    it { should_not contain_file('/etc/systemd/system/containerd.service.d')}
+    it { should_not contain_file('/etc/systemd/system/containerd.service.d/http-proxy.conf')}
+  end
+
   context 'with osfamily => Debian and container_runtime => Docker and manage_docker => false and manage_etcd => true' do
     let(:facts) do
       {

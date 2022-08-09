@@ -533,6 +533,30 @@
 #   {'RootlessControlPlane' => true}
 # Default: undefined, no feature gates
 #
+# [*http_proxy*]
+#  Configure the HTTP_PROXY environment variable
+#  Defaults to undef
+#
+# [*https_proxy*]
+#  Configure the HTTPS_PROXY environment variable
+#  Defaults to undef
+#
+# [*no_proxy*]
+#  Configure the NO_PROXY environment variable
+#  Defaults to undef
+#
+# [*container_runtime_use_proxy*]
+#  Configure whether the container runtime should be configured to use a proxy.
+#  If set to true, the container runtime will use the http_proxy, https_proxy and
+#  no_proxy values.
+#  Defaults to false
+#
+# [*kubelet_use_proxy*]
+#  Configure whether the kubelet should be configured to use a proxy.
+#  If set to true, the kubelet will use the http_proxy, https_proxy and
+#  no_proxy values.
+#  Defaults to false
+#
 # Authors
 # -------
 #
@@ -659,6 +683,11 @@ class kubernetes (
     default  => undef,
   },
   Optional[String] $docker_extra_daemon_config            = undef,
+  Optional[String] $http_proxy                            = undef,
+  Optional[String] $https_proxy                           = undef,
+  Optional[String] $no_proxy                              = undef,
+  Boolean $container_runtime_use_proxy                    = false,
+  Boolean $kubelet_use_proxy                              = false,
   String $docker_log_max_file                             = '1',
   String $docker_log_max_size                             = '100m',
   Boolean $disable_swap                                   = true,
