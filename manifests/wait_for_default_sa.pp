@@ -10,9 +10,11 @@ define kubernetes::wait_for_default_sa (
   $safe_namespace = shell_escape($namespace)
 
   # This prevents a known race condition https://github.com/kubernetes/kubernetes/issues/66689
+  $cmd = ['kubectl', '-n', shell_escape($safe_namespace), 'get', 'serviceaccount', 'default', '-o', 'name']
+
   exec { "wait for default serviceaccount creation in ${safe_namespace}":
-    command     => "kubectl -n ${safe_namespace} get serviceaccount default -o name",
-    unless      => "kubectl -n ${safe_namespace} get serviceaccount default -o name",
+    command     => $cmd,
+    unless      => $cmd,
     path        => $path,
     environment => $env,
     timeout     => $timeout,

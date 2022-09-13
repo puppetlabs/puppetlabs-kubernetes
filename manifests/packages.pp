@@ -58,10 +58,13 @@ class kubernetes::packages (
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
 
   if $disable_swap {
+    $command = ['swapoff', '-a']
+    $unless = ['awk', '"{ if (NR > 1) exit 1}"', '/proc/swaps']
+
     exec { 'disable swap':
       path    => ['/usr/sbin/', '/usr/bin', '/bin', '/sbin'],
-      command => 'swapoff -a',
-      unless  => "awk '{ if (NR > 1) exit 1}' /proc/swaps",
+      command => $command,
+      unless  => $unless,
     }
     file_line { 'remove swap in /etc/fstab':
       ensure            => absent,
