@@ -25,28 +25,39 @@ class kubernetes::kube_addons (
   }
 
   if $cni_rbac_binding {
-    $shellsafe_binding = shell_escape($cni_rbac_binding)
+    $binding_command = ['kubectl', 'apply', '-f', $cni_rbac_binding]
+    $binding_onlyif = ['kubectl', 'get', 'nodes']
+    $binding_unless = ['kubectl get clusterrole | grep calico']
+
     exec { 'Install calico rbac bindings':
       environment => $env,
-      command     => "kubectl apply -f ${shellsafe_binding}",
-      onlyif      => 'kubectl get nodes',
-      unless      => 'kubectl get clusterrole | grep calico',
+      command     => $binding_command,
+      onlyif      => $binding_onlyif,
+      unless      => $binding_unless,
     }
   }
 
   if $cni_network_provider {
     if $cni_provider == 'calico-tigera' {
       if $cni_network_preinstall {
-        $shellsafe_preinstall = shell_escape($cni_network_preinstall)
+        $preinstall_command = ['kubectl', 'apply', '-f', $cni_network_preinstall]
+        $preinstall_onlyif = ['kubectl', 'get', 'nodes']
+        $preinstall_unless = ["kubectl -n tigera-operator get deployments | egrep '^tigera-operator'"]
+
         exec { 'Install cni network (preinstall)':
-          command     => "kubectl apply -f ${shellsafe_preinstall}",
-          onlyif      => 'kubectl get nodes',
-          unless      => "kubectl -n tigera-operator get deployments | egrep '^tigera-operator'",
+          command     => $preinstall_command,
+          onlyif      => $preinstall_onlyif,
+          unless      => $preinstall_unless,
           environment => $env,
           before      => Exec['Install cni network provider'],
         }
       }
-      $calico_installation_path='/etc/kubernetes/calico-installation.yaml'
+      # Removing Calico_installation_path variable as it doesnt seem to apport any extra value here.
+      $calico_installation_path = '/etc/kubernetes/calico-installation.yaml'
+      $path_command = ['kubectl', 'apply', '-f', '/etc/kubernetes/calico-installation.yaml']
+      $path_onlyif = ['kubectl', 'get', 'nodes']
+      $path_unless = ["kubectl -n calico-system get daemonset | egrep '^calico-node'"]
+
       file { $calico_installation_path:
         ensure  => 'present',
         group   => 'root',
@@ -62,38 +73,49 @@ class kubernetes::kube_addons (
         multiple => false,
         replace  => true,
       } -> exec { 'Install cni network provider':
-        command     => "kubectl apply -f ${calico_installation_path}",
-        onlyif      => 'kubectl get nodes',
-        unless      => "kubectl -n calico-system get daemonset | egrep '^calico-node'",
+        command     => $path_command,
+        onlyif      => $path_onlyif,
+        unless      => $path_unless,
         environment => $env,
       }
     } else {
-      $shellsafe_provider = shell_escape($cni_network_provider)
+      $provider_command = ['kubectl', 'apply', '-f', $cni_network_provider]
+      $provider_onlyif = ['kubectl', 'get', 'nodes']
+      $provider_unless = ["kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'"]
+
       exec { 'Install cni network provider':
-        command     => "kubectl apply -f ${shellsafe_provider}",
-        onlyif      => 'kubectl get nodes',
-        unless      => "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'",
+        command     => $provider_command,
+        onlyif      => $provider_onlyif,
+        unless      => $provider_unless,
         environment => $env,
       }
     }
   }
 
+  if $node_name !~ /^[a-zA-Z0-9\-_]+$/ {
+    fail("Invalid node name: ${node_name}")
+  }
+
   if $schedule_on_controller {
+    $schedule_command = ['kubectl', 'taint', 'nodes', $node_name, 'node-role.kubernetes.io/master-']
+    $schedule_onlyif = ["kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'"]
+
     exec { 'schedule on controller':
-      command => "kubectl taint nodes ${node_name} node-role.kubernetes.io/master-",
-      onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'",
+      command => $schedule_command,
+      onlyif  => $schedule_onlyif,
     }
   }
 
   if $install_dashboard {
-    $shellsafe_source = shell_escape($dashboard_url)
+    $dashboard_command = ['kubectl', 'apply', '-f', $dashboard_url]
+    $dashboard_onlyif = ['kubectl', 'get', 'nodes']
+    $dashboard_unless = [['kubectl get pods --field-selector="status.phase=Running" -n kubernetes-dashboard | grep kubernetes-dashboard-'],
+    ['kubectl get pods --field-selector="status.phase=Running" -n kube-system | grep kubernetes-dashboard-']]
+
     exec { 'Install Kubernetes dashboard':
-      command     => "kubectl apply -f ${shellsafe_source}",
-      onlyif      => 'kubectl get nodes',
-      unless      => [
-        'kubectl get pods --field-selector="status.phase=Running" -n kubernetes-dashboard|grep kubernetes-dashboard-',
-        'kubectl get pods --field-selector="status.phase=Running" -n kube-system|grep kubernetes-dashboard-',
-      ],
+      command     => $dashboard_command,
+      onlyif      => $dashboard_onlyif,
+      unless      => $dashboard_unless,
       environment => $env,
     }
   }

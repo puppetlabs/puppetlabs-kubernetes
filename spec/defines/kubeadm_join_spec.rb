@@ -39,7 +39,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     end
 
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_exec('kubeadm join').with_command("kubeadm join '10.0.0.1:6443' --discovery-token 'token' --discovery-token-ca-cert-hash 'sha256:hash' --node-name 'kube-node' --token 'token'")}
+    it { is_expected.to contain_exec('kubeadm join').with_command(["kubeadm", "join", "'10.0.0.1:6443' --discovery-token 'token' --discovery-token-ca-cert-hash 'sha256:hash' --node-name 'kube-node' --token 'token'"])}
   end
 
   context 'with kubernetes_version => 1.12.3 and controller_address => 10.0.0.1:6443' do
@@ -48,7 +48,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     end
 
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_exec('kubeadm join').with_command("kubeadm join --config '/etc/kubernetes/config.yaml'")}
+    it { is_expected.to contain_exec('kubeadm join').with_command(["kubeadm", "join", "--config '/etc/kubernetes/config.yaml'"])}
   end
 
   context 'with kubernetes_version => 1.12.3 and ignore_preflight_errors => [foo, bar]' do
@@ -60,7 +60,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     end
 
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_exec('kubeadm join').with_command("kubeadm join --config '/etc/kubernetes/config.yaml' --ignore-preflight-errors 'foo,bar'")}
+    it { is_expected.to contain_exec('kubeadm join').with_command(["kubeadm", "join", "--config '/etc/kubernetes/config.yaml' --ignore-preflight-errors 'foo,bar'"])}
   end
 
   context 'with kubernetes_version => 1.12.3 and discovery_file => /etc/kubernetes/admin.conf' do
@@ -72,6 +72,6 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     end
 
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_exec('kubeadm join').with_command("kubeadm join --discovery-file '/etc/kubernetes/admin.conf'")}
+    it { is_expected.to contain_exec('kubeadm join').with_command(["kubeadm", "join", "--discovery-file '/etc/kubernetes/admin.conf'"])}
   end
 end
