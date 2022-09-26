@@ -69,6 +69,7 @@ The above parameters are:
 * `ETCD_IP`: The IP each etcd member listens on. We recommend passing the fact for the interface to be used by the cluster.
 * `KUBE_API_ADVERTISE_ADDRESS`: The IP each etcd/apiserver instance uses on each controller. We recommend passing the fact for the interface to be used by the cluster.
 * `INSTALL_DASHBOARD`: A boolean which specifies whether to install the dashboard.
+* `KEY_SIZE`: Number of bits in certificates (default: `2048`).
 
 Kubetool creates:
 
