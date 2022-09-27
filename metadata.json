@@ -48,11 +48,17 @@
         "22.04"
       ]
     },
-     {
+    {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "10",
         "11"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
       ]
     }
   ],
