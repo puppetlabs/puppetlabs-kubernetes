@@ -159,7 +159,8 @@ class kubernetes::service (
   }
 
   service { 'kubelet':
-    enable  => true,
-    require => Exec['kubernetes-systemd-reload'],
+    ensure    => running,
+    enable    => true,
+    subscribe => [Exec['kubernetes-systemd-reload'], Package['kubelet']],
   }
 }
