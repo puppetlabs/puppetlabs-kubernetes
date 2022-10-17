@@ -18,6 +18,7 @@ class kubernetes::config::kubeadm (
   Optional[String] $etcdpeer_key = $kubernetes::etcdpeer_key,
   Array $etcd_peers = $kubernetes::etcd_peers,
   String $etcd_hostname = $kubernetes::etcd_hostname,
+  String $etcd_data_dir = $kubernetes::etcd_data_dir,
   String $etcd_ip = $kubernetes::etcd_ip,
   String $cni_pod_cidr = $kubernetes::cni_pod_cidr,
   Integer $kube_api_bind_port = $kubernetes::kube_api_bind_port,
@@ -85,6 +86,9 @@ class kubernetes::config::kubeadm (
   }
 
   if $manage_etcd {
+    file { $etcd_data_dir:
+      ensure => file,
+    }
     if !$delegated_pki {
       $etcd.each | String $etcd_files | {
         file { "/etc/kubernetes/pki/etcd/${etcd_files}":

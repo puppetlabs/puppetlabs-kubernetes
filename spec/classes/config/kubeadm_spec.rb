@@ -60,6 +60,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
+    it { is_expected.to contain_file('/var/lib/etcd') }
 
     context 'with etcd_listen_metric_urls defined' do
       let(:params) do
@@ -73,6 +74,17 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       end
 
       it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--listen-metrics-urls http://0.0.0.0:2381.*}) }
+    end
+
+    context 'with etcd_data_dir configured' do
+      let(:params) do
+        {
+          'manage_etcd' => true,
+          'etcd_data_dir' => '/var/lib/foo',
+        }
+      end
+
+      it { is_expected.to contain_file('/var/lib/foo' )}
     end
   end
 
