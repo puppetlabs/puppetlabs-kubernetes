@@ -175,7 +175,7 @@
 #
 # [*etcd_data_dir*]
 # Directory, where etcd data is stored.
-# Default to /var/lib/etcd.
+# Defaults to /var/lib/etcd.
 #
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
