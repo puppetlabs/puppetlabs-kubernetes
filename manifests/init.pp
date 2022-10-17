@@ -173,6 +173,10 @@
 #   An example with hiera would be kubernetes::etcd_hostname: "%{::fqdn}"
 #   Defaults to hostname
 #
+# [*etcd_data_dir*]
+# Directory, where etcd data is stored.
+# Defaults to /var/lib/etcd.
+#
 # [*etcd_ip*]
 #   The ip address that you want etcd to use for communications.
 #   An example with hiera would be kubernetes::etcd_ip: "%{networking.ip}"
@@ -588,6 +592,7 @@ class kubernetes (
   Optional[String] $kube_api_advertise_address            = undef,
   String $etcd_version                                    = '3.2.18',
   Optional[String] $etcd_hostname                         = $facts['networking']['hostname'],
+  String $etcd_data_dir                                   = '/var/lib/etcd',
   Optional[String] $etcd_ip                               = undef,
   Optional[Array] $etcd_peers                             = undef,
   Optional[String] $etcd_initial_cluster                  = undef,
