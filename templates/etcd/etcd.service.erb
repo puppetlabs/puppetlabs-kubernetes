@@ -12,7 +12,7 @@ LimitNOFILE=40000
 TimeoutStartSec=0
 
 ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
-    --data-dir /var/lib/etcd \
+    --data-dir <%= @etcd_data_dir %> \
     --listen-client-urls https://<%= @etcd_ip %>:2379 \
     --advertise-client-urls https://<%= @etcd_ip %>:2379 \
     --listen-peer-urls https://<%= @etcd_ip %>:2380 \

@@ -1,5 +1,5 @@
 ETCD_NAME="<%= @hostname %>"
-ETCD_DATA_DIR="/var/lib/etcd"
+ETCD_DATA_DIR="<%= @etcd_data_dir %>"
 ETCD_LISTEN_PEER_URLS="https://<%= @etcd_ip %>:2380"
 ETCD_LISTEN_CLIENT_URLS="https://<%= @etcd_ip %>:2379"
 <% if @etcd_discovery_srv -%>
