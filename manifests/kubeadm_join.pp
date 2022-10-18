@@ -19,7 +19,7 @@ define kubernetes::kubeadm_join (
   case $kubernetes_version {
     # K1.11 and below don't use the config file
     /^1.1(0|1)/: {
-      $kubeadm_join_flags = kubeadm_join_flags( {
+      $kubeadm_join_flags = kubeadm_join_flags({
           controller_address       => $controller_address,
           cri_socket               => $cri_socket,
           discovery_file           => $discovery_file,
@@ -34,7 +34,7 @@ define kubernetes::kubeadm_join (
       })
     }
     default: {
-      $kubeadm_join_flags = kubeadm_join_flags( {
+      $kubeadm_join_flags = kubeadm_join_flags({
           config                   => $config,
           discovery_file           => $discovery_file,
           feature_gates            => $feature_gates,

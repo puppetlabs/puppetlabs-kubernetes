@@ -60,7 +60,6 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
-    it { is_expected.to contain_file('/var/lib/etcd') }
 
     context 'with etcd_listen_metric_urls defined' do
       let(:params) do
@@ -74,17 +73,6 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       end
 
       it { is_expected.to contain_file('/etc/systemd/system/etcd.service').with_content(%r{.*--listen-metrics-urls http://0.0.0.0:2381.*}) }
-    end
-
-    context 'with etcd_data_dir configured' do
-      let(:params) do
-        {
-          'manage_etcd' => true,
-          'etcd_data_dir' => '/var/lib/foo',
-        }
-      end
-
-      it { is_expected.to contain_file('/var/lib/foo' )}
     end
   end
 
@@ -179,6 +167,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_LISTEN_METRICS_URLS=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="\/var\/lib\/etcd"}) }
 
     context 'with etcd_listen_metric_urls defined' do
       let(:params) do
@@ -197,7 +186,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
   end
 
-  context 'manage_etcd => true and etcd_install_method => package and etcd_discovery_srv => etcd-autodiscovery' do
+  context 'manage_etcd => true and etcd_install_method => package and etcd_discovery_srv => etcd-autodiscovery and etcd_data_dir => "/var/lib/foo"' do
     let(:params) do
       {
         'etcd_install_method' => 'package',
@@ -207,6 +196,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
         'etcd_version' => '2.9.9',
+        'etcd_data_dir' => '/var/lib/foo',
       }
     end
 
@@ -215,6 +205,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_DISCOVERY_SRV="etcd-autodiscovery".*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="\/var\/lib\/foo"}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => wget and etcd_discovery_srv => etcd-autodiscovery' do
@@ -237,7 +228,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/systemd/system/etcd.service').without_content(%r{.*--auto-compaction-mode .*}) }
   end
 
-  context 'manage_etcd => true and etcd_install_method => package' do
+  context 'manage_etcd => true and etcd_install_method => package and etcd_data_dir => /var/lib/bar' do
     let(:params) do
       {
         'etcd_install_method' => 'package',
@@ -245,6 +236,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
+        'etcd_data_dir' => '/var/lib/bar',
       }
     end
 
@@ -252,6 +244,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="\/var\/lib\/bar"}) }
   end
 
   context 'with version = 1.12 and node_name => foo and cloud_provider => aws' do
