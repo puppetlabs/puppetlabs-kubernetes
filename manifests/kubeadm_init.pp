@@ -8,7 +8,7 @@ define kubernetes::kubeadm_init (
   Optional[Array] $ignore_preflight_errors      = $kubernetes::ignore_preflight_errors,
   Optional[String] $skip_phases                 = $kubernetes::skip_phases,
 ) {
-  $kubeadm_init_flags = kubeadm_init_flags( {
+  $kubeadm_init_flags = kubeadm_init_flags({
       config                  => $config,
       dry_run                 => $dry_run,
       ignore_preflight_errors => $ignore_preflight_errors,

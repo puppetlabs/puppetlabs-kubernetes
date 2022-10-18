@@ -86,9 +86,6 @@ class kubernetes::config::kubeadm (
   }
 
   if $manage_etcd {
-    file { $etcd_data_dir:
-      ensure => file,
-    }
     if !$delegated_pki {
       $etcd.each | String $etcd_files | {
         file { "/etc/kubernetes/pki/etcd/${etcd_files}":
