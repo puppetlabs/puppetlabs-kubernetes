@@ -289,6 +289,12 @@ Valid values are `true`, `false`.
 
 Defaults to `false`.
 
+#### `containerd_sandbox_image`
+
+The configuration for the image pause container.
+
+Defaults to `k8s.gcr.io/pause:3.2`
+
 #### `controller`
 
 Specifies whether to set the node as a Kubernetes controller.

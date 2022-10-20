@@ -9,12 +9,12 @@ class kubernetes::service (
   Boolean $manage_etcd                                  = $kubernetes::manage_etcd,
   String $etcd_install_method                           = $kubernetes::etcd_install_method,
   String $kubernetes_version                            = $kubernetes::kubernetes_version,
+  Boolean $kubelet_use_proxy                            = $kubernetes::kubelet_use_proxy,
   Optional[String] $cloud_provider                      = $kubernetes::cloud_provider,
   Optional[String] $cloud_config                        = $kubernetes::cloud_config,
   Optional[String] $http_proxy                          = $kubernetes::http_proxy,
   Optional[String] $https_proxy                         = $kubernetes::https_proxy,
   Optional[String] $no_proxy                            = $kubernetes::no_proxy,
-  Boolean $kubelet_use_proxy                            = $kubernetes::kubelet_use_proxy,
 ) {
   file { '/etc/systemd/system/kubelet.service.d':
     ensure => directory,

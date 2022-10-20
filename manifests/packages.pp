@@ -23,6 +23,7 @@ class kubernetes::packages (
   String $containerd_config_template                    = $kubernetes::containerd_config_template,
   Optional[String] $containerd_config_source            = $kubernetes::containerd_config_source,
   Optional[Hash] $containerd_plugins_registry           = $kubernetes::containerd_plugins_registry,
+  String $containerd_sandbox_image                      = $kubernetes::containerd_sandbox_image,
   Enum['runc','nvidia']
   $containerd_default_runtime_name                      = $kubernetes::containerd_default_runtime_name,
   String $etcd_archive                                  = $kubernetes::etcd_archive,

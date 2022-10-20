@@ -15,9 +15,17 @@ discovery:
     - 'sha256:<%= @discovery_token_hash %>'
 nodeRegistration:
   name: <%= @node_name %>
+  <%- if @maintenance_new_nodes -%>
+  taints:
+  - effect: NoExecute
+    key: dedicated
+    value: NewNode
+  - effect: NoSchedule
+    key: dedicated
+    value: NewNode
+  <%- end -%>
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: unix:///run/containerd/containerd.sock
-  taints: null
   <%- end -%>
   kubeletExtraArgs:
     <%- if @cloud_provider -%>

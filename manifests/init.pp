@@ -64,6 +64,10 @@
 #  The configuration for the image registries used by containerd when containerd_install_method is package.
 #  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
 #  Defaults to `undef`
+#  
+# [*containerd_sandbox_image*]
+#  The configuration for the image pause container
+#  Defaults k8s.gcr.io/pause:3.2
 #
 # [*containerd_default_runtime_name*]
 #   The default runtime to use with containerd
@@ -382,6 +386,10 @@
 # The mode for kubeproxy to run. It should be one of: "" (default), "userspace", "kernelspace", "iptables", or "ipvs".
 # Defaults to ""
 #
+# [*kube_proxy_enable*]
+# The option enable/disable kube-proxy service
+# Default to true 
+#
 # [*pin_packages*]
 #  Enable pinning of the docker and kubernetes packages to prevent accidential updates.
 #  This is currently only implemented for debian based distributions.
@@ -495,6 +503,10 @@
 # [*ttl_duration*]
 # Availability of the token
 # Default to 24h
+#
+# [*maintenance_new_nodes*]
+# Set if new nodes no need Schedule pods
+# Default to false
 #
 # [*metrics_bind_address*]
 # Set the metricsBindAddress (to allow prometheus)
@@ -645,6 +657,7 @@ class kubernetes (
   Optional[Hash] $kubelet_extra_config                    = undef,
   Array $kubelet_extra_arguments                          = [],
   String $proxy_mode                                      = '',
+  Optional[Boolean] $kube_proxy_enable                    = true,
   String $runc_version                                    = '1.0.0',
   String $runc_source                                     =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
@@ -663,6 +676,7 @@ class kubernetes (
     },
   },
   Enum['runc','nvidia'] $containerd_default_runtime_name  = 'runc',
+  String $containerd_sandbox_image                        = 'k8s.gcr.io/pause:3.2',
   String $etcd_archive                                    = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                 = undef,
   String $etcd_package_name                               = 'etcd-server',
@@ -699,6 +713,7 @@ class kubernetes (
   Boolean $manage_kernel_modules                          = true,
   Boolean $manage_sysctl_settings                         = true,
   Boolean $create_repos                                   = true,
+  Boolean $maintenance_new_nodes                          = false,
   String $image_repository                                = 'k8s.gcr.io',
   Array[String] $default_path                             = ['/usr/bin', '/usr/sbin', '/bin', '/sbin', '/usr/local/bin'],
   String $cgroup_driver                                   = $facts['os']['family'] ? {
