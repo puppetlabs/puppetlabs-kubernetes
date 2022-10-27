@@ -26,7 +26,7 @@ define kubernetes::kubeadm_init (
       skip_phases             => $skip_phases_merge,
   })
 
-  $exec_init = ['kubeadm', 'init', $kubeadm_init_flags]
+  $exec_init = ['kubeadm', 'init', $kubeadm_init_flags].join(' ')
   $unless_init = ["kubectl get nodes | grep ${node_name}"]
 
   exec { 'kubeadm init':
