@@ -8,7 +8,6 @@ define kubernetes::kubeadm_init (
   Optional[Array] $env                          = $kubernetes::environment,
   Optional[Array] $ignore_preflight_errors      = $kubernetes::ignore_preflight_errors,
   Optional[String] $skip_phases                 = $kubernetes::skip_phases,
-  Optional[String] $skip_phases_merge           = undef,
 ) {
   if !$kube_proxy_enable {
     if $skip_phases {
