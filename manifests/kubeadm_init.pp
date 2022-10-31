@@ -9,13 +9,9 @@ define kubernetes::kubeadm_init (
   Optional[Array] $ignore_preflight_errors      = $kubernetes::ignore_preflight_errors,
   Optional[String] $skip_phases                 = $kubernetes::skip_phases,
 ) {
-  if !$kube_proxy_enable {
-    if $skip_phases {
-      $skip_phases_merge = "${skip_phases},addon/kube-proxy"
-    }
-    else {
-      $skip_phases_merge = 'addon/kube-proxy'
-    }
+  $skip_phases_merge = $kube_proxy_enable ? {
+    true    => $skip_phases,
+    default => "${skip_phases},addon/kube-proxy".regsubst(/^,/, ''),
   }
 
   $kubeadm_init_flags = kubeadm_init_flags({
