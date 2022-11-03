@@ -54,6 +54,12 @@
         "10",
         "11"
       ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
     }
   ],
   "requirements": [
