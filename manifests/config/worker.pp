@@ -19,7 +19,7 @@ class kubernetes::config::worker (
   Optional[Array] $ignore_preflight_errors = undef,
   Boolean $skip_ca_verification            = false,
   String $cgroup_driver                    = $kubernetes::cgroup_driver,
-  Boolean $maintenance_new_nodes           = $kubernetes::maintenance_new_nodes,
+  Optional[Hash] $node_extra_taints        = $kubernetes::node_extra_taints,
   Optional[Array] $skip_phases_join        = $kubernetes::skip_phases_join,
 ) {
   # to_yaml emits a complete YAML document, so we must remove the leading '---'

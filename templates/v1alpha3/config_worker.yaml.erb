@@ -22,15 +22,14 @@ tlsBootstrapToken: <%= @tls_bootstrap_token %>
 token: <%= @token %>
 nodeRegistration:
   name: <%= @node_name %>
-  <%- if @maintenance_new_nodes -%>
+<%- if @node_extra_taints -%>
   taints:
-  - effect: NoExecute
-    key: dedicated
-    value: NewNode
-  - effect: NoSchedule
-    key: dedicated
-    value: NewNode
+  <%- @node_extra_taints.each do |item| -%>
+  - key: <%= item['key'] %>
+    value: <%= item['value'] %>
+    effect: <%= item['effect'] %>
   <%- end -%>
+<%- end -%>
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: unix:///run/containerd/containerd.sock
   <%- end -%>

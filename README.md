@@ -815,6 +815,17 @@ An override to the label of a node.
 
 Defaults to `hostname`.
 
+#### `node_extra_taints`
+
+Additional taints for node.
+Defaults to `undef`.
+
+For example,
+
+```puppet
+  [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule'}]
+```
+
 #### `runc_source`
 
 The download URL for `runc`.

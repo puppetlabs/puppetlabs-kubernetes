@@ -504,9 +504,11 @@
 # Availability of the token
 # Default to 24h
 #
-# [*maintenance_new_nodes*]
-# Set if new nodes no need Schedule pods
-# Default to false
+# [*node_extra_taints*]
+# Additional taints for node.
+# Example:
+#   [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule'}]
+#  Defaults to []
 #
 # [*metrics_bind_address*]
 # Set the metricsBindAddress (to allow prometheus)
@@ -648,6 +650,7 @@ class kubernetes (
   Array $scheduler_extra_arguments                        = [],
   String $service_cidr                                    = '10.96.0.0/12',
   Optional[String] $node_label                            = undef,
+  Optional[Hash] $node_extra_taints                        = undef,
   Optional[String] $controller_address                    = undef,
   Optional[String] $cloud_provider                        = undef,
   Optional[String] $cloud_config                          = undef,
@@ -657,7 +660,7 @@ class kubernetes (
   Optional[Hash] $kubelet_extra_config                    = undef,
   Array $kubelet_extra_arguments                          = [],
   String $proxy_mode                                      = '',
-  Optional[Boolean] $kube_proxy_enable                    = true,
+  Boolean $kube_proxy_enable                              = true,
   String $runc_version                                    = '1.0.0',
   String $runc_source                                     =
     "https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64",
@@ -713,7 +716,6 @@ class kubernetes (
   Boolean $manage_kernel_modules                          = true,
   Boolean $manage_sysctl_settings                         = true,
   Boolean $create_repos                                   = true,
-  Boolean $maintenance_new_nodes                          = false,
   String $image_repository                                = 'k8s.gcr.io',
   Array[String] $default_path                             = ['/usr/bin', '/usr/sbin', '/bin', '/sbin', '/usr/local/bin'],
   String $cgroup_driver                                   = $facts['os']['family'] ? {
