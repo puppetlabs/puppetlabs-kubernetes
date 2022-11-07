@@ -72,4 +72,38 @@ describe 'kubernetes::config::worker', :type => :class do
       expect(config_yaml['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => 'aws')
     end
   end
+
+  context 'with version => 1.20.0 and node_extra_taints => [{key => key1, value => NewNode, effect => NoSchedule, operator => Equal}' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.20.0',
+        'node_extra_taints' => [
+          {
+            'key' => 'key1',
+            'value' => 'NewNode',
+            'effect' => 'NoSchedule',
+            'operator' => 'Equal',
+          },
+          {
+            'key' => 'key2',
+            'value' => 'NewNode',
+            'effect' => 'NoSchedule',
+            'operator' => 'Equal',
+          },
+        ],
+      }
+    end
+
+    let(:config_yaml) { YAML.safe_load(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it 'has arg key1 in first YAML document (taints) NodeRegistration' do
+      expect(config_yaml['nodeRegistration']['taints'][0]['key']).to include('key1')
+    end
+    it 'has arg key2 in first YAML document (taints) NodeRegistration' do
+      expect(config_yaml['nodeRegistration']['taints'][1]['key']).to include('key2')
+    end
+    it 'has arg effect in first YAML document (taints) NodeRegistration' do
+      expect(config_yaml['nodeRegistration']['taints'][0]['effect']).to include('NoSchedule')
+    end
+  end
 end
