@@ -130,6 +130,10 @@
 #   Apiserver bind port
 #   Defaults to 6443
 #
+# [*kube_proxy_enable*]
+#   The parameter enable/disable kube-proxy service.
+#   Default to true 
+#
 # [*etcd_version*]
 #   The version of etcd that you would like to use.
 #   Defaults to 3.2.18
@@ -589,6 +593,7 @@ class kubernetes (
   Boolean $manage_docker                                  = true,
   Boolean $manage_etcd                                    = true,
   Integer $kube_api_bind_port                             = 6443,
+  Boolean $kube_proxy_enable                              = true,
   Optional[String] $kube_api_advertise_address            = undef,
   String $etcd_version                                    = '3.2.18',
   Optional[String] $etcd_hostname                         = $facts['networking']['hostname'],

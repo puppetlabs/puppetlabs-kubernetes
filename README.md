@@ -701,6 +701,12 @@ A Hiera example is `kubernetes::kube_api_advertise_address:"%{networking.ip}"`.
 
 Defaults to `undef`.
 
+#### `kube_proxy_enable`
+
+The parameter enable/disable kube-proxy service.
+
+Default `true`.
+
 #### `kubernetes_version`
 
 The version of the Kubernetes containers to install. Must follow X.Y.Z format.
