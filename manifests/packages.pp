@@ -3,6 +3,7 @@
 class kubernetes::packages (
   String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
   String $container_runtime                             = $kubernetes::container_runtime,
+  String $containerd_sandbox_image                      = $kubernetes::containerd_sandbox_image,
   Boolean $manage_docker                                = $kubernetes::manage_docker,
   Boolean $manage_etcd                                  = $kubernetes::manage_etcd,
   Optional[String] $docker_version                      = $kubernetes::docker_version,
