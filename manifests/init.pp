@@ -69,6 +69,10 @@
 #   The default runtime to use with containerd
 #   Defaults to runc
 #
+# [*containerd_sandbox_image*]
+#  The configuration for the image pause container
+#  Defaults k8s.gcr.io/pause:3.2
+#
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
 #   Default cluster.local
@@ -663,6 +667,7 @@ class kubernetes (
     },
   },
   Enum['runc','nvidia'] $containerd_default_runtime_name  = 'runc',
+  String $containerd_sandbox_image                        = 'k8s.gcr.io/pause:3.2',
   String $etcd_archive                                    = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                 = undef,
   String $etcd_package_name                               = 'etcd-server',
