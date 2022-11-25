@@ -60,7 +60,7 @@ class kubernetes::packages (
 
   if $disable_swap {
     $command = ['swapoff', '-a']
-    $unless = ['awk', '"{ if (NR > 1) exit 1}"', '/proc/swaps']
+    $unless = [['awk', '"{ if (NR > 1) exit 1}"', '/proc/swaps']]
 
     exec { 'disable swap':
       path    => ['/usr/sbin/', '/usr/bin', '/bin', '/sbin'],
