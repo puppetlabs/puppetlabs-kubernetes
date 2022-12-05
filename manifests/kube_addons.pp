@@ -42,7 +42,7 @@ class kubernetes::kube_addons (
       if $cni_network_preinstall {
         $preinstall_command = ['kubectl', 'apply', '-f', $cni_network_preinstall]
         $preinstall_onlyif = ['kubectl', 'get', 'nodes']
-        $preinstall_unless = [["kubectl -n tigera-operator get deployments | egrep '^tigera-operator'"]]
+        $preinstall_unless = "kubectl -n tigera-operator get deployments | egrep '^tigera-operator'"
 
         exec { 'Install cni network (preinstall)':
           command     => $preinstall_command,
@@ -56,7 +56,7 @@ class kubernetes::kube_addons (
       $calico_installation_path = '/etc/kubernetes/calico-installation.yaml'
       $path_command = ['kubectl', 'apply', '-f', '/etc/kubernetes/calico-installation.yaml']
       $path_onlyif = ['kubectl', 'get', 'nodes']
-      $path_unless = [["kubectl -n calico-system get daemonset | egrep '^calico-node'"]]
+      $path_unless = "kubectl -n calico-system get daemonset | egrep '^calico-node'"
 
       file { $calico_installation_path:
         ensure  => 'present',
@@ -81,7 +81,7 @@ class kubernetes::kube_addons (
     } else {
       $provider_command = ['kubectl', 'apply', '-f', $cni_network_provider]
       $provider_onlyif = ['kubectl', 'get', 'nodes']
-      $provider_unless = [["kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'"]]
+      $provider_unless = "kubectl -n kube-system get daemonset | egrep '(flannel|weave|calico-node|cilium)'"
 
       exec { 'Install cni network provider':
         command     => $provider_command,
@@ -98,7 +98,7 @@ class kubernetes::kube_addons (
 
   if $schedule_on_controller {
     $schedule_command = ['kubectl', 'taint', 'nodes', $node_name, 'node-role.kubernetes.io/master-']
-    $schedule_onlyif = ["kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'"]
+    $schedule_onlyif = "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'"
 
     exec { 'schedule on controller':
       command => $schedule_command,
