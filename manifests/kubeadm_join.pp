@@ -43,15 +43,12 @@ define kubernetes::kubeadm_join (
     }
   }
 
-  $exec_join = ['kubeadm', 'join', $kubeadm_join_flags]
-  $unless_join = "kubectl get nodes | grep ${node_name}"
-
   exec { 'kubeadm join':
-    command     => $exec_join,
+    command     => "kubeadm join ${kubeadm_join_flags}",
     environment => $env,
     path        => $path,
     logoutput   => true,
     timeout     => 0,
-    unless      => $unless_join,
+    unless      => "kubectl get nodes | grep ${node_name}",
   }
 }

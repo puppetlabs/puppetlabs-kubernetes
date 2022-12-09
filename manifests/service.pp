@@ -20,11 +20,9 @@ class kubernetes::service (
     ensure => directory,
   }
 
-  $exec_reload = ['systemctl', 'daemon-reload']
-
   exec { 'kubernetes-systemd-reload':
     path        => '/bin',
-    command     => $exec_reload,
+    command     =>'systemctl daemon-reload',
     refreshonly => true,
   }
 
@@ -107,7 +105,7 @@ class kubernetes::service (
     if $etcd_install_method == 'wget' {
       exec { 'systemctl-daemon-reload-etcd':
         path        => '/usr/bin:/bin:/usr/sbin:/sbin',
-        command     => $exec_reload,
+        command     => 'systemctl daemon-reload',
         refreshonly => true,
         subscribe   => File['/etc/systemd/system/etcd.service'],
         notify      => Service['etcd'],
