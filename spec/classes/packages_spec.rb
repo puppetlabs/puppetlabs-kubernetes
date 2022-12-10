@@ -369,6 +369,9 @@ describe 'kubernetes::packages', :type => :class do
         /\s*ca_file = "ca2.pem"\s*/
     )}
     it { should_not contain_file('/etc/apt/preferences.d/containerd')}
+    it { is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+        %r{\saddress = "/run/containerd/containerd.sock"}
+    )}
   end
 
   context 'with osfamily => RedHat and container_runtime => cri_containerd and containerd_install_method => package and containerd_default_runtime_name => nvidia and manage_etcd => true' do
@@ -1059,6 +1062,7 @@ describe 'kubernetes::packages', :type => :class do
         'etcd_archive_checksum' => '9ba70e27c17a1faf6d3de89040432189d8071fa27ca156d09d3503989ecd9ccd',
         'runc_source_checksum' => '6e8b24be90fffce6b025d254846da9d2ca6d65125f9139b6354bab0272253d01',
         'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_socket' => 'unix:///run/containerd/containerd.sock'
         }
     end
     it { is_expected.to contain_file_line('remove swap in /etc/fstab')}
@@ -1079,5 +1083,8 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/docker')}
     it { is_expected.to contain_file('/etc/apt/preferences.d/kubernetes')}
     it { is_expected.not_to contain_file('/etc/systemd/system/docker.service.d')}
+    it { is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+        %r{\saddress = "unix:///run/containerd/containerd.sock"}
+    )}
   end
 end

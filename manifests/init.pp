@@ -60,6 +60,10 @@
 #   This value overrides containerd_config_template
 #   Default to undef
 #
+# [*containerd_socket*]
+#   The path to containerd GRPC socket
+#   Defaults to /run/containerd/containerd.sock
+#
 # [*containerd_plugins_registry*]
 #  The configuration for the image registries used by containerd when containerd_install_method is package.
 #  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
@@ -658,6 +662,7 @@ class kubernetes (
   String $containerd_source                               =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $containerd_config_template                      = 'kubernetes/containerd/config.toml.erb',
+  Variant[Stdlib::Unixpath, String] $containerd_socket    = '/run/containerd/containerd.sock',
   Optional[String] $containerd_config_source              = undef,
   Hash $containerd_plugins_registry                       = {
     'docker.io' => {
