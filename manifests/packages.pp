@@ -46,6 +46,7 @@ class kubernetes::packages (
   Optional[String] $https_proxy                         = $kubernetes::https_proxy,
   Optional[String] $no_proxy                            = $kubernetes::no_proxy,
   Boolean $container_runtime_use_proxy                  = $kubernetes::container_runtime_use_proxy,
+  Variant[Stdlib::Unixpath, String] $containerd_socket  = $kubernetes::containerd_socket,
 ) {
   # Download directory for archives
   file { $tmp_directory:
