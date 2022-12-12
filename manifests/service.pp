@@ -22,7 +22,7 @@ class kubernetes::service (
 
   exec { 'kubernetes-systemd-reload':
     path        => '/bin',
-    command     =>'systemctl daemon-reload',
+    command     => 'systemctl daemon-reload',
     refreshonly => true,
   }
 

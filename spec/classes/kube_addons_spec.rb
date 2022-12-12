@@ -64,7 +64,7 @@ describe 'kubernetes::kube_addons', :type => :class do
         when 'calico-tigera'
           it { is_expected.to contain_exec('Install cni network (preinstall)').with({
             'command': ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
-            'onlyif': ['kubectl get nodes'],
+            'onlyif': 'kubectl get nodes',
             })
           }
           it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml')}
