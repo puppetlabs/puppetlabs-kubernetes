@@ -77,10 +77,9 @@ class kubernetes::kube_addons (
   }
 
   if $schedule_on_controller {
-    $safe_node_name = shell_escape($node_name)
     exec { 'schedule on controller':
-      command => "kubectl taint nodes ${safe_node_name} node-role.kubernetes.io/master-",
-      onlyif  => "kubectl describe nodes ${safe_node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'",
+      command => "kubectl taint nodes ${node_name} node-role.kubernetes.io/master-",
+      onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'",
     }
   }
 
