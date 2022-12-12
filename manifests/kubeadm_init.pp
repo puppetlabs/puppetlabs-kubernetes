@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_init
 define kubernetes::kubeadm_init (
-  String $node_name                             = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                       = $kubernetes::node_name,
   Optional[String] $config                      = $kubernetes::config_file,
   Boolean $dry_run                              = false,
   Boolean $kube_proxy_enable                    = $kubernetes::kube_proxy_enable,
@@ -22,8 +22,7 @@ define kubernetes::kubeadm_init (
   })
 
   $exec_init = ['kubeadm', 'init', $kubeadm_init_flags]
-  $unless_init = ["kubectl get nodes | grep ${node_name}"]
-
+  $unless_init = "kubectl get nodes | grep ${node_name}"
   exec { 'kubeadm init':
     command     => $exec_init,
     environment => $env,

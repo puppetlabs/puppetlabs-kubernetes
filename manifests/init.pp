@@ -60,6 +60,10 @@
 #   This value overrides containerd_config_template
 #   Default to undef
 #
+# [*containerd_socket*]
+#   The path to containerd GRPC socket
+#   Defaults to /run/containerd/containerd.sock
+#
 # [*containerd_plugins_registry*]
 #  The configuration for the image registries used by containerd when containerd_install_method is package.
 #  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
@@ -68,6 +72,10 @@
 # [*containerd_default_runtime_name*]
 #   The default runtime to use with containerd
 #   Defaults to runc
+#
+# [*containerd_sandbox_image*]
+#  The configuration for the image pause container
+#  Defaults k8s.gcr.io/pause:3.2
 #
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
@@ -640,7 +648,7 @@ class kubernetes (
   Array $controllermanager_extra_arguments                = [],
   Array $scheduler_extra_arguments                        = [],
   String $service_cidr                                    = '10.96.0.0/12',
-  Optional[String] $node_label                            = undef,
+  Optional[Stdlib::Fqdn] $node_label                      = undef,
   Optional[String] $controller_address                    = undef,
   Optional[String] $cloud_provider                        = undef,
   Optional[String] $cloud_config                          = undef,
@@ -659,6 +667,7 @@ class kubernetes (
   String $containerd_source                               =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
   String $containerd_config_template                      = 'kubernetes/containerd/config.toml.erb',
+  Variant[Stdlib::Unixpath, String] $containerd_socket    = '/run/containerd/containerd.sock',
   Optional[String] $containerd_config_source              = undef,
   Hash $containerd_plugins_registry                       = {
     'docker.io' => {
@@ -668,6 +677,7 @@ class kubernetes (
     },
   },
   Enum['runc','nvidia'] $containerd_default_runtime_name  = 'runc',
+  String $containerd_sandbox_image                        = 'k8s.gcr.io/pause:3.2',
   String $etcd_archive                                    = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                 = undef,
   String $etcd_package_name                               = 'etcd-server',
