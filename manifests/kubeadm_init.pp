@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_init
 define kubernetes::kubeadm_init (
-  String $node_name                             = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                       = $kubernetes::node_name,
   Optional[String] $config                      = $kubernetes::config_file,
   Boolean $dry_run                              = false,
   Array $path                                   = $kubernetes::default_path,

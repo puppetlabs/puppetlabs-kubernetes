@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_join
 define kubernetes::kubeadm_join (
-  String $node_name                        = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                  = $kubernetes::node_name,
   String $kubernetes_version               = $kubernetes::kubernetes_version,
   String $config                           = $kubernetes::config_file,
   String $controller_address               = $kubernetes::controller_address,

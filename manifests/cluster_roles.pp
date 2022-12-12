@@ -3,7 +3,7 @@
 class kubernetes::cluster_roles (
   Optional[Boolean] $controller = $kubernetes::controller,
   Optional[Boolean] $worker = $kubernetes::worker,
-  String $node_name = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name = $kubernetes::node_name,
   String $container_runtime = $kubernetes::container_runtime,
   Optional[String] $join_discovery_file = $kubernetes::join_discovery_file,
   Optional[Array] $ignore_preflight_errors = $kubernetes::ignore_preflight_errors,
