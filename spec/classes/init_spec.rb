@@ -89,6 +89,15 @@ describe 'kubernetes' do
 
         it { is_expected.to_not contain_notify('aws_name_override') }
       end
+
+      context 'with invalid node_label should not allow code injection' do
+        let(:params) do {
+          worker: true,
+          node_label: 'hostname;rm -rf /',
+        } end
+
+        it { is_expected.to raise_error(/Evaluation Error: Error while evaluating/) }
+      end
     end
   end
 end

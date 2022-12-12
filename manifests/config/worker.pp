@@ -1,6 +1,6 @@
 # Class kubernetes config_worker, populates worker config files with joinconfig
 class kubernetes::config::worker (
-  String $node_name                        = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                  = $kubernetes::node_name,
   String $config_file                      = $kubernetes::config_file,
   String $kubernetes_version               = $kubernetes::kubernetes_version,
   String $kubernetes_cluster_name          = $kubernetes::kubernetes_cluster_name,

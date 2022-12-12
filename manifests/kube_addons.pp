@@ -12,7 +12,7 @@ class kubernetes::kube_addons (
   String $kubernetes_version                = $kubernetes::kubernetes_version,
   Boolean $controller                       = $kubernetes::controller,
   Optional[Boolean] $schedule_on_controller = $kubernetes::schedule_on_controller,
-  String $node_name                         = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                   = $kubernetes::node_name,
   Array $path                               = $kubernetes::default_path,
   Optional[Array] $env                      = $kubernetes::environment,
 ) {
@@ -88,10 +88,6 @@ class kubernetes::kube_addons (
         environment => $env,
       }
     }
-  }
-
-  if $node_name !~ /^[a-zA-Z0-9]([a-zA-Z0-9\-\.]{0,251}[a-zA-Z0-9])?$/ {
-    fail("Invalid node name: ${node_name}")
   }
 
   if $schedule_on_controller {

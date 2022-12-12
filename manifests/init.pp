@@ -643,7 +643,7 @@ class kubernetes (
   Array $controllermanager_extra_arguments                = [],
   Array $scheduler_extra_arguments                        = [],
   String $service_cidr                                    = '10.96.0.0/12',
-  Optional[String] $node_label                            = undef,
+  Optional[Stdlib::Fqdn] $node_label                      = undef,
   Optional[String] $controller_address                    = undef,
   Optional[String] $cloud_provider                        = undef,
   Optional[String] $cloud_config                          = undef,
