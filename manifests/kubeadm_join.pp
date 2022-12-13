@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_join
 define kubernetes::kubeadm_join (
-  String $node_name                        = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                  = $kubernetes::node_name,
   String $kubernetes_version               = $kubernetes::kubernetes_version,
   String $config                           = $kubernetes::config_file,
   String $controller_address               = $kubernetes::controller_address,
@@ -43,15 +43,12 @@ define kubernetes::kubeadm_join (
     }
   }
 
-  $exec_join = ['kubeadm', 'join', $kubeadm_join_flags]
-  $unless_join = ["kubectl get nodes | grep ${node_name}"]
-
   exec { 'kubeadm join':
-    command     => $exec_join,
+    command     => "kubeadm join ${kubeadm_join_flags}",
     environment => $env,
     path        => $path,
     logoutput   => true,
     timeout     => 0,
-    unless      => $unless_join,
+    unless      => "kubectl get nodes | grep ${node_name}",
   }
 }

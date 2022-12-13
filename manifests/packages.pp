@@ -3,6 +3,7 @@
 class kubernetes::packages (
   String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
   String $container_runtime                             = $kubernetes::container_runtime,
+  String $containerd_sandbox_image                      = $kubernetes::containerd_sandbox_image,
   Boolean $manage_docker                                = $kubernetes::manage_docker,
   Boolean $manage_etcd                                  = $kubernetes::manage_etcd,
   Optional[String] $docker_version                      = $kubernetes::docker_version,
@@ -45,6 +46,7 @@ class kubernetes::packages (
   Optional[String] $https_proxy                         = $kubernetes::https_proxy,
   Optional[String] $no_proxy                            = $kubernetes::no_proxy,
   Boolean $container_runtime_use_proxy                  = $kubernetes::container_runtime_use_proxy,
+  Variant[Stdlib::Unixpath, String] $containerd_socket  = $kubernetes::containerd_socket,
 ) {
   # Download directory for archives
   file { $tmp_directory:
@@ -58,13 +60,10 @@ class kubernetes::packages (
   $kube_packages = ['kubelet', 'kubectl', 'kubeadm']
 
   if $disable_swap {
-    $command = ['swapoff', '-a']
-    $unless = ['awk', '"{ if (NR > 1) exit 1}"', '/proc/swaps']
-
     exec { 'disable swap':
       path    => ['/usr/sbin/', '/usr/bin', '/bin', '/sbin'],
-      command => $command,
-      unless  => $unless,
+      command => 'swapoff -a',
+      unless  => "awk '{ if (NR > 1) exit 1}' /proc/swaps",
     }
     file_line { 'remove swap in /etc/fstab':
       ensure            => absent,

@@ -49,7 +49,7 @@ class kubernetes::config::kubeadm (
   Optional[Array] $scheduler_extra_arguments = $kubernetes::scheduler_extra_arguments,
   Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
   String $service_cidr = $kubernetes::service_cidr,
-  String $node_name = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name = $kubernetes::node_name,
   Optional[String] $cloud_provider = $kubernetes::cloud_provider,
   Optional[String] $cloud_config = $kubernetes::cloud_config,
   Optional[Hash] $apiserver_extra_volumes = $kubernetes::apiserver_extra_volumes,

@@ -1,19 +1,13 @@
-FROM golang:1.12.13-alpine3.9
+FROM golang:1.19.2-alpine3.16
 
-ENV GOPATH /go
 ENV USER root
 
 RUN set -x && \
-  apk --no-cache add git gcc libc-dev && \
-  go get github.com/cloudflare/cfssl/cmd/... && \
+  apk --no-cache add git gcc make libc-dev && \
+  git clone https://github.com/cloudflare/cfssl.git /go/src/github.com/cloudflare/cfssl && \
   cd /go/src/github.com/cloudflare/cfssl && \
-  go get github.com/GeertJohan/go.rice/rice && rice embed-go -i=./cli/serve && \
-  mkdir bin && cd bin && \
-  go build ../cmd/cfssl && \
-  go build ../cmd/cfssljson && \
-  go build ../cmd/mkbundle && \
-  go build ../cmd/multirootca && \
-  go get -u github.com/cloudflare/cfssl_trust/... && \
+  make && \
+  git clone https://github.com/cloudflare/cfssl_trust.git /go/src/github.com/cloudflare/cfssl_trust && \
   echo "Build complete."
 
 FROM ruby:2.3.5-alpine

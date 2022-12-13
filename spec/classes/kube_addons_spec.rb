@@ -4,98 +4,114 @@ describe 'kubernetes::kube_addons', :type => :class do
   let(:facts) do
     {
       :os               => {
-        :family => "Debian",
+        :family => 'Debian',
         :name    => 'Ubuntu',
         :release => {
-          :full => '16.04',
+          :full => '22.04',
         },
         :distro => {
-          :codename => "xenial",
+          :codename => 'jammy',
         },
       },
     }
   end
   context 'with controller => true and schedule_on_controller => true' do
     let(:params) do {
-      'controller' => true,
-      'cni_rbac_binding' => 'foo',
-      'cni_network_provider' => 'https://foo.test',
-      'install_dashboard' => false,
-      'kubernetes_version' => '1.10.2',
-      'schedule_on_controller' => true,
-      'node_name' => 'foo',
+      controller: true,
+      cni_rbac_binding: 'foo',
+      cni_network_provider: 'https://foo.test',
+      install_dashboard: false,
+      kubernetes_version: '1.25.4',
+      schedule_on_controller: true,
+      node_name: 'foo',
       }
     end
 
-    it { should contain_exec('Install calico rbac bindings')}
-    it { should contain_exec('Install cni network provider')}
-    it { should contain_exec('schedule on controller')}
+    it { is_expected.to contain_exec('Install calico rbac bindings').with({
+      'command': ['kubectl', 'apply', '-f', 'foo'],
+      'onlyif': ['kubectl get nodes'],
+      })
+    }
+    it { is_expected.to contain_exec('Install cni network provider').with({
+      'command': ['kubectl', 'apply', '-f', 'https://foo.test'],
+      'onlyif': ['kubectl get nodes'],
+      })
+    }
+    it { is_expected.to contain_exec('schedule on controller')}
 
-    it { should_not contain_exec('Install cni network (preinstall)')}
-    it { should_not contain_file('/etc/kubernetes/calico-installation.yaml')}
-    it { should_not contain_file_line('Configure calico ipPools.cidr')}
+    it { is_expected.not_to contain_exec('Install cni network (preinstall)')}
+    it { is_expected.not_to contain_file('/etc/kubernetes/calico-installation.yaml')}
+    it { is_expected.not_to contain_file_line('Configure calico ipPools.cidr')}
   end
 
-  context 'with cni_provider => calico' do
-    let(:params) do {
-      'controller' => true,
-      'cni_network_provider' => 'https://foo.test',
-      'cni_provider' => 'calico',
-      'install_dashboard' => false,
-      'kubernetes_version' => '1.10.2',
-      'node_name' => 'foo',
-      }
+
+  context 'CNI network provider' do
+    ['flannel', 'weave', 'calico', 'cilium', 'calico-tigera'].each do |provider|
+
+      context "with #{provider}" do
+        let(:params) do {
+          controller: true,
+          cni_network_provider: "https://#{provider}.test",
+          cni_network_preinstall: 'https://foo.test/tigera-operator',
+          cni_provider: provider,
+          install_dashboard: false,
+          kubernetes_version: '1.25.4',
+          node_name: 'foo',
+          }
+        end
+
+        case provider
+        when 'calico-tigera'
+          it { is_expected.to contain_exec('Install cni network (preinstall)').with({
+            'command': ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
+            'onlyif': 'kubectl get nodes',
+            })
+          }
+          it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml')}
+          it { is_expected.to contain_file_line('Configure calico ipPools.cidr')}
+          it { is_expected.to contain_exec('Install cni network provider')}
+        else
+          it {
+            is_expected.to contain_exec('Install cni network provider').with({
+              'onlyif': ['kubectl get nodes'],
+              'command': ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+              'unless': ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
+            })
+          }
+
+          it { is_expected.not_to contain_exec('Install cni network (preinstall)').with({
+              'onlyif': ['kubectl get nodes'],
+            })
+          }
+        end
+      end
     end
-
-    it { should contain_exec('Install cni network provider')}
-
-    it { should_not contain_exec('Install cni network (preinstall)')}
-    it { should_not contain_file('/etc/kubernetes/calico-installation.yaml')}
-    it { should_not contain_file_line('Configure calico ipPools.cidr')}
-  end
-
-  context 'with cni_provider => calico-tigera' do
-    let(:params) do {
-      'controller' => true,
-      'cni_network_preinstall' => 'https://foo.test/tigera-operator',
-      'cni_network_provider' => 'https://foo.test',
-      'cni_provider' => 'calico-tigera',
-      'install_dashboard' => false,
-      'kubernetes_version' => '1.10.2',
-      'node_name' => 'foo',
-      }
-    end
-
-    it { should contain_exec('Install cni network (preinstall)')}
-    it { should contain_file('/etc/kubernetes/calico-installation.yaml')}
-    it { should contain_file_line('Configure calico ipPools.cidr')}
-    it { should contain_exec('Install cni network provider')}
   end
 
   context 'with install_dashboard => false' do
     let(:params) do {
-      'controller' => true,
-      'cni_rbac_binding' => nil,
-      'cni_network_provider' => 'https://foo.test',
-      'install_dashboard' => false,
-      'kubernetes_version' => '1.10.2',
-      'schedule_on_controller' => false,
-      'node_name' => 'foo',
+      controller: true,
+      cni_rbac_binding: nil,
+      cni_network_provider: 'https://foo.test',
+      install_dashboard: false,
+      kubernetes_version: '1.25.4',
+      schedule_on_controller: false,
+      node_name: 'foo',
       }
     end
-    it { is_expected.to_not contain_exec('Install Kubernetes dashboard')}
+    it { is_expected.not_to contain_exec('Install Kubernetes dashboard')}
   end
 
   context 'with install_dashboard => true' do
     let(:params) do {
-      'controller' => true,
-      'cni_rbac_binding' => nil,
-      'cni_network_provider' => 'https://foo.test',
-      'install_dashboard' => true,
-      'kubernetes_version' => '1.10.2',
-      'dashboard_version' => '1.10.1',
-      'schedule_on_controller' => false,
-      'node_name' => 'foo',
+      controller: true,
+      cni_rbac_binding: nil,
+      cni_network_provider: 'https://foo.test',
+      install_dashboard: true,
+      kubernetes_version: '1.25.4',
+      dashboard_version: '1.10.1',
+      schedule_on_controller: false,
+      node_name: 'foo',
       }
     end
     it { is_expected.to contain_exec('Install Kubernetes dashboard').with_command(%r{dashboard/v1.10.1/src}) }

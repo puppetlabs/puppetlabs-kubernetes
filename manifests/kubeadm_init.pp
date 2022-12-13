@@ -1,6 +1,6 @@
 # == kubernetes::kubeadm_init
 define kubernetes::kubeadm_init (
-  String $node_name                             = $kubernetes::node_name,
+  Stdlib::Fqdn $node_name                       = $kubernetes::node_name,
   Optional[String] $config                      = $kubernetes::config_file,
   Boolean $dry_run                              = false,
   Array $path                                   = $kubernetes::default_path,
@@ -15,16 +15,13 @@ define kubernetes::kubeadm_init (
       skip_phases             => $skip_phases,
   })
 
-  $exec_init = ['kubeadm', 'init', $kubeadm_init_flags]
-  $unless_init = ["kubectl get nodes | grep ${node_name}"]
-
   exec { 'kubeadm init':
-    command     => $exec_init,
+    command     => "kubeadm init ${kubeadm_init_flags}",
     environment => $env,
     path        => $path,
     logoutput   => true,
     timeout     => 0,
-    unless      => $unless_init,
+    unless      => "kubectl get nodes | grep ${node_name}",
   }
 
   # This prevents a known race condition https://github.com/kubernetes/kubernetes/issues/66689

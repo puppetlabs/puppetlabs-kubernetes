@@ -373,6 +373,18 @@ For example,
 }
 ```
 
+### `containerd_sandbox_image`
+
+The configuration for the image pause container.
+
+Default `k8s.gcr.io/pause:3.2`.
+
+### `containerd_socket`
+
+The path to containerd GRPC socket.
+
+Default: `/run/containerd/containerd.sock`
+
 #### `controller_address`
 
 The IP address and port for the controller the worker node joins. For example `172.17.10.101:6443`.
