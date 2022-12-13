@@ -15,15 +15,13 @@ define kubernetes::kubeadm_init (
       skip_phases             => $skip_phases,
   })
 
-  $exec_init = ['kubeadm', 'init', $kubeadm_init_flags]
-  $unless_init = "kubectl get nodes | grep ${node_name}"
   exec { 'kubeadm init':
-    command     => $exec_init,
+    command     => "kubeadm init ${kubeadm_init_flags}",
     environment => $env,
     path        => $path,
     logoutput   => true,
     timeout     => 0,
-    unless      => $unless_init,
+    unless      => "kubectl get nodes | grep ${node_name}",
   }
 
   # This prevents a known race condition https://github.com/kubernetes/kubernetes/issues/66689
