@@ -10,9 +10,10 @@ RUN set -x && \
   git clone https://github.com/cloudflare/cfssl_trust.git /go/src/github.com/cloudflare/cfssl_trust && \
   echo "Build complete."
 
-FROM ruby:2.3.5-alpine
+FROM ruby:3.0-alpine3.16
 COPY --from=0 /go/src/github.com/cloudflare/cfssl_trust /etc/cfssl
 COPY --from=0 /go/src/github.com/cloudflare/cfssl/bin/ /usr/bin
+RUN gem install slop
 COPY . /etc/k8s
 
 RUN set -x && \
@@ -20,4 +21,4 @@ RUN set -x && \
 
 WORKDIR /mnt
 
-ENTRYPOINT ["sh", "-c", "/etc/k8s/start-kubetool.sh"]
+ENTRYPOINT ["ruby", "/etc/k8s/kube_tool.rb"]
