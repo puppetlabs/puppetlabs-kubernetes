@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-kubernetes",
-  "version": "6.3.0",
+  "version": "7.0.0",
   "author": "puppetlabs",
   "summary": "The module installs and configures a Kubernetes cluster",
   "license": "Apache-2.0",
