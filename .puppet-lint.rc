@@ -1,5 +1,1 @@
 --relative
---no-parameter_documentation-check
---no-params_empty_string_assignment-check
---no-file_ensure-check
---no-variables_not_enclosed-check

@@ -4,7 +4,7 @@ require:
 - rubocop-rspec
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: '2.4'
+  TargetRubyVersion: '2.5'
   Include:
   - "**/*.rb"
   Exclude:
@@ -18,16 +18,6 @@ AllCops:
   - "**/Puppetfile"
   - "**/Vagrantfile"
   - "**/Guardfile"
-  - tooling/kube_tool/*
-  - tooling/*
-  - spec/defines/*
-  - spec/classes/*
-  - spec/*
-  - spec/acceptance/*
-  - rakelib/*
-  - plans/*.pp
-  - tasks/*
-inherit_from: ".rubocop_todo.yml"
 Layout/LineLength:
   Description: People have wide screens, use them.
   Max: 200
