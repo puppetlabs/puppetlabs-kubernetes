@@ -30,7 +30,7 @@ class kubernetes::repos (
           repos    => pick($kubernetes_apt_repos,'main'),
           release  => pick($kubernetes_apt_release,'kubernetes-xenial'),
           key      => {
-            'id'     => pick($kubernetes_key_id,'7F92E05B31093BEF5A3C2D38FEEA9169307EA071'),
+            'id'     => pick($kubernetes_key_id,'A362B822F6DEDC652817EA46B53DC80D13EDEF05'),
             'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
           },
         }
