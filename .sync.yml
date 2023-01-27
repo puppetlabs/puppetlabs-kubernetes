@@ -36,14 +36,11 @@ Rakefile:
     strict:
       configs:
         AllCops:
-          TargetRubyVersion: '2.4'
+          TargetRubyVersion: '2.5'
           Exclude:
           - tooling/kube_tool/*
           - tooling/*
-          - spec/defines/*
-          - spec/classes/*
           - spec/*
-          - spec/acceptance/*
           - rakelib/*
           - plans/*.pp
           - tasks/*

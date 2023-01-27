@@ -4,7 +4,7 @@ require:
 - rubocop-rspec
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: '2.4'
+  TargetRubyVersion: '2.5'
   Include:
   - "**/*.rb"
   Exclude:
@@ -20,10 +20,7 @@ AllCops:
   - "**/Guardfile"
   - tooling/kube_tool/*
   - tooling/*
-  - spec/defines/*
-  - spec/classes/*
   - spec/*
-  - spec/acceptance/*
   - rakelib/*
   - plans/*.pp
   - tasks/*
