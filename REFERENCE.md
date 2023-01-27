@@ -899,6 +899,12 @@ Defaults to /var/lib/etcd.
  Defaults to hostname.
   NOTE: Ignored when cloud_provider is AWS, until this lands fixed https://github.com/kubernetes/kubernetes/pull/61878
 
+[*node_extra_taints*]
+Additional taints for node.
+Example:
+  [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule', 'operator' => 'Equal'}]
+ Defaults to undef
+
 [*token*]
   A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
   Defaults to undef
@@ -1215,6 +1221,7 @@ The following parameters are available in the `kubernetes` class:
 * [`scheduler_extra_arguments`](#-kubernetes--scheduler_extra_arguments)
 * [`service_cidr`](#-kubernetes--service_cidr)
 * [`node_label`](#-kubernetes--node_label)
+* [`node_extra_taints`](#-kubernetes--node_extra_taints)
 * [`controller_address`](#-kubernetes--controller_address)
 * [`cloud_provider`](#-kubernetes--cloud_provider)
 * [`cloud_config`](#-kubernetes--cloud_config)
@@ -1799,7 +1806,15 @@ Default value: `'10.96.0.0/12'`
 
 ##### <a name="-kubernetes--node_label"></a>`node_label`
 
-Data type: `Optional[Stdlib::Fqdn]`
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--node_extra_taints"></a>`node_extra_taints`
+
+Data type: `Optional[Array[Hash]]`
 
 
 
@@ -3098,6 +3113,7 @@ The following parameters are available in the `kubernetes::config::worker` class
 * [`feature_gates`](#-kubernetes--config--worker--feature_gates)
 * [`cloud_provider`](#-kubernetes--config--worker--cloud_provider)
 * [`cloud_config`](#-kubernetes--config--worker--cloud_config)
+* [`node_extra_taints`](#-kubernetes--config--worker--node_extra_taints)
 * [`kubelet_extra_arguments`](#-kubernetes--config--worker--kubelet_extra_arguments)
 * [`kubelet_extra_config`](#-kubernetes--config--worker--kubelet_extra_config)
 * [`ignore_preflight_errors`](#-kubernetes--config--worker--ignore_preflight_errors)
@@ -3216,6 +3232,14 @@ Data type: `Optional[String]`
 
 
 Default value: `$kubernetes::cloud_config`
+
+##### <a name="-kubernetes--config--worker--node_extra_taints"></a>`node_extra_taints`
+
+Data type: `Optional[Array[Hash]]`
+
+
+
+Default value: `$kubernetes::node_extra_taints`
 
 ##### <a name="-kubernetes--config--worker--kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 

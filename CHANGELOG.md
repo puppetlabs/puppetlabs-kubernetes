@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v7.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v7.1.0) (2023-01-27)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v7.0.0...v7.1.0)
+
+### Added
+
+- Reproducible kube-tool build [\#605](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/605) ([deric](https://github.com/deric))
+- add new parameter node\_extra\_taints [\#586](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/586) ([BaronMsk](https://github.com/BaronMsk))
+
 ## [v7.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v7.0.0) (2022-12-15)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.3.0...v7.0.0)
