@@ -5,15 +5,15 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
   let(:title) { 'default' }
   let(:facts) do
     {
-      :kernel           => 'Linux',
-      :os               => {
-        :family => "Debian",
-        :name    => 'Ubuntu',
-        :release => {
-          :full => '16.04',
+      kernel: 'Linux',
+      os: {
+        family: 'Debian',
+        name: 'Ubuntu',
+        release: {
+          full: '16.04',
         },
-        :distro => {
-          :codename => "xenial",
+        distro: {
+          codename: 'xenial',
         },
       },
     }
@@ -25,9 +25,12 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
         'namespace' => 'default',
       }
     end
+
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_exec('wait for default serviceaccount creation in default')
-          .with_command('kubectl -n default get serviceaccount default -o name')}
+    it {
+      is_expected.to contain_exec('wait for default serviceaccount creation in default')
+        .with_command('kubectl -n default get serviceaccount default -o name')
+    }
   end
 
   context 'with namespace foo and path /bar' do
@@ -37,10 +40,13 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
         'path'      => ['/bar'],
       }
     end
+
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_exec('wait for default serviceaccount creation in foo')
-          .with_command('kubectl -n foo get serviceaccount default -o name')
-          .with_path(['/bar'])}
+    it {
+      is_expected.to contain_exec('wait for default serviceaccount creation in foo')
+        .with_command('kubectl -n foo get serviceaccount default -o name')
+        .with_path(['/bar'])
+    }
   end
 
   describe 'namespace naming' do
@@ -57,7 +63,7 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
       ['a', true],
       ['0--0', true],
       ["A0c\nA0c", false],
-      ['host;rm -rf /', false]
+      ['host;rm -rf /', false],
     ]
 
     tests.each do |namespace, expected|
@@ -70,11 +76,12 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
 
         if expected
           it { is_expected.to compile.with_all_deps }
-          it { is_expected.to contain_exec("wait for default serviceaccount creation in #{namespace}")
-                .with_command("kubectl -n #{namespace} get serviceaccount default -o name")
+          it {
+            is_expected.to contain_exec("wait for default serviceaccount creation in #{namespace}")
+              .with_command("kubectl -n #{namespace} get serviceaccount default -o name")
           }
         else
-          it { is_expected.to raise_error(/parameter 'namespace' expects a match for Kubernetes::Namespace/) }
+          it { is_expected.to raise_error(%r{parameter 'namespace' expects a match for Kubernetes::Namespace}) }
         end
       end
     end

@@ -1,46 +1,48 @@
 require 'spec_helper'
 describe 'kubernetes::cluster_roles', :type => :class do
-  let(:facts) do {
-    :kernel => 'Linux',
-    :networking => {
-      :hostname => 'foo',
+  let(:facts) do
+    {
+      kernel: 'Linux',
+    networking: {
+      hostname: 'foo',
     },
-    :os => {
-      :family => "Debian",
-      :name => 'Ubuntu',
-      :release => {
-        :full => '16.04',
+    os: {
+      family: 'Debian',
+      name: 'Ubuntu',
+      release: {
+        full: '16.04',
       },
-      :distro => {
-        :codename => "xenial",
+      distro: {
+        codename: 'xenial',
       },
     },
-    :ec2_metadata => {
-      :hostname => 'ip-10-10-10-1.ec2.internal',
+    ec2_metadata: {
+      hostname: 'ip-10-10-10-1.ec2.internal',
     },
-  } end
+    }
+  end
 
   context 'with controller => true' do
     let(:pre_condition) { 'include kubernetes' }
-    let(:params) do 
-        { 
-          'controller' => true, 
-          'worker' => false,
-        } 
+    let(:params) do
+      {
+        'controller' => true,
+        'worker' => false,
+      }
     end
 
-    it { should contain_kubernetes__kubeadm_init('foo') }
+    it { is_expected.to contain_kubernetes__kubeadm_init('foo') }
   end
 
   context 'with worker => true' do
     let(:pre_condition) { 'include kubernetes' }
-    let(:params) do 
-        { 
-          'controller' => false, 
-          'worker' => true,
-        } 
+    let(:params) do
+      {
+        'controller' => false,
+        'worker' => true,
+      }
     end
 
-    it { should contain_kubernetes__kubeadm_join('foo') }
+    it { is_expected.to contain_kubernetes__kubeadm_join('foo') }
   end
 end
