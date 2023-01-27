@@ -12,6 +12,19 @@ discovery:
     - 'sha256:<%= @discovery_token_hash %>'
 nodeRegistration:
   name: <%= @node_name %>
+<%- if @node_extra_taints -%>
+  taints:
+  <%- @node_extra_taints.each do |item| -%>
+  - key: <%= item['key'] %>
+    <%- if item['value'] -%>
+    value: <%= item['value'] %>
+    <%- end -%>
+    <%- if item['operator'] -%>
+    operator: <%= item['operator'] %>
+    <%- end -%>
+    effect: <%= item['effect'] %>
+  <%- end -%>
+<%- end -%>
   <%- if @container_runtime == "cri_containerd" -%>
   criSocket: unix:///run/containerd/containerd.sock
   <%- end -%>

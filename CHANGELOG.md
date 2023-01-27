@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v7.0.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v7.0.0) (2022-12-15)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.3.0...v7.0.0)
+
+### Changed
+
+- Validate namespace parameter as DNS subdomain name [\#602](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/602) ([deric](https://github.com/deric))
+- \(MAINT\) Fixing codebase hardening issues [\#590](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/590) ([LukasAud](https://github.com/LukasAud))
+
+### Added
+
+- Support overriding containerd socket path \(\#596\) [\#597](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/597) ([deric](https://github.com/deric))
+- Rewrite command line arguments parsing [\#593](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/593) ([deric](https://github.com/deric))
+- add new parameter containerd\_sandbox\_image [\#587](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/587) ([BaronMsk](https://github.com/BaronMsk))
+- Add RedHat family as supported OS \(\#563\) [\#577](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/577) ([deric](https://github.com/deric))
+- Support Debian 11 [\#568](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/568) ([deric](https://github.com/deric))
+- Support changing bits used for generating certificates [\#566](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/566) ([deric](https://github.com/deric))
+- Add proxy support to docker, cri\_containerd and kubelet [\#561](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/561) ([nickperry](https://github.com/nickperry))
+- Remove cgroup-driver arg to avoid deprecation warnings [\#540](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/540) ([treydock](https://github.com/treydock))
+
+### Fixed
+
+- Stronger type checking for $node\_name [\#600](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/600) ([deric](https://github.com/deric))
+- \(MAINT\) Revert hardening changes [\#599](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/599) ([chelnak](https://github.com/chelnak))
+- Fix executing CNI addons commands \(fixes \#594\) [\#598](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/598) ([deric](https://github.com/deric))
+- Addressing wrong type for unless execs [\#592](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/592) ([LukasAud](https://github.com/LukasAud))
+- Fix Build docker image tooling [\#589](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/589) ([BaronMsk](https://github.com/BaronMsk))
+- \(CONT-217\) Correct Kubernetes etcd\_data\_dir spec tests [\#582](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/582) ([GSPatton](https://github.com/GSPatton))
+- etcd data dir path configurable by hiera [\#581](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/581) ([GSPatton](https://github.com/GSPatton))
+- Hardening manifest classes [\#575](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/575) ([LukasAud](https://github.com/LukasAud))
+- Master role has been deprecated since kubernetes v1.20.0 [\#571](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/571) ([deric](https://github.com/deric))
+- Don't try to guess docker\_version \(\#564\) [\#565](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/565) ([deric](https://github.com/deric))
+- fix: anchor regex for determining config\_version [\#554](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/554) ([TheMeier](https://github.com/TheMeier))
+- pdksync - \(GH-iac-334\) Remove Support for Ubuntu 16.04 [\#548](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/548) ([david22swan](https://github.com/david22swan))
+- Fix \#541 [\#542](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/542) ([nickperry](https://github.com/nickperry))
+- Update Debian-family docker repo location and key id [\#535](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/535) ([jorhett](https://github.com/jorhett))
+
 ## [v6.3.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v6.3.0) (2021-09-06)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v6.2.0...v6.3.0)

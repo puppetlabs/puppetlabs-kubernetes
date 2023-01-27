@@ -7,24 +7,28 @@
 ### Classes
 
 * [`kubernetes`](#kubernetes): Class: kubernetes ===========================  A module to build a Kubernetes cluster https://kubernetes.io/  Parameters ---------- [*kuberne
-* [`kubernetes::cluster_roles`](#kubernetescluster_roles)
-* [`kubernetes::config::kubeadm`](#kubernetesconfigkubeadm): Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
-* [`kubernetes::config::worker`](#kubernetesconfigworker): Class kubernetes config_worker, populates worker config files with joinconfig
-* [`kubernetes::kube_addons`](#kuberneteskube_addons): Class kubernetes kube_addons
-* [`kubernetes::packages`](#kubernetespackages)
-* [`kubernetes::repos`](#kubernetesrepos)
-* [`kubernetes::service`](#kubernetesservice)
+* [`kubernetes::cluster_roles`](#kubernetes--cluster_roles)
+* [`kubernetes::config::kubeadm`](#kubernetes--config--kubeadm): Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
+* [`kubernetes::config::worker`](#kubernetes--config--worker): Class kubernetes config_worker, populates worker config files with joinconfig
+* [`kubernetes::kube_addons`](#kubernetes--kube_addons): Class kubernetes kube_addons
+* [`kubernetes::packages`](#kubernetes--packages)
+* [`kubernetes::repos`](#kubernetes--repos)
+* [`kubernetes::service`](#kubernetes--service)
 
 ### Defined types
 
-* [`kubernetes::kubeadm_init`](#kuberneteskubeadm_init): == kubernetes::kubeadm_init
-* [`kubernetes::kubeadm_join`](#kuberneteskubeadm_join): == kubernetes::kubeadm_join
-* [`kubernetes::wait_for_default_sa`](#kuberneteswait_for_default_sa): == kubernetes::wait_for_default_sa
+* [`kubernetes::kubeadm_init`](#kubernetes--kubeadm_init): == kubernetes::kubeadm_init
+* [`kubernetes::kubeadm_join`](#kubernetes--kubeadm_join): == kubernetes::kubeadm_join
+* [`kubernetes::wait_for_default_sa`](#kubernetes--wait_for_default_sa): == kubernetes::wait_for_default_sa
 
 ### Functions
 
 * [`kubeadm_init_flags`](#kubeadm_init_flags): Transforms a hash into a string of kubeadm init flags
 * [`kubeadm_join_flags`](#kubeadm_join_flags): Transforms a hash into a string of kubeadm init flags
+
+### Data types
+
+* [`Kubernetes::Namespace`](#Kubernetes--Namespace): namespace should conform to RFC 1123 source https://stackoverflow.com/a/20945961/334831
 
 ### Tasks
 
@@ -559,9 +563,9 @@
 
 ### Plans
 
-* [`k8s::deploy`](#k8sdeploy): This plan is meant to create a deployment and a service on Kubernetes To run this plan you will have to enable the anonymous user access to y
-* [`kubernetes::provision_cluster`](#kubernetesprovision_cluster): Provisions machines
-* [`kubernetes::puppetserver_setup`](#kubernetespuppetserver_setup): Provisions machines
+* [`k8s::deploy`](#k8s--deploy): This plan is meant to create a deployment and a service on Kubernetes To run this plan you will have to enable the anonymous user access to y
+* [`kubernetes::provision_cluster`](#kubernetes--provision_cluster): Provisions machines
+* [`kubernetes::puppetserver_setup`](#kubernetes--puppetserver_setup): Provisions machines
 
 ## Classes
 
@@ -629,6 +633,10 @@ the files if they do not exist.
   This value overrides containerd_config_template
   Default to undef
 
+[*containerd_socket*]
+  The path to containerd GRPC socket
+  Defaults to /run/containerd/containerd.sock
+
 [*containerd_plugins_registry*]
  The configuration for the image registries used by containerd when containerd_install_method is package.
  See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md
@@ -638,6 +646,10 @@ the files if they do not exist.
   The default runtime to use with containerd
   Defaults to runc
 
+[*containerd_sandbox_image*]
+ The configuration for the image pause container
+ Defaults k8s.gcr.io/pause:3.2
+
 [*dns_domain*]
   This is a string that sets the dns domain in kubernetes cluster
   Default cluster.local
@@ -645,7 +657,7 @@ the files if they do not exist.
 [*docker_version*]
   This is the version of the docker runtime that you want to install.
   Defaults to 17.03.0.ce-1.el7.centos on RedHat
-  Defaults to 17.03.0~ce-0~ubuntu-xenial on Ubuntu
+  Defaults to 5:20.10.11~3-0~ubuntu-(distro codename) on Ubuntu
 
 [*docker_package_name*]
  The docker package name to download from an upstream repo
@@ -741,6 +753,10 @@ the files if they do not exist.
   The name of the etcd instance.
   An example with hiera would be kubernetes::etcd_hostname: "%{::fqdn}"
   Defaults to hostname
+
+[*etcd_data_dir*]
+Directory, where etcd data is stored.
+Defaults to /var/lib/etcd.
 
 [*etcd_ip*]
   The ip address that you want etcd to use for communications.
@@ -986,7 +1002,7 @@ Defaults to ""
 
 [*docker_apt_release*]
  The release name for the APT repo for the Docker packages.
- Defaults to 'ubuntu-${facts.os.distro.codename}'
+ Defaults to $facts.os.distro.codename
 
 [*docker_apt_repos*]
  The repos to install from the Docker APT url
@@ -1102,6 +1118,30 @@ Example:
   {'RootlessControlPlane' => true}
 Default: undefined, no feature gates
 
+[*http_proxy*]
+ Configure the HTTP_PROXY environment variable
+ Defaults to undef
+
+[*https_proxy*]
+ Configure the HTTPS_PROXY environment variable
+ Defaults to undef
+
+[*no_proxy*]
+ Configure the NO_PROXY environment variable
+ Defaults to undef
+
+[*container_runtime_use_proxy*]
+ Configure whether the container runtime should be configured to use a proxy.
+ If set to true, the container runtime will use the http_proxy, https_proxy and
+ no_proxy values.
+ Defaults to false
+
+[*kubelet_use_proxy*]
+ Configure whether the kubelet should be configured to use a proxy.
+ If set to true, the kubelet will use the http_proxy, https_proxy and
+ no_proxy values.
+ Defaults to false
+
 Authors
 -------
 
@@ -1111,135 +1151,143 @@ Puppet cloud and containers team
 
 The following parameters are available in the `kubernetes` class:
 
-* [`kubernetes_version`](#kubernetes_version)
-* [`kubernetes_cluster_name`](#kubernetes_cluster_name)
-* [`kubernetes_package_version`](#kubernetes_package_version)
-* [`container_runtime`](#container_runtime)
-* [`containerd_version`](#containerd_version)
-* [`containerd_install_method`](#containerd_install_method)
-* [`containerd_package_name`](#containerd_package_name)
-* [`docker_package_name`](#docker_package_name)
-* [`docker_version`](#docker_version)
-* [`pin_packages`](#pin_packages)
-* [`dns_domain`](#dns_domain)
-* [`cni_pod_cidr`](#cni_pod_cidr)
-* [`controller`](#controller)
-* [`worker`](#worker)
-* [`manage_docker`](#manage_docker)
-* [`manage_etcd`](#manage_etcd)
-* [`kube_api_bind_port`](#kube_api_bind_port)
-* [`kube_api_advertise_address`](#kube_api_advertise_address)
-* [`etcd_version`](#etcd_version)
-* [`etcd_hostname`](#etcd_hostname)
-* [`etcd_ip`](#etcd_ip)
-* [`etcd_peers`](#etcd_peers)
-* [`etcd_initial_cluster`](#etcd_initial_cluster)
-* [`etcd_discovery_srv`](#etcd_discovery_srv)
-* [`etcd_initial_cluster_state`](#etcd_initial_cluster_state)
-* [`etcd_compaction_method`](#etcd_compaction_method)
-* [`etcd_compaction_retention`](#etcd_compaction_retention)
-* [`etcd_max_wals`](#etcd_max_wals)
-* [`etcd_max_request_bytes`](#etcd_max_request_bytes)
-* [`etcd_listen_metric_urls`](#etcd_listen_metric_urls)
-* [`etcd_ca_key`](#etcd_ca_key)
-* [`etcd_ca_crt`](#etcd_ca_crt)
-* [`etcdclient_key`](#etcdclient_key)
-* [`etcdclient_crt`](#etcdclient_crt)
-* [`etcdserver_crt`](#etcdserver_crt)
-* [`etcdserver_key`](#etcdserver_key)
-* [`etcdpeer_crt`](#etcdpeer_crt)
-* [`etcdpeer_key`](#etcdpeer_key)
-* [`cni_network_preinstall`](#cni_network_preinstall)
-* [`cni_network_provider`](#cni_network_provider)
-* [`cni_provider`](#cni_provider)
-* [`cni_rbac_binding`](#cni_rbac_binding)
-* [`install_dashboard`](#install_dashboard)
-* [`dashboard_version`](#dashboard_version)
-* [`kubernetes_dashboard_url`](#kubernetes_dashboard_url)
-* [`schedule_on_controller`](#schedule_on_controller)
-* [`api_server_count`](#api_server_count)
-* [`delegated_pki`](#delegated_pki)
-* [`kubernetes_ca_crt`](#kubernetes_ca_crt)
-* [`kubernetes_ca_key`](#kubernetes_ca_key)
-* [`kubernetes_front_proxy_ca_crt`](#kubernetes_front_proxy_ca_crt)
-* [`kubernetes_front_proxy_ca_key`](#kubernetes_front_proxy_ca_key)
-* [`token`](#token)
-* [`ttl_duration`](#ttl_duration)
-* [`discovery_token_hash`](#discovery_token_hash)
-* [`sa_pub`](#sa_pub)
-* [`sa_key`](#sa_key)
-* [`apiserver_cert_extra_sans`](#apiserver_cert_extra_sans)
-* [`apiserver_extra_arguments`](#apiserver_extra_arguments)
-* [`controllermanager_extra_arguments`](#controllermanager_extra_arguments)
-* [`scheduler_extra_arguments`](#scheduler_extra_arguments)
-* [`service_cidr`](#service_cidr)
-* [`node_label`](#node_label)
-* [`controller_address`](#controller_address)
-* [`cloud_provider`](#cloud_provider)
-* [`cloud_config`](#cloud_config)
-* [`apiserver_extra_volumes`](#apiserver_extra_volumes)
-* [`controllermanager_extra_volumes`](#controllermanager_extra_volumes)
-* [`kubeadm_extra_config`](#kubeadm_extra_config)
-* [`kubelet_extra_config`](#kubelet_extra_config)
-* [`kubelet_extra_arguments`](#kubelet_extra_arguments)
-* [`proxy_mode`](#proxy_mode)
-* [`runc_version`](#runc_version)
-* [`runc_source`](#runc_source)
-* [`runc_source_checksum`](#runc_source_checksum)
-* [`containerd_archive`](#containerd_archive)
-* [`containerd_archive_checksum`](#containerd_archive_checksum)
-* [`containerd_source`](#containerd_source)
-* [`containerd_config_template`](#containerd_config_template)
-* [`containerd_config_source`](#containerd_config_source)
-* [`containerd_plugins_registry`](#containerd_plugins_registry)
-* [`containerd_default_runtime_name`](#containerd_default_runtime_name)
-* [`etcd_archive`](#etcd_archive)
-* [`etcd_archive_checksum`](#etcd_archive_checksum)
-* [`etcd_package_name`](#etcd_package_name)
-* [`etcd_source`](#etcd_source)
-* [`etcd_install_method`](#etcd_install_method)
-* [`kubernetes_apt_location`](#kubernetes_apt_location)
-* [`kubernetes_apt_release`](#kubernetes_apt_release)
-* [`kubernetes_apt_repos`](#kubernetes_apt_repos)
-* [`kubernetes_key_id`](#kubernetes_key_id)
-* [`kubernetes_key_source`](#kubernetes_key_source)
-* [`kubernetes_yum_baseurl`](#kubernetes_yum_baseurl)
-* [`kubernetes_yum_gpgkey`](#kubernetes_yum_gpgkey)
-* [`docker_apt_location`](#docker_apt_location)
-* [`docker_apt_release`](#docker_apt_release)
-* [`docker_apt_repos`](#docker_apt_repos)
-* [`docker_yum_baseurl`](#docker_yum_baseurl)
-* [`docker_yum_gpgkey`](#docker_yum_gpgkey)
-* [`docker_key_id`](#docker_key_id)
-* [`docker_key_source`](#docker_key_source)
-* [`docker_storage_driver`](#docker_storage_driver)
-* [`docker_storage_opts`](#docker_storage_opts)
-* [`docker_extra_daemon_config`](#docker_extra_daemon_config)
-* [`docker_log_max_file`](#docker_log_max_file)
-* [`docker_log_max_size`](#docker_log_max_size)
-* [`disable_swap`](#disable_swap)
-* [`manage_kernel_modules`](#manage_kernel_modules)
-* [`manage_sysctl_settings`](#manage_sysctl_settings)
-* [`create_repos`](#create_repos)
-* [`image_repository`](#image_repository)
-* [`default_path`](#default_path)
-* [`cgroup_driver`](#cgroup_driver)
-* [`environment`](#environment)
-* [`ignore_preflight_errors`](#ignore_preflight_errors)
-* [`metrics_bind_address`](#metrics_bind_address)
-* [`join_discovery_file`](#join_discovery_file)
-* [`skip_phases`](#skip_phases)
-* [`skip_phases_join`](#skip_phases_join)
-* [`conntrack_max_per_core`](#conntrack_max_per_core)
-* [`conntrack_min`](#conntrack_min)
-* [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
-* [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
-* [`tmp_directory`](#tmp_directory)
-* [`wait_for_default_sa_tries`](#wait_for_default_sa_tries)
-* [`wait_for_default_sa_try_sleep`](#wait_for_default_sa_try_sleep)
-* [`feature_gates`](#feature_gates)
+* [`kubernetes_version`](#-kubernetes--kubernetes_version)
+* [`kubernetes_cluster_name`](#-kubernetes--kubernetes_cluster_name)
+* [`kubernetes_package_version`](#-kubernetes--kubernetes_package_version)
+* [`container_runtime`](#-kubernetes--container_runtime)
+* [`containerd_version`](#-kubernetes--containerd_version)
+* [`containerd_install_method`](#-kubernetes--containerd_install_method)
+* [`containerd_package_name`](#-kubernetes--containerd_package_name)
+* [`docker_package_name`](#-kubernetes--docker_package_name)
+* [`docker_version`](#-kubernetes--docker_version)
+* [`pin_packages`](#-kubernetes--pin_packages)
+* [`dns_domain`](#-kubernetes--dns_domain)
+* [`cni_pod_cidr`](#-kubernetes--cni_pod_cidr)
+* [`controller`](#-kubernetes--controller)
+* [`worker`](#-kubernetes--worker)
+* [`manage_docker`](#-kubernetes--manage_docker)
+* [`manage_etcd`](#-kubernetes--manage_etcd)
+* [`kube_api_bind_port`](#-kubernetes--kube_api_bind_port)
+* [`kube_api_advertise_address`](#-kubernetes--kube_api_advertise_address)
+* [`etcd_version`](#-kubernetes--etcd_version)
+* [`etcd_hostname`](#-kubernetes--etcd_hostname)
+* [`etcd_data_dir`](#-kubernetes--etcd_data_dir)
+* [`etcd_ip`](#-kubernetes--etcd_ip)
+* [`etcd_peers`](#-kubernetes--etcd_peers)
+* [`etcd_initial_cluster`](#-kubernetes--etcd_initial_cluster)
+* [`etcd_discovery_srv`](#-kubernetes--etcd_discovery_srv)
+* [`etcd_initial_cluster_state`](#-kubernetes--etcd_initial_cluster_state)
+* [`etcd_compaction_method`](#-kubernetes--etcd_compaction_method)
+* [`etcd_compaction_retention`](#-kubernetes--etcd_compaction_retention)
+* [`etcd_max_wals`](#-kubernetes--etcd_max_wals)
+* [`etcd_max_request_bytes`](#-kubernetes--etcd_max_request_bytes)
+* [`etcd_listen_metric_urls`](#-kubernetes--etcd_listen_metric_urls)
+* [`etcd_ca_key`](#-kubernetes--etcd_ca_key)
+* [`etcd_ca_crt`](#-kubernetes--etcd_ca_crt)
+* [`etcdclient_key`](#-kubernetes--etcdclient_key)
+* [`etcdclient_crt`](#-kubernetes--etcdclient_crt)
+* [`etcdserver_crt`](#-kubernetes--etcdserver_crt)
+* [`etcdserver_key`](#-kubernetes--etcdserver_key)
+* [`etcdpeer_crt`](#-kubernetes--etcdpeer_crt)
+* [`etcdpeer_key`](#-kubernetes--etcdpeer_key)
+* [`cni_network_preinstall`](#-kubernetes--cni_network_preinstall)
+* [`cni_network_provider`](#-kubernetes--cni_network_provider)
+* [`cni_provider`](#-kubernetes--cni_provider)
+* [`cni_rbac_binding`](#-kubernetes--cni_rbac_binding)
+* [`install_dashboard`](#-kubernetes--install_dashboard)
+* [`dashboard_version`](#-kubernetes--dashboard_version)
+* [`kubernetes_dashboard_url`](#-kubernetes--kubernetes_dashboard_url)
+* [`schedule_on_controller`](#-kubernetes--schedule_on_controller)
+* [`api_server_count`](#-kubernetes--api_server_count)
+* [`delegated_pki`](#-kubernetes--delegated_pki)
+* [`kubernetes_ca_crt`](#-kubernetes--kubernetes_ca_crt)
+* [`kubernetes_ca_key`](#-kubernetes--kubernetes_ca_key)
+* [`kubernetes_front_proxy_ca_crt`](#-kubernetes--kubernetes_front_proxy_ca_crt)
+* [`kubernetes_front_proxy_ca_key`](#-kubernetes--kubernetes_front_proxy_ca_key)
+* [`token`](#-kubernetes--token)
+* [`ttl_duration`](#-kubernetes--ttl_duration)
+* [`discovery_token_hash`](#-kubernetes--discovery_token_hash)
+* [`sa_pub`](#-kubernetes--sa_pub)
+* [`sa_key`](#-kubernetes--sa_key)
+* [`apiserver_cert_extra_sans`](#-kubernetes--apiserver_cert_extra_sans)
+* [`apiserver_extra_arguments`](#-kubernetes--apiserver_extra_arguments)
+* [`controllermanager_extra_arguments`](#-kubernetes--controllermanager_extra_arguments)
+* [`scheduler_extra_arguments`](#-kubernetes--scheduler_extra_arguments)
+* [`service_cidr`](#-kubernetes--service_cidr)
+* [`node_label`](#-kubernetes--node_label)
+* [`controller_address`](#-kubernetes--controller_address)
+* [`cloud_provider`](#-kubernetes--cloud_provider)
+* [`cloud_config`](#-kubernetes--cloud_config)
+* [`apiserver_extra_volumes`](#-kubernetes--apiserver_extra_volumes)
+* [`controllermanager_extra_volumes`](#-kubernetes--controllermanager_extra_volumes)
+* [`kubeadm_extra_config`](#-kubernetes--kubeadm_extra_config)
+* [`kubelet_extra_config`](#-kubernetes--kubelet_extra_config)
+* [`kubelet_extra_arguments`](#-kubernetes--kubelet_extra_arguments)
+* [`proxy_mode`](#-kubernetes--proxy_mode)
+* [`runc_version`](#-kubernetes--runc_version)
+* [`runc_source`](#-kubernetes--runc_source)
+* [`runc_source_checksum`](#-kubernetes--runc_source_checksum)
+* [`containerd_archive`](#-kubernetes--containerd_archive)
+* [`containerd_archive_checksum`](#-kubernetes--containerd_archive_checksum)
+* [`containerd_source`](#-kubernetes--containerd_source)
+* [`containerd_config_template`](#-kubernetes--containerd_config_template)
+* [`containerd_socket`](#-kubernetes--containerd_socket)
+* [`containerd_config_source`](#-kubernetes--containerd_config_source)
+* [`containerd_plugins_registry`](#-kubernetes--containerd_plugins_registry)
+* [`containerd_default_runtime_name`](#-kubernetes--containerd_default_runtime_name)
+* [`containerd_sandbox_image`](#-kubernetes--containerd_sandbox_image)
+* [`etcd_archive`](#-kubernetes--etcd_archive)
+* [`etcd_archive_checksum`](#-kubernetes--etcd_archive_checksum)
+* [`etcd_package_name`](#-kubernetes--etcd_package_name)
+* [`etcd_source`](#-kubernetes--etcd_source)
+* [`etcd_install_method`](#-kubernetes--etcd_install_method)
+* [`kubernetes_apt_location`](#-kubernetes--kubernetes_apt_location)
+* [`kubernetes_apt_release`](#-kubernetes--kubernetes_apt_release)
+* [`kubernetes_apt_repos`](#-kubernetes--kubernetes_apt_repos)
+* [`kubernetes_key_id`](#-kubernetes--kubernetes_key_id)
+* [`kubernetes_key_source`](#-kubernetes--kubernetes_key_source)
+* [`kubernetes_yum_baseurl`](#-kubernetes--kubernetes_yum_baseurl)
+* [`kubernetes_yum_gpgkey`](#-kubernetes--kubernetes_yum_gpgkey)
+* [`docker_apt_location`](#-kubernetes--docker_apt_location)
+* [`docker_apt_release`](#-kubernetes--docker_apt_release)
+* [`docker_apt_repos`](#-kubernetes--docker_apt_repos)
+* [`docker_yum_baseurl`](#-kubernetes--docker_yum_baseurl)
+* [`docker_yum_gpgkey`](#-kubernetes--docker_yum_gpgkey)
+* [`docker_key_id`](#-kubernetes--docker_key_id)
+* [`docker_key_source`](#-kubernetes--docker_key_source)
+* [`docker_storage_driver`](#-kubernetes--docker_storage_driver)
+* [`docker_storage_opts`](#-kubernetes--docker_storage_opts)
+* [`docker_extra_daemon_config`](#-kubernetes--docker_extra_daemon_config)
+* [`http_proxy`](#-kubernetes--http_proxy)
+* [`https_proxy`](#-kubernetes--https_proxy)
+* [`no_proxy`](#-kubernetes--no_proxy)
+* [`container_runtime_use_proxy`](#-kubernetes--container_runtime_use_proxy)
+* [`kubelet_use_proxy`](#-kubernetes--kubelet_use_proxy)
+* [`docker_log_max_file`](#-kubernetes--docker_log_max_file)
+* [`docker_log_max_size`](#-kubernetes--docker_log_max_size)
+* [`disable_swap`](#-kubernetes--disable_swap)
+* [`manage_kernel_modules`](#-kubernetes--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-kubernetes--manage_sysctl_settings)
+* [`create_repos`](#-kubernetes--create_repos)
+* [`image_repository`](#-kubernetes--image_repository)
+* [`default_path`](#-kubernetes--default_path)
+* [`cgroup_driver`](#-kubernetes--cgroup_driver)
+* [`environment`](#-kubernetes--environment)
+* [`ignore_preflight_errors`](#-kubernetes--ignore_preflight_errors)
+* [`metrics_bind_address`](#-kubernetes--metrics_bind_address)
+* [`join_discovery_file`](#-kubernetes--join_discovery_file)
+* [`skip_phases`](#-kubernetes--skip_phases)
+* [`skip_phases_join`](#-kubernetes--skip_phases_join)
+* [`conntrack_max_per_core`](#-kubernetes--conntrack_max_per_core)
+* [`conntrack_min`](#-kubernetes--conntrack_min)
+* [`conntrack_tcp_wait_timeout`](#-kubernetes--conntrack_tcp_wait_timeout)
+* [`conntrack_tcp_stablished_timeout`](#-kubernetes--conntrack_tcp_stablished_timeout)
+* [`tmp_directory`](#-kubernetes--tmp_directory)
+* [`wait_for_default_sa_tries`](#-kubernetes--wait_for_default_sa_tries)
+* [`wait_for_default_sa_try_sleep`](#-kubernetes--wait_for_default_sa_try_sleep)
+* [`feature_gates`](#-kubernetes--feature_gates)
 
-##### <a name="kubernetes_version"></a>`kubernetes_version`
+##### <a name="-kubernetes--kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -1247,7 +1295,7 @@ Data type: `String`
 
 Default value: `'1.10.2'`
 
-##### <a name="kubernetes_cluster_name"></a>`kubernetes_cluster_name`
+##### <a name="-kubernetes--kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
 Data type: `String`
 
@@ -1255,15 +1303,21 @@ Data type: `String`
 
 Default value: `'kubernetes'`
 
-##### <a name="kubernetes_package_version"></a>`kubernetes_package_version`
+##### <a name="-kubernetes--kubernetes_package_version"></a>`kubernetes_package_version`
 
 Data type: `String`
 
 
 
-Default value: `$facts['os']['family']`
+Default value:
 
-##### <a name="container_runtime"></a>`container_runtime`
+```puppet
+$facts['os']['family'] ? {
+    'Debian' => "${kubernetes_version}-00",
+    'RedHat' => $kubernetes::kubernetes_version
+```
+
+##### <a name="-kubernetes--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -1271,15 +1325,15 @@ Data type: `String`
 
 Default value: `'docker'`
 
-##### <a name="containerd_version"></a>`containerd_version`
+##### <a name="-kubernetes--containerd_version"></a>`containerd_version`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `'1.4.3'`
 
-##### <a name="containerd_install_method"></a>`containerd_install_method`
+##### <a name="-kubernetes--containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Enum['archive','package']`
 
@@ -1287,7 +1341,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `'archive'`
 
-##### <a name="containerd_package_name"></a>`containerd_package_name`
+##### <a name="-kubernetes--containerd_package_name"></a>`containerd_package_name`
 
 Data type: `String`
 
@@ -1295,79 +1349,79 @@ Data type: `String`
 
 Default value: `'containerd.io'`
 
-##### <a name="docker_package_name"></a>`docker_package_name`
+##### <a name="-kubernetes--docker_package_name"></a>`docker_package_name`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `'docker-engine'`
 
-##### <a name="docker_version"></a>`docker_version`
+##### <a name="-kubernetes--docker_version"></a>`docker_version`
 
 Data type: `Optional[String]`
 
 
 
-Default value: `$facts['os']['family']`
+Default value: `undef`
 
-##### <a name="pin_packages"></a>`pin_packages`
+##### <a name="-kubernetes--pin_packages"></a>`pin_packages`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="dns_domain"></a>`dns_domain`
+##### <a name="-kubernetes--dns_domain"></a>`dns_domain`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `'cluster.local'`
 
-##### <a name="cni_pod_cidr"></a>`cni_pod_cidr`
+##### <a name="-kubernetes--cni_pod_cidr"></a>`cni_pod_cidr`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="controller"></a>`controller`
-
-Data type: `Boolean`
-
-
-
-Default value: ``false``
-
-##### <a name="worker"></a>`worker`
+##### <a name="-kubernetes--controller"></a>`controller`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="manage_docker"></a>`manage_docker`
-
-Data type: `Boolean`
-
-
-
-Default value: ``true``
-
-##### <a name="manage_etcd"></a>`manage_etcd`
+##### <a name="-kubernetes--worker"></a>`worker`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `false`
 
-##### <a name="kube_api_bind_port"></a>`kube_api_bind_port`
+##### <a name="-kubernetes--manage_docker"></a>`manage_docker`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
+
+##### <a name="-kubernetes--manage_etcd"></a>`manage_etcd`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
+
+##### <a name="-kubernetes--kube_api_bind_port"></a>`kube_api_bind_port`
 
 Data type: `Integer`
 
@@ -1375,23 +1429,23 @@ Data type: `Integer`
 
 Default value: `6443`
 
-##### <a name="kube_api_advertise_address"></a>`kube_api_advertise_address`
+##### <a name="-kubernetes--kube_api_advertise_address"></a>`kube_api_advertise_address`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcd_version"></a>`etcd_version`
+##### <a name="-kubernetes--etcd_version"></a>`etcd_version`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `'3.2.18'`
 
-##### <a name="etcd_hostname"></a>`etcd_hostname`
+##### <a name="-kubernetes--etcd_hostname"></a>`etcd_hostname`
 
 Data type: `Optional[String]`
 
@@ -1399,55 +1453,63 @@ Data type: `Optional[String]`
 
 Default value: `$facts['networking']['hostname']`
 
-##### <a name="etcd_ip"></a>`etcd_ip`
+##### <a name="-kubernetes--etcd_data_dir"></a>`etcd_data_dir`
+
+Data type: `String`
+
+
+
+Default value: `'/var/lib/etcd'`
+
+##### <a name="-kubernetes--etcd_ip"></a>`etcd_ip`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcd_peers"></a>`etcd_peers`
+##### <a name="-kubernetes--etcd_peers"></a>`etcd_peers`
 
 Data type: `Optional[Array]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcd_initial_cluster"></a>`etcd_initial_cluster`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="etcd_discovery_srv"></a>`etcd_discovery_srv`
+##### <a name="-kubernetes--etcd_initial_cluster"></a>`etcd_initial_cluster`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcd_initial_cluster_state"></a>`etcd_initial_cluster_state`
+##### <a name="-kubernetes--etcd_discovery_srv"></a>`etcd_discovery_srv`
 
-Data type: `Optional[Enum['new', 'existing']]`
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--etcd_initial_cluster_state"></a>`etcd_initial_cluster_state`
+
+Data type: `Enum['new', 'existing']`
 
 
 
 Default value: `'new'`
 
-##### <a name="etcd_compaction_method"></a>`etcd_compaction_method`
+##### <a name="-kubernetes--etcd_compaction_method"></a>`etcd_compaction_method`
 
-Data type: `Optional[Enum['periodic', 'revision']]`
+Data type: `Enum['periodic', 'revision']`
 
 
 
 Default value: `'periodic'`
 
-##### <a name="etcd_compaction_retention"></a>`etcd_compaction_retention`
+##### <a name="-kubernetes--etcd_compaction_retention"></a>`etcd_compaction_retention`
 
 Data type: `Variant[String, Integer]`
 
@@ -1455,7 +1517,7 @@ Data type: `Variant[String, Integer]`
 
 Default value: `0`
 
-##### <a name="etcd_max_wals"></a>`etcd_max_wals`
+##### <a name="-kubernetes--etcd_max_wals"></a>`etcd_max_wals`
 
 Data type: `Integer`
 
@@ -1463,7 +1525,7 @@ Data type: `Integer`
 
 Default value: `5`
 
-##### <a name="etcd_max_request_bytes"></a>`etcd_max_request_bytes`
+##### <a name="-kubernetes--etcd_max_request_bytes"></a>`etcd_max_request_bytes`
 
 Data type: `Integer`
 
@@ -1471,119 +1533,119 @@ Data type: `Integer`
 
 Default value: `1572864`
 
-##### <a name="etcd_listen_metric_urls"></a>`etcd_listen_metric_urls`
+##### <a name="-kubernetes--etcd_listen_metric_urls"></a>`etcd_listen_metric_urls`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcd_ca_key"></a>`etcd_ca_key`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="etcd_ca_crt"></a>`etcd_ca_crt`
+##### <a name="-kubernetes--etcd_ca_key"></a>`etcd_ca_key`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcdclient_key"></a>`etcdclient_key`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="etcdclient_crt"></a>`etcdclient_crt`
+##### <a name="-kubernetes--etcd_ca_crt"></a>`etcd_ca_crt`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcdserver_crt"></a>`etcdserver_crt`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="etcdserver_key"></a>`etcdserver_key`
+##### <a name="-kubernetes--etcdclient_key"></a>`etcdclient_key`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcdpeer_crt"></a>`etcdpeer_crt`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="etcdpeer_key"></a>`etcdpeer_key`
+##### <a name="-kubernetes--etcdclient_crt"></a>`etcdclient_crt`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cni_network_preinstall"></a>`cni_network_preinstall`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="cni_network_provider"></a>`cni_network_provider`
+##### <a name="-kubernetes--etcdserver_crt"></a>`etcdserver_crt`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cni_provider"></a>`cni_provider`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="cni_rbac_binding"></a>`cni_rbac_binding`
+##### <a name="-kubernetes--etcdserver_key"></a>`etcdserver_key`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="install_dashboard"></a>`install_dashboard`
+##### <a name="-kubernetes--etcdpeer_crt"></a>`etcdpeer_crt`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--etcdpeer_key"></a>`etcdpeer_key`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--cni_network_preinstall"></a>`cni_network_preinstall`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--cni_network_provider"></a>`cni_network_provider`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--cni_provider"></a>`cni_provider`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--cni_rbac_binding"></a>`cni_rbac_binding`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--install_dashboard"></a>`install_dashboard`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="dashboard_version"></a>`dashboard_version`
+##### <a name="-kubernetes--dashboard_version"></a>`dashboard_version`
 
 Data type: `String`
 
@@ -1591,79 +1653,79 @@ Data type: `String`
 
 Default value: `'1.10.1'`
 
-##### <a name="kubernetes_dashboard_url"></a>`kubernetes_dashboard_url`
+##### <a name="-kubernetes--kubernetes_dashboard_url"></a>`kubernetes_dashboard_url`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="schedule_on_controller"></a>`schedule_on_controller`
+##### <a name="-kubernetes--schedule_on_controller"></a>`schedule_on_controller`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="api_server_count"></a>`api_server_count`
+##### <a name="-kubernetes--api_server_count"></a>`api_server_count`
 
 Data type: `Integer`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="delegated_pki"></a>`delegated_pki`
+##### <a name="-kubernetes--delegated_pki"></a>`delegated_pki`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="kubernetes_ca_crt"></a>`kubernetes_ca_crt`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="kubernetes_ca_key"></a>`kubernetes_ca_key`
+##### <a name="-kubernetes--kubernetes_ca_crt"></a>`kubernetes_ca_crt`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="kubernetes_front_proxy_ca_crt"></a>`kubernetes_front_proxy_ca_crt`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="kubernetes_front_proxy_ca_key"></a>`kubernetes_front_proxy_ca_key`
+##### <a name="-kubernetes--kubernetes_ca_key"></a>`kubernetes_ca_key`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="token"></a>`token`
+##### <a name="-kubernetes--kubernetes_front_proxy_ca_crt"></a>`kubernetes_front_proxy_ca_crt`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--kubernetes_front_proxy_ca_key"></a>`kubernetes_front_proxy_ca_key`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--token"></a>`token`
 
 Data type: `String`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="ttl_duration"></a>`ttl_duration`
+##### <a name="-kubernetes--ttl_duration"></a>`ttl_duration`
 
 Data type: `String`
 
@@ -1671,63 +1733,63 @@ Data type: `String`
 
 Default value: `'24h'`
 
-##### <a name="discovery_token_hash"></a>`discovery_token_hash`
+##### <a name="-kubernetes--discovery_token_hash"></a>`discovery_token_hash`
 
 Data type: `String`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="sa_pub"></a>`sa_pub`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="sa_key"></a>`sa_key`
+##### <a name="-kubernetes--sa_pub"></a>`sa_pub`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="apiserver_cert_extra_sans"></a>`apiserver_cert_extra_sans`
+##### <a name="-kubernetes--sa_key"></a>`sa_key`
 
-Data type: `Optional[Array]`
-
-
-
-Default value: `[]`
-
-##### <a name="apiserver_extra_arguments"></a>`apiserver_extra_arguments`
-
-Data type: `Optional[Array]`
+Data type: `Optional[String]`
 
 
 
-Default value: `[]`
+Default value: `undef`
 
-##### <a name="controllermanager_extra_arguments"></a>`controllermanager_extra_arguments`
+##### <a name="-kubernetes--apiserver_cert_extra_sans"></a>`apiserver_cert_extra_sans`
 
-Data type: `Optional[Array]`
+Data type: `Array`
 
 
 
 Default value: `[]`
 
-##### <a name="scheduler_extra_arguments"></a>`scheduler_extra_arguments`
+##### <a name="-kubernetes--apiserver_extra_arguments"></a>`apiserver_extra_arguments`
 
-Data type: `Optional[Array]`
+Data type: `Array`
 
 
 
 Default value: `[]`
 
-##### <a name="service_cidr"></a>`service_cidr`
+##### <a name="-kubernetes--controllermanager_extra_arguments"></a>`controllermanager_extra_arguments`
+
+Data type: `Array`
+
+
+
+Default value: `[]`
+
+##### <a name="-kubernetes--scheduler_extra_arguments"></a>`scheduler_extra_arguments`
+
+Data type: `Array`
+
+
+
+Default value: `[]`
+
+##### <a name="-kubernetes--service_cidr"></a>`service_cidr`
 
 Data type: `String`
 
@@ -1735,135 +1797,135 @@ Data type: `String`
 
 Default value: `'10.96.0.0/12'`
 
-##### <a name="node_label"></a>`node_label`
+##### <a name="-kubernetes--node_label"></a>`node_label`
+
+Data type: `Optional[Stdlib::Fqdn]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--controller_address"></a>`controller_address`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="controller_address"></a>`controller_address`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="cloud_provider"></a>`cloud_provider`
+##### <a name="-kubernetes--cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cloud_config"></a>`cloud_config`
+##### <a name="-kubernetes--cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="apiserver_extra_volumes"></a>`apiserver_extra_volumes`
+##### <a name="-kubernetes--apiserver_extra_volumes"></a>`apiserver_extra_volumes`
 
-Data type: `Optional[Hash]`
+Data type: `Hash`
 
 
 
 Default value: `{}`
 
-##### <a name="controllermanager_extra_volumes"></a>`controllermanager_extra_volumes`
+##### <a name="-kubernetes--controllermanager_extra_volumes"></a>`controllermanager_extra_volumes`
 
-Data type: `Optional[Hash]`
+Data type: `Hash`
 
 
 
 Default value: `{}`
 
-##### <a name="kubeadm_extra_config"></a>`kubeadm_extra_config`
+##### <a name="-kubernetes--kubeadm_extra_config"></a>`kubeadm_extra_config`
 
 Data type: `Optional[Hash]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="kubelet_extra_config"></a>`kubelet_extra_config`
+##### <a name="-kubernetes--kubelet_extra_config"></a>`kubelet_extra_config`
 
 Data type: `Optional[Hash]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="kubelet_extra_arguments"></a>`kubelet_extra_arguments`
+##### <a name="-kubernetes--kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 
-Data type: `Optional[Array]`
+Data type: `Array`
 
 
 
 Default value: `[]`
 
-##### <a name="proxy_mode"></a>`proxy_mode`
+##### <a name="-kubernetes--proxy_mode"></a>`proxy_mode`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `''`
 
-##### <a name="runc_version"></a>`runc_version`
+##### <a name="-kubernetes--runc_version"></a>`runc_version`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `'1.0.0'`
 
-##### <a name="runc_source"></a>`runc_source`
+##### <a name="-kubernetes--runc_source"></a>`runc_source`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `"https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64"`
 
-##### <a name="runc_source_checksum"></a>`runc_source_checksum`
+##### <a name="-kubernetes--runc_source_checksum"></a>`runc_source_checksum`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="containerd_archive"></a>`containerd_archive`
+##### <a name="-kubernetes--containerd_archive"></a>`containerd_archive`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `"containerd-${containerd_version}-linux-amd64.tar.gz"`
 
-##### <a name="containerd_archive_checksum"></a>`containerd_archive_checksum`
+##### <a name="-kubernetes--containerd_archive_checksum"></a>`containerd_archive_checksum`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="containerd_source"></a>`containerd_source`
+##### <a name="-kubernetes--containerd_source"></a>`containerd_source`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 
 
 Default value: `"https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}"`
 
-##### <a name="containerd_config_template"></a>`containerd_config_template`
+##### <a name="-kubernetes--containerd_config_template"></a>`containerd_config_template`
 
 Data type: `String`
 
@@ -1871,29 +1933,41 @@ Data type: `String`
 
 Default value: `'kubernetes/containerd/config.toml.erb'`
 
-##### <a name="containerd_config_source"></a>`containerd_config_source`
+##### <a name="-kubernetes--containerd_socket"></a>`containerd_socket`
+
+Data type: `Variant[Stdlib::Unixpath, String]`
+
+
+
+Default value: `'/run/containerd/containerd.sock'`
+
+##### <a name="-kubernetes--containerd_config_source"></a>`containerd_config_source`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="containerd_plugins_registry"></a>`containerd_plugins_registry`
+##### <a name="-kubernetes--containerd_plugins_registry"></a>`containerd_plugins_registry`
 
-Data type: `Optional[Hash]`
+Data type: `Hash`
 
 
 
-Default value: `{
+Default value:
+
+```puppet
+{
     'docker.io' => {
       'mirrors' => {
-        'endpoint' => 'https://registry-1.docker.io'
+        'endpoint' => 'https://registry-1.docker.io',
       },
     },
-  }`
+  }
+```
 
-##### <a name="containerd_default_runtime_name"></a>`containerd_default_runtime_name`
+##### <a name="-kubernetes--containerd_default_runtime_name"></a>`containerd_default_runtime_name`
 
 Data type: `Enum['runc','nvidia']`
 
@@ -1901,7 +1975,15 @@ Data type: `Enum['runc','nvidia']`
 
 Default value: `'runc'`
 
-##### <a name="etcd_archive"></a>`etcd_archive`
+##### <a name="-kubernetes--containerd_sandbox_image"></a>`containerd_sandbox_image`
+
+Data type: `String`
+
+
+
+Default value: `'k8s.gcr.io/pause:3.2'`
+
+##### <a name="-kubernetes--etcd_archive"></a>`etcd_archive`
 
 Data type: `String`
 
@@ -1909,15 +1991,15 @@ Data type: `String`
 
 Default value: `"etcd-v${etcd_version}-linux-amd64.tar.gz"`
 
-##### <a name="etcd_archive_checksum"></a>`etcd_archive_checksum`
+##### <a name="-kubernetes--etcd_archive_checksum"></a>`etcd_archive_checksum`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="etcd_package_name"></a>`etcd_package_name`
+##### <a name="-kubernetes--etcd_package_name"></a>`etcd_package_name`
 
 Data type: `String`
 
@@ -1925,7 +2007,7 @@ Data type: `String`
 
 Default value: `'etcd-server'`
 
-##### <a name="etcd_source"></a>`etcd_source`
+##### <a name="-kubernetes--etcd_source"></a>`etcd_source`
 
 Data type: `String`
 
@@ -1933,7 +2015,7 @@ Data type: `String`
 
 Default value: `"https://github.com/etcd-io/etcd/releases/download/v${etcd_version}/${etcd_archive}"`
 
-##### <a name="etcd_install_method"></a>`etcd_install_method`
+##### <a name="-kubernetes--etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -1941,143 +2023,189 @@ Data type: `String`
 
 Default value: `'wget'`
 
-##### <a name="kubernetes_apt_location"></a>`kubernetes_apt_location`
+##### <a name="-kubernetes--kubernetes_apt_location"></a>`kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="kubernetes_apt_release"></a>`kubernetes_apt_release`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="kubernetes_apt_repos"></a>`kubernetes_apt_repos`
+##### <a name="-kubernetes--kubernetes_apt_release"></a>`kubernetes_apt_release`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="kubernetes_key_id"></a>`kubernetes_key_id`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="kubernetes_key_source"></a>`kubernetes_key_source`
+##### <a name="-kubernetes--kubernetes_apt_repos"></a>`kubernetes_apt_repos`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="kubernetes_yum_baseurl"></a>`kubernetes_yum_baseurl`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="kubernetes_yum_gpgkey"></a>`kubernetes_yum_gpgkey`
+##### <a name="-kubernetes--kubernetes_key_id"></a>`kubernetes_key_id`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_apt_location"></a>`docker_apt_location`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="docker_apt_release"></a>`docker_apt_release`
+##### <a name="-kubernetes--kubernetes_key_source"></a>`kubernetes_key_source`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_apt_repos"></a>`docker_apt_repos`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="docker_yum_baseurl"></a>`docker_yum_baseurl`
+##### <a name="-kubernetes--kubernetes_yum_baseurl"></a>`kubernetes_yum_baseurl`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_yum_gpgkey"></a>`docker_yum_gpgkey`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="docker_key_id"></a>`docker_key_id`
+##### <a name="-kubernetes--kubernetes_yum_gpgkey"></a>`kubernetes_yum_gpgkey`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_key_source"></a>`docker_key_source`
+##### <a name="-kubernetes--docker_apt_location"></a>`docker_apt_location`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--docker_apt_release"></a>`docker_apt_release`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_storage_driver"></a>`docker_storage_driver`
+##### <a name="-kubernetes--docker_apt_repos"></a>`docker_apt_repos`
 
 Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--docker_yum_baseurl"></a>`docker_yum_baseurl`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--docker_yum_gpgkey"></a>`docker_yum_gpgkey`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--docker_key_id"></a>`docker_key_id`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--docker_key_source"></a>`docker_key_source`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--docker_storage_driver"></a>`docker_storage_driver`
+
+Data type: `String`
 
 
 
 Default value: `'overlay2'`
 
-##### <a name="docker_storage_opts"></a>`docker_storage_opts`
+##### <a name="-kubernetes--docker_storage_opts"></a>`docker_storage_opts`
 
 Data type: `Optional[Array]`
 
 
 
-Default value: `$facts['os']['family']`
+Default value:
 
-##### <a name="docker_extra_daemon_config"></a>`docker_extra_daemon_config`
+```puppet
+$facts['os']['family'] ? {
+    'RedHat' => ['overlay2.override_kernel_check=true'],
+    default  => undef
+```
+
+##### <a name="-kubernetes--docker_extra_daemon_config"></a>`docker_extra_daemon_config`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_log_max_file"></a>`docker_log_max_file`
+##### <a name="-kubernetes--http_proxy"></a>`http_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--https_proxy"></a>`https_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--no_proxy"></a>`no_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--container_runtime_use_proxy"></a>`container_runtime_use_proxy`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-kubernetes--kubelet_use_proxy"></a>`kubelet_use_proxy`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-kubernetes--docker_log_max_file"></a>`docker_log_max_file`
 
 Data type: `String`
 
@@ -2085,7 +2213,7 @@ Data type: `String`
 
 Default value: `'1'`
 
-##### <a name="docker_log_max_size"></a>`docker_log_max_size`
+##### <a name="-kubernetes--docker_log_max_size"></a>`docker_log_max_size`
 
 Data type: `String`
 
@@ -2093,39 +2221,39 @@ Data type: `String`
 
 Default value: `'100m'`
 
-##### <a name="disable_swap"></a>`disable_swap`
+##### <a name="-kubernetes--disable_swap"></a>`disable_swap`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
-
-Data type: `Boolean`
-
-
-
-Default value: ``true``
-
-##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
+##### <a name="-kubernetes--manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="create_repos"></a>`create_repos`
+##### <a name="-kubernetes--manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="image_repository"></a>`image_repository`
+##### <a name="-kubernetes--create_repos"></a>`create_repos`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
+
+##### <a name="-kubernetes--image_repository"></a>`image_repository`
 
 Data type: `String`
 
@@ -2133,7 +2261,7 @@ Data type: `String`
 
 Default value: `'k8s.gcr.io'`
 
-##### <a name="default_path"></a>`default_path`
+##### <a name="-kubernetes--default_path"></a>`default_path`
 
 Data type: `Array[String]`
 
@@ -2141,31 +2269,43 @@ Data type: `Array[String]`
 
 Default value: `['/usr/bin', '/usr/sbin', '/bin', '/sbin', '/usr/local/bin']`
 
-##### <a name="cgroup_driver"></a>`cgroup_driver`
+##### <a name="-kubernetes--cgroup_driver"></a>`cgroup_driver`
 
 Data type: `String`
 
 
 
-Default value: `$facts['os']['family']`
+Default value:
 
-##### <a name="environment"></a>`environment`
+```puppet
+$facts['os']['family'] ? {
+    'RedHat' => 'systemd',
+    default  => 'cgroupfs'
+```
+
+##### <a name="-kubernetes--environment"></a>`environment`
 
 Data type: `Array[String]`
 
 
 
-Default value: `$controller`
+Default value:
 
-##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
+```puppet
+$controller ? {
+    true    => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+    default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf']
+```
+
+##### <a name="-kubernetes--ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="metrics_bind_address"></a>`metrics_bind_address`
+##### <a name="-kubernetes--metrics_bind_address"></a>`metrics_bind_address`
 
 Data type: `Stdlib::IP::Address`
 
@@ -2173,31 +2313,31 @@ Data type: `Stdlib::IP::Address`
 
 Default value: `'127.0.0.1'`
 
-##### <a name="join_discovery_file"></a>`join_discovery_file`
+##### <a name="-kubernetes--join_discovery_file"></a>`join_discovery_file`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="skip_phases"></a>`skip_phases`
+##### <a name="-kubernetes--skip_phases"></a>`skip_phases`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="skip_phases_join"></a>`skip_phases_join`
+##### <a name="-kubernetes--skip_phases_join"></a>`skip_phases_join`
 
 Data type: `Optional[Array]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="conntrack_max_per_core"></a>`conntrack_max_per_core`
+##### <a name="-kubernetes--conntrack_max_per_core"></a>`conntrack_max_per_core`
 
 Data type: `Integer`
 
@@ -2205,7 +2345,7 @@ Data type: `Integer`
 
 Default value: `32768`
 
-##### <a name="conntrack_min"></a>`conntrack_min`
+##### <a name="-kubernetes--conntrack_min"></a>`conntrack_min`
 
 Data type: `Integer`
 
@@ -2213,7 +2353,7 @@ Data type: `Integer`
 
 Default value: `131072`
 
-##### <a name="conntrack_tcp_wait_timeout"></a>`conntrack_tcp_wait_timeout`
+##### <a name="-kubernetes--conntrack_tcp_wait_timeout"></a>`conntrack_tcp_wait_timeout`
 
 Data type: `String`
 
@@ -2221,7 +2361,7 @@ Data type: `String`
 
 Default value: `'1h0m0s'`
 
-##### <a name="conntrack_tcp_stablished_timeout"></a>`conntrack_tcp_stablished_timeout`
+##### <a name="-kubernetes--conntrack_tcp_stablished_timeout"></a>`conntrack_tcp_stablished_timeout`
 
 Data type: `String`
 
@@ -2229,7 +2369,7 @@ Data type: `String`
 
 Default value: `'24h0m0s'`
 
-##### <a name="tmp_directory"></a>`tmp_directory`
+##### <a name="-kubernetes--tmp_directory"></a>`tmp_directory`
 
 Data type: `String`
 
@@ -2237,7 +2377,7 @@ Data type: `String`
 
 Default value: `'/var/tmp/puppetlabs-kubernetes'`
 
-##### <a name="wait_for_default_sa_tries"></a>`wait_for_default_sa_tries`
+##### <a name="-kubernetes--wait_for_default_sa_tries"></a>`wait_for_default_sa_tries`
 
 Data type: `Integer`
 
@@ -2245,7 +2385,7 @@ Data type: `Integer`
 
 Default value: `5`
 
-##### <a name="wait_for_default_sa_try_sleep"></a>`wait_for_default_sa_try_sleep`
+##### <a name="-kubernetes--wait_for_default_sa_try_sleep"></a>`wait_for_default_sa_try_sleep`
 
 Data type: `Integer`
 
@@ -2253,7 +2393,7 @@ Data type: `Integer`
 
 Default value: `6`
 
-##### <a name="feature_gates"></a>`feature_gates`
+##### <a name="-kubernetes--feature_gates"></a>`feature_gates`
 
 Data type: `Hash[String[1], Boolean]`
 
@@ -2261,7 +2401,7 @@ Data type: `Hash[String[1], Boolean]`
 
 Default value: `{}`
 
-### <a name="kubernetescluster_roles"></a>`kubernetes::cluster_roles`
+### <a name="kubernetes--cluster_roles"></a>`kubernetes::cluster_roles`
 
 The kubernetes::cluster_roles class.
 
@@ -2269,16 +2409,16 @@ The kubernetes::cluster_roles class.
 
 The following parameters are available in the `kubernetes::cluster_roles` class:
 
-* [`controller`](#controller)
-* [`worker`](#worker)
-* [`node_name`](#node_name)
-* [`container_runtime`](#container_runtime)
-* [`join_discovery_file`](#join_discovery_file)
-* [`ignore_preflight_errors`](#ignore_preflight_errors)
-* [`env`](#env)
-* [`skip_phases`](#skip_phases)
+* [`controller`](#-kubernetes--cluster_roles--controller)
+* [`worker`](#-kubernetes--cluster_roles--worker)
+* [`node_name`](#-kubernetes--cluster_roles--node_name)
+* [`container_runtime`](#-kubernetes--cluster_roles--container_runtime)
+* [`join_discovery_file`](#-kubernetes--cluster_roles--join_discovery_file)
+* [`ignore_preflight_errors`](#-kubernetes--cluster_roles--ignore_preflight_errors)
+* [`env`](#-kubernetes--cluster_roles--env)
+* [`skip_phases`](#-kubernetes--cluster_roles--skip_phases)
 
-##### <a name="controller"></a>`controller`
+##### <a name="-kubernetes--cluster_roles--controller"></a>`controller`
 
 Data type: `Optional[Boolean]`
 
@@ -2286,7 +2426,7 @@ Data type: `Optional[Boolean]`
 
 Default value: `$kubernetes::controller`
 
-##### <a name="worker"></a>`worker`
+##### <a name="-kubernetes--cluster_roles--worker"></a>`worker`
 
 Data type: `Optional[Boolean]`
 
@@ -2294,15 +2434,15 @@ Data type: `Optional[Boolean]`
 
 Default value: `$kubernetes::worker`
 
-##### <a name="node_name"></a>`node_name`
+##### <a name="-kubernetes--cluster_roles--node_name"></a>`node_name`
 
-Data type: `String`
+Data type: `Stdlib::Fqdn`
 
 
 
 Default value: `$kubernetes::node_name`
 
-##### <a name="container_runtime"></a>`container_runtime`
+##### <a name="-kubernetes--cluster_roles--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -2310,7 +2450,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### <a name="join_discovery_file"></a>`join_discovery_file`
+##### <a name="-kubernetes--cluster_roles--join_discovery_file"></a>`join_discovery_file`
 
 Data type: `Optional[String]`
 
@@ -2318,7 +2458,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::join_discovery_file`
 
-##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
+##### <a name="-kubernetes--cluster_roles--ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -2326,7 +2466,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::ignore_preflight_errors`
 
-##### <a name="env"></a>`env`
+##### <a name="-kubernetes--cluster_roles--env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -2334,7 +2474,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-##### <a name="skip_phases"></a>`skip_phases`
+##### <a name="-kubernetes--cluster_roles--skip_phases"></a>`skip_phases`
 
 Data type: `Optional[String]`
 
@@ -2342,7 +2482,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::skip_phases`
 
-### <a name="kubernetesconfigkubeadm"></a>`kubernetes::config::kubeadm`
+### <a name="kubernetes--config--kubeadm"></a>`kubernetes::config::kubeadm`
 
 Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
 
@@ -2350,72 +2490,73 @@ Class kubernetes config kubeadm, populates kubeadm config file with params to bo
 
 The following parameters are available in the `kubernetes::config::kubeadm` class:
 
-* [`config_file`](#config_file)
-* [`controller_address`](#controller_address)
-* [`dns_domain`](#dns_domain)
-* [`manage_etcd`](#manage_etcd)
-* [`delegated_pki`](#delegated_pki)
-* [`etcd_install_method`](#etcd_install_method)
-* [`kubernetes_version`](#kubernetes_version)
-* [`kubernetes_cluster_name`](#kubernetes_cluster_name)
-* [`etcd_ca_key`](#etcd_ca_key)
-* [`etcd_ca_crt`](#etcd_ca_crt)
-* [`etcdclient_key`](#etcdclient_key)
-* [`etcdclient_crt`](#etcdclient_crt)
-* [`etcdserver_crt`](#etcdserver_crt)
-* [`etcdserver_key`](#etcdserver_key)
-* [`etcdpeer_crt`](#etcdpeer_crt)
-* [`etcdpeer_key`](#etcdpeer_key)
-* [`etcd_peers`](#etcd_peers)
-* [`etcd_hostname`](#etcd_hostname)
-* [`etcd_ip`](#etcd_ip)
-* [`cni_pod_cidr`](#cni_pod_cidr)
-* [`kube_api_bind_port`](#kube_api_bind_port)
-* [`kube_api_advertise_address`](#kube_api_advertise_address)
-* [`etcd_initial_cluster`](#etcd_initial_cluster)
-* [`etcd_discovery_srv`](#etcd_discovery_srv)
-* [`etcd_initial_cluster_state`](#etcd_initial_cluster_state)
-* [`etcd_compaction_method`](#etcd_compaction_method)
-* [`etcd_compaction_retention`](#etcd_compaction_retention)
-* [`api_server_count`](#api_server_count)
-* [`etcd_version`](#etcd_version)
-* [`etcd_max_wals`](#etcd_max_wals)
-* [`etcd_max_request_bytes`](#etcd_max_request_bytes)
-* [`etcd_listen_metric_urls`](#etcd_listen_metric_urls)
-* [`token`](#token)
-* [`ttl_duration`](#ttl_duration)
-* [`discovery_token_hash`](#discovery_token_hash)
-* [`kubernetes_ca_crt`](#kubernetes_ca_crt)
-* [`kubernetes_ca_key`](#kubernetes_ca_key)
-* [`kubernetes_front_proxy_ca_crt`](#kubernetes_front_proxy_ca_crt)
-* [`kubernetes_front_proxy_ca_key`](#kubernetes_front_proxy_ca_key)
-* [`container_runtime`](#container_runtime)
-* [`sa_pub`](#sa_pub)
-* [`sa_key`](#sa_key)
-* [`apiserver_cert_extra_sans`](#apiserver_cert_extra_sans)
-* [`apiserver_extra_arguments`](#apiserver_extra_arguments)
-* [`controllermanager_extra_arguments`](#controllermanager_extra_arguments)
-* [`scheduler_extra_arguments`](#scheduler_extra_arguments)
-* [`kubelet_extra_arguments`](#kubelet_extra_arguments)
-* [`service_cidr`](#service_cidr)
-* [`node_name`](#node_name)
-* [`cloud_provider`](#cloud_provider)
-* [`cloud_config`](#cloud_config)
-* [`apiserver_extra_volumes`](#apiserver_extra_volumes)
-* [`controllermanager_extra_volumes`](#controllermanager_extra_volumes)
-* [`kubeadm_extra_config`](#kubeadm_extra_config)
-* [`kubelet_extra_config`](#kubelet_extra_config)
-* [`image_repository`](#image_repository)
-* [`cgroup_driver`](#cgroup_driver)
-* [`proxy_mode`](#proxy_mode)
-* [`metrics_bind_address`](#metrics_bind_address)
-* [`conntrack_max_per_core`](#conntrack_max_per_core)
-* [`conntrack_min`](#conntrack_min)
-* [`conntrack_tcp_wait_timeout`](#conntrack_tcp_wait_timeout)
-* [`conntrack_tcp_stablished_timeout`](#conntrack_tcp_stablished_timeout)
-* [`feature_gates`](#feature_gates)
+* [`config_file`](#-kubernetes--config--kubeadm--config_file)
+* [`controller_address`](#-kubernetes--config--kubeadm--controller_address)
+* [`dns_domain`](#-kubernetes--config--kubeadm--dns_domain)
+* [`manage_etcd`](#-kubernetes--config--kubeadm--manage_etcd)
+* [`delegated_pki`](#-kubernetes--config--kubeadm--delegated_pki)
+* [`etcd_install_method`](#-kubernetes--config--kubeadm--etcd_install_method)
+* [`kubernetes_version`](#-kubernetes--config--kubeadm--kubernetes_version)
+* [`kubernetes_cluster_name`](#-kubernetes--config--kubeadm--kubernetes_cluster_name)
+* [`etcd_ca_key`](#-kubernetes--config--kubeadm--etcd_ca_key)
+* [`etcd_ca_crt`](#-kubernetes--config--kubeadm--etcd_ca_crt)
+* [`etcdclient_key`](#-kubernetes--config--kubeadm--etcdclient_key)
+* [`etcdclient_crt`](#-kubernetes--config--kubeadm--etcdclient_crt)
+* [`etcdserver_crt`](#-kubernetes--config--kubeadm--etcdserver_crt)
+* [`etcdserver_key`](#-kubernetes--config--kubeadm--etcdserver_key)
+* [`etcdpeer_crt`](#-kubernetes--config--kubeadm--etcdpeer_crt)
+* [`etcdpeer_key`](#-kubernetes--config--kubeadm--etcdpeer_key)
+* [`etcd_peers`](#-kubernetes--config--kubeadm--etcd_peers)
+* [`etcd_hostname`](#-kubernetes--config--kubeadm--etcd_hostname)
+* [`etcd_data_dir`](#-kubernetes--config--kubeadm--etcd_data_dir)
+* [`etcd_ip`](#-kubernetes--config--kubeadm--etcd_ip)
+* [`cni_pod_cidr`](#-kubernetes--config--kubeadm--cni_pod_cidr)
+* [`kube_api_bind_port`](#-kubernetes--config--kubeadm--kube_api_bind_port)
+* [`kube_api_advertise_address`](#-kubernetes--config--kubeadm--kube_api_advertise_address)
+* [`etcd_initial_cluster`](#-kubernetes--config--kubeadm--etcd_initial_cluster)
+* [`etcd_discovery_srv`](#-kubernetes--config--kubeadm--etcd_discovery_srv)
+* [`etcd_initial_cluster_state`](#-kubernetes--config--kubeadm--etcd_initial_cluster_state)
+* [`etcd_compaction_method`](#-kubernetes--config--kubeadm--etcd_compaction_method)
+* [`etcd_compaction_retention`](#-kubernetes--config--kubeadm--etcd_compaction_retention)
+* [`api_server_count`](#-kubernetes--config--kubeadm--api_server_count)
+* [`etcd_version`](#-kubernetes--config--kubeadm--etcd_version)
+* [`etcd_max_wals`](#-kubernetes--config--kubeadm--etcd_max_wals)
+* [`etcd_max_request_bytes`](#-kubernetes--config--kubeadm--etcd_max_request_bytes)
+* [`etcd_listen_metric_urls`](#-kubernetes--config--kubeadm--etcd_listen_metric_urls)
+* [`token`](#-kubernetes--config--kubeadm--token)
+* [`ttl_duration`](#-kubernetes--config--kubeadm--ttl_duration)
+* [`discovery_token_hash`](#-kubernetes--config--kubeadm--discovery_token_hash)
+* [`kubernetes_ca_crt`](#-kubernetes--config--kubeadm--kubernetes_ca_crt)
+* [`kubernetes_ca_key`](#-kubernetes--config--kubeadm--kubernetes_ca_key)
+* [`kubernetes_front_proxy_ca_crt`](#-kubernetes--config--kubeadm--kubernetes_front_proxy_ca_crt)
+* [`kubernetes_front_proxy_ca_key`](#-kubernetes--config--kubeadm--kubernetes_front_proxy_ca_key)
+* [`container_runtime`](#-kubernetes--config--kubeadm--container_runtime)
+* [`sa_pub`](#-kubernetes--config--kubeadm--sa_pub)
+* [`sa_key`](#-kubernetes--config--kubeadm--sa_key)
+* [`apiserver_cert_extra_sans`](#-kubernetes--config--kubeadm--apiserver_cert_extra_sans)
+* [`apiserver_extra_arguments`](#-kubernetes--config--kubeadm--apiserver_extra_arguments)
+* [`controllermanager_extra_arguments`](#-kubernetes--config--kubeadm--controllermanager_extra_arguments)
+* [`scheduler_extra_arguments`](#-kubernetes--config--kubeadm--scheduler_extra_arguments)
+* [`kubelet_extra_arguments`](#-kubernetes--config--kubeadm--kubelet_extra_arguments)
+* [`service_cidr`](#-kubernetes--config--kubeadm--service_cidr)
+* [`node_name`](#-kubernetes--config--kubeadm--node_name)
+* [`cloud_provider`](#-kubernetes--config--kubeadm--cloud_provider)
+* [`cloud_config`](#-kubernetes--config--kubeadm--cloud_config)
+* [`apiserver_extra_volumes`](#-kubernetes--config--kubeadm--apiserver_extra_volumes)
+* [`controllermanager_extra_volumes`](#-kubernetes--config--kubeadm--controllermanager_extra_volumes)
+* [`kubeadm_extra_config`](#-kubernetes--config--kubeadm--kubeadm_extra_config)
+* [`kubelet_extra_config`](#-kubernetes--config--kubeadm--kubelet_extra_config)
+* [`image_repository`](#-kubernetes--config--kubeadm--image_repository)
+* [`cgroup_driver`](#-kubernetes--config--kubeadm--cgroup_driver)
+* [`proxy_mode`](#-kubernetes--config--kubeadm--proxy_mode)
+* [`metrics_bind_address`](#-kubernetes--config--kubeadm--metrics_bind_address)
+* [`conntrack_max_per_core`](#-kubernetes--config--kubeadm--conntrack_max_per_core)
+* [`conntrack_min`](#-kubernetes--config--kubeadm--conntrack_min)
+* [`conntrack_tcp_wait_timeout`](#-kubernetes--config--kubeadm--conntrack_tcp_wait_timeout)
+* [`conntrack_tcp_stablished_timeout`](#-kubernetes--config--kubeadm--conntrack_tcp_stablished_timeout)
+* [`feature_gates`](#-kubernetes--config--kubeadm--feature_gates)
 
-##### <a name="config_file"></a>`config_file`
+##### <a name="-kubernetes--config--kubeadm--config_file"></a>`config_file`
 
 Data type: `String`
 
@@ -2423,7 +2564,7 @@ Data type: `String`
 
 Default value: `$kubernetes::config_file`
 
-##### <a name="controller_address"></a>`controller_address`
+##### <a name="-kubernetes--config--kubeadm--controller_address"></a>`controller_address`
 
 Data type: `String`
 
@@ -2431,7 +2572,7 @@ Data type: `String`
 
 Default value: `$kubernetes::controller_address`
 
-##### <a name="dns_domain"></a>`dns_domain`
+##### <a name="-kubernetes--config--kubeadm--dns_domain"></a>`dns_domain`
 
 Data type: `String`
 
@@ -2439,7 +2580,7 @@ Data type: `String`
 
 Default value: `$kubernetes::dns_domain`
 
-##### <a name="manage_etcd"></a>`manage_etcd`
+##### <a name="-kubernetes--config--kubeadm--manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -2447,7 +2588,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_etcd`
 
-##### <a name="delegated_pki"></a>`delegated_pki`
+##### <a name="-kubernetes--config--kubeadm--delegated_pki"></a>`delegated_pki`
 
 Data type: `Boolean`
 
@@ -2455,7 +2596,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::delegated_pki`
 
-##### <a name="etcd_install_method"></a>`etcd_install_method`
+##### <a name="-kubernetes--config--kubeadm--etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -2463,7 +2604,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_install_method`
 
-##### <a name="kubernetes_version"></a>`kubernetes_version`
+##### <a name="-kubernetes--config--kubeadm--kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -2471,7 +2612,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### <a name="kubernetes_cluster_name"></a>`kubernetes_cluster_name`
+##### <a name="-kubernetes--config--kubeadm--kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
 Data type: `String`
 
@@ -2479,7 +2620,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_cluster_name`
 
-##### <a name="etcd_ca_key"></a>`etcd_ca_key`
+##### <a name="-kubernetes--config--kubeadm--etcd_ca_key"></a>`etcd_ca_key`
 
 Data type: `Optional[String]`
 
@@ -2487,7 +2628,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_ca_key`
 
-##### <a name="etcd_ca_crt"></a>`etcd_ca_crt`
+##### <a name="-kubernetes--config--kubeadm--etcd_ca_crt"></a>`etcd_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -2495,7 +2636,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_ca_crt`
 
-##### <a name="etcdclient_key"></a>`etcdclient_key`
+##### <a name="-kubernetes--config--kubeadm--etcdclient_key"></a>`etcdclient_key`
 
 Data type: `Optional[String]`
 
@@ -2503,7 +2644,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdclient_key`
 
-##### <a name="etcdclient_crt"></a>`etcdclient_crt`
+##### <a name="-kubernetes--config--kubeadm--etcdclient_crt"></a>`etcdclient_crt`
 
 Data type: `Optional[String]`
 
@@ -2511,7 +2652,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdclient_crt`
 
-##### <a name="etcdserver_crt"></a>`etcdserver_crt`
+##### <a name="-kubernetes--config--kubeadm--etcdserver_crt"></a>`etcdserver_crt`
 
 Data type: `Optional[String]`
 
@@ -2519,7 +2660,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdserver_crt`
 
-##### <a name="etcdserver_key"></a>`etcdserver_key`
+##### <a name="-kubernetes--config--kubeadm--etcdserver_key"></a>`etcdserver_key`
 
 Data type: `Optional[String]`
 
@@ -2527,7 +2668,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdserver_key`
 
-##### <a name="etcdpeer_crt"></a>`etcdpeer_crt`
+##### <a name="-kubernetes--config--kubeadm--etcdpeer_crt"></a>`etcdpeer_crt`
 
 Data type: `Optional[String]`
 
@@ -2535,7 +2676,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdpeer_crt`
 
-##### <a name="etcdpeer_key"></a>`etcdpeer_key`
+##### <a name="-kubernetes--config--kubeadm--etcdpeer_key"></a>`etcdpeer_key`
 
 Data type: `Optional[String]`
 
@@ -2543,7 +2684,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcdpeer_key`
 
-##### <a name="etcd_peers"></a>`etcd_peers`
+##### <a name="-kubernetes--config--kubeadm--etcd_peers"></a>`etcd_peers`
 
 Data type: `Array`
 
@@ -2551,7 +2692,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::etcd_peers`
 
-##### <a name="etcd_hostname"></a>`etcd_hostname`
+##### <a name="-kubernetes--config--kubeadm--etcd_hostname"></a>`etcd_hostname`
 
 Data type: `String`
 
@@ -2559,7 +2700,15 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_hostname`
 
-##### <a name="etcd_ip"></a>`etcd_ip`
+##### <a name="-kubernetes--config--kubeadm--etcd_data_dir"></a>`etcd_data_dir`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::etcd_data_dir`
+
+##### <a name="-kubernetes--config--kubeadm--etcd_ip"></a>`etcd_ip`
 
 Data type: `String`
 
@@ -2567,7 +2716,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_ip`
 
-##### <a name="cni_pod_cidr"></a>`cni_pod_cidr`
+##### <a name="-kubernetes--config--kubeadm--cni_pod_cidr"></a>`cni_pod_cidr`
 
 Data type: `String`
 
@@ -2575,7 +2724,7 @@ Data type: `String`
 
 Default value: `$kubernetes::cni_pod_cidr`
 
-##### <a name="kube_api_bind_port"></a>`kube_api_bind_port`
+##### <a name="-kubernetes--config--kubeadm--kube_api_bind_port"></a>`kube_api_bind_port`
 
 Data type: `Integer`
 
@@ -2583,7 +2732,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::kube_api_bind_port`
 
-##### <a name="kube_api_advertise_address"></a>`kube_api_advertise_address`
+##### <a name="-kubernetes--config--kubeadm--kube_api_advertise_address"></a>`kube_api_advertise_address`
 
 Data type: `String`
 
@@ -2591,7 +2740,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kube_api_advertise_address`
 
-##### <a name="etcd_initial_cluster"></a>`etcd_initial_cluster`
+##### <a name="-kubernetes--config--kubeadm--etcd_initial_cluster"></a>`etcd_initial_cluster`
 
 Data type: `Optional[String]`
 
@@ -2599,7 +2748,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_initial_cluster`
 
-##### <a name="etcd_discovery_srv"></a>`etcd_discovery_srv`
+##### <a name="-kubernetes--config--kubeadm--etcd_discovery_srv"></a>`etcd_discovery_srv`
 
 Data type: `Optional[String]`
 
@@ -2607,7 +2756,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_discovery_srv`
 
-##### <a name="etcd_initial_cluster_state"></a>`etcd_initial_cluster_state`
+##### <a name="-kubernetes--config--kubeadm--etcd_initial_cluster_state"></a>`etcd_initial_cluster_state`
 
 Data type: `String`
 
@@ -2615,7 +2764,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_initial_cluster_state`
 
-##### <a name="etcd_compaction_method"></a>`etcd_compaction_method`
+##### <a name="-kubernetes--config--kubeadm--etcd_compaction_method"></a>`etcd_compaction_method`
 
 Data type: `String`
 
@@ -2623,7 +2772,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_compaction_method`
 
-##### <a name="etcd_compaction_retention"></a>`etcd_compaction_retention`
+##### <a name="-kubernetes--config--kubeadm--etcd_compaction_retention"></a>`etcd_compaction_retention`
 
 Data type: `Variant[Integer,String]`
 
@@ -2631,7 +2780,7 @@ Data type: `Variant[Integer,String]`
 
 Default value: `$kubernetes::etcd_compaction_retention`
 
-##### <a name="api_server_count"></a>`api_server_count`
+##### <a name="-kubernetes--config--kubeadm--api_server_count"></a>`api_server_count`
 
 Data type: `Integer`
 
@@ -2639,7 +2788,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::api_server_count`
 
-##### <a name="etcd_version"></a>`etcd_version`
+##### <a name="-kubernetes--config--kubeadm--etcd_version"></a>`etcd_version`
 
 Data type: `String`
 
@@ -2647,7 +2796,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_version`
 
-##### <a name="etcd_max_wals"></a>`etcd_max_wals`
+##### <a name="-kubernetes--config--kubeadm--etcd_max_wals"></a>`etcd_max_wals`
 
 Data type: `Integer`
 
@@ -2655,7 +2804,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::etcd_max_wals`
 
-##### <a name="etcd_max_request_bytes"></a>`etcd_max_request_bytes`
+##### <a name="-kubernetes--config--kubeadm--etcd_max_request_bytes"></a>`etcd_max_request_bytes`
 
 Data type: `Integer`
 
@@ -2663,7 +2812,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::etcd_max_request_bytes`
 
-##### <a name="etcd_listen_metric_urls"></a>`etcd_listen_metric_urls`
+##### <a name="-kubernetes--config--kubeadm--etcd_listen_metric_urls"></a>`etcd_listen_metric_urls`
 
 Data type: `Optional[String]`
 
@@ -2671,7 +2820,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_listen_metric_urls`
 
-##### <a name="token"></a>`token`
+##### <a name="-kubernetes--config--kubeadm--token"></a>`token`
 
 Data type: `String`
 
@@ -2679,7 +2828,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="ttl_duration"></a>`ttl_duration`
+##### <a name="-kubernetes--config--kubeadm--ttl_duration"></a>`ttl_duration`
 
 Data type: `String`
 
@@ -2687,7 +2836,7 @@ Data type: `String`
 
 Default value: `$kubernetes::ttl_duration`
 
-##### <a name="discovery_token_hash"></a>`discovery_token_hash`
+##### <a name="-kubernetes--config--kubeadm--discovery_token_hash"></a>`discovery_token_hash`
 
 Data type: `String`
 
@@ -2695,7 +2844,7 @@ Data type: `String`
 
 Default value: `$kubernetes::discovery_token_hash`
 
-##### <a name="kubernetes_ca_crt"></a>`kubernetes_ca_crt`
+##### <a name="-kubernetes--config--kubeadm--kubernetes_ca_crt"></a>`kubernetes_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -2703,7 +2852,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_ca_crt`
 
-##### <a name="kubernetes_ca_key"></a>`kubernetes_ca_key`
+##### <a name="-kubernetes--config--kubeadm--kubernetes_ca_key"></a>`kubernetes_ca_key`
 
 Data type: `Optional[String]`
 
@@ -2711,7 +2860,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_ca_key`
 
-##### <a name="kubernetes_front_proxy_ca_crt"></a>`kubernetes_front_proxy_ca_crt`
+##### <a name="-kubernetes--config--kubeadm--kubernetes_front_proxy_ca_crt"></a>`kubernetes_front_proxy_ca_crt`
 
 Data type: `Optional[String]`
 
@@ -2719,7 +2868,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_front_proxy_ca_crt`
 
-##### <a name="kubernetes_front_proxy_ca_key"></a>`kubernetes_front_proxy_ca_key`
+##### <a name="-kubernetes--config--kubeadm--kubernetes_front_proxy_ca_key"></a>`kubernetes_front_proxy_ca_key`
 
 Data type: `Optional[String]`
 
@@ -2727,7 +2876,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_front_proxy_ca_key`
 
-##### <a name="container_runtime"></a>`container_runtime`
+##### <a name="-kubernetes--config--kubeadm--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -2735,7 +2884,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### <a name="sa_pub"></a>`sa_pub`
+##### <a name="-kubernetes--config--kubeadm--sa_pub"></a>`sa_pub`
 
 Data type: `Optional[String]`
 
@@ -2743,7 +2892,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::sa_pub`
 
-##### <a name="sa_key"></a>`sa_key`
+##### <a name="-kubernetes--config--kubeadm--sa_key"></a>`sa_key`
 
 Data type: `Optional[String]`
 
@@ -2751,7 +2900,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::sa_key`
 
-##### <a name="apiserver_cert_extra_sans"></a>`apiserver_cert_extra_sans`
+##### <a name="-kubernetes--config--kubeadm--apiserver_cert_extra_sans"></a>`apiserver_cert_extra_sans`
 
 Data type: `Optional[Array]`
 
@@ -2759,7 +2908,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::apiserver_cert_extra_sans`
 
-##### <a name="apiserver_extra_arguments"></a>`apiserver_extra_arguments`
+##### <a name="-kubernetes--config--kubeadm--apiserver_extra_arguments"></a>`apiserver_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2767,7 +2916,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::apiserver_extra_arguments`
 
-##### <a name="controllermanager_extra_arguments"></a>`controllermanager_extra_arguments`
+##### <a name="-kubernetes--config--kubeadm--controllermanager_extra_arguments"></a>`controllermanager_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2775,7 +2924,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::controllermanager_extra_arguments`
 
-##### <a name="scheduler_extra_arguments"></a>`scheduler_extra_arguments`
+##### <a name="-kubernetes--config--kubeadm--scheduler_extra_arguments"></a>`scheduler_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2783,7 +2932,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::scheduler_extra_arguments`
 
-##### <a name="kubelet_extra_arguments"></a>`kubelet_extra_arguments`
+##### <a name="-kubernetes--config--kubeadm--kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -2791,7 +2940,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::kubelet_extra_arguments`
 
-##### <a name="service_cidr"></a>`service_cidr`
+##### <a name="-kubernetes--config--kubeadm--service_cidr"></a>`service_cidr`
 
 Data type: `String`
 
@@ -2799,15 +2948,15 @@ Data type: `String`
 
 Default value: `$kubernetes::service_cidr`
 
-##### <a name="node_name"></a>`node_name`
+##### <a name="-kubernetes--config--kubeadm--node_name"></a>`node_name`
 
-Data type: `String`
+Data type: `Stdlib::Fqdn`
 
 
 
 Default value: `$kubernetes::node_name`
 
-##### <a name="cloud_provider"></a>`cloud_provider`
+##### <a name="-kubernetes--config--kubeadm--cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -2815,7 +2964,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_provider`
 
-##### <a name="cloud_config"></a>`cloud_config`
+##### <a name="-kubernetes--config--kubeadm--cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -2823,7 +2972,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_config`
 
-##### <a name="apiserver_extra_volumes"></a>`apiserver_extra_volumes`
+##### <a name="-kubernetes--config--kubeadm--apiserver_extra_volumes"></a>`apiserver_extra_volumes`
 
 Data type: `Optional[Hash]`
 
@@ -2831,7 +2980,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::apiserver_extra_volumes`
 
-##### <a name="controllermanager_extra_volumes"></a>`controllermanager_extra_volumes`
+##### <a name="-kubernetes--config--kubeadm--controllermanager_extra_volumes"></a>`controllermanager_extra_volumes`
 
 Data type: `Optional[Hash]`
 
@@ -2839,7 +2988,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::controllermanager_extra_volumes`
 
-##### <a name="kubeadm_extra_config"></a>`kubeadm_extra_config`
+##### <a name="-kubernetes--config--kubeadm--kubeadm_extra_config"></a>`kubeadm_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -2847,7 +2996,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::kubeadm_extra_config`
 
-##### <a name="kubelet_extra_config"></a>`kubelet_extra_config`
+##### <a name="-kubernetes--config--kubeadm--kubelet_extra_config"></a>`kubelet_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -2855,7 +3004,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::kubelet_extra_config`
 
-##### <a name="image_repository"></a>`image_repository`
+##### <a name="-kubernetes--config--kubeadm--image_repository"></a>`image_repository`
 
 Data type: `String`
 
@@ -2863,7 +3012,7 @@ Data type: `String`
 
 Default value: `$kubernetes::image_repository`
 
-##### <a name="cgroup_driver"></a>`cgroup_driver`
+##### <a name="-kubernetes--config--kubeadm--cgroup_driver"></a>`cgroup_driver`
 
 Data type: `String`
 
@@ -2871,7 +3020,7 @@ Data type: `String`
 
 Default value: `$kubernetes::cgroup_driver`
 
-##### <a name="proxy_mode"></a>`proxy_mode`
+##### <a name="-kubernetes--config--kubeadm--proxy_mode"></a>`proxy_mode`
 
 Data type: `String`
 
@@ -2879,7 +3028,7 @@ Data type: `String`
 
 Default value: `$kubernetes::proxy_mode`
 
-##### <a name="metrics_bind_address"></a>`metrics_bind_address`
+##### <a name="-kubernetes--config--kubeadm--metrics_bind_address"></a>`metrics_bind_address`
 
 Data type: `Stdlib::IP::Address`
 
@@ -2887,7 +3036,7 @@ Data type: `Stdlib::IP::Address`
 
 Default value: `$kubernetes::metrics_bind_address`
 
-##### <a name="conntrack_max_per_core"></a>`conntrack_max_per_core`
+##### <a name="-kubernetes--config--kubeadm--conntrack_max_per_core"></a>`conntrack_max_per_core`
 
 Data type: `Integer`
 
@@ -2895,7 +3044,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::conntrack_max_per_core`
 
-##### <a name="conntrack_min"></a>`conntrack_min`
+##### <a name="-kubernetes--config--kubeadm--conntrack_min"></a>`conntrack_min`
 
 Data type: `Integer`
 
@@ -2903,7 +3052,7 @@ Data type: `Integer`
 
 Default value: `$kubernetes::conntrack_min`
 
-##### <a name="conntrack_tcp_wait_timeout"></a>`conntrack_tcp_wait_timeout`
+##### <a name="-kubernetes--config--kubeadm--conntrack_tcp_wait_timeout"></a>`conntrack_tcp_wait_timeout`
 
 Data type: `String`
 
@@ -2911,7 +3060,7 @@ Data type: `String`
 
 Default value: `$kubernetes::conntrack_tcp_wait_timeout`
 
-##### <a name="conntrack_tcp_stablished_timeout"></a>`conntrack_tcp_stablished_timeout`
+##### <a name="-kubernetes--config--kubeadm--conntrack_tcp_stablished_timeout"></a>`conntrack_tcp_stablished_timeout`
 
 Data type: `String`
 
@@ -2919,7 +3068,7 @@ Data type: `String`
 
 Default value: `$kubernetes::conntrack_tcp_stablished_timeout`
 
-##### <a name="feature_gates"></a>`feature_gates`
+##### <a name="-kubernetes--config--kubeadm--feature_gates"></a>`feature_gates`
 
 Data type: `Hash[String[1], Boolean]`
 
@@ -2927,7 +3076,7 @@ Data type: `Hash[String[1], Boolean]`
 
 Default value: `$kubernetes::feature_gates`
 
-### <a name="kubernetesconfigworker"></a>`kubernetes::config::worker`
+### <a name="kubernetes--config--worker"></a>`kubernetes::config::worker`
 
 Class kubernetes config_worker, populates worker config files with joinconfig
 
@@ -2935,36 +3084,36 @@ Class kubernetes config_worker, populates worker config files with joinconfig
 
 The following parameters are available in the `kubernetes::config::worker` class:
 
-* [`node_name`](#node_name)
-* [`config_file`](#config_file)
-* [`kubernetes_version`](#kubernetes_version)
-* [`kubernetes_cluster_name`](#kubernetes_cluster_name)
-* [`controller_address`](#controller_address)
-* [`discovery_token_hash`](#discovery_token_hash)
-* [`container_runtime`](#container_runtime)
-* [`discovery_token`](#discovery_token)
-* [`tls_bootstrap_token`](#tls_bootstrap_token)
-* [`token`](#token)
-* [`discovery_file`](#discovery_file)
-* [`feature_gates`](#feature_gates)
-* [`cloud_provider`](#cloud_provider)
-* [`cloud_config`](#cloud_config)
-* [`kubelet_extra_arguments`](#kubelet_extra_arguments)
-* [`kubelet_extra_config`](#kubelet_extra_config)
-* [`ignore_preflight_errors`](#ignore_preflight_errors)
-* [`skip_ca_verification`](#skip_ca_verification)
-* [`cgroup_driver`](#cgroup_driver)
-* [`skip_phases_join`](#skip_phases_join)
+* [`node_name`](#-kubernetes--config--worker--node_name)
+* [`config_file`](#-kubernetes--config--worker--config_file)
+* [`kubernetes_version`](#-kubernetes--config--worker--kubernetes_version)
+* [`kubernetes_cluster_name`](#-kubernetes--config--worker--kubernetes_cluster_name)
+* [`controller_address`](#-kubernetes--config--worker--controller_address)
+* [`discovery_token_hash`](#-kubernetes--config--worker--discovery_token_hash)
+* [`container_runtime`](#-kubernetes--config--worker--container_runtime)
+* [`discovery_token`](#-kubernetes--config--worker--discovery_token)
+* [`tls_bootstrap_token`](#-kubernetes--config--worker--tls_bootstrap_token)
+* [`token`](#-kubernetes--config--worker--token)
+* [`discovery_file`](#-kubernetes--config--worker--discovery_file)
+* [`feature_gates`](#-kubernetes--config--worker--feature_gates)
+* [`cloud_provider`](#-kubernetes--config--worker--cloud_provider)
+* [`cloud_config`](#-kubernetes--config--worker--cloud_config)
+* [`kubelet_extra_arguments`](#-kubernetes--config--worker--kubelet_extra_arguments)
+* [`kubelet_extra_config`](#-kubernetes--config--worker--kubelet_extra_config)
+* [`ignore_preflight_errors`](#-kubernetes--config--worker--ignore_preflight_errors)
+* [`skip_ca_verification`](#-kubernetes--config--worker--skip_ca_verification)
+* [`cgroup_driver`](#-kubernetes--config--worker--cgroup_driver)
+* [`skip_phases_join`](#-kubernetes--config--worker--skip_phases_join)
 
-##### <a name="node_name"></a>`node_name`
+##### <a name="-kubernetes--config--worker--node_name"></a>`node_name`
 
-Data type: `String`
+Data type: `Stdlib::Fqdn`
 
 
 
 Default value: `$kubernetes::node_name`
 
-##### <a name="config_file"></a>`config_file`
+##### <a name="-kubernetes--config--worker--config_file"></a>`config_file`
 
 Data type: `String`
 
@@ -2972,7 +3121,7 @@ Data type: `String`
 
 Default value: `$kubernetes::config_file`
 
-##### <a name="kubernetes_version"></a>`kubernetes_version`
+##### <a name="-kubernetes--config--worker--kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -2980,7 +3129,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### <a name="kubernetes_cluster_name"></a>`kubernetes_cluster_name`
+##### <a name="-kubernetes--config--worker--kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
 Data type: `String`
 
@@ -2988,7 +3137,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_cluster_name`
 
-##### <a name="controller_address"></a>`controller_address`
+##### <a name="-kubernetes--config--worker--controller_address"></a>`controller_address`
 
 Data type: `String`
 
@@ -2996,7 +3145,7 @@ Data type: `String`
 
 Default value: `$kubernetes::controller_address`
 
-##### <a name="discovery_token_hash"></a>`discovery_token_hash`
+##### <a name="-kubernetes--config--worker--discovery_token_hash"></a>`discovery_token_hash`
 
 Data type: `String`
 
@@ -3004,7 +3153,7 @@ Data type: `String`
 
 Default value: `$kubernetes::discovery_token_hash`
 
-##### <a name="container_runtime"></a>`container_runtime`
+##### <a name="-kubernetes--config--worker--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -3012,7 +3161,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### <a name="discovery_token"></a>`discovery_token`
+##### <a name="-kubernetes--config--worker--discovery_token"></a>`discovery_token`
 
 Data type: `String`
 
@@ -3020,7 +3169,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="tls_bootstrap_token"></a>`tls_bootstrap_token`
+##### <a name="-kubernetes--config--worker--tls_bootstrap_token"></a>`tls_bootstrap_token`
 
 Data type: `String`
 
@@ -3028,7 +3177,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="token"></a>`token`
+##### <a name="-kubernetes--config--worker--token"></a>`token`
 
 Data type: `String`
 
@@ -3036,23 +3185,23 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="discovery_file"></a>`discovery_file`
+##### <a name="-kubernetes--config--worker--discovery_file"></a>`discovery_file`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="feature_gates"></a>`feature_gates`
+##### <a name="-kubernetes--config--worker--feature_gates"></a>`feature_gates`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cloud_provider"></a>`cloud_provider`
+##### <a name="-kubernetes--config--worker--cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -3060,7 +3209,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_provider`
 
-##### <a name="cloud_config"></a>`cloud_config`
+##### <a name="-kubernetes--config--worker--cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -3068,7 +3217,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_config`
 
-##### <a name="kubelet_extra_arguments"></a>`kubelet_extra_arguments`
+##### <a name="-kubernetes--config--worker--kubelet_extra_arguments"></a>`kubelet_extra_arguments`
 
 Data type: `Optional[Array]`
 
@@ -3076,7 +3225,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::kubelet_extra_arguments`
 
-##### <a name="kubelet_extra_config"></a>`kubelet_extra_config`
+##### <a name="-kubernetes--config--worker--kubelet_extra_config"></a>`kubelet_extra_config`
 
 Data type: `Optional[Hash]`
 
@@ -3084,23 +3233,23 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::kubelet_extra_config`
 
-##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
+##### <a name="-kubernetes--config--worker--ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="skip_ca_verification"></a>`skip_ca_verification`
+##### <a name="-kubernetes--config--worker--skip_ca_verification"></a>`skip_ca_verification`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="cgroup_driver"></a>`cgroup_driver`
+##### <a name="-kubernetes--config--worker--cgroup_driver"></a>`cgroup_driver`
 
 Data type: `String`
 
@@ -3108,7 +3257,7 @@ Data type: `String`
 
 Default value: `$kubernetes::cgroup_driver`
 
-##### <a name="skip_phases_join"></a>`skip_phases_join`
+##### <a name="-kubernetes--config--worker--skip_phases_join"></a>`skip_phases_join`
 
 Data type: `Optional[Array]`
 
@@ -3116,7 +3265,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::skip_phases_join`
 
-### <a name="kuberneteskube_addons"></a>`kubernetes::kube_addons`
+### <a name="kubernetes--kube_addons"></a>`kubernetes::kube_addons`
 
 Class kubernetes kube_addons
 
@@ -3124,22 +3273,22 @@ Class kubernetes kube_addons
 
 The following parameters are available in the `kubernetes::kube_addons` class:
 
-* [`cni_network_preinstall`](#cni_network_preinstall)
-* [`cni_network_provider`](#cni_network_provider)
-* [`cni_pod_cidr`](#cni_pod_cidr)
-* [`cni_provider`](#cni_provider)
-* [`cni_rbac_binding`](#cni_rbac_binding)
-* [`install_dashboard`](#install_dashboard)
-* [`dashboard_version`](#dashboard_version)
-* [`dashboard_url`](#dashboard_url)
-* [`kubernetes_version`](#kubernetes_version)
-* [`controller`](#controller)
-* [`schedule_on_controller`](#schedule_on_controller)
-* [`node_name`](#node_name)
-* [`path`](#path)
-* [`env`](#env)
+* [`cni_network_preinstall`](#-kubernetes--kube_addons--cni_network_preinstall)
+* [`cni_network_provider`](#-kubernetes--kube_addons--cni_network_provider)
+* [`cni_pod_cidr`](#-kubernetes--kube_addons--cni_pod_cidr)
+* [`cni_provider`](#-kubernetes--kube_addons--cni_provider)
+* [`cni_rbac_binding`](#-kubernetes--kube_addons--cni_rbac_binding)
+* [`install_dashboard`](#-kubernetes--kube_addons--install_dashboard)
+* [`dashboard_version`](#-kubernetes--kube_addons--dashboard_version)
+* [`dashboard_url`](#-kubernetes--kube_addons--dashboard_url)
+* [`kubernetes_version`](#-kubernetes--kube_addons--kubernetes_version)
+* [`controller`](#-kubernetes--kube_addons--controller)
+* [`schedule_on_controller`](#-kubernetes--kube_addons--schedule_on_controller)
+* [`node_name`](#-kubernetes--kube_addons--node_name)
+* [`path`](#-kubernetes--kube_addons--path)
+* [`env`](#-kubernetes--kube_addons--env)
 
-##### <a name="cni_network_preinstall"></a>`cni_network_preinstall`
+##### <a name="-kubernetes--kube_addons--cni_network_preinstall"></a>`cni_network_preinstall`
 
 Data type: `Optional[String]`
 
@@ -3147,7 +3296,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_network_preinstall`
 
-##### <a name="cni_network_provider"></a>`cni_network_provider`
+##### <a name="-kubernetes--kube_addons--cni_network_provider"></a>`cni_network_provider`
 
 Data type: `Optional[String]`
 
@@ -3155,7 +3304,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_network_provider`
 
-##### <a name="cni_pod_cidr"></a>`cni_pod_cidr`
+##### <a name="-kubernetes--kube_addons--cni_pod_cidr"></a>`cni_pod_cidr`
 
 Data type: `Optional[String]`
 
@@ -3163,7 +3312,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_pod_cidr`
 
-##### <a name="cni_provider"></a>`cni_provider`
+##### <a name="-kubernetes--kube_addons--cni_provider"></a>`cni_provider`
 
 Data type: `Optional[String]`
 
@@ -3171,7 +3320,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_provider`
 
-##### <a name="cni_rbac_binding"></a>`cni_rbac_binding`
+##### <a name="-kubernetes--kube_addons--cni_rbac_binding"></a>`cni_rbac_binding`
 
 Data type: `Optional[String]`
 
@@ -3179,7 +3328,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cni_rbac_binding`
 
-##### <a name="install_dashboard"></a>`install_dashboard`
+##### <a name="-kubernetes--kube_addons--install_dashboard"></a>`install_dashboard`
 
 Data type: `Boolean`
 
@@ -3187,7 +3336,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::install_dashboard`
 
-##### <a name="dashboard_version"></a>`dashboard_version`
+##### <a name="-kubernetes--kube_addons--dashboard_version"></a>`dashboard_version`
 
 Data type: `String`
 
@@ -3195,7 +3344,7 @@ Data type: `String`
 
 Default value: `$kubernetes::dashboard_version`
 
-##### <a name="dashboard_url"></a>`dashboard_url`
+##### <a name="-kubernetes--kube_addons--dashboard_url"></a>`dashboard_url`
 
 Data type: `String`
 
@@ -3203,7 +3352,7 @@ Data type: `String`
 
 Default value: `$kubernetes::dashboard_url`
 
-##### <a name="kubernetes_version"></a>`kubernetes_version`
+##### <a name="-kubernetes--kube_addons--kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -3211,7 +3360,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### <a name="controller"></a>`controller`
+##### <a name="-kubernetes--kube_addons--controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -3219,7 +3368,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
-##### <a name="schedule_on_controller"></a>`schedule_on_controller`
+##### <a name="-kubernetes--kube_addons--schedule_on_controller"></a>`schedule_on_controller`
 
 Data type: `Optional[Boolean]`
 
@@ -3227,15 +3376,15 @@ Data type: `Optional[Boolean]`
 
 Default value: `$kubernetes::schedule_on_controller`
 
-##### <a name="node_name"></a>`node_name`
+##### <a name="-kubernetes--kube_addons--node_name"></a>`node_name`
 
-Data type: `String`
+Data type: `Stdlib::Fqdn`
 
 
 
 Default value: `$kubernetes::node_name`
 
-##### <a name="path"></a>`path`
+##### <a name="-kubernetes--kube_addons--path"></a>`path`
 
 Data type: `Array`
 
@@ -3243,7 +3392,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### <a name="env"></a>`env`
+##### <a name="-kubernetes--kube_addons--env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -3251,7 +3400,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-### <a name="kubernetespackages"></a>`kubernetes::packages`
+### <a name="kubernetes--packages"></a>`kubernetes::packages`
 
 The kubernetes::packages class.
 
@@ -3259,47 +3408,53 @@ The kubernetes::packages class.
 
 The following parameters are available in the `kubernetes::packages` class:
 
-* [`kubernetes_package_version`](#kubernetes_package_version)
-* [`container_runtime`](#container_runtime)
-* [`manage_docker`](#manage_docker)
-* [`manage_etcd`](#manage_etcd)
-* [`docker_version`](#docker_version)
-* [`docker_package_name`](#docker_package_name)
-* [`docker_storage_driver`](#docker_storage_driver)
-* [`docker_cgroup_driver`](#docker_cgroup_driver)
-* [`docker_storage_opts`](#docker_storage_opts)
-* [`docker_extra_daemon_config`](#docker_extra_daemon_config)
-* [`docker_log_max_file`](#docker_log_max_file)
-* [`docker_log_max_size`](#docker_log_max_size)
-* [`controller`](#controller)
-* [`containerd_version`](#containerd_version)
-* [`containerd_install_method`](#containerd_install_method)
-* [`containerd_package_name`](#containerd_package_name)
-* [`containerd_archive`](#containerd_archive)
-* [`containerd_archive_checksum`](#containerd_archive_checksum)
-* [`containerd_source`](#containerd_source)
-* [`containerd_config_template`](#containerd_config_template)
-* [`containerd_config_source`](#containerd_config_source)
-* [`containerd_plugins_registry`](#containerd_plugins_registry)
-* [`containerd_default_runtime_name`](#containerd_default_runtime_name)
-* [`etcd_archive`](#etcd_archive)
-* [`etcd_archive_checksum`](#etcd_archive_checksum)
-* [`etcd_version`](#etcd_version)
-* [`etcd_source`](#etcd_source)
-* [`etcd_package_name`](#etcd_package_name)
-* [`etcd_install_method`](#etcd_install_method)
-* [`runc_source`](#runc_source)
-* [`runc_source_checksum`](#runc_source_checksum)
-* [`disable_swap`](#disable_swap)
-* [`manage_kernel_modules`](#manage_kernel_modules)
-* [`manage_sysctl_settings`](#manage_sysctl_settings)
-* [`create_repos`](#create_repos)
-* [`pin_packages`](#pin_packages)
-* [`package_pin_priority`](#package_pin_priority)
-* [`archive_checksum_type`](#archive_checksum_type)
-* [`tmp_directory`](#tmp_directory)
+* [`kubernetes_package_version`](#-kubernetes--packages--kubernetes_package_version)
+* [`container_runtime`](#-kubernetes--packages--container_runtime)
+* [`containerd_sandbox_image`](#-kubernetes--packages--containerd_sandbox_image)
+* [`manage_docker`](#-kubernetes--packages--manage_docker)
+* [`manage_etcd`](#-kubernetes--packages--manage_etcd)
+* [`docker_version`](#-kubernetes--packages--docker_version)
+* [`docker_package_name`](#-kubernetes--packages--docker_package_name)
+* [`docker_storage_driver`](#-kubernetes--packages--docker_storage_driver)
+* [`docker_cgroup_driver`](#-kubernetes--packages--docker_cgroup_driver)
+* [`docker_storage_opts`](#-kubernetes--packages--docker_storage_opts)
+* [`docker_extra_daemon_config`](#-kubernetes--packages--docker_extra_daemon_config)
+* [`docker_log_max_file`](#-kubernetes--packages--docker_log_max_file)
+* [`docker_log_max_size`](#-kubernetes--packages--docker_log_max_size)
+* [`controller`](#-kubernetes--packages--controller)
+* [`containerd_version`](#-kubernetes--packages--containerd_version)
+* [`containerd_install_method`](#-kubernetes--packages--containerd_install_method)
+* [`containerd_package_name`](#-kubernetes--packages--containerd_package_name)
+* [`containerd_archive`](#-kubernetes--packages--containerd_archive)
+* [`containerd_archive_checksum`](#-kubernetes--packages--containerd_archive_checksum)
+* [`containerd_source`](#-kubernetes--packages--containerd_source)
+* [`containerd_config_template`](#-kubernetes--packages--containerd_config_template)
+* [`containerd_config_source`](#-kubernetes--packages--containerd_config_source)
+* [`containerd_plugins_registry`](#-kubernetes--packages--containerd_plugins_registry)
+* [`containerd_default_runtime_name`](#-kubernetes--packages--containerd_default_runtime_name)
+* [`etcd_archive`](#-kubernetes--packages--etcd_archive)
+* [`etcd_archive_checksum`](#-kubernetes--packages--etcd_archive_checksum)
+* [`etcd_version`](#-kubernetes--packages--etcd_version)
+* [`etcd_source`](#-kubernetes--packages--etcd_source)
+* [`etcd_package_name`](#-kubernetes--packages--etcd_package_name)
+* [`etcd_install_method`](#-kubernetes--packages--etcd_install_method)
+* [`runc_source`](#-kubernetes--packages--runc_source)
+* [`runc_source_checksum`](#-kubernetes--packages--runc_source_checksum)
+* [`disable_swap`](#-kubernetes--packages--disable_swap)
+* [`manage_kernel_modules`](#-kubernetes--packages--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-kubernetes--packages--manage_sysctl_settings)
+* [`create_repos`](#-kubernetes--packages--create_repos)
+* [`pin_packages`](#-kubernetes--packages--pin_packages)
+* [`package_pin_priority`](#-kubernetes--packages--package_pin_priority)
+* [`archive_checksum_type`](#-kubernetes--packages--archive_checksum_type)
+* [`tmp_directory`](#-kubernetes--packages--tmp_directory)
+* [`http_proxy`](#-kubernetes--packages--http_proxy)
+* [`https_proxy`](#-kubernetes--packages--https_proxy)
+* [`no_proxy`](#-kubernetes--packages--no_proxy)
+* [`container_runtime_use_proxy`](#-kubernetes--packages--container_runtime_use_proxy)
+* [`containerd_socket`](#-kubernetes--packages--containerd_socket)
 
-##### <a name="kubernetes_package_version"></a>`kubernetes_package_version`
+##### <a name="-kubernetes--packages--kubernetes_package_version"></a>`kubernetes_package_version`
 
 Data type: `String`
 
@@ -3307,7 +3462,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_package_version`
 
-##### <a name="container_runtime"></a>`container_runtime`
+##### <a name="-kubernetes--packages--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -3315,7 +3470,15 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### <a name="manage_docker"></a>`manage_docker`
+##### <a name="-kubernetes--packages--containerd_sandbox_image"></a>`containerd_sandbox_image`
+
+Data type: `String`
+
+
+
+Default value: `$kubernetes::containerd_sandbox_image`
+
+##### <a name="-kubernetes--packages--manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -3323,7 +3486,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_docker`
 
-##### <a name="manage_etcd"></a>`manage_etcd`
+##### <a name="-kubernetes--packages--manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -3331,7 +3494,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_etcd`
 
-##### <a name="docker_version"></a>`docker_version`
+##### <a name="-kubernetes--packages--docker_version"></a>`docker_version`
 
 Data type: `Optional[String]`
 
@@ -3339,7 +3502,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_version`
 
-##### <a name="docker_package_name"></a>`docker_package_name`
+##### <a name="-kubernetes--packages--docker_package_name"></a>`docker_package_name`
 
 Data type: `Optional[String]`
 
@@ -3347,7 +3510,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_package_name`
 
-##### <a name="docker_storage_driver"></a>`docker_storage_driver`
+##### <a name="-kubernetes--packages--docker_storage_driver"></a>`docker_storage_driver`
 
 Data type: `Optional[String]`
 
@@ -3355,7 +3518,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_storage_driver`
 
-##### <a name="docker_cgroup_driver"></a>`docker_cgroup_driver`
+##### <a name="-kubernetes--packages--docker_cgroup_driver"></a>`docker_cgroup_driver`
 
 Data type: `Optional[String]`
 
@@ -3363,7 +3526,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cgroup_driver`
 
-##### <a name="docker_storage_opts"></a>`docker_storage_opts`
+##### <a name="-kubernetes--packages--docker_storage_opts"></a>`docker_storage_opts`
 
 Data type: `Optional[Array]`
 
@@ -3371,7 +3534,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::docker_storage_opts`
 
-##### <a name="docker_extra_daemon_config"></a>`docker_extra_daemon_config`
+##### <a name="-kubernetes--packages--docker_extra_daemon_config"></a>`docker_extra_daemon_config`
 
 Data type: `Optional[String]`
 
@@ -3379,7 +3542,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_extra_daemon_config`
 
-##### <a name="docker_log_max_file"></a>`docker_log_max_file`
+##### <a name="-kubernetes--packages--docker_log_max_file"></a>`docker_log_max_file`
 
 Data type: `String`
 
@@ -3387,7 +3550,7 @@ Data type: `String`
 
 Default value: `$kubernetes::docker_log_max_file`
 
-##### <a name="docker_log_max_size"></a>`docker_log_max_size`
+##### <a name="-kubernetes--packages--docker_log_max_size"></a>`docker_log_max_size`
 
 Data type: `String`
 
@@ -3395,7 +3558,7 @@ Data type: `String`
 
 Default value: `$kubernetes::docker_log_max_size`
 
-##### <a name="controller"></a>`controller`
+##### <a name="-kubernetes--packages--controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -3403,7 +3566,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
-##### <a name="containerd_version"></a>`containerd_version`
+##### <a name="-kubernetes--packages--containerd_version"></a>`containerd_version`
 
 Data type: `Optional[String]`
 
@@ -3411,7 +3574,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_version`
 
-##### <a name="containerd_install_method"></a>`containerd_install_method`
+##### <a name="-kubernetes--packages--containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Enum['archive','package']`
 
@@ -3419,7 +3582,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `$kubernetes::containerd_install_method`
 
-##### <a name="containerd_package_name"></a>`containerd_package_name`
+##### <a name="-kubernetes--packages--containerd_package_name"></a>`containerd_package_name`
 
 Data type: `String`
 
@@ -3427,7 +3590,7 @@ Data type: `String`
 
 Default value: `$kubernetes::containerd_package_name`
 
-##### <a name="containerd_archive"></a>`containerd_archive`
+##### <a name="-kubernetes--packages--containerd_archive"></a>`containerd_archive`
 
 Data type: `Optional[String]`
 
@@ -3435,7 +3598,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_archive`
 
-##### <a name="containerd_archive_checksum"></a>`containerd_archive_checksum`
+##### <a name="-kubernetes--packages--containerd_archive_checksum"></a>`containerd_archive_checksum`
 
 Data type: `Optional[String]`
 
@@ -3443,7 +3606,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_archive_checksum`
 
-##### <a name="containerd_source"></a>`containerd_source`
+##### <a name="-kubernetes--packages--containerd_source"></a>`containerd_source`
 
 Data type: `Optional[String]`
 
@@ -3451,7 +3614,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_source`
 
-##### <a name="containerd_config_template"></a>`containerd_config_template`
+##### <a name="-kubernetes--packages--containerd_config_template"></a>`containerd_config_template`
 
 Data type: `String`
 
@@ -3459,7 +3622,7 @@ Data type: `String`
 
 Default value: `$kubernetes::containerd_config_template`
 
-##### <a name="containerd_config_source"></a>`containerd_config_source`
+##### <a name="-kubernetes--packages--containerd_config_source"></a>`containerd_config_source`
 
 Data type: `Optional[String]`
 
@@ -3467,7 +3630,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_config_source`
 
-##### <a name="containerd_plugins_registry"></a>`containerd_plugins_registry`
+##### <a name="-kubernetes--packages--containerd_plugins_registry"></a>`containerd_plugins_registry`
 
 Data type: `Optional[Hash]`
 
@@ -3475,7 +3638,7 @@ Data type: `Optional[Hash]`
 
 Default value: `$kubernetes::containerd_plugins_registry`
 
-##### <a name="containerd_default_runtime_name"></a>`containerd_default_runtime_name`
+##### <a name="-kubernetes--packages--containerd_default_runtime_name"></a>`containerd_default_runtime_name`
 
 Data type: `Enum['runc','nvidia']`
 
@@ -3483,7 +3646,7 @@ Data type: `Enum['runc','nvidia']`
 
 Default value: `$kubernetes::containerd_default_runtime_name`
 
-##### <a name="etcd_archive"></a>`etcd_archive`
+##### <a name="-kubernetes--packages--etcd_archive"></a>`etcd_archive`
 
 Data type: `String`
 
@@ -3491,7 +3654,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_archive`
 
-##### <a name="etcd_archive_checksum"></a>`etcd_archive_checksum`
+##### <a name="-kubernetes--packages--etcd_archive_checksum"></a>`etcd_archive_checksum`
 
 Data type: `Optional[String]`
 
@@ -3499,7 +3662,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::etcd_archive_checksum`
 
-##### <a name="etcd_version"></a>`etcd_version`
+##### <a name="-kubernetes--packages--etcd_version"></a>`etcd_version`
 
 Data type: `String`
 
@@ -3507,7 +3670,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_version`
 
-##### <a name="etcd_source"></a>`etcd_source`
+##### <a name="-kubernetes--packages--etcd_source"></a>`etcd_source`
 
 Data type: `String`
 
@@ -3515,7 +3678,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_source`
 
-##### <a name="etcd_package_name"></a>`etcd_package_name`
+##### <a name="-kubernetes--packages--etcd_package_name"></a>`etcd_package_name`
 
 Data type: `String`
 
@@ -3523,7 +3686,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_package_name`
 
-##### <a name="etcd_install_method"></a>`etcd_install_method`
+##### <a name="-kubernetes--packages--etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -3531,7 +3694,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_install_method`
 
-##### <a name="runc_source"></a>`runc_source`
+##### <a name="-kubernetes--packages--runc_source"></a>`runc_source`
 
 Data type: `Optional[String]`
 
@@ -3539,7 +3702,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::runc_source`
 
-##### <a name="runc_source_checksum"></a>`runc_source_checksum`
+##### <a name="-kubernetes--packages--runc_source_checksum"></a>`runc_source_checksum`
 
 Data type: `Optional[String]`
 
@@ -3547,7 +3710,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::runc_source_checksum`
 
-##### <a name="disable_swap"></a>`disable_swap`
+##### <a name="-kubernetes--packages--disable_swap"></a>`disable_swap`
 
 Data type: `Boolean`
 
@@ -3555,7 +3718,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::disable_swap`
 
-##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
+##### <a name="-kubernetes--packages--manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
@@ -3563,7 +3726,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_kernel_modules`
 
-##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
+##### <a name="-kubernetes--packages--manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
@@ -3571,7 +3734,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_sysctl_settings`
 
-##### <a name="create_repos"></a>`create_repos`
+##### <a name="-kubernetes--packages--create_repos"></a>`create_repos`
 
 Data type: `Boolean`
 
@@ -3579,7 +3742,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::repos::create_repos`
 
-##### <a name="pin_packages"></a>`pin_packages`
+##### <a name="-kubernetes--packages--pin_packages"></a>`pin_packages`
 
 Data type: `Boolean`
 
@@ -3587,7 +3750,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::pin_packages`
 
-##### <a name="package_pin_priority"></a>`package_pin_priority`
+##### <a name="-kubernetes--packages--package_pin_priority"></a>`package_pin_priority`
 
 Data type: `Integer`
 
@@ -3595,7 +3758,7 @@ Data type: `Integer`
 
 Default value: `32767`
 
-##### <a name="archive_checksum_type"></a>`archive_checksum_type`
+##### <a name="-kubernetes--packages--archive_checksum_type"></a>`archive_checksum_type`
 
 Data type: `String`
 
@@ -3603,7 +3766,7 @@ Data type: `String`
 
 Default value: `'sha256'`
 
-##### <a name="tmp_directory"></a>`tmp_directory`
+##### <a name="-kubernetes--packages--tmp_directory"></a>`tmp_directory`
 
 Data type: `String`
 
@@ -3611,7 +3774,47 @@ Data type: `String`
 
 Default value: `$kubernetes::tmp_directory`
 
-### <a name="kubernetesrepos"></a>`kubernetes::repos`
+##### <a name="-kubernetes--packages--http_proxy"></a>`http_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::http_proxy`
+
+##### <a name="-kubernetes--packages--https_proxy"></a>`https_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::https_proxy`
+
+##### <a name="-kubernetes--packages--no_proxy"></a>`no_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::no_proxy`
+
+##### <a name="-kubernetes--packages--container_runtime_use_proxy"></a>`container_runtime_use_proxy`
+
+Data type: `Boolean`
+
+
+
+Default value: `$kubernetes::container_runtime_use_proxy`
+
+##### <a name="-kubernetes--packages--containerd_socket"></a>`containerd_socket`
+
+Data type: `Variant[Stdlib::Unixpath, String]`
+
+
+
+Default value: `$kubernetes::containerd_socket`
+
+### <a name="kubernetes--repos"></a>`kubernetes::repos`
 
 The kubernetes::repos class.
 
@@ -3619,26 +3822,26 @@ The kubernetes::repos class.
 
 The following parameters are available in the `kubernetes::repos` class:
 
-* [`container_runtime`](#container_runtime)
-* [`kubernetes_apt_location`](#kubernetes_apt_location)
-* [`kubernetes_apt_release`](#kubernetes_apt_release)
-* [`kubernetes_apt_repos`](#kubernetes_apt_repos)
-* [`kubernetes_key_id`](#kubernetes_key_id)
-* [`kubernetes_key_source`](#kubernetes_key_source)
-* [`kubernetes_yum_baseurl`](#kubernetes_yum_baseurl)
-* [`kubernetes_yum_gpgkey`](#kubernetes_yum_gpgkey)
-* [`docker_apt_location`](#docker_apt_location)
-* [`docker_apt_release`](#docker_apt_release)
-* [`docker_apt_repos`](#docker_apt_repos)
-* [`docker_yum_baseurl`](#docker_yum_baseurl)
-* [`docker_yum_gpgkey`](#docker_yum_gpgkey)
-* [`docker_key_id`](#docker_key_id)
-* [`docker_key_source`](#docker_key_source)
-* [`containerd_install_method`](#containerd_install_method)
-* [`manage_docker`](#manage_docker)
-* [`create_repos`](#create_repos)
+* [`container_runtime`](#-kubernetes--repos--container_runtime)
+* [`kubernetes_apt_location`](#-kubernetes--repos--kubernetes_apt_location)
+* [`kubernetes_apt_release`](#-kubernetes--repos--kubernetes_apt_release)
+* [`kubernetes_apt_repos`](#-kubernetes--repos--kubernetes_apt_repos)
+* [`kubernetes_key_id`](#-kubernetes--repos--kubernetes_key_id)
+* [`kubernetes_key_source`](#-kubernetes--repos--kubernetes_key_source)
+* [`kubernetes_yum_baseurl`](#-kubernetes--repos--kubernetes_yum_baseurl)
+* [`kubernetes_yum_gpgkey`](#-kubernetes--repos--kubernetes_yum_gpgkey)
+* [`docker_apt_location`](#-kubernetes--repos--docker_apt_location)
+* [`docker_apt_release`](#-kubernetes--repos--docker_apt_release)
+* [`docker_apt_repos`](#-kubernetes--repos--docker_apt_repos)
+* [`docker_yum_baseurl`](#-kubernetes--repos--docker_yum_baseurl)
+* [`docker_yum_gpgkey`](#-kubernetes--repos--docker_yum_gpgkey)
+* [`docker_key_id`](#-kubernetes--repos--docker_key_id)
+* [`docker_key_source`](#-kubernetes--repos--docker_key_source)
+* [`containerd_install_method`](#-kubernetes--repos--containerd_install_method)
+* [`manage_docker`](#-kubernetes--repos--manage_docker)
+* [`create_repos`](#-kubernetes--repos--create_repos)
 
-##### <a name="container_runtime"></a>`container_runtime`
+##### <a name="-kubernetes--repos--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -3646,7 +3849,7 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### <a name="kubernetes_apt_location"></a>`kubernetes_apt_location`
+##### <a name="-kubernetes--repos--kubernetes_apt_location"></a>`kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
@@ -3654,7 +3857,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_apt_location`
 
-##### <a name="kubernetes_apt_release"></a>`kubernetes_apt_release`
+##### <a name="-kubernetes--repos--kubernetes_apt_release"></a>`kubernetes_apt_release`
 
 Data type: `Optional[String]`
 
@@ -3662,7 +3865,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_apt_release`
 
-##### <a name="kubernetes_apt_repos"></a>`kubernetes_apt_repos`
+##### <a name="-kubernetes--repos--kubernetes_apt_repos"></a>`kubernetes_apt_repos`
 
 Data type: `Optional[String]`
 
@@ -3670,7 +3873,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_apt_repos`
 
-##### <a name="kubernetes_key_id"></a>`kubernetes_key_id`
+##### <a name="-kubernetes--repos--kubernetes_key_id"></a>`kubernetes_key_id`
 
 Data type: `Optional[String]`
 
@@ -3678,7 +3881,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_key_id`
 
-##### <a name="kubernetes_key_source"></a>`kubernetes_key_source`
+##### <a name="-kubernetes--repos--kubernetes_key_source"></a>`kubernetes_key_source`
 
 Data type: `Optional[String]`
 
@@ -3686,7 +3889,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_key_source`
 
-##### <a name="kubernetes_yum_baseurl"></a>`kubernetes_yum_baseurl`
+##### <a name="-kubernetes--repos--kubernetes_yum_baseurl"></a>`kubernetes_yum_baseurl`
 
 Data type: `Optional[String]`
 
@@ -3694,7 +3897,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_yum_baseurl`
 
-##### <a name="kubernetes_yum_gpgkey"></a>`kubernetes_yum_gpgkey`
+##### <a name="-kubernetes--repos--kubernetes_yum_gpgkey"></a>`kubernetes_yum_gpgkey`
 
 Data type: `Optional[String]`
 
@@ -3702,7 +3905,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::kubernetes_yum_gpgkey`
 
-##### <a name="docker_apt_location"></a>`docker_apt_location`
+##### <a name="-kubernetes--repos--docker_apt_location"></a>`docker_apt_location`
 
 Data type: `Optional[String]`
 
@@ -3710,7 +3913,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_apt_location`
 
-##### <a name="docker_apt_release"></a>`docker_apt_release`
+##### <a name="-kubernetes--repos--docker_apt_release"></a>`docker_apt_release`
 
 Data type: `Optional[String]`
 
@@ -3718,7 +3921,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_apt_release`
 
-##### <a name="docker_apt_repos"></a>`docker_apt_repos`
+##### <a name="-kubernetes--repos--docker_apt_repos"></a>`docker_apt_repos`
 
 Data type: `Optional[String]`
 
@@ -3726,7 +3929,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_apt_repos`
 
-##### <a name="docker_yum_baseurl"></a>`docker_yum_baseurl`
+##### <a name="-kubernetes--repos--docker_yum_baseurl"></a>`docker_yum_baseurl`
 
 Data type: `Optional[String]`
 
@@ -3734,7 +3937,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_yum_baseurl`
 
-##### <a name="docker_yum_gpgkey"></a>`docker_yum_gpgkey`
+##### <a name="-kubernetes--repos--docker_yum_gpgkey"></a>`docker_yum_gpgkey`
 
 Data type: `Optional[String]`
 
@@ -3742,7 +3945,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_yum_gpgkey`
 
-##### <a name="docker_key_id"></a>`docker_key_id`
+##### <a name="-kubernetes--repos--docker_key_id"></a>`docker_key_id`
 
 Data type: `Optional[String]`
 
@@ -3750,7 +3953,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_key_id`
 
-##### <a name="docker_key_source"></a>`docker_key_source`
+##### <a name="-kubernetes--repos--docker_key_source"></a>`docker_key_source`
 
 Data type: `Optional[String]`
 
@@ -3758,7 +3961,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::docker_key_source`
 
-##### <a name="containerd_install_method"></a>`containerd_install_method`
+##### <a name="-kubernetes--repos--containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Optional[String]`
 
@@ -3766,7 +3969,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::containerd_install_method`
 
-##### <a name="manage_docker"></a>`manage_docker`
+##### <a name="-kubernetes--repos--manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -3774,7 +3977,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_docker`
 
-##### <a name="create_repos"></a>`create_repos`
+##### <a name="-kubernetes--repos--create_repos"></a>`create_repos`
 
 Data type: `Boolean`
 
@@ -3782,7 +3985,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::create_repos`
 
-### <a name="kubernetesservice"></a>`kubernetes::service`
+### <a name="kubernetes--service"></a>`kubernetes::service`
 
 The kubernetes::service class.
 
@@ -3790,17 +3993,22 @@ The kubernetes::service class.
 
 The following parameters are available in the `kubernetes::service` class:
 
-* [`container_runtime`](#container_runtime)
-* [`containerd_install_method`](#containerd_install_method)
-* [`controller`](#controller)
-* [`manage_docker`](#manage_docker)
-* [`manage_etcd`](#manage_etcd)
-* [`etcd_install_method`](#etcd_install_method)
-* [`kubernetes_version`](#kubernetes_version)
-* [`cloud_provider`](#cloud_provider)
-* [`cloud_config`](#cloud_config)
+* [`container_runtime`](#-kubernetes--service--container_runtime)
+* [`container_runtime_use_proxy`](#-kubernetes--service--container_runtime_use_proxy)
+* [`containerd_install_method`](#-kubernetes--service--containerd_install_method)
+* [`controller`](#-kubernetes--service--controller)
+* [`manage_docker`](#-kubernetes--service--manage_docker)
+* [`manage_etcd`](#-kubernetes--service--manage_etcd)
+* [`etcd_install_method`](#-kubernetes--service--etcd_install_method)
+* [`kubernetes_version`](#-kubernetes--service--kubernetes_version)
+* [`cloud_provider`](#-kubernetes--service--cloud_provider)
+* [`cloud_config`](#-kubernetes--service--cloud_config)
+* [`http_proxy`](#-kubernetes--service--http_proxy)
+* [`https_proxy`](#-kubernetes--service--https_proxy)
+* [`no_proxy`](#-kubernetes--service--no_proxy)
+* [`kubelet_use_proxy`](#-kubernetes--service--kubelet_use_proxy)
 
-##### <a name="container_runtime"></a>`container_runtime`
+##### <a name="-kubernetes--service--container_runtime"></a>`container_runtime`
 
 Data type: `String`
 
@@ -3808,7 +4016,15 @@ Data type: `String`
 
 Default value: `$kubernetes::container_runtime`
 
-##### <a name="containerd_install_method"></a>`containerd_install_method`
+##### <a name="-kubernetes--service--container_runtime_use_proxy"></a>`container_runtime_use_proxy`
+
+Data type: `Boolean`
+
+
+
+Default value: `$kubernetes::container_runtime_use_proxy`
+
+##### <a name="-kubernetes--service--containerd_install_method"></a>`containerd_install_method`
 
 Data type: `Enum['archive','package']`
 
@@ -3816,7 +4032,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `$kubernetes::containerd_install_method`
 
-##### <a name="controller"></a>`controller`
+##### <a name="-kubernetes--service--controller"></a>`controller`
 
 Data type: `Boolean`
 
@@ -3824,7 +4040,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::controller`
 
-##### <a name="manage_docker"></a>`manage_docker`
+##### <a name="-kubernetes--service--manage_docker"></a>`manage_docker`
 
 Data type: `Boolean`
 
@@ -3832,7 +4048,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_docker`
 
-##### <a name="manage_etcd"></a>`manage_etcd`
+##### <a name="-kubernetes--service--manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -3840,7 +4056,7 @@ Data type: `Boolean`
 
 Default value: `$kubernetes::manage_etcd`
 
-##### <a name="etcd_install_method"></a>`etcd_install_method`
+##### <a name="-kubernetes--service--etcd_install_method"></a>`etcd_install_method`
 
 Data type: `String`
 
@@ -3848,7 +4064,7 @@ Data type: `String`
 
 Default value: `$kubernetes::etcd_install_method`
 
-##### <a name="kubernetes_version"></a>`kubernetes_version`
+##### <a name="-kubernetes--service--kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -3856,7 +4072,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### <a name="cloud_provider"></a>`cloud_provider`
+##### <a name="-kubernetes--service--cloud_provider"></a>`cloud_provider`
 
 Data type: `Optional[String]`
 
@@ -3864,7 +4080,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_provider`
 
-##### <a name="cloud_config"></a>`cloud_config`
+##### <a name="-kubernetes--service--cloud_config"></a>`cloud_config`
 
 Data type: `Optional[String]`
 
@@ -3872,9 +4088,41 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::cloud_config`
 
+##### <a name="-kubernetes--service--http_proxy"></a>`http_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::http_proxy`
+
+##### <a name="-kubernetes--service--https_proxy"></a>`https_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::https_proxy`
+
+##### <a name="-kubernetes--service--no_proxy"></a>`no_proxy`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$kubernetes::no_proxy`
+
+##### <a name="-kubernetes--service--kubelet_use_proxy"></a>`kubelet_use_proxy`
+
+Data type: `Boolean`
+
+
+
+Default value: `$kubernetes::kubelet_use_proxy`
+
 ## Defined types
 
-### <a name="kuberneteskubeadm_init"></a>`kubernetes::kubeadm_init`
+### <a name="kubernetes--kubeadm_init"></a>`kubernetes::kubeadm_init`
 
 == kubernetes::kubeadm_init
 
@@ -3882,23 +4130,23 @@ Default value: `$kubernetes::cloud_config`
 
 The following parameters are available in the `kubernetes::kubeadm_init` defined type:
 
-* [`node_name`](#node_name)
-* [`config`](#config)
-* [`dry_run`](#dry_run)
-* [`path`](#path)
-* [`env`](#env)
-* [`ignore_preflight_errors`](#ignore_preflight_errors)
-* [`skip_phases`](#skip_phases)
+* [`node_name`](#-kubernetes--kubeadm_init--node_name)
+* [`config`](#-kubernetes--kubeadm_init--config)
+* [`dry_run`](#-kubernetes--kubeadm_init--dry_run)
+* [`path`](#-kubernetes--kubeadm_init--path)
+* [`env`](#-kubernetes--kubeadm_init--env)
+* [`ignore_preflight_errors`](#-kubernetes--kubeadm_init--ignore_preflight_errors)
+* [`skip_phases`](#-kubernetes--kubeadm_init--skip_phases)
 
-##### <a name="node_name"></a>`node_name`
+##### <a name="-kubernetes--kubeadm_init--node_name"></a>`node_name`
 
-Data type: `String`
+Data type: `Stdlib::Fqdn`
 
 
 
 Default value: `$kubernetes::node_name`
 
-##### <a name="config"></a>`config`
+##### <a name="-kubernetes--kubeadm_init--config"></a>`config`
 
 Data type: `Optional[String]`
 
@@ -3906,15 +4154,15 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::config_file`
 
-##### <a name="dry_run"></a>`dry_run`
+##### <a name="-kubernetes--kubeadm_init--dry_run"></a>`dry_run`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="path"></a>`path`
+##### <a name="-kubernetes--kubeadm_init--path"></a>`path`
 
 Data type: `Array`
 
@@ -3922,7 +4170,7 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### <a name="env"></a>`env`
+##### <a name="-kubernetes--kubeadm_init--env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -3930,7 +4178,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
+##### <a name="-kubernetes--kubeadm_init--ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
@@ -3938,7 +4186,7 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::ignore_preflight_errors`
 
-##### <a name="skip_phases"></a>`skip_phases`
+##### <a name="-kubernetes--kubeadm_init--skip_phases"></a>`skip_phases`
 
 Data type: `Optional[String]`
 
@@ -3946,7 +4194,7 @@ Data type: `Optional[String]`
 
 Default value: `$kubernetes::skip_phases`
 
-### <a name="kuberneteskubeadm_join"></a>`kubernetes::kubeadm_join`
+### <a name="kubernetes--kubeadm_join"></a>`kubernetes::kubeadm_join`
 
 == kubernetes::kubeadm_join
 
@@ -3954,31 +4202,31 @@ Default value: `$kubernetes::skip_phases`
 
 The following parameters are available in the `kubernetes::kubeadm_join` defined type:
 
-* [`node_name`](#node_name)
-* [`kubernetes_version`](#kubernetes_version)
-* [`config`](#config)
-* [`controller_address`](#controller_address)
-* [`ca_cert_hash`](#ca_cert_hash)
-* [`discovery_token`](#discovery_token)
-* [`tls_bootstrap_token`](#tls_bootstrap_token)
-* [`token`](#token)
-* [`feature_gates`](#feature_gates)
-* [`cri_socket`](#cri_socket)
-* [`discovery_file`](#discovery_file)
-* [`env`](#env)
-* [`ignore_preflight_errors`](#ignore_preflight_errors)
-* [`path`](#path)
-* [`skip_ca_verification`](#skip_ca_verification)
+* [`node_name`](#-kubernetes--kubeadm_join--node_name)
+* [`kubernetes_version`](#-kubernetes--kubeadm_join--kubernetes_version)
+* [`config`](#-kubernetes--kubeadm_join--config)
+* [`controller_address`](#-kubernetes--kubeadm_join--controller_address)
+* [`ca_cert_hash`](#-kubernetes--kubeadm_join--ca_cert_hash)
+* [`discovery_token`](#-kubernetes--kubeadm_join--discovery_token)
+* [`tls_bootstrap_token`](#-kubernetes--kubeadm_join--tls_bootstrap_token)
+* [`token`](#-kubernetes--kubeadm_join--token)
+* [`feature_gates`](#-kubernetes--kubeadm_join--feature_gates)
+* [`cri_socket`](#-kubernetes--kubeadm_join--cri_socket)
+* [`discovery_file`](#-kubernetes--kubeadm_join--discovery_file)
+* [`env`](#-kubernetes--kubeadm_join--env)
+* [`ignore_preflight_errors`](#-kubernetes--kubeadm_join--ignore_preflight_errors)
+* [`path`](#-kubernetes--kubeadm_join--path)
+* [`skip_ca_verification`](#-kubernetes--kubeadm_join--skip_ca_verification)
 
-##### <a name="node_name"></a>`node_name`
+##### <a name="-kubernetes--kubeadm_join--node_name"></a>`node_name`
 
-Data type: `String`
+Data type: `Stdlib::Fqdn`
 
 
 
 Default value: `$kubernetes::node_name`
 
-##### <a name="kubernetes_version"></a>`kubernetes_version`
+##### <a name="-kubernetes--kubeadm_join--kubernetes_version"></a>`kubernetes_version`
 
 Data type: `String`
 
@@ -3986,7 +4234,7 @@ Data type: `String`
 
 Default value: `$kubernetes::kubernetes_version`
 
-##### <a name="config"></a>`config`
+##### <a name="-kubernetes--kubeadm_join--config"></a>`config`
 
 Data type: `String`
 
@@ -3994,7 +4242,7 @@ Data type: `String`
 
 Default value: `$kubernetes::config_file`
 
-##### <a name="controller_address"></a>`controller_address`
+##### <a name="-kubernetes--kubeadm_join--controller_address"></a>`controller_address`
 
 Data type: `String`
 
@@ -4002,7 +4250,7 @@ Data type: `String`
 
 Default value: `$kubernetes::controller_address`
 
-##### <a name="ca_cert_hash"></a>`ca_cert_hash`
+##### <a name="-kubernetes--kubeadm_join--ca_cert_hash"></a>`ca_cert_hash`
 
 Data type: `String`
 
@@ -4010,7 +4258,7 @@ Data type: `String`
 
 Default value: `$kubernetes::discovery_token_hash`
 
-##### <a name="discovery_token"></a>`discovery_token`
+##### <a name="-kubernetes--kubeadm_join--discovery_token"></a>`discovery_token`
 
 Data type: `String`
 
@@ -4018,7 +4266,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="tls_bootstrap_token"></a>`tls_bootstrap_token`
+##### <a name="-kubernetes--kubeadm_join--tls_bootstrap_token"></a>`tls_bootstrap_token`
 
 Data type: `String`
 
@@ -4026,7 +4274,7 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="token"></a>`token`
+##### <a name="-kubernetes--kubeadm_join--token"></a>`token`
 
 Data type: `String`
 
@@ -4034,31 +4282,31 @@ Data type: `String`
 
 Default value: `$kubernetes::token`
 
-##### <a name="feature_gates"></a>`feature_gates`
+##### <a name="-kubernetes--kubeadm_join--feature_gates"></a>`feature_gates`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cri_socket"></a>`cri_socket`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="discovery_file"></a>`discovery_file`
+##### <a name="-kubernetes--kubeadm_join--cri_socket"></a>`cri_socket`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="env"></a>`env`
+##### <a name="-kubernetes--kubeadm_join--discovery_file"></a>`discovery_file`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-kubernetes--kubeadm_join--env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -4066,15 +4314,15 @@ Data type: `Optional[Array]`
 
 Default value: `$kubernetes::environment`
 
-##### <a name="ignore_preflight_errors"></a>`ignore_preflight_errors`
+##### <a name="-kubernetes--kubeadm_join--ignore_preflight_errors"></a>`ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="path"></a>`path`
+##### <a name="-kubernetes--kubeadm_join--path"></a>`path`
 
 Data type: `Array`
 
@@ -4082,15 +4330,15 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### <a name="skip_ca_verification"></a>`skip_ca_verification`
+##### <a name="-kubernetes--kubeadm_join--skip_ca_verification"></a>`skip_ca_verification`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-### <a name="kuberneteswait_for_default_sa"></a>`kubernetes::wait_for_default_sa`
+### <a name="kubernetes--wait_for_default_sa"></a>`kubernetes::wait_for_default_sa`
 
 == kubernetes::wait_for_default_sa
 
@@ -4098,22 +4346,23 @@ Default value: ``false``
 
 The following parameters are available in the `kubernetes::wait_for_default_sa` defined type:
 
-* [`namespace`](#namespace)
-* [`path`](#path)
-* [`timeout`](#timeout)
-* [`tries`](#tries)
-* [`try_sleep`](#try_sleep)
-* [`env`](#env)
+* [`namespace`](#-kubernetes--wait_for_default_sa--namespace)
+* [`path`](#-kubernetes--wait_for_default_sa--path)
+* [`timeout`](#-kubernetes--wait_for_default_sa--timeout)
+* [`tries`](#-kubernetes--wait_for_default_sa--tries)
+* [`try_sleep`](#-kubernetes--wait_for_default_sa--try_sleep)
+* [`env`](#-kubernetes--wait_for_default_sa--env)
 
-##### <a name="namespace"></a>`namespace`
+##### <a name="-kubernetes--wait_for_default_sa--namespace"></a>`namespace`
 
-Data type: `String`
+Data type: `Kubernetes::Namespace`
 
-
+Namespace name must be a valid DNS name (max. 63 characters)
+see https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#namespaces-and-dns
 
 Default value: `$title`
 
-##### <a name="path"></a>`path`
+##### <a name="-kubernetes--wait_for_default_sa--path"></a>`path`
 
 Data type: `Array`
 
@@ -4121,15 +4370,15 @@ Data type: `Array`
 
 Default value: `$kubernetes::default_path`
 
-##### <a name="timeout"></a>`timeout`
+##### <a name="-kubernetes--wait_for_default_sa--timeout"></a>`timeout`
 
 Data type: `Optional[Integer]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="tries"></a>`tries`
+##### <a name="-kubernetes--wait_for_default_sa--tries"></a>`tries`
 
 Data type: `Optional[Integer]`
 
@@ -4137,7 +4386,7 @@ Data type: `Optional[Integer]`
 
 Default value: `$kubernetes::wait_for_default_sa_tries`
 
-##### <a name="try_sleep"></a>`try_sleep`
+##### <a name="-kubernetes--wait_for_default_sa--try_sleep"></a>`try_sleep`
 
 Data type: `Optional[Integer]`
 
@@ -4145,7 +4394,7 @@ Data type: `Optional[Integer]`
 
 Default value: `$kubernetes::wait_for_default_sa_try_sleep`
 
-##### <a name="env"></a>`env`
+##### <a name="-kubernetes--wait_for_default_sa--env"></a>`env`
 
 Data type: `Optional[Array]`
 
@@ -4178,6 +4427,15 @@ Transforms a hash into a string of kubeadm init flags
 Transforms a hash into a string of kubeadm init flags
 
 Returns: `Any`
+
+## Data types
+
+### <a name="Kubernetes--Namespace"></a>`Kubernetes::Namespace`
+
+namespace should conform to RFC 1123
+source https://stackoverflow.com/a/20945961/334831
+
+Alias of `Pattern['\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z']`
 
 ## Tasks
 
@@ -53653,7 +53911,7 @@ Status of the VolumeAttachment request. Populated by the entity completing the a
 
 ## Plans
 
-### <a name="k8sdeploy"></a>`k8s::deploy`
+### <a name="k8s--deploy"></a>`k8s::deploy`
 
 This plan is meant to create a deployment and a service on Kubernetes
 To run this plan you will have to enable the anonymous user access to you Kubernetes environment or add the necessary authentication parameters (token and ca_file for each task)
@@ -53663,50 +53921,50 @@ Command to system:anonymous rights: kubectl create clusterrolebinding cluster-sy
 
 The following parameters are available in the `k8s::deploy` plan:
 
-* [`name`](#name)
-* [`namespace`](#namespace)
-* [`replicas`](#replicas)
-* [`image`](#image)
-* [`container_port`](#container_port)
-* [`endpoint`](#endpoint)
+* [`name`](#-k8s--deploy--name)
+* [`namespace`](#-k8s--deploy--namespace)
+* [`replicas`](#-k8s--deploy--replicas)
+* [`image`](#-k8s--deploy--image)
+* [`container_port`](#-k8s--deploy--container_port)
+* [`endpoint`](#-k8s--deploy--endpoint)
 
-##### <a name="name"></a>`name`
-
-Data type: `String[1]`
-
-
-
-##### <a name="namespace"></a>`namespace`
+##### <a name="-k8s--deploy--name"></a>`name`
 
 Data type: `String[1]`
 
 
 
-##### <a name="replicas"></a>`replicas`
+##### <a name="-k8s--deploy--namespace"></a>`namespace`
+
+Data type: `String[1]`
+
+
+
+##### <a name="-k8s--deploy--replicas"></a>`replicas`
 
 Data type: `Integer`
 
 
 
-##### <a name="image"></a>`image`
+##### <a name="-k8s--deploy--image"></a>`image`
 
 Data type: `String[1]`
 
 
 
-##### <a name="container_port"></a>`container_port`
+##### <a name="-k8s--deploy--container_port"></a>`container_port`
 
 Data type: `Integer`
 
 
 
-##### <a name="endpoint"></a>`endpoint`
+##### <a name="-k8s--deploy--endpoint"></a>`endpoint`
 
 Data type: `String[1]`
 
 
 
-### <a name="kubernetesprovision_cluster"></a>`kubernetes::provision_cluster`
+### <a name="kubernetes--provision_cluster"></a>`kubernetes::provision_cluster`
 
 Provisions machines for integration testing
 
@@ -53722,10 +53980,10 @@ kubernetes::provision_cluster
 
 The following parameters are available in the `kubernetes::provision_cluster` plan:
 
-* [`image_type`](#image_type)
-* [`provision_type`](#provision_type)
+* [`image_type`](#-kubernetes--provision_cluster--image_type)
+* [`provision_type`](#-kubernetes--provision_cluster--provision_type)
 
-##### <a name="image_type"></a>`image_type`
+##### <a name="-kubernetes--provision_cluster--image_type"></a>`image_type`
 
 Data type: `Optional[String]`
 
@@ -53733,7 +53991,7 @@ Data type: `Optional[String]`
 
 Default value: `'centos-7'`
 
-##### <a name="provision_type"></a>`provision_type`
+##### <a name="-kubernetes--provision_cluster--provision_type"></a>`provision_type`
 
 Data type: `Optional[String]`
 
@@ -53741,7 +53999,7 @@ Data type: `Optional[String]`
 
 Default value: `'provision_service'`
 
-### <a name="kubernetespuppetserver_setup"></a>`kubernetes::puppetserver_setup`
+### <a name="kubernetes--puppetserver_setup"></a>`kubernetes::puppetserver_setup`
 
 Puppet Server Setup
 
@@ -53757,9 +54015,9 @@ kubernetes::puppetserver_setup
 
 The following parameters are available in the `kubernetes::puppetserver_setup` plan:
 
-* [`collection`](#collection)
+* [`collection`](#-kubernetes--puppetserver_setup--collection)
 
-##### <a name="collection"></a>`collection`
+##### <a name="-kubernetes--puppetserver_setup--collection"></a>`collection`
 
 Data type: `Optional[String]`
 
