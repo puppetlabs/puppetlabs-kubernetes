@@ -326,6 +326,12 @@
 #  Defaults to hostname.
 #   NOTE: Ignored when cloud_provider is AWS, until this lands fixed https://github.com/kubernetes/kubernetes/pull/61878
 #
+# [*node_extra_taints*]
+# Additional taints for node.
+# Example:
+#   [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule', 'operator' => 'Equal'}]
+#  Defaults to undef
+#
 # [*token*]
 #   A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
 #   Defaults to undef
@@ -643,7 +649,8 @@ class kubernetes (
   Array $controllermanager_extra_arguments                = [],
   Array $scheduler_extra_arguments                        = [],
   String $service_cidr                                    = '10.96.0.0/12',
-  Optional[Stdlib::Fqdn] $node_label                      = undef,
+  Optional[String] $node_label                            = undef,
+  Optional[Array[Hash]] $node_extra_taints                = undef,
   Optional[String] $controller_address                    = undef,
   Optional[String] $cloud_provider                        = undef,
   Optional[String] $cloud_config                          = undef,

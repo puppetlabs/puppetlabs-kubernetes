@@ -14,6 +14,7 @@ class kubernetes::config::worker (
   Optional[String] $feature_gates          = undef,
   Optional[String] $cloud_provider         = $kubernetes::cloud_provider,
   Optional[String] $cloud_config           = $kubernetes::cloud_config,
+  Optional[Array[Hash]] $node_extra_taints = $kubernetes::node_extra_taints,
   Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
   Optional[Hash] $kubelet_extra_config     = $kubernetes::kubelet_extra_config,
   Optional[Array] $ignore_preflight_errors = undef,
