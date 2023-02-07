@@ -75,42 +75,54 @@ class kubernetes::kube_addons (
   }
 
   if $cni_network_provider {
-    if $cni_provider == 'calico-tigera' {
-      if $cni_network_preinstall {
-        exec { 'Install cni network (preinstall)':
-          command     => ['kubectl', 'apply', '-f', $cni_network_preinstall],
+    case $cni_provider {
+      'calico-tigera': {
+        if $cni_network_preinstall {
+          exec { 'Install cni network (preinstall)':
+            command     => ['kubectl', 'apply', '-f', $cni_network_preinstall],
+            onlyif      => $exec_onlyif,
+            unless      => 'kubectl -n tigera-operator get deployments | egrep "^tigera-operator"',
+            environment => $env,
+            before      => Exec['Install cni network provider'],
+          }
+        }
+        file { '/etc/kubernetes/calico-installation.yaml':
+          ensure  => file,
+          group   => 'root',
+          mode    => '0400',
+          owner   => 'root',
+          replace => false,
+          source  => $cni_network_provider,
+        } -> file_line { 'Configure calico ipPools.cidr':
+          ensure   => present,
+          path     => '/etc/kubernetes/calico-installation.yaml',
+          match    => '      cidr:',
+          line     => "      cidr: ${cni_pod_cidr}",
+          multiple => false,
+          replace  => true,
+        } -> exec { 'Install cni network provider':
+          command     => 'kubectl apply -f /etc/kubernetes/calico-installation.yaml',
           onlyif      => $exec_onlyif,
-          unless      => 'kubectl -n tigera-operator get deployments | egrep "^tigera-operator"',
+          unless      => 'kubectl -n calico-system get daemonset | egrep "^calico-node"',
           environment => $env,
           before      => Exec['Install cni network provider'],
         }
       }
-      file { '/etc/kubernetes/calico-installation.yaml':
-        ensure  => file,
-        group   => 'root',
-        mode    => '0400',
-        owner   => 'root',
-        replace => false,
-        source  => $cni_network_provider,
-      } -> file_line { 'Configure calico ipPools.cidr':
-        ensure   => present,
-        path     => '/etc/kubernetes/calico-installation.yaml',
-        match    => '      cidr:',
-        line     => "      cidr: ${cni_pod_cidr}",
-        multiple => false,
-        replace  => true,
-      } -> exec { 'Install cni network provider':
-        command     => 'kubectl apply -f /etc/kubernetes/calico-installation.yaml',
-        onlyif      => $exec_onlyif,
-        unless      => 'kubectl -n calico-system get daemonset | egrep "^calico-node"',
-        environment => $env,
+      'flannel': {
+        exec { 'Install cni network provider':
+          command     => ['kubectl', 'apply', '-f', $cni_network_provider],
+          onlyif      => $exec_onlyif,
+          unless      => 'kubectl -n kube-flannel get daemonset | egrep "^kube-flannel"',
+          environment => $env,
+        }
       }
-    } else {
-      exec { 'Install cni network provider':
-        command     => ['kubectl', 'apply', '-f', $cni_network_provider],
-        onlyif      => $exec_onlyif,
-        unless      => 'kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"',
-        environment => $env,
+      default: {
+        exec { 'Install cni network provider':
+          command     => ['kubectl', 'apply', '-f', $cni_network_provider],
+          onlyif      => $exec_onlyif,
+          unless      => 'kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"',
+          environment => $env,
+        }
       }
     }
   }

@@ -81,6 +81,16 @@ describe 'kubernetes::kube_addons', type: :class do
           it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml') }
           it { is_expected.to contain_file_line('Configure calico ipPools.cidr') }
           it { is_expected.to contain_exec('Install cni network provider') }
+        when 'flannel'
+          it {
+            expect(subject).to contain_exec('Install cni network provider').with(
+              {
+                onlyif: ['kubectl get nodes'],
+                command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+                unless: ['kubectl -n kube-flannel get daemonset | egrep "^kube-flannel"']
+              },
+            )
+          }
         else
           it {
             expect(subject).to contain_exec('Install cni network provider').with({
