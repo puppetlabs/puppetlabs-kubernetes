@@ -1,4 +1,72 @@
 # Class kubernetes config_worker, populates worker config files with joinconfig
+# @param node_name
+#   Name of the node. Defaults to a fact
+# @param config_file
+#   Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
+# @param kubernetes_version
+#   The version of Kubernetes containers you want to install.
+#   ie api server,
+#   Defaults to  1.10.2
+# @param kubernetes_cluster_name
+#   The name of the cluster, for use when multiple clusters are accessed from the same source
+#   Only used by Kubernetes 1.12+
+#   Defaults to "kubernetes"
+# @param controller_address
+#   The IP address and Port of the controller that worker node will join. eg 172.17.10.101:6443
+#   Defaults to undef
+# @param discovery_token_hash
+#   A string to validate to the root CA public key when joining a cluster. Created by kubetool
+#   Defaults to undef
+# @param container_runtime
+#   This is the runtime that the Kubernetes cluster will use.
+#   It can only be set to "cri_containerd" or "docker"
+#   Defaults to cri_containerd
+# @param discovery_token
+#   A string to validate to the root CA public key when joining a cluster. Created by kubetool
+#   Defaults to undef
+# @param tls_bootstrap_token
+#   A string to validate to the root CA public key when joining a cluster. Created by kubetool
+#   Defaults to undef
+# @param token
+#   A string to validate to the root CA public key when joining a cluster. Created by kubetool
+#   Defaults to undef
+# @param discovery_file
+#   Defaults to undef
+# @param feature_gates
+#   Defaults to undef
+# @param cloud_provider
+#   The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
+#   Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+#   Defaults to undef
+# @param cloud_config
+#   The file location of the cloud config to be used by cloud_provider [*For use with v1.12 and above*]
+#   Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+#   Defaults to undef
+# @param node_extra_taints
+#   Additional taints for node.
+#   Example:
+#     [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule', 'operator' => 'Equal'}]
+#   Defaults to undef
+# @param kubelet_extra_arguments
+#   A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
+#   Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+#   Defaults to []
+# @param kubelet_extra_config
+#   A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster.
+#   Requires DynamicKubeletConfig.
+#   Defaults to {}
+# @param ignore_preflight_errors
+#   Defaults to undef
+# @param skip_ca_verification
+#   Defaults to false
+# @param cgroup_driver
+#   The cgroup driver to be used.
+#   Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+# @param skip_phases_join
+#   Allow kubeadm join to skip some phases
+#   Only works with Kubernetes 1.22+
+#   Default: no phases skipped
+#
 class kubernetes::config::worker (
   Stdlib::Fqdn $node_name                  = $kubernetes::node_name,
   String $config_file                      = $kubernetes::config_file,

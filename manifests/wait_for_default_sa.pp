@@ -1,8 +1,20 @@
 # == kubernetes::wait_for_default_sa
 #
 # @param namespace
-#  Namespace name must be a valid DNS name (max. 63 characters)
-#  see https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#namespaces-and-dns
+#   Namespace name must be a valid DNS name (max. 63 characters)
+#   see https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#namespaces-and-dns
+# @param path
+#   The path to be used when running kube* commands
+#   Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
+# @param timeout
+#   Sets the timeout time. Defaults to undef.
+# @param tries
+#   Sets the amount of attempts to be carried out. Defaults to 5.
+# @param try_sleep
+#   Defaults to 6.
+# @param env
+#   The environment passed to kubectl commands.
+#   Defaults to setting HOME and KUBECONFIG variables
 #
 define kubernetes::wait_for_default_sa (
   Kubernetes::Namespace $namespace = $title,

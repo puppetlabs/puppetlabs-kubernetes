@@ -1,5 +1,27 @@
-# This class configures the RBAC roles for Kubernetes 1.10.x
-
+# @summary
+#   This class configures the RBAC roles for Kubernetes 1.10.x
+#
+# @param controller
+#   This is a bool that sets the node as a Kubernetes controller. Defaults to false.
+# @param worker
+#   This is a bool that sets a node to a worker. Defaults to false.
+# @param node_name
+#   Sets the name of the node. Defaults to a networking fact.
+# @param container_runtime
+#   Configure whether the container runtime should be configured to use a proxy.
+#   If set to true, the container runtime will use the http_proxy, https_proxy and no_proxy values.
+#   Defaults to false
+# @param join_discovery_file
+#   Sets the name of the discovery file. Defaults to undef.
+# @param ignore_preflight_errors
+#   List of errors to ignore pre_flight. Defaults to undef.
+# @param env
+#   The environment passed to kubectl commands.
+#   Defaults to setting HOME and KUBECONFIG variables
+# @param skip_phases
+#   Allow kubeadm init skip some phases
+#   Default: none phases skipped
+#
 class kubernetes::cluster_roles (
   Optional[Boolean] $controller = $kubernetes::controller,
   Optional[Boolean] $worker = $kubernetes::worker,

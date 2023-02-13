@@ -1,4 +1,19 @@
 # == kubernetes::kubeadm_init
+# @param node_name
+#   Name of the node. Defaults to a fact
+# @param config
+#   Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
+# @param dry_run
+#   Defaults to false
+# @param path
+#   The path to be used when running kube* commands. Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
+# @param env
+#   The environment passed to kubectl commands. Defaults to setting HOME and KUBECONFIG variables
+# @param ignore_preflight_errors
+#   Defaults to undef
+# @param skip_phases
+#   Allow kubeadm init skip some phases. Default: none phases skipped
+#
 define kubernetes::kubeadm_init (
   Stdlib::Fqdn $node_name                       = $kubernetes::node_name,
   Optional[String] $config                      = $kubernetes::config_file,

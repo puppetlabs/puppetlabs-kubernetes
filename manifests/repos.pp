@@ -1,5 +1,43 @@
 ## kubernetes repos
 
+# @param container_runtime
+#   This is the runtime that the Kubernetes cluster will use.
+#   It can only be set to "cri_containerd" or "docker". Defaults to cri_containerd
+# @param kubernetes_apt_location
+#   The APT repo URL for the Kubernetes packages. Defaults to https://apt.kubernetes.io
+# @param kubernetes_apt_release
+#   The release name for the APT repo for the Kubernetes packages. Defaults to 'kubernetes-${facts.os.distro.codename}'
+# @param kubernetes_apt_repos
+#   The repos to install from the Kubernetes APT url. Defaults to main
+# @param kubernetes_key_id
+#   The gpg key for the Kubernetes APT repo. Defaults to '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
+# @param kubernetes_key_source
+#   The URL for the APT repo gpg key. Defaults to https://packages.cloud.google.com/apt/doc/apt-key.gpg
+# @param kubernetes_yum_baseurl
+#   The YUM repo URL for the Kubernetes packages. Defaults to https://download.docker.com/linux/centos/
+# @param kubernetes_yum_gpgkey
+#   The URL for the Kubernetes yum repo gpg key. Defaults to https://download.docker.com/linux/centos/gpg
+# @param docker_apt_location
+#   The APT repo URL for the Docker packages. Defaults to https://apt.dockerproject.org/repo
+# @param docker_apt_release
+#   The release name for the APT repo for the Docker packages. Defaults to $facts.os.distro.codename
+# @param docker_apt_repos
+#   The repos to install from the Docker APT url. Defaults to main
+# @param docker_yum_baseurl
+#   The YUM repo URL for the Docker packages. Defaults to https://download.docker.com/linux/centos/7/x86_64/stable
+# @param docker_yum_gpgkey
+#   The URL for the Docker yum repo gpg key. Defaults to https://download.docker.com/linux/centos/gpg
+# @param docker_key_id
+#   The gpg key for the Docker APT repo. Defaults to '58118E89F3A912897C070ADBF76221572C52609D'
+# @param docker_key_source
+#   The URL for the Docker APT repo gpg key. Defaults to https://apt.dockerproject.org/gpg
+# @param containerd_install_method
+#   Whether to install containerd via archive or package. Defaults to archive
+# @param manage_docker
+#   Whether or not to install Docker repositories and packages via this module. Defaults to true.
+# @param create_repos
+#   A flag to install the upstream Kubernetes and Docker repos. Defaults to true
+#
 class kubernetes::repos (
   String $container_runtime                   = $kubernetes::container_runtime,
   Optional[String] $kubernetes_apt_location   = $kubernetes::kubernetes_apt_location,
