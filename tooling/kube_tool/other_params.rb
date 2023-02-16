@@ -25,11 +25,17 @@ class OtherParams
       cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
       cni_pod_cidr = '10.244.0.0/16'
     when 'calico'
-      cni_network_provider = "https://docs.projectcalico.org/archive/#{opts[:cni_provider_version]}/manifests/calico.yaml"
+      if options[:cni_provider_version].nil?
+        abort('Please set $cni_provider_version variable to specify the version of calico you want to install (3.24.0 and newer)')
+      end
+      cni_network_provider = "https://raw.githubusercontent.com/projectcalico/calico/v#{opts[:cni_provider_version]}/manifests/calico.yaml"
       cni_pod_cidr = '192.168.0.0/16'
     when 'calico-tigera'
-      cni_network_preinstall = "https://docs.projectcalico.org/manifests/tigera-operator.yaml"
-      cni_network_provider = "https://docs.projectcalico.org/manifests/custom-resources.yaml"
+      if options[:cni_provider_version].nil?
+        abort('Please set $cni_provider_version variable to specify the version of calico-tigera you want to install (3.24.0 and newer)')
+      end
+      cni_network_preinstall = "https://raw.githubusercontent.com/projectcalico/calico/v#{opts[:cni_provider_version]}/manifests/tigera-operator.yaml"
+      cni_network_provider = "https://raw.githubusercontent.com/projectcalico/calico/v#{opts[:cni_provider_version]}/manifests/custom-resources.yaml"
       cni_pod_cidr = '192.168.0.0/16'
     when 'cilium'
       cni_pod_cidr = '10.244.0.0/16'
