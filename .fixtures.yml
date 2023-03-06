@@ -4,7 +4,7 @@ fixtures:
     apt: 'puppetlabs-apt'
     puppet_conf: 'puppetlabs-puppet_conf'
     archive: "puppet-archive"
-    augeasproviders_sysctl: "puppet-augeasproviders_sysctl"
+    augeasproviders_sysctl: "herculesteam-augeasproviders_sysctl"
     augeasproviders_core: "puppet-augeasproviders_core"
     kmod: "puppet-kmod"
     helm: 'puppetlabs-helm'
