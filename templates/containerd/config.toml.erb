@@ -69,7 +69,7 @@ oom_score = 0
     disable_hugetlb_controller = true
     ignore_image_defined_volumes = false
     [plugins."io.containerd.grpc.v1.cri".containerd]
-      snapshotter = "overlayfs"
+      snapshotter = "<%= @containerd_snapshotter -%>"
       default_runtime_name = "<%= @containerd_default_runtime_name %>"
       no_pivot = false
       disable_snapshot_annotations = true

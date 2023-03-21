@@ -26,6 +26,8 @@ class kubernetes::packages (
   Optional[Hash] $containerd_plugins_registry           = $kubernetes::containerd_plugins_registry,
   Enum['runc','nvidia']
   $containerd_default_runtime_name                      = $kubernetes::containerd_default_runtime_name,
+  Enum['overlayfs', 'zfs']
+  $containerd_snapshotter                               = $kubernetes::containerd_snapshotter,
   String $etcd_archive                                  = $kubernetes::etcd_archive,
   Optional[String] $etcd_archive_checksum               = $kubernetes::etcd_archive_checksum,
   String $etcd_version                                  = $kubernetes::etcd_version,

@@ -73,6 +73,10 @@
 #   The default runtime to use with containerd
 #   Defaults to runc
 #
+# [*containerd_snapshotter*]
+#   The default snapshotter to use with containerd
+#   Defaults to overlayfs
+#
 # [*containerd_sandbox_image*]
 #  The configuration for the image pause container
 #  Defaults k8s.gcr.io/pause:3.2
@@ -679,6 +683,7 @@ class kubernetes (
     },
   },
   Enum['runc','nvidia'] $containerd_default_runtime_name  = 'runc',
+  Enum['overlayfs', 'zfs'] $containerd_snapshotter        = 'overlayfs',
   String $containerd_sandbox_image                        = 'k8s.gcr.io/pause:3.2',
   String $etcd_archive                                    = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                 = undef,

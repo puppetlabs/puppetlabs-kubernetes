@@ -39,7 +39,7 @@ class kubernetes::kube_addons (
     if $cni_provider == 'calico-tigera' {
       if $cni_network_preinstall {
         exec { 'Install cni network (preinstall)':
-          command     => ['kubectl', 'apply', '-f', $cni_network_preinstall],
+          command     => ['kubectl', 'apply', '--server-side', '-f', $cni_network_preinstall],
           onlyif      => $exec_onlyif,
           unless      => 'kubectl -n tigera-operator get deployments | egrep "^tigera-operator"',
           environment => $env,
