@@ -9,73 +9,18 @@ env:
   HONEYCOMB_DATASET: litmus tests
 
 jobs:
-  setup_matrix:
-    name: "Setup Test Matrix"
-    runs-on: ubuntu-20.04
-    outputs:
-      matrix: ${{ steps.get-matrix.outputs.matrix }}
-
-    steps:
-    - name: "Honeycomb: Start recording"
-      uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
-      with:
-        apikey: ${{ env.HONEYCOMB_WRITEKEY }}
-        dataset: ${{ env.HONEYCOMB_DATASET }}
-        job-status: ${{ job.status }}
-
-    - name: "Honeycomb: Start first step"
-      run: |
-        echo STEP_ID=setup-environment >> $GITHUB_ENV
-        echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
-    - name: Checkout Source
-      uses: actions/checkout@v2
-      if: ${{ github.repository_owner == 'puppetlabs' }}
-
-    - name: Activate Ruby 2.7
-      uses: ruby/setup-ruby@v1
-      if: ${{ github.repository_owner == 'puppetlabs' }}
-      with:
-        ruby-version: "2.7"
-        bundler-cache: true
-
-    - name: Print bundle environment
-      if: ${{ github.repository_owner == 'puppetlabs' }}
-      run: |
-        echo ::group::bundler environment
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
-        echo ::endgroup::
-
-    - name: "Honeycomb: Record Setup Environment time"
-      if: ${{ github.repository_owner == 'puppetlabs' }}
-      run: |
-        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
-        echo STEP_ID=Setup-Integration-Test-Matrix >> $GITHUB_ENV
-        echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
-    - name: Setup Integration Test Matrix
-      id: get-matrix
-      run: |
-        if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          echo  "::set-output name=matrix::{'platform':['centos-7'],'collection':['puppet6-nightly', 'puppet7-nightly']}"
-        else
-          echo  "::set-output name=matrix::{}"
-        fi
-
-    - name: "Honeycomb: Record Setup Test Matrix time"
-      if: ${{ always() }}
-      run: |
-        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
+  Spec:
+    uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
+    secrets: "inherit"
 
   Integration:
-    needs:
-      - setup_matrix
+    needs: "Spec"
     if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
 
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
+      matrix: {'platform':['centos-7'],'collection':['puppet6-nightly', 'puppet7-nightly']}
 
     env:
       BUILDEVENT_FILE: '../buildevents.txt'
@@ -186,20 +131,3 @@ jobs:
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Remove test environment'
-
-  slack-workflow-status:
-    if: always()
-    name: Post Workflow Status To Slack
-    needs:
-      - Integration
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Slack Workflow Notification
-        uses: puppetlabs/Gamesight-slack-workflow-status@pdk-templates-v1
-        with:
-          # Required Input
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          # Optional Input
-          channel: '#team-cat-bots'
-          name: 'GABot'
