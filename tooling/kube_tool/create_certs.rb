@@ -88,7 +88,7 @@ class CreateCerts
     File.open("ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("ca-conf.json", "w+") { |file| file.write(conf.to_json) }
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare ca')
-    system("openssl x509 -pubkey -in ca.pem | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //' > discovery_token_hash")
+    system("openssl x509 -pubkey -in ca.pem | openssl ec -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //' > discovery_token_hash")
     FileUtils.rm_f('ca.csr')
     data = Hash.new
     cer = File.read("ca.pem")
