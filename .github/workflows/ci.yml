@@ -1,8 +1,10 @@
-name: "nightly"
+name: "ci"
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  pull_request:
+    branches:
+      - "main"
+  workflow_dispatch:
 
 jobs:
   Spec:
@@ -66,4 +68,3 @@ jobs:
       continue-on-error: true
       run: |
         bundle exec rake 'litmus:tear_down'
-

@@ -11,7 +11,9 @@ fixtures:
     rook: 'puppetlabs-rook'
   repositories:
     facts: 'https://github.com/puppetlabs/puppetlabs-facts.git'
-    puppet_agent: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
+    puppet_agent:
+      repo: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
+      ref: v4.12.1
     provision: 'https://github.com/puppetlabs/provision.git'
     yumrepo_core:
       repo: https://github.com/puppetlabs/puppetlabs-yumrepo_core.git
