@@ -377,7 +377,7 @@ For example,
 
 The configuration for the image pause container.
 
-Default `k8s.gcr.io/pause:3.2`.
+Default `registry.k8s.io/pause:3.2`.
 
 ### `containerd_socket`
 
@@ -671,7 +671,7 @@ Defaults to `undef`.
 
 The container registry to pull control plane images from.
 
-Defaults to k8s.gcr.io
+Defaults to registry.k8s.io
 
 #### `install_dashboard`
 

@@ -75,7 +75,7 @@
 #
 # [*containerd_sandbox_image*]
 #  The configuration for the image pause container
-#  Defaults k8s.gcr.io/pause:3.2
+#  Defaults registry.k8s.io/pause:3.2
 #
 # [*dns_domain*]
 #   This is a string that sets the dns domain in kubernetes cluster
@@ -376,7 +376,7 @@
 #
 # [*image_repository*]
 #  The container registry to pull control plane images from
-#  Defaults to k8s.gcr.io
+#  Defaults to registry.k8s.io
 #
 # [*kubeadm_extra_config*]
 #  A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
@@ -697,7 +697,7 @@ class kubernetes (
     },
   },
   Enum['runc','nvidia'] $containerd_default_runtime_name  = 'runc',
-  String $containerd_sandbox_image                        = 'k8s.gcr.io/pause:3.2',
+  String $containerd_sandbox_image                        = 'registry.k8s.io/pause:3.2',
   String $etcd_archive                                    = "etcd-v${etcd_version}-linux-amd64.tar.gz",
   Optional[String] $etcd_archive_checksum                 = undef,
   String $etcd_package_name                               = 'etcd-server',
@@ -734,7 +734,7 @@ class kubernetes (
   Boolean $manage_kernel_modules                          = true,
   Boolean $manage_sysctl_settings                         = true,
   Boolean $create_repos                                   = true,
-  String $image_repository                                = 'k8s.gcr.io',
+  String $image_repository                                = 'registry.k8s.io',
   Array[String] $default_path                             = ['/usr/bin', '/usr/sbin', '/bin', '/sbin', '/usr/local/bin'],
   String $cgroup_driver                                   = $facts['os']['family'] ? {
     'RedHat' => 'systemd',

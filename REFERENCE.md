@@ -648,7 +648,7 @@ the files if they do not exist.
 
 [*containerd_sandbox_image*]
  The configuration for the image pause container
- Defaults k8s.gcr.io/pause:3.2
+ Defaults registry.k8s.io/pause:3.2
 
 [*dns_domain*]
   This is a string that sets the dns domain in kubernetes cluster
@@ -949,7 +949,7 @@ Example:
 
 [*image_repository*]
  The container registry to pull control plane images from
- Defaults to k8s.gcr.io
+ Defaults to registry.k8s.io
 
 [*kubeadm_extra_config*]
  A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
@@ -1996,7 +1996,7 @@ Data type: `String`
 
 
 
-Default value: `'k8s.gcr.io/pause:3.2'`
+Default value: `'registry.k8s.io/pause:3.2'`
 
 ##### <a name="-kubernetes--etcd_archive"></a>`etcd_archive`
 
@@ -2274,7 +2274,7 @@ Data type: `String`
 
 
 
-Default value: `'k8s.gcr.io'`
+Default value: `'registry.k8s.io'`
 
 ##### <a name="-kubernetes--default_path"></a>`default_path`
 
