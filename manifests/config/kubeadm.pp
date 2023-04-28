@@ -143,7 +143,7 @@ class kubernetes::config::kubeadm (
           mountPath => $cloud_config,
         },
       }
-      if has_key($apiserver_extra_volumes, 'cloud') or has_key($controllermanager_extra_volumes, 'cloud') {
+      if 'cloud' in $apiserver_extra_volumes or 'cloud' in $controllermanager_extra_volumes {
         fail('Cannot use "cloud" as volume name')
       }
 
