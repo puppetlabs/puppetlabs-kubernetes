@@ -75,11 +75,11 @@ def configure_puppet_server(controller, worker1, worker2)
   puppet_cert_sign
   # Create site.pp
   site_pp = <<-EOS
-  node /#{controller}/ {
+  node /#{controller[0]}/ {
     class {'kubernetes':
       kubernetes_version => '1.20.6',
       kubernetes_package_version => '1.20.6',
-      controller_address => "$::ipaddress:6443",
+      controller_address => "#{controller[1]}:6443",
       container_runtime => 'docker',
       manage_docker => false,
       controller => true,
@@ -120,7 +120,7 @@ end
 def puppet_cert_sign
   # Sign the certs
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-  run_shell("puppetserver ca sign --all", expect_failures: true)
+  run_shell('puppetserver ca sign --all', expect_failures: true)
 end
 
 def clear_certs(role)
@@ -145,7 +145,7 @@ RSpec.configure do |c|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
       }
-      configure_puppet_server(hostname1, hostname2, hostname3)
+      configure_puppet_server([hostname1, int_ipaddr1], hostname2, hostname3)
     else
       c.filter_run_excluding :integration
     end
@@ -158,8 +158,8 @@ RSpec.configure do |c|
     run_shell('puppet module install puppetlabs-apt')
     run_shell('puppet module install maestrodev-wget')
     run_shell('puppet module install puppet-archive')
-    run_shell('puppet module install herculesteam-augeasproviders_sysctl')
-    run_shell('puppet module install herculesteam-augeasproviders_core')
+    run_shell('puppet module install puppet-augeasproviders_sysctl')
+    run_shell('puppet module install puppet-augeasproviders_core')
     run_shell('puppet module install puppet-kmod')
     run_shell('puppet module install puppetlabs-docker')
     run_shell('puppet module install puppetlabs-helm')
@@ -295,11 +295,11 @@ EOS
   run_shell("sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
 
   if family =~ /debian|ubuntu-1604-lts/
-    run_shell("echo 'kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.16.6' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
   end
 
   if family =~ /redhat|centos/
-    run_shell("echo 'kubernetes::cni_network_provider: https://cloud.weave.works/k8s/net?k8s-version=1.20.6' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
   end
 
   run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")

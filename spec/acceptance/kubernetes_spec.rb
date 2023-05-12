@@ -9,22 +9,26 @@ describe 'the Kubernetes module' do
       context 'it should install the module and run' do
         before(:all) { change_target_host('controller') }
         after(:all) { reset_target_host }
+        # fetch_ip_hostname_by_role returns an array of 3 elements [hostname, ipaddress, internal_ipaddress]
+        int_ipaddr1 = fetch_ip_hostname_by_role('controller')[2]
+
         pp = <<-MANIFEST
-        if $facts['os']['family'] == 'redhat'{
-          class {'kubernetes':
-                  kubernetes_version => '1.22.0',
-                  kubernetes_package_version => '1.22.0',
-                  controller_address => "$::ipaddress:6443",
-                  container_runtime => 'docker',
-                  manage_docker => false,
-                  controller => true,
-                  schedule_on_controller => true,
-                  environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
-                  ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
-                  cgroup_driver => 'cgroupfs',
-                }
+        case $facts['os']['family'] {
+          'RedHat', 'CentOS':  {
+            class {'kubernetes':
+              kubernetes_version => '1.22.0',
+              kubernetes_package_version => '1.22.0',
+              controller_address => "#{int_ipaddr1}:6443",
+              container_runtime => 'docker',
+              manage_docker => false,
+              controller => true,
+              schedule_on_controller => true,
+              environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+              ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
+              cgroup_driver => 'cgroupfs',
+            }
           }
-        if $facts['os']['family'] == 'debian'{
+          /^(Debian|Ubuntu)$/: {
           class {'kubernetes':
                   controller => true,
                   schedule_on_controller => true,
@@ -32,6 +36,10 @@ describe 'the Kubernetes module' do
                   ignore_preflight_errors => ['NumCPU'],
                 }
           }
+          default:  {
+            class {'kubernetes': } # any other OS are not supported
+        }
+      }
     MANIFEST
 
         it 'runs' do
