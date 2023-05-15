@@ -19,7 +19,7 @@ class OtherParams
 
     case opts[:cni_provider]
     when 'weave'
-      cni_network_provider = "https://cloud.weave.works/k8s/net?k8s-version=#{version}"
+      cni_network_provider = "https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml"
       cni_pod_cidr = '10.32.0.0/12'
     when 'flannel'
       cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
