@@ -23,7 +23,7 @@
 # @param docker_storage_driver
 #   Storage Driver to be added to `/etc/docker/daemon.json`. Defaults to overlay2
 # @param docker_cgroup_driver
-#   The cgroup driver to be used. Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+#   The cgroup driver to be used. Defaults to 'systemd'
 # @param docker_storage_opts
 #   Storage options to be added to `/etc/docker/daemon.json`. Defaults to undef
 # @param docker_extra_daemon_config

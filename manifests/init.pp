@@ -500,7 +500,7 @@
 #
 # [*cgroup_driver*]
 #  The cgroup driver to be used.
-#  Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+#  Defaults to 'systemd'
 #
 # [*environment*]
 #  The environment passed to kubectl commands.
@@ -736,10 +736,7 @@ class kubernetes (
   Boolean $create_repos                                   = true,
   String $image_repository                                = 'registry.k8s.io',
   Array[String] $default_path                             = ['/usr/bin', '/usr/sbin', '/bin', '/sbin', '/usr/local/bin'],
-  String $cgroup_driver                                   = $facts['os']['family'] ? {
-    'RedHat' => 'systemd',
-    default  => 'cgroupfs',
-  },
+  String $cgroup_driver                                   = 'systemd',
   Array[String] $environment                              = $controller ? {
     true    => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
     default => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/kubelet.conf'],

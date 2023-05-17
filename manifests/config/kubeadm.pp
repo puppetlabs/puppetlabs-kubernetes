@@ -191,7 +191,7 @@
 #   Defaults to k8s.gcr.io
 # @param cgroup_driver
 #   The cgroup driver to be used.
-#   Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+#   Defaults to 'systemd'
 # @param proxy_mode
 #   The mode for kubeproxy to run. It should be one of: "" (default), "userspace", "kernelspace", "iptables", or "ipvs".
 #   Defaults to ""
