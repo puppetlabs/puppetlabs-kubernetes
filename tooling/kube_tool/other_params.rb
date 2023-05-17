@@ -25,7 +25,7 @@ class OtherParams
       cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
       cni_pod_cidr = '10.244.0.0/16'
     when 'calico'
-      cni_network_provider = "https://docs.projectcalico.org/archive/#{opts[:cni_provider_version]}/manifests/calico.yaml"
+      cni_network_provider = "https://docs.projectcalico.org/archive/v#{opts[:cni_provider_version]}/manifests/calico.yaml"
       cni_pod_cidr = '192.168.0.0/16'
     when 'calico-tigera'
       cni_network_preinstall = "https://docs.projectcalico.org/manifests/tigera-operator.yaml"
