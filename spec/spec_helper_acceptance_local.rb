@@ -81,21 +81,21 @@ def configure_puppet_server(controller, worker1, worker2)
       schedule_on_controller => true,
       environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
       ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
-      cgroup_driver => 'cgroupfs',
+      cgroup_driver => 'systemd',
     }
   }
   node /#{worker1}/ {
     class {'kubernetes':
       worker => true,
       manage_docker => false,
-      cgroup_driver => 'cgroupfs',
+      cgroup_driver => 'systemd',
     }
   }
   node /#{worker2}/  {
     class {'kubernetes':
       worker => true,
       manage_docker => false,
-      cgroup_driver => 'cgroupfs',
+      cgroup_driver => 'systemd',
     }
   }
   EOS
