@@ -1,5 +1,118 @@
 # Class kubernetes packages
 
+# @param kubernetes_package_version
+#   The version of the packages the Kubernetes os packages to install
+#   ie kubectl and kubelet. Defaults to 1.10.2
+# @param container_runtime
+#   This is the runtime that the Kubernetes cluster will use.
+#   It can only be set to "cri_containerd" or "docker". Defaults to cri_containerd
+# @param containerd_sandbox_image
+#   The configuration for the image pause container. Defaults k8s.gcr.io/pause:3.2
+# @param manage_docker
+#   Whether or not to install Docker repositories and packages via this module.
+#   Defaults to true.
+# @param manage_etcd
+#   When set to true, etcd will be downloaded from the specified source URL.
+#   Defaults to true.
+# @param docker_version
+#   This is the version of the docker runtime that you want to install.
+#   Defaults to 17.03.0.ce-1.el7.centos on RedHat
+#   Defaults to 5:20.10.11~3-0~ubuntu-(distro codename) on Ubuntu
+# @param docker_package_name
+#   The docker package name to download from an upstream repo. Defaults to docker-engine
+# @param docker_storage_driver
+#   Storage Driver to be added to `/etc/docker/daemon.json`. Defaults to overlay2
+# @param docker_cgroup_driver
+#   The cgroup driver to be used. Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+# @param docker_storage_opts
+#   Storage options to be added to `/etc/docker/daemon.json`. Defaults to undef
+# @param docker_extra_daemon_config
+#   Extra configuration to be added to `/etc/docker/daemon.json`. Defaults to undef
+# @param docker_log_max_file
+#   The maximum number of log files that can be present.
+#   Defaults to 1. See https://docs.docker.com/config/containers/logging/json-file/
+# @param docker_log_max_size
+#   The maximum size of the log before it is rolled.
+#   A positive integer plus a modifier representing the unit of measure (k, m, or g).
+#   Defaults to 100m. See https://docs.docker.com/config/containers/logging/json-file/
+# @param controller
+#   This is a bool that sets the node as a Kubernetes controller. Defaults to false
+# @param containerd_version
+#   This is the version of the containerd runtime the module will install. Defaults to 1.1.0
+# @param containerd_install_method
+#   Whether to install containerd via archive or package. Defaults to archive
+# @param containerd_package_name
+#   containerd package name. Defaults to containerd.io
+# @param containerd_archive
+#   The name of the containerd archive
+#   Defaults to containerd-${containerd_version}.linux-amd64.tar.gz
+# @param containerd_archive_checksum
+#   A checksum (sha-256) of the archive. If the checksum does not match, a reinstall will be executed and the related service will be
+#   restarted. If no checksum is defined, the puppet module checks for the extracted files of the archive and downloads and extracts
+#   the files if they do not exist.
+# @param containerd_source
+#   The URL to download the containerd archive
+#   Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
+# @param containerd_config_template
+#   The template to use for containerd configuration
+#   This value is ignored if containerd_config_source is defined. Default to 'kubernetes/containerd/config.toml.erb'
+# @param containerd_config_source
+#   The source of the containerd configuration
+#   This value overrides containerd_config_template. Default to undef
+# @param containerd_plugins_registry
+#   The configuration for the image registries used by containerd when containerd_install_method is package.
+#   See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md. Defaults to `undef`
+# @param containerd_default_runtime_name
+#   The default runtime to use with containerd. Defaults to runc
+# @param etcd_archive
+#   The name of the etcd archive. Defaults to etcd-v${etcd_version}-linux-amd64.tar.gz
+# @param etcd_archive_checksum
+#   A checksum (sha-256) of the archive. If the checksum does not match, a reinstall will be executed and the related service will be
+#   restarted. If no checksum is defined, the puppet module checks for the extracted files of the archive and downloads and extracts
+#   the files if they do not exist.
+# @param etcd_version
+#   The version of etcd that you would like to use. Defaults to 3.2.18
+# @param etcd_source
+#   The URL to download the etcd archive. Defaults to https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}
+# @param etcd_package_name
+#   The system package name for installing etcd. Defaults to etcd-server
+# @param etcd_install_method
+#   The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name). Defaults to wget
+# @param runc_source
+#   The URL to download runc. Defaults to https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64
+# @param runc_source_checksum
+#   Defaults to undef
+# @param disable_swap
+#   A flag to turn off the swap setting. This is required for kubeadm. Defaults to true
+# @param manage_kernel_modules
+#   A flag to manage required Kernel modules. Defaults to true
+# @param manage_sysctl_settings
+#   A flag to manage required sysctl settings. Defaults to true
+# @param create_repos
+#   A flag to install the upstream Kubernetes and Docker repos. Defaults to true
+# @param pin_packages
+#   Enable pinning of the docker and kubernetes packages to prevent accidential updates.
+#   This is currently only implemented for debian based distributions. Defaults to false
+# @param package_pin_priority
+#   Defaults to 32767
+# @param archive_checksum_type
+#   Defaults to 'sha256'
+# @param tmp_directory
+#   Directory to use when downloading archives for install.
+#   Default to /var/tmp/puppetlabs-kubernetes
+# @param http_proxy
+#   Configure the HTTP_PROXY environment variable. Defaults to undef
+# @param https_proxy
+#   Configure the HTTPS_PROXY environment variable. Defaults to undef
+# @param no_proxy
+#   Configure the NO_PROXY environment variable. Defaults to undef
+# @param container_runtime_use_proxy
+#   Configure whether the container runtime should be configured to use a proxy.
+#   If set to true, the container runtime will use the http_proxy, https_proxy and
+#   no_proxy values. Defaults to false
+# @param containerd_socket
+#   The path to containerd GRPC socket. Defaults to /run/containerd/containerd.sock
+#
 class kubernetes::packages (
   String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
   String $container_runtime                             = $kubernetes::container_runtime,
@@ -187,7 +300,7 @@ class kubernetes::packages (
 
     if $container_runtime_use_proxy {
       file { '/etc/systemd/system/docker.service.d/http-proxy.conf':
-        ensure  => present,
+        ensure  => file,
         notify  => [Exec['kubernetes-systemd-reload'], Service['docker']],
         owner   => root,
         group   => root,

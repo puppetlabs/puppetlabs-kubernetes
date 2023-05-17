@@ -503,77 +503,95 @@
 #  Defaults to 'systemd' on EL and 'cgroupfs' otherwise
 #
 # [*environment*]
-# The environment passed to kubectl commands.
-# Defaults to setting HOME and KUBECONFIG variables
+#  The environment passed to kubectl commands.
+#  Defaults to setting HOME and KUBECONFIG variables
 #
 # [*ttl_duration*]
-# Availability of the token
-# Default to 24h
+#  Availability of the token
+#  Default to 24h
 #
 # [*metrics_bind_address*]
-# Set the metricsBindAddress (to allow prometheus)
-# Default to 127.0.0.1
+#  Set the metricsBindAddress (to allow prometheus)
+#  Default to 127.0.0.1
 #
 # [*conntrack_max_per_core*]
-# Maximum number of NAT connections to track per CPU core.
-# Set to 0 to leave the limit as-is and ignore conntrack_min.
-# Default to 32768
+#  Maximum number of NAT connections to track per CPU core.
+#  Set to 0 to leave the limit as-is and ignore conntrack_min.
+#  Default to 32768
 #
 # [*conntrack_min*]
-# Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
-# Set conntrack_max_per_core to 0 to leave the limit as-is
-# Default to 131072
+#   Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
+#   Set conntrack_max_per_core to 0 to leave the limit as-is
+#   Default to 131072
 #
 # [*conntrack_tcp_wait_timeout*]
-# NAT timeout for TCP connections in the CLOSE_WAIT state.
-# Default to 1h0m0s
+#   NAT timeout for TCP connections in the CLOSE_WAIT state.
+#   Default to 1h0m0s
 #
 # [*conntrack_tcp_stablished_timeout*]
-# Idle timeout for established TCP connections (0 to leave as-is).
-# Default to 24h0m0s
+#   Idle timeout for established TCP connections (0 to leave as-is).
+#   Default to 24h0m0s
 #
 # [*tmp_directory*]
-# Directory to use when downloading archives for install.
-# Default to /var/tmp/puppetlabs-kubernetes
+#   Directory to use when downloading archives for install.
+#   Default to /var/tmp/puppetlabs-kubernetes
 #
 # [*skip_phases*]
-# Allow kubeadm init skip some phases
-# Default: none phases skipped
+#   Allow kubeadm init skip some phases
+#   Default: none phases skipped
 #
 # [*skip_phases_join*]
-# Allow kubeadm join to skip some phases
-# Only works with Kubernetes 1.22+
-# Default: no phases skipped
+#   Allow kubeadm join to skip some phases
+#   Only works with Kubernetes 1.22+
+#   Default: no phases skipped
 #
 # [*feature_gates*]
-# Feature gate hash to be added to kubeadm configuration
-# Example:
+#  Feature gate hash to be added to kubeadm configuration
+#  Example:
 #   {'RootlessControlPlane' => true}
-# Default: undefined, no feature gates
+#   Default: undefined, no feature gates
 #
 # [*http_proxy*]
-#  Configure the HTTP_PROXY environment variable
-#  Defaults to undef
+#   Configure the HTTP_PROXY environment variable
+#   Defaults to undef
 #
 # [*https_proxy*]
-#  Configure the HTTPS_PROXY environment variable
-#  Defaults to undef
+#   Configure the HTTPS_PROXY environment variable
+#   Defaults to undef
 #
 # [*no_proxy*]
-#  Configure the NO_PROXY environment variable
-#  Defaults to undef
+#   Configure the NO_PROXY environment variable
+#   Defaults to undef
 #
 # [*container_runtime_use_proxy*]
-#  Configure whether the container runtime should be configured to use a proxy.
-#  If set to true, the container runtime will use the http_proxy, https_proxy and
-#  no_proxy values.
-#  Defaults to false
+#   Configure whether the container runtime should be configured to use a proxy.
+#   If set to true, the container runtime will use the http_proxy, https_proxy and
+#   no_proxy values.
+#   Defaults to false
 #
 # [*kubelet_use_proxy*]
-#  Configure whether the kubelet should be configured to use a proxy.
-#  If set to true, the kubelet will use the http_proxy, https_proxy and
-#  no_proxy values.
-#  Defaults to false
+#   Configure whether the kubelet should be configured to use a proxy.
+#   If set to true, the kubelet will use the http_proxy, https_proxy and
+#   no_proxy values.
+#   Defaults to false
+#
+# [*api_server_count*]
+#   Defaults to undef
+#
+# [*runc_source_checksum*]
+#   Defaults to undef
+#
+# [*ignore_preflight_errors*]
+#   Defaults to undef
+#
+# [*join_discovery_file*]
+#   Defaults to undef
+#
+# [*wait_for_default_sa_tries*]
+#   Defaults to 5
+#
+# [*wait_for_default_sa_try_sleep*]
+#   Defaults to 6
 #
 # Authors
 # -------

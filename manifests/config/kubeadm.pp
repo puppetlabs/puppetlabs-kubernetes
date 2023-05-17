@@ -1,4 +1,223 @@
 # Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
+# @param config_file
+#   Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
+# @param controller_address
+#   The IP address and Port of the controller that worker node will join. eg 172.17.10.101:6443
+#   Defaults to undef
+# @param dns_domain
+#   This is a string that sets the dns domain in kubernetes cluster
+#   Default cluster.local
+# @param manage_etcd
+#   When set to true, etcd will be downloaded from the specified source URL.
+#   Defaults to true.
+# @param delegated_pki
+#   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
+#   Defaults to false
+# @param etcd_install_method
+#   The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
+#   Defaults to wget
+# @param kubernetes_version
+#   The version of Kubernetes containers you want to install.
+#   ie api server,
+#   Defaults to  1.10.2
+# @param kubernetes_cluster_name
+#   The name of the cluster, for use when multiple clusters are accessed from the same source
+#   Only used by Kubernetes 1.12+
+#   Defaults to "kubernetes"
+# @param etcd_ca_key
+#   This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcd_ca_crt
+#   This is the ca certificate data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcdclient_key
+#   This is the client certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcdclient_crt
+#   This is the client certificate data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcdserver_crt
+#   This is the server certificate data for the etcd cluster . This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcdserver_key
+#   This is the server certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcdpeer_crt
+#   This is the peer certificate data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcdpeer_key
+#   This is the peer certificate key data for the etcd cluster. This must be passed as string not as a file.
+#   Defaults to undef
+# @param etcd_peers
+#   This will tell etcd how the list of peers to connect to into the cluster.
+#   An example with hiera would be kubernetes::etcd_peers:
+#       - 172.17.10.101
+#       - 172.17.10.102
+#       - 172.17.10.103
+#   Defaults to undef
+# @param etcd_hostname
+#   The name of the etcd instance.
+#   An example with hiera would be kubernetes::etcd_hostname: "%{::fqdn}"
+#   Defaults to hostname
+# @param etcd_data_dir
+#   Directory, where etcd data is stored.
+#   Defaults to /var/lib/etcd.
+# @param etcd_ip
+#   The ip address that you want etcd to use for communications.
+#   An example with hiera would be kubernetes::etcd_ip: "%{networking.ip}"
+#   Or to pin explicitly to a specific interface kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
+#   Defaults to undef
+# @param cni_pod_cidr
+#   The overlay (internal) network range to use.
+#   Defaults to undef. kube_tool sets this per cni provider.
+# @param kube_api_bind_port
+#   Apiserver bind port
+#   Defaults to 6443
+# @param kube_api_advertise_address
+#   This is the ip address that the want to api server to expose.
+#   An example with hiera would be kubernetes::kube_api_advertise_address: "%{networking.ip}"
+#   Or to pin explicitly to a specific interface kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
+#   defaults to undef
+# @param etcd_initial_cluster
+#   This will tell etcd how many nodes will be in the cluster and is passed as a string.
+#   An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-control-plane=http://172.17.10.101:2380,etcd-kube-replica-control-plane-01=http://172.17.10.210:2380,etcd-kube-replica-control-plane-02=http://172.17.10.220:2380
+#   Defaults to undef
+# @param etcd_discovery_srv
+#   This will tell etcd to use DNS SRV discovery method. This option is exclusive with `etcd_initial_cluster`, taking precedence
+#   over it if both are present.
+#   An example with hiera would be kubernetes::etcd_discovery_srv: etcd-gen.example.org
+#   Defaults to undef
+# @param etcd_initial_cluster_state
+#   This will tell etcd the initial state of the cluster. Useful for adding a node to the cluster. Allowed values are
+#   "new" or "existing"
+#   Defaults to "new"
+# @param etcd_compaction_method
+#   This will tell etcd the compaction method to be used.
+#   "periodic" or "revision"
+#   Defaults to "periodic"
+# @param etcd_compaction_retention
+#   This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`. An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
+#   Integer or String
+#   Defaults to 0 (disabled)
+# @param api_server_count
+#   Defaults to undef
+# @param etcd_version
+#   The version of etcd that you would like to use.
+#   Defaults to 3.2.18
+# @param etcd_max_wals
+#   This will tell etcd how many WAL files to be kept
+#   Defaults to 5
+# @param etcd_max_request_bytes
+#   This will tell etcd the maximum size of a request in bytes
+#   Defaults to 1572864
+# @param etcd_listen_metric_urls
+#   The URL(s) to listen on to respond to /metrics and /health for etcd
+#   Defaults to undef
+# @param token
+#   A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
+#   Defaults to undef
+# @param ttl_duration
+#   Availability of the token
+#   Default to 24h
+# @param discovery_token_hash
+#   A string to validate to the root CA public key when joining a cluster. Created by kubetool
+#   Defaults to undef
+# @param kubernetes_ca_crt
+#   The clusters ca certificate. Must be passed as a string not a file.
+#   Defaults to undef
+# @param kubernetes_ca_key
+#   The clusters ca key. Must be passed as a string not a file.
+#   Defaults to undef
+# @param kubernetes_front_proxy_ca_crt
+#   The clusters front-proxy ca certificate. Must be passed as a string not a file.
+#   Defaults to undef
+# @param kubernetes_front_proxy_ca_key
+#   The clusters front-proxy ca key. Must be passed as a string not a file.
+#   Defaults to undef
+# @param container_runtime
+#   This is the runtime that the Kubernetes cluster will use.
+#   It can only be set to "cri_containerd" or "docker"
+#   Defaults to cri_containerd
+# @param sa_pub
+#   The service account public key. Must be passed as cert not a file.
+#   Defaults to undef
+# @param sa_key
+#   The service account key. Must be passed as string not a file.
+#   Defaults to undef
+# @param apiserver_cert_extra_sans
+#   A string array of Subhect Alternative Names for the api server certificates.
+#   Defaults to []
+# @param apiserver_extra_arguments
+#   A string array of extra arguments to be passed to the api server.
+#   Defaults to []
+# @param controllermanager_extra_arguments
+#   A string array of extra arguments to be passed to the controller manager.
+#   Defaults to []
+# @param scheduler_extra_arguments
+#   A string array of extra arguments to be passed to scheduler.
+#   Defaults to []
+# @param kubelet_extra_arguments
+#   A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
+#   Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+#   Defaults to []
+# @param service_cidr
+#   The IP assdress range for service VIPs
+#   Defaults to 10.96.0.0/12
+# @param node_name
+#   Name of the node. Defaults to a fact
+# @param cloud_provider
+#   The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
+#   Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+#   Defaults to undef
+# @param cloud_config
+#   The file location of the cloud config to be used by cloud_provider [*For use with v1.12 and above*]
+#   Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+#   Defaults to undef
+# @param apiserver_extra_volumes
+#   A hash of extra volume mounts mounted on the api server.
+#   Defaults to {}
+# @param controllermanager_extra_volumes
+#   A hash of extra volume mounts mounted on the controller manager.
+#   Defaults to []
+# @param kubeadm_extra_config
+#   A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
+#   Defaults to {}
+# @param kubelet_extra_config
+#   A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster.
+#   Requires DynamicKubeletConfig.
+#   Defaults to {}
+# @param image_repository
+#   The container registry to pull control plane images from
+#   Defaults to k8s.gcr.io
+# @param cgroup_driver
+#   The cgroup driver to be used.
+#   Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+# @param proxy_mode
+#   The mode for kubeproxy to run. It should be one of: "" (default), "userspace", "kernelspace", "iptables", or "ipvs".
+#   Defaults to ""
+# @param metrics_bind_address
+#   Set the metricsBindAddress (to allow prometheus)
+#   Default to 127.0.0.1
+# @param conntrack_max_per_core
+#   Maximum number of NAT connections to track per CPU core.
+#   Set to 0 to leave the limit as-is and ignore conntrack_min.
+#   Default to 32768
+# @param conntrack_min
+#   Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
+#   Set conntrack_max_per_core to 0 to leave the limit as-is
+#   Default to 131072
+# @param conntrack_tcp_wait_timeout
+#   NAT timeout for TCP connections in the CLOSE_WAIT state.
+#   Default to 1h0m0s
+# @param conntrack_tcp_stablished_timeout
+#   Idle timeout for established TCP connections (0 to leave as-is).
+#   Default to 24h0m0s
+# @param feature_gates
+#  Feature gate hash to be added to kubeadm configuration
+#  Example:
+#   {'RootlessControlPlane' => true}
+#   Default: undefined, no feature gates
+#
 class kubernetes::config::kubeadm (
   String $config_file = $kubernetes::config_file,
   String $controller_address = $kubernetes::controller_address,

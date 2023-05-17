@@ -1,4 +1,43 @@
 # Class kubernetes kube_addons
+# @param cni_network_preinstall
+#   Defaults to undef
+# @param cni_network_provider
+#   Defaults to undef
+# @param cni_pod_cidr
+#   The overlay (internal) network range to use.
+#   Defaults to undef. kube_tool sets this per cni provider.
+# @param cni_provider
+#   Defaults to undef
+# @param cni_rbac_binding
+#   The URL get the cni providers rbac rules. This is for use with Calico only.
+#   Defaults to `undef`.
+# @param install_dashboard
+#   This is a bool that determines if the kubernetes dashboard is installed.
+#   Defaults to false
+# @param dashboard_version
+#   The version of Kubernetes dashboard you want to install.
+#   Defaults to 1.10.1
+# @param dashboard_url
+#   The URL to get the Kubernetes Dashboard yaml file.
+#   Default is based on dashboard_version.
+# @param kubernetes_version
+#   The version of Kubernetes containers you want to install.
+#   ie api server, Defaults to  1.10.2
+# @param controller
+#   This is a bool that sets the node as a Kubernetes controller
+#   Defaults to false
+# @param schedule_on_controller
+#   A flag to remove the control plane role and allow pod scheduling on controllers
+#   Defaults to true
+# @param node_name
+#   Name of the node. Defaults to a fact
+# @param path
+#   The path to be used when running kube* commands
+#   Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
+# @param env
+#   The environment passed to kubectl commands.
+#   Defaults to setting HOME and KUBECONFIG variables
+#
 class kubernetes::kube_addons (
 
   Optional[String] $cni_network_preinstall  = $kubernetes::cni_network_preinstall,
@@ -47,7 +86,7 @@ class kubernetes::kube_addons (
         }
       }
       file { '/etc/kubernetes/calico-installation.yaml':
-        ensure  => 'present',
+        ensure  => file,
         group   => 'root',
         mode    => '0400',
         owner   => 'root',
