@@ -4,6 +4,7 @@ require 'json'
 require 'base64'
 require_relative 'clean_up.rb'
 
+# Create Certs
 class CreateCerts
 
   def initialize(opts)

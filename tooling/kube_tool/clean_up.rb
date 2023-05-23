@@ -1,5 +1,6 @@
 require 'fileutils'
 
+# Clean Up
 class CleanUp
   def self.all(files)
     files.each do |x|
