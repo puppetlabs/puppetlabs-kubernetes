@@ -14,7 +14,10 @@ class CreateCerts
     puts "Creating etcd ca"
     CleanUp.all(['ca-conf.json', 'ca-csr.json', 'ca-key.pem', 'ca-key.pem'])
     csr = { "CN": "etcd", "key": {"algo": @opts[:ca_algo], "size": @opts[:key_size] }}
-    conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
+    conf = { "signing": { "default": { "expiry": "43800h" }, 
+                          "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, 
+                                        "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] },
+                                        "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
     File.open("ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("ca-conf.json", "w+") { |file| file.write(conf.to_json) }
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare ca')
@@ -84,7 +87,10 @@ class CreateCerts
     puts "Creating kube ca"
     CleanUp.all(['ca-conf.json', 'ca-csr.json', 'ca-key.pem', 'ca-key.pem'])
     csr = { "CN": "kubernetes", "key": {"algo": @opts[:ca_algo], "size": @opts[:key_size] }}
-    conf = { "signing": { "default": { "expiry": "43800h" }, "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] }, "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
+    conf = { "signing": { "default": { "expiry": "43800h" }, 
+                          "profiles": { "server": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] }, 
+                                        "client": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "client auth" ] },
+                                        "peer": { "expiry": "43800h", "usages": [ "signing", "key encipherment", "server auth", "client auth" ] } } } }
     File.open("ca-csr.json", "w+") { |file| file.write(csr.to_json) }
     File.open("ca-conf.json", "w+") { |file| file.write(conf.to_json) }
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare ca')

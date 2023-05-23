@@ -283,7 +283,7 @@ EOS
 
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('docker build -t kubetool:latest /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
-  run_shell("docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} -e VERSION=1.20.6 -e CONTAINER_RUNTIME=#{runtime} -e CNI_PROVIDER=#{cni} -e ETCD_INITIAL_CLUSTER=#{hostname1}:#{int_ipaddr1} -e ETCD_IP=#{int_ipaddr1} -e ETCD_PEERS=[#{int_ipaddr1},#{int_ipaddr2},#{int_ipaddr3}] -e KUBE_API_ADVERTISE_ADDRESS=#{int_ipaddr1} -e INSTALL_DASHBOARD=true kubetool:latest")
+  run_shell("docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} -e VERSION=1.20.6 -e CONTAINER_RUNTIME=#{runtime} -e CNI_PROVIDER=#{cni} -e ETCD_INITIAL_CLUSTER=#{hostname1}:#{int_ipaddr1} -e ETCD_IP=#{int_ipaddr1} -e ETCD_PEERS=[#{int_ipaddr1},#{int_ipaddr2},#{int_ipaddr3}] -e KUBE_API_ADVERTISE_ADDRESS=#{int_ipaddr1} -e INSTALL_DASHBOARD=true kubetool:latest") # rubocop:disable Layout/LineLength
   create_remote_file("nginx","/tmp/nginx.yml", nginx)
   create_remote_file("hiera","/etc/puppetlabs/puppet/hiera.yaml", hiera)
   run_shell('chmod 644 /etc/puppetlabs/puppet/hiera.yaml')
@@ -295,11 +295,11 @@ EOS
   run_shell("sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
 
   if family =~ /debian|ubuntu-1604-lts/
-    run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
   end
 
   if family =~ /redhat|centos/
-    run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
   end
 
   run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
