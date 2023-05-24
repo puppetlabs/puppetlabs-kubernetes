@@ -32,13 +32,13 @@ describe 'kubernetes::kube_addons', :type => :class do
     it {
       is_expected.to contain_exec('Install calico rbac bindings').with({
                                                                          'command': ['kubectl', 'apply', '-f', 'foo'],
-      'onlyif': ['kubectl get nodes'],
+                                                                         'onlyif': ['kubectl get nodes'],
                                                                        })
     }
     it {
       is_expected.to contain_exec('Install cni network provider').with({
                                                                          'command': ['kubectl', 'apply', '-f', 'https://foo.test'],
-      'onlyif': ['kubectl get nodes'],
+                                                                         'onlyif': ['kubectl get nodes'],
                                                                        })
     }
     it { is_expected.to contain_exec('schedule on controller') }
@@ -70,7 +70,7 @@ describe 'kubernetes::kube_addons', :type => :class do
           it {
             is_expected.to contain_exec('Install cni network (preinstall)').with({
                                                                                    'command': ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
-            'onlyif': 'kubectl get nodes',
+                                                                                   'onlyif': 'kubectl get nodes',
                                                                                  })
           }
           it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml') }
@@ -80,8 +80,8 @@ describe 'kubernetes::kube_addons', :type => :class do
           it {
             is_expected.to contain_exec('Install cni network provider').with({
                                                                                'onlyif': ['kubectl get nodes'],
-              'command': ['kubectl', 'apply', '-f', "https://#{provider}.test"],
-              'unless': ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
+                                                                               'command': ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+                                                                               'unless': ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
                                                                              })
           }
 
@@ -99,12 +99,12 @@ describe 'kubernetes::kube_addons', :type => :class do
     let(:params) do
       {
         controller: true,
-      cni_rbac_binding: nil,
-      cni_network_provider: 'https://foo.test',
-      install_dashboard: false,
-      kubernetes_version: '1.25.4',
-      schedule_on_controller: false,
-      node_name: 'foo',
+        cni_rbac_binding: nil,
+        cni_network_provider: 'https://foo.test',
+        install_dashboard: false,
+        kubernetes_version: '1.25.4',
+        schedule_on_controller: false,
+        node_name: 'foo',
       }
     end
 
@@ -115,13 +115,13 @@ describe 'kubernetes::kube_addons', :type => :class do
     let(:params) do
       {
         controller: true,
-      cni_rbac_binding: nil,
-      cni_network_provider: 'https://foo.test',
-      install_dashboard: true,
-      kubernetes_version: '1.25.4',
-      dashboard_version: '1.10.1',
-      schedule_on_controller: false,
-      node_name: 'foo',
+        cni_rbac_binding: nil,
+        cni_network_provider: 'https://foo.test',
+        install_dashboard: true,
+        kubernetes_version: '1.25.4',
+        dashboard_version: '1.10.1',
+        schedule_on_controller: false,
+        node_name: 'foo',
       }
     end
 

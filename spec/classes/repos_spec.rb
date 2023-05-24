@@ -42,22 +42,22 @@ describe 'kubernetes::repos', :type => :class do
 
     it {
       is_expected.to contain_apt__source('kubernetes').with(
-      ensure: 'present',
-      location: 'http://apt.kubernetes.io',
-      repos: 'main',
-      release: 'kubernetes-xenial',
-      key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
-    )
+        ensure: 'present',
+        location: 'http://apt.kubernetes.io',
+        repos: 'main',
+        release: 'kubernetes-xenial',
+        key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
+      )
     }
 
     it {
       is_expected.to contain_apt__source('docker').with(
-      ensure: 'present',
-      location: 'https://download.docker.com/linux/ubuntu',
-      repos: 'main',
-      release: 'xenial',
-      key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
-    )
+        ensure: 'present',
+        location: 'https://download.docker.com/linux/ubuntu',
+        repos: 'main',
+        release: 'xenial',
+        key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
+      )
     }
   end
 
@@ -103,22 +103,22 @@ describe 'kubernetes::repos', :type => :class do
 
     it {
       is_expected.to contain_apt__source('kubernetes').with(
-      ensure: 'present',
-      location: 'http://apt.kubernetes.io',
-      repos: 'main',
-      release: 'kubernetes-xenial',
-      key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
-    )
+        ensure: 'present',
+        location: 'http://apt.kubernetes.io',
+        repos: 'main',
+        release: 'kubernetes-xenial',
+        key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
+      )
     }
 
     it {
       is_expected.to contain_apt__source('docker').with(
-      ensure: 'present',
-      location: 'https://download.docker.com/linux/ubuntu',
-      repos: 'main',
-      release: 'xenial',
-      key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
-    )
+        ensure: 'present',
+        location: 'https://download.docker.com/linux/ubuntu',
+        repos: 'main',
+        release: 'xenial',
+        key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
+      )
     }
   end
 

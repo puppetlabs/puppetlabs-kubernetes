@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,32 +113,32 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('action', 'body', 'action', 'action'),
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
-      op_param('body', 'body', 'body', 'body'),
-      op_param('count', 'body', 'count', 'count'),
-      op_param('dryRun', 'query', 'dry_run', 'dry_run'),
-      op_param('eventtime', 'body', 'event_time', 'eventtime'),
-      op_param('firsttimestamp', 'body', 'first_timestamp', 'firsttimestamp'),
-      op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
-      op_param('involvedobject', 'body', 'involved_object', 'involvedobject'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('lasttimestamp', 'body', 'last_timestamp', 'lasttimestamp'),
-      op_param('message', 'body', 'message', 'message'),
-      op_param('metadata', 'body', 'metadata', 'metadata'),
-      op_param('name', 'path', 'name', 'name'),
-      op_param('namespace', 'path', 'namespace', 'namespace'),
-      op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
-      op_param('pretty', 'query', 'pretty', 'pretty'),
-      op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
-      op_param('reason', 'body', 'reason', 'reason'),
-      op_param('related', 'body', 'related', 'related'),
-      op_param('reportingcomponent', 'body', 'reporting_component', 'reportingcomponent'),
-      op_param('reportinginstance', 'body', 'reporting_instance', 'reportinginstance'),
-      op_param('series', 'body', 'series', 'series'),
-      op_param('source', 'body', 'source', 'source'),
-      op_param('type', 'body', 'type', 'type'),
-    ]
+    op_param('action', 'body', 'action', 'action'),
+    op_param('apiversion', 'body', 'api_version', 'apiversion'),
+    op_param('body', 'body', 'body', 'body'),
+    op_param('count', 'body', 'count', 'count'),
+    op_param('dryRun', 'query', 'dry_run', 'dry_run'),
+    op_param('eventtime', 'body', 'event_time', 'eventtime'),
+    op_param('firsttimestamp', 'body', 'first_timestamp', 'firsttimestamp'),
+    op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
+    op_param('involvedobject', 'body', 'involved_object', 'involvedobject'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('lasttimestamp', 'body', 'last_timestamp', 'lasttimestamp'),
+    op_param('message', 'body', 'message', 'message'),
+    op_param('metadata', 'body', 'metadata', 'metadata'),
+    op_param('name', 'path', 'name', 'name'),
+    op_param('namespace', 'path', 'namespace', 'namespace'),
+    op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
+    op_param('pretty', 'query', 'pretty', 'pretty'),
+    op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
+    op_param('reason', 'body', 'reason', 'reason'),
+    op_param('related', 'body', 'related', 'related'),
+    op_param('reportingcomponent', 'body', 'reporting_component', 'reportingcomponent'),
+    op_param('reportinginstance', 'body', 'reporting_instance', 'reportinginstance'),
+    op_param('series', 'body', 'series', 'series'),
+    op_param('source', 'body', 'source', 'source'),
+    op_param('type', 'body', 'type', 'type'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

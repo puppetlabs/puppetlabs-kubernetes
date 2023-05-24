@@ -16,7 +16,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             controller: true,
-           worker: true,
+            worker: true,
           }
         end
 
@@ -57,8 +57,8 @@ describe 'kubernetes' do
       context 'with worker => true and version => 1.12.2' do
         let(:params) do
           {
-            worker:  true,
-          kubernetes_version: '1.12.2',
+            worker: true,
+            kubernetes_version: '1.12.2',
           }
         end
 
@@ -70,8 +70,8 @@ describe 'kubernetes' do
         let(:params) do
           {
             :worker => true,
-          :node_label => 'foo',
-          :cloud_provider => :undef,
+            :node_label => 'foo',
+            :cloud_provider => :undef,
           }
         end
 
@@ -82,8 +82,8 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-          node_label: 'foo',
-          cloud_provider: 'aws',
+            node_label: 'foo',
+            cloud_provider: 'aws',
           }
         end
 
@@ -94,8 +94,8 @@ describe 'kubernetes' do
         let(:params) do
           {
             :worker => true,
-          :node_label => :undef,
-          :cloud_provider => 'aws',
+            :node_label => :undef,
+            :cloud_provider => 'aws',
           }
         end
 
@@ -106,7 +106,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-          node_label: 'hostname;rm -rf /',
+            node_label: 'hostname;rm -rf /',
           }
         end
 

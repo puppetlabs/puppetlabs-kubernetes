@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,9 +113,9 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('clientcidr', 'body', 'clientcidr', 'clientcidr'),
-      op_param('serveraddress', 'body', 'serveraddress', 'serveraddress'),
-    ]
+    op_param('clientcidr', 'body', 'clientcidr', 'clientcidr'),
+    op_param('serveraddress', 'body', 'serveraddress', 'serveraddress'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,32 +113,32 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('action', 'body', 'action', 'action'),
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
-      op_param('continue', 'query', 'continue', 'continue'),
-      op_param('deprecatedcount', 'body', 'deprecated_count', 'deprecatedcount'),
-      op_param('deprecatedfirsttimestamp', 'body', 'deprecated_first_timestamp', 'deprecatedfirsttimestamp'),
-      op_param('deprecatedlasttimestamp', 'body', 'deprecated_last_timestamp', 'deprecatedlasttimestamp'),
-      op_param('deprecatedsource', 'body', 'deprecated_source', 'deprecatedsource'),
-      op_param('eventtime', 'body', 'event_time', 'eventtime'),
-      op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('labelSelector', 'query', 'label_selector', 'label_selector'),
-      op_param('limit', 'query', 'limit', 'limit'),
-      op_param('metadata', 'body', 'metadata', 'metadata'),
-      op_param('note', 'body', 'note', 'note'),
-      op_param('pretty', 'query', 'pretty', 'pretty'),
-      op_param('reason', 'body', 'reason', 'reason'),
-      op_param('regarding', 'body', 'regarding', 'regarding'),
-      op_param('related', 'body', 'related', 'related'),
-      op_param('reportingcontroller', 'body', 'reporting_controller', 'reportingcontroller'),
-      op_param('reportinginstance', 'body', 'reporting_instance', 'reportinginstance'),
-      op_param('resourceVersion', 'query', 'resource_version', 'resource_version'),
-      op_param('series', 'body', 'series', 'series'),
-      op_param('timeoutSeconds', 'query', 'timeout_seconds', 'timeout_seconds'),
-      op_param('type', 'body', 'type', 'type'),
-      op_param('watch', 'query', 'watch', 'watch'),
-    ]
+    op_param('action', 'body', 'action', 'action'),
+    op_param('apiversion', 'body', 'api_version', 'apiversion'),
+    op_param('continue', 'query', 'continue', 'continue'),
+    op_param('deprecatedcount', 'body', 'deprecated_count', 'deprecatedcount'),
+    op_param('deprecatedfirsttimestamp', 'body', 'deprecated_first_timestamp', 'deprecatedfirsttimestamp'),
+    op_param('deprecatedlasttimestamp', 'body', 'deprecated_last_timestamp', 'deprecatedlasttimestamp'),
+    op_param('deprecatedsource', 'body', 'deprecated_source', 'deprecatedsource'),
+    op_param('eventtime', 'body', 'event_time', 'eventtime'),
+    op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('labelSelector', 'query', 'label_selector', 'label_selector'),
+    op_param('limit', 'query', 'limit', 'limit'),
+    op_param('metadata', 'body', 'metadata', 'metadata'),
+    op_param('note', 'body', 'note', 'note'),
+    op_param('pretty', 'query', 'pretty', 'pretty'),
+    op_param('reason', 'body', 'reason', 'reason'),
+    op_param('regarding', 'body', 'regarding', 'regarding'),
+    op_param('related', 'body', 'related', 'related'),
+    op_param('reportingcontroller', 'body', 'reporting_controller', 'reportingcontroller'),
+    op_param('reportinginstance', 'body', 'reporting_instance', 'reportinginstance'),
+    op_param('resourceVersion', 'query', 'resource_version', 'resource_version'),
+    op_param('series', 'body', 'series', 'series'),
+    op_param('timeoutSeconds', 'query', 'timeout_seconds', 'timeout_seconds'),
+    op_param('type', 'body', 'type', 'type'),
+    op_param('watch', 'query', 'watch', 'watch'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

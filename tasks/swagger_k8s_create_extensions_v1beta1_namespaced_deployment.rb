@@ -25,7 +25,7 @@ def create_extensions_v1beta1_namespaced_deployment(*args)
   query_params, body_params, path_params = format_params(arg_hash)
 
   uri_string = "#{arg_hash['kube_api']}/apis/extensions/v1beta1/namespaces/%{namespace}/deployments" % path_params
-puts uri_string
+  puts uri_string
 
   if query_params
     uri_string = uri_string + '?' + to_query(query_params)
@@ -93,15 +93,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -114,17 +114,17 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
-      op_param('body', 'body', 'body', 'body'),
-      op_param('dryRun', 'query', 'dry_run', 'dry_run'),
-      op_param('fieldManager', 'query', 'field_manager', 'field_manager'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('metadata', 'body', 'metadata', 'metadata'),
-      op_param('namespace', 'path', 'namespace', 'namespace'),
-      op_param('pretty', 'query', 'pretty', 'pretty'),
-      op_param('spec', 'body', 'spec', 'spec'),
-      op_param('status', 'body', 'status', 'status'),
-    ]
+    op_param('apiversion', 'body', 'api_version', 'apiversion'),
+    op_param('body', 'body', 'body', 'body'),
+    op_param('dryRun', 'query', 'dry_run', 'dry_run'),
+    op_param('fieldManager', 'query', 'field_manager', 'field_manager'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('metadata', 'body', 'metadata', 'metadata'),
+    op_param('namespace', 'path', 'namespace', 'namespace'),
+    op_param('pretty', 'query', 'pretty', 'pretty'),
+    op_param('spec', 'body', 'spec', 'spec'),
+    op_param('status', 'body', 'status', 'status'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

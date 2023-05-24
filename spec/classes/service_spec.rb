@@ -65,13 +65,13 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.10.2',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'cloud_provider' => '',
-          'cloud_config' => '',
-          'manage_docker' => false,
-          'manage_etcd' => true,
-          'etcd_install_method' => 'wget',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'cloud_provider' => '',
+        'cloud_config' => '',
+        'manage_docker' => false,
+        'manage_etcd' => true,
+        'etcd_install_method' => 'wget',
       }
     end
 
@@ -93,12 +93,12 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.10.2',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'manage_docker' => true,
-          'manage_etcd' => true,
-          'cloud_provider' => 'aws',
-          'cloud_config' => '',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'cloud_provider' => 'aws',
+        'cloud_config' => '',
       }
     end
 
@@ -116,12 +116,12 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.10.2',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'manage_docker' => true,
-          'manage_etcd' => true,
-          'cloud_provider' => 'openstack',
-          'cloud_config' => '/etc/kubernetes/cloud.conf',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'cloud_provider' => 'openstack',
+        'cloud_config' => '/etc/kubernetes/cloud.conf',
       }
     end
 
@@ -139,12 +139,12 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'manage_docker' => true,
-          'manage_etcd' => true,
-          'cloud_provider' => 'aws',
-          'cloud_config' => '',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'cloud_provider' => 'aws',
+        'cloud_config' => '',
       }
     end
 

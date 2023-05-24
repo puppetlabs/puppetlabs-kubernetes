@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,13 +113,13 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('name', 'body', 'name', 'name'),
-      op_param('preferredversion', 'body', 'preferred_version', 'preferredversion'),
-      op_param('serveraddressbyclientcidrs', 'body', 'server_address_by_client_cid_rs', 'serveraddressbyclientcidrs'),
-      op_param('versions', 'body', 'versions', 'versions'),
-    ]
+    op_param('apiversion', 'body', 'api_version', 'apiversion'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('name', 'body', 'name', 'name'),
+    op_param('preferredversion', 'body', 'preferred_version', 'preferredversion'),
+    op_param('serveraddressbyclientcidrs', 'body', 'server_address_by_client_cid_rs', 'serveraddressbyclientcidrs'),
+    op_param('versions', 'body', 'versions', 'versions'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

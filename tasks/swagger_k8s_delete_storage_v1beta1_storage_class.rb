@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,24 +113,24 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('allowedtopologies', 'body', 'allowedtopologies', 'allowedtopologies'),
-      op_param('allowvolumeexpansion', 'body', 'allowvolumeexpansion', 'allowvolumeexpansion'),
-      op_param('apiversion', 'body', 'apiversion', 'apiversion'),
-      op_param('body', 'body', 'body', 'body'),
-      op_param('dryRun', 'query', 'dry_run', 'dry_run'),
-      op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('metadata', 'body', 'metadata', 'metadata'),
-      op_param('mountoptions', 'body', 'mountoptions', 'mountoptions'),
-      op_param('name', 'path', 'name', 'name'),
-      op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
-      op_param('parameters', 'body', 'parameters', 'parameters'),
-      op_param('pretty', 'query', 'pretty', 'pretty'),
-      op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
-      op_param('provisioner', 'body', 'provisioner', 'provisioner'),
-      op_param('reclaimpolicy', 'body', 'reclaimpolicy', 'reclaimpolicy'),
-      op_param('volumebindingmode', 'body', 'volumebindingmode', 'volumebindingmode'),
-    ]
+    op_param('allowedtopologies', 'body', 'allowedtopologies', 'allowedtopologies'),
+    op_param('allowvolumeexpansion', 'body', 'allowvolumeexpansion', 'allowvolumeexpansion'),
+    op_param('apiversion', 'body', 'apiversion', 'apiversion'),
+    op_param('body', 'body', 'body', 'body'),
+    op_param('dryRun', 'query', 'dry_run', 'dry_run'),
+    op_param('gracePeriodSeconds', 'query', 'grace_period_seconds', 'grace_period_seconds'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('metadata', 'body', 'metadata', 'metadata'),
+    op_param('mountoptions', 'body', 'mountoptions', 'mountoptions'),
+    op_param('name', 'path', 'name', 'name'),
+    op_param('orphanDependents', 'query', 'orphan_dependents', 'orphan_dependents'),
+    op_param('parameters', 'body', 'parameters', 'parameters'),
+    op_param('pretty', 'query', 'pretty', 'pretty'),
+    op_param('propagationPolicy', 'query', 'propagation_policy', 'propagation_policy'),
+    op_param('provisioner', 'body', 'provisioner', 'provisioner'),
+    op_param('reclaimpolicy', 'body', 'reclaimpolicy', 'reclaimpolicy'),
+    op_param('volumebindingmode', 'body', 'volumebindingmode', 'volumebindingmode'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

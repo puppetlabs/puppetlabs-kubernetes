@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,19 +113,19 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('apiversion', 'body', 'api_version', 'apiversion'),
-      op_param('continue', 'query', 'continue', 'continue'),
-      op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('labelSelector', 'query', 'label_selector', 'label_selector'),
-      op_param('limit', 'query', 'limit', 'limit'),
-      op_param('metadata', 'body', 'metadata', 'metadata'),
-      op_param('pretty', 'query', 'pretty', 'pretty'),
-      op_param('resourceVersion', 'query', 'resource_version', 'resource_version'),
-      op_param('rules', 'body', 'rules', 'rules'),
-      op_param('timeoutSeconds', 'query', 'timeout_seconds', 'timeout_seconds'),
-      op_param('watch', 'query', 'watch', 'watch'),
-    ]
+    op_param('apiversion', 'body', 'api_version', 'apiversion'),
+    op_param('continue', 'query', 'continue', 'continue'),
+    op_param('fieldSelector', 'query', 'field_selector', 'field_selector'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('labelSelector', 'query', 'label_selector', 'label_selector'),
+    op_param('limit', 'query', 'limit', 'limit'),
+    op_param('metadata', 'body', 'metadata', 'metadata'),
+    op_param('pretty', 'query', 'pretty', 'pretty'),
+    op_param('resourceVersion', 'query', 'resource_version', 'resource_version'),
+    op_param('rules', 'body', 'rules', 'rules'),
+    op_param('timeoutSeconds', 'query', 'timeout_seconds', 'timeout_seconds'),
+    op_param('watch', 'query', 'watch', 'watch'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

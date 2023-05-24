@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,17 +113,17 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('categories', 'body', 'categories', 'categories'),
-      op_param('group', 'body', 'group', 'group'),
-      op_param('kind', 'body', 'kind', 'kind'),
-      op_param('name', 'body', 'name', 'name'),
-      op_param('namespaced', 'body', 'namespaced', 'namespaced'),
-      op_param('shortnames', 'body', 'shortnames', 'shortnames'),
-      op_param('singularname', 'body', 'singularname', 'singularname'),
-      op_param('storageversionhash', 'body', 'storageversionhash', 'storageversionhash'),
-      op_param('verbs', 'body', 'verbs', 'verbs'),
-      op_param('version', 'body', 'version', 'version'),
-    ]
+    op_param('categories', 'body', 'categories', 'categories'),
+    op_param('group', 'body', 'group', 'group'),
+    op_param('kind', 'body', 'kind', 'kind'),
+    op_param('name', 'body', 'name', 'name'),
+    op_param('namespaced', 'body', 'namespaced', 'namespaced'),
+    op_param('shortnames', 'body', 'shortnames', 'shortnames'),
+    op_param('singularname', 'body', 'singularname', 'singularname'),
+    op_param('storageversionhash', 'body', 'storageversionhash', 'storageversionhash'),
+    op_param('verbs', 'body', 'verbs', 'verbs'),
+    op_param('version', 'body', 'version', 'version'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

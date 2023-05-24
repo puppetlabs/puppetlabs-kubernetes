@@ -92,15 +92,15 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
- key_values.each { | key, value |
-    if value.include?("=>")
-       Puppet.debug("Running hash from string on #{value}")
-       value.gsub!("=>",":")
-       value.gsub!("'","\"")
-       key_values[key] = JSON.parse(value)
-       Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
- }
+  key_values.each { | key, value |
+     if value.include?("=>")
+        Puppet.debug("Running hash from string on #{value}")
+        value.gsub!("=>",":")
+        value.gsub!("'","\"")
+        key_values[key] = JSON.parse(value)
+        Puppet.debug("Obtained hash #{key_values[key].inspect}")
+     end
+  }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -113,18 +113,18 @@ def format_params(key_values)
   end
 
   op_params = [
-      op_param('admissionreviewversions', 'body', 'admission_review_versions', 'admissionreviewversions'),
-      op_param('clientconfig', 'body', 'client_config', 'clientconfig'),
-      op_param('exact', 'query', 'exact', 'exact'),
-      op_param('export', 'query', 'export', 'export'),
-      op_param('failurepolicy', 'body', 'failure_policy', 'failurepolicy'),
-      op_param('name', 'path', 'name', 'name'),
-      op_param('namespaceselector', 'body', 'namespace_selector', 'namespaceselector'),
-      op_param('pretty', 'query', 'pretty', 'pretty'),
-      op_param('rules', 'body', 'rules', 'rules'),
-      op_param('sideeffects', 'body', 'side_effects', 'sideeffects'),
-      op_param('timeoutseconds', 'body', 'timeout_seconds', 'timeoutseconds'),
-    ]
+    op_param('admissionreviewversions', 'body', 'admission_review_versions', 'admissionreviewversions'),
+    op_param('clientconfig', 'body', 'client_config', 'clientconfig'),
+    op_param('exact', 'query', 'exact', 'exact'),
+    op_param('export', 'query', 'export', 'export'),
+    op_param('failurepolicy', 'body', 'failure_policy', 'failurepolicy'),
+    op_param('name', 'path', 'name', 'name'),
+    op_param('namespaceselector', 'body', 'namespace_selector', 'namespaceselector'),
+    op_param('pretty', 'query', 'pretty', 'pretty'),
+    op_param('rules', 'body', 'rules', 'rules'),
+    op_param('sideeffects', 'body', 'side_effects', 'sideeffects'),
+    op_param('timeoutseconds', 'body', 'timeout_seconds', 'timeoutseconds'),
+  ]
   op_params.each do |i|
     location = i[:location]
     name     = i[:name]

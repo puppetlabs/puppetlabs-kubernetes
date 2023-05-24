@@ -37,7 +37,7 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
     let(:params) do
       {
         'namespace' => 'foo',
-        'path'      => ['/bar'],
+        'path' => ['/bar'],
       }
     end
 

@@ -58,7 +58,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     let(:params) do
       super().merge({
                       kubernetes_version: '1.12.3',
-        ignore_preflight_errors: ['foo', 'bar'],
+                      ignore_preflight_errors: ['foo', 'bar'],
                     })
     end
 
@@ -70,7 +70,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     let(:params) do
       super().merge({
                       kubernetes_version: '1.12.3',
-        discovery_file: '/etc/kubernetes/admin.conf',
+                      discovery_file: '/etc/kubernetes/admin.conf',
                     })
     end
 
