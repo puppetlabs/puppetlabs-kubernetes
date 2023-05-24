@@ -7,15 +7,15 @@ require 'openssl'
 def get_certificates_api_group(*args)
   header_params = {}
   
-  params=args[0][1..-1].split(',')
+  params = args[0][1..-1].split(',')
 
-  arg_hash={}
+  arg_hash = {}
   params.each { |param|
-   mapValues= param.split(':',2)
-   if mapValues[1].include?(';')
-      mapValues[1].gsub! ';',','
-   end
-   arg_hash[mapValues[0][1..-2]]=mapValues[1][1..-2]
+    mapValues = param.split(':', 2)
+    if mapValues[1].include?(';')
+      mapValues[1].gsub! ';', ','
+    end
+    arg_hash[mapValues[0][1..-2]] = mapValues[1][1..-2]
   }
 
   # Remove task name from arguments - should contain all necessary parameters for URI
@@ -38,9 +38,9 @@ def get_certificates_api_group(*args)
 
   uri = URI(uri_string)
  
-  verify_mode= OpenSSL::SSL::VERIFY_NONE
+  verify_mode = OpenSSL::SSL::VERIFY_NONE
   if arg_hash['ca_file']
-    verify_mode=OpenSSL::SSL::VERIFY_PEER
+    verify_mode = OpenSSL::SSL::VERIFY_PEER
   end
 
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', verify_mode: verify_mode, ca_file: arg_hash['ca_file']) do |http|
@@ -92,14 +92,14 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
-  key_values.each { | key, value |
-     if value.include?("=>")
-        Puppet.debug("Running hash from string on #{value}")
-        value.gsub!("=>",":")
-        value.gsub!("'","\"")
-        key_values[key] = JSON.parse(value)
-        Puppet.debug("Obtained hash #{key_values[key].inspect}")
-     end
+  key_values.each { |key, value|
+    if value.include?("=>")
+      Puppet.debug("Running hash from string on #{value}")
+      value.gsub!("=>", ":")
+      value.gsub!("'", "\"")
+      key_values[key] = JSON.parse(value)
+      Puppet.debug("Obtained hash #{key_values[key].inspect}")
+    end
   }
 
   if key_values.key?('body')
@@ -107,7 +107,7 @@ def format_params(key_values)
       if key_values['body'].include?('json')
         body_params['file_content'] = File.read(key_values['body'])
       else
-        body_params['file_content'] =JSON.pretty_generate(YAML.load_file(key_values['body']))
+        body_params['file_content'] = JSON.pretty_generate(YAML.load_file(key_values['body']))
       end
     end
   end
@@ -133,7 +133,7 @@ def format_params(key_values)
     end
   end
   
-  return query_params,body_params,path_params
+  return query_params, body_params, path_params
 end
 
 def task

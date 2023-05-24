@@ -10,11 +10,11 @@ class OtherParams
 
     kubernetes_package_version = case opts[:os].downcase
                                  when 'debian'
-      "#{version}-00"
+                                   "#{version}-00"
                                  when 'redhat'
-      version
+                                   version
                                  else
-      version
+                                   version
                                  end
 
     case opts[:cni_provider]
@@ -46,7 +46,7 @@ class OtherParams
     bootstrap_controller = x[0]
     z = bootstrap_controller.split(":")
     controller_address = "#{z[1]}:6443"
-    x.each do | members |
+    x.each do |members|
       y = members.split(":")
       hostname = y[0]
       ip = y[1]

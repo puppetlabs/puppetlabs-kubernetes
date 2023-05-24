@@ -7,8 +7,8 @@ include PuppetLitmus
 
 def create_remote_file(name, full_name, file_content)
   Tempfile.open name do |tempfile|
-            File.open(tempfile.path, 'w') {|file| file.puts file_content }
-            bolt_upload_file(tempfile.path, full_name)
+    File.open(tempfile.path, 'w') {|file| file.puts file_content }
+    bolt_upload_file(tempfile.path, full_name)
   end
 end
 
@@ -41,17 +41,17 @@ def fetch_platform_by_node(uri)
 end
 
 def fetch_ip_hostname_by_role(role)
-   #Fetch hostname and  ip adress for each node
-   ipaddr = target_roles(role)[0][:name]
-   platform = fetch_platform_by_node(ipaddr)
-   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
-   hostname = run_shell('hostname').stdout.strip
-   if os[:family] == 'redhat'
-     int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
-   else
-     int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
-   end
-   return hostname, ipaddr, int_ipaddr
+  # Fetch hostname and  ip adress for each node
+  ipaddr = target_roles(role)[0][:name]
+  platform = fetch_platform_by_node(ipaddr)
+  ENV['TARGET_HOST'] = target_roles(role)[0][:name]
+  hostname = run_shell('hostname').stdout.strip
+  if os[:family] == 'redhat'
+    int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
+  else
+    int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
+  end
+  return hostname, ipaddr, int_ipaddr
 end
 
 def change_target_host(role)
@@ -106,7 +106,7 @@ def configure_puppet_server(controller, worker1, worker2)
   }
   EOS
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-  create_remote_file("site","/etc/puppetlabs/code/environments/production/manifests/site.pp", site_pp)
+  create_remote_file("site", "/etc/puppetlabs/code/environments/production/manifests/site.pp", site_pp)
   run_shell('chmod 644 /etc/puppetlabs/code/environments/production/manifests/site.pp')
 end
 
@@ -277,7 +277,7 @@ RSpec.configure do |c|
         run_shell("usermod -aG docker $(whoami)")
         run_shell('systemctl start docker.service')
         run_shell('systemctl enable docker.service')
-        create_remote_file("k8repo","/etc/yum.repos.d/kubernetes.repo", k8repo)
+        create_remote_file("k8repo", "/etc/yum.repos.d/kubernetes.repo", k8repo)
         run_shell('yum install -y kubectl')
       }
     end
@@ -285,10 +285,10 @@ RSpec.configure do |c|
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
     run_shell('docker build -t kubetool:latest /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
     run_shell("docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} -e VERSION=1.20.6 -e CONTAINER_RUNTIME=#{runtime} -e CNI_PROVIDER=#{cni} -e ETCD_INITIAL_CLUSTER=#{hostname1}:#{int_ipaddr1} -e ETCD_IP=#{int_ipaddr1} -e ETCD_PEERS=[#{int_ipaddr1},#{int_ipaddr2},#{int_ipaddr3}] -e KUBE_API_ADVERTISE_ADDRESS=#{int_ipaddr1} -e INSTALL_DASHBOARD=true kubetool:latest") # rubocop:disable Layout/LineLength
-    create_remote_file("nginx","/tmp/nginx.yml", nginx)
-    create_remote_file("hiera","/etc/puppetlabs/puppet/hiera.yaml", hiera)
+    create_remote_file("nginx", "/tmp/nginx.yml", nginx)
+    create_remote_file("hiera", "/etc/puppetlabs/puppet/hiera.yaml", hiera)
     run_shell('chmod 644 /etc/puppetlabs/puppet/hiera.yaml')
-    create_remote_file("hiera_prod","/etc/puppetlabs/code/environments/production/hiera.yaml", hiera)
+    create_remote_file("hiera_prod", "/etc/puppetlabs/code/environments/production/hiera.yaml", hiera)
     run_shell('chmod 644 /etc/puppetlabs/code/environments/production/hiera.yaml')
     run_shell('mkdir -p /etc/puppetlabs/code/environments/production/hieradata')
     run_shell("cp $HOME/hieradata/*.yaml /etc/puppetlabs/code/environments/production/hieradata/")

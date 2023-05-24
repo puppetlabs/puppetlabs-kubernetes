@@ -24,7 +24,7 @@ class Kube_tool
         o.int '--ca_algo', 'Algorithm to generate CA certificates, default: ecdsa', default: ENV['CA_ALGO']
         o.int '--sa_size', 'Service account key size', default: ENV['SA_SIZE'].to_i
         o.bool '-d', '--install_dashboard', 'Whether install the kube dashboard', default: ENV['INSTALL_DASHBOARD']
-        o.on '-h','--help', 'print the help' do
+        o.on '-h', '--help', 'print the help' do
           puts o
           exit
         end

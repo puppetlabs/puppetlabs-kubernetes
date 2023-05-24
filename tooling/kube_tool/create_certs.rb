@@ -47,12 +47,12 @@ class CreateCerts
   def etcd_certificates
     etcd_servers = @opts[:etcd_initial_cluster].split(",")
     etcd_server_ips = []
-    etcd_servers.each do | servers |
+    etcd_servers.each do |servers|
       server = servers.split(":")
       etcd_server_ips.push(server[1])
     end
 
-    etcd_servers.each do | servers |
+    etcd_servers.each do |servers|
       server = servers.split(":")
       hostname = server[0]
       ip = server[1]
