@@ -10,11 +10,11 @@ class OtherParams
     kubernetes_minor_release = version.match(/(\d+\.)(\d+)/)[0]
 
     kubernetes_package_version = case opts[:os].downcase
-    when 'debian'
+                                 when 'debian'
       "#{version}-00"
-    when 'redhat'
+                                 when 'redhat'
       version
-    else
+                                 else
       version
     end
 
@@ -60,7 +60,6 @@ class OtherParams
     etcd_peers = peers.chop
     etcd_peers = etcd_peers.split(",")
     api_server_count = x.length
-
 
     data = Hash.new
     data['kubernetes::kubernetes_version'] = version

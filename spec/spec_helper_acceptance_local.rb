@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'puppet_litmus'
 require 'tempfile'
 
@@ -200,7 +201,7 @@ spec:
     protocol: TCP
   selector:
     run: my-nginx
-EOS
+      EOS
 
       hiera = <<-EOS
 version: 5
@@ -220,7 +221,7 @@ hierarchy:
       - "#{hostname1}.yaml"
       - "Redhat.yaml"
       - "common.yaml"
-EOS
+      EOS
       k8repo = <<-EOS
 [kubernetes]
 name=Kubernetes
@@ -229,7 +230,7 @@ enabled=1
 gpgcheck=0
 repo_gpgcheck=0
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOS
+      EOS
   pp = <<-PUPPETCODE
     # needed by tests
     package { 'curl':
@@ -310,5 +311,5 @@ EOS
   execute_agent('worker1')
   execute_agent('worker2')
   puppet_cert_sign
-end
+  end
 end

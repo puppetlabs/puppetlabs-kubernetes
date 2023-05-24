@@ -100,8 +100,7 @@ def format_params(key_values)
        key_values[key] = JSON.parse(value)
        Puppet.debug("Obtained hash #{key_values[key].inspect}")
     end
-  }
-
+ }
 
   if key_values.key?('body')
     if File.file?(key_values['body'])

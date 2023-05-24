@@ -40,7 +40,7 @@ describe 'the Kubernetes module' do
             class {'kubernetes': } # any other OS are not supported
         }
       }
-    MANIFEST
+        MANIFEST
 
         it 'runs' do
           apply_manifest(pp)
