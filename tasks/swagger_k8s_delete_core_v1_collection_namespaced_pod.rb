@@ -6,7 +6,7 @@ require 'openssl'
 
 def delete_core_v1_collection_namespaced_pod(*args)
   header_params = {}
-  
+
   params = args[0][1..-1].split(',')
 
   arg_hash = {}
@@ -37,7 +37,7 @@ def delete_core_v1_collection_namespaced_pod(*args)
   end
 
   uri = URI(uri_string)
- 
+
   verify_mode = OpenSSL::SSL::VERIFY_NONE
   if arg_hash['ca_file']
     verify_mode = OpenSSL::SSL::VERIFY_PEER
@@ -144,7 +144,7 @@ def format_params(key_values)
       path_params[name_snake.to_sym] = ENV["azure__#{name_snake}"] unless ENV["<no value>_#{name_snake}"].nil?
     end
   end
-  
+
   return query_params, body_params, path_params
 end
 

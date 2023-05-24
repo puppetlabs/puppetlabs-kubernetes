@@ -15,7 +15,7 @@ class Kube_tool
         o.string '-v', '--version', 'The Kubernetes version to install', default: ENV['VERSION']
         o.string '-r', '--container_runtime', 'The container runtime to use. This can only be "docker" or "cri_containerd"', default: ENV['CONTAINER_RUNTIME']
         o.string '-c', '--cni_provider', 'The networking provider to use, flannel, weave, calico, calico-tigera or cilium are supported', default: ENV['CNI_PROVIDER']
-        o.string '-p', '--cni_provider_version', 'The networking provider version to use, calico and cilium will use this to reference the correct deployment download link', 
+        o.string '-p', '--cni_provider_version', 'The networking provider version to use, calico and cilium will use this to reference the correct deployment download link',
                  default: ENV['CNI_PROVIDER_VERSION']
         o.string '-t', '--etcd_ip', 'The IP address etcd will listen on', default: ENV['ETCD_IP']
         o.string '-i', '--etcd_initial_cluster', 'The list of servers in the etcd cluster', default: ENV['ETCD_INITIAL_CLUSTER']

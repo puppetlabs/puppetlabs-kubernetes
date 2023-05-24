@@ -7,7 +7,7 @@ include PuppetLitmus
 
 def create_remote_file(name, full_name, file_content)
   Tempfile.open name do |tempfile|
-    File.open(tempfile.path, 'w') {|file| file.puts file_content }
+    File.open(tempfile.path, 'w') { |file| file.puts file_content }
     bolt_upload_file(tempfile.path, full_name)
   end
 end

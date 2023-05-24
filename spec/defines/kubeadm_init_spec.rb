@@ -24,8 +24,8 @@ describe 'kubernetes::kubeadm_init', :type => :define do
       {
         'config' => '/etc/kubernetes/config.yaml',
         'node_name' => 'kube-control-plane',
-        'path' => [ '/bin', '/usr/bin', '/sbin'],
-        'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+        'path' => ['/bin', '/usr/bin', '/sbin'],
+        'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf'],
       }
     end
 
@@ -39,9 +39,9 @@ describe 'kubernetes::kubeadm_init', :type => :define do
       {
         'config' => '/etc/kubernetes/config.yaml',
         'node_name' => 'kube-control-plane',
-        'path' => [ '/bin', '/usr/bin', '/sbin'],
+        'path' => ['/bin', '/usr/bin', '/sbin'],
         'dry_run' => true,
-        'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+        'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf'],
       }
     end
 
@@ -55,9 +55,9 @@ describe 'kubernetes::kubeadm_init', :type => :define do
       {
         'config' => '/etc/kubernetes/config.yaml',
         'node_name' => 'kube-control-plane',
-        'path' => [ '/bin', '/usr/bin', '/sbin'],
+        'path' => ['/bin', '/usr/bin', '/sbin'],
         'ignore_preflight_errors' => ['foo', 'bar'],
-        'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+        'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf'],
       }
     end
 
