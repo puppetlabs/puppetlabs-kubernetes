@@ -6,7 +6,6 @@ require_relative 'clean_up.rb'
 
 # Create Certs
 class CreateCerts
-
   def initialize(opts)
     @opts = opts
   end

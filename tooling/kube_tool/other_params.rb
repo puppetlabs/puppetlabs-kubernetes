@@ -3,7 +3,6 @@ require 'securerandom'
 
 # OTher Parameters
 class OtherParams
-
   def OtherParams.create(opts)
     version = opts[:version]
     container_runtime = opts[:container_runtime]
@@ -16,7 +15,7 @@ class OtherParams
       version
                                  else
       version
-    end
+                                 end
 
     case opts[:cni_provider]
     when 'weave'
@@ -48,7 +47,7 @@ class OtherParams
     z = bootstrap_controller.split(":")
     controller_address = "#{z[1]}:6443"
     x.each do | members |
-      y  = members.split(":")
+      y = members.split(":")
       hostname = y[0]
       ip = y[1]
 
@@ -80,6 +79,5 @@ class OtherParams
     data['kubernetes::controller_address'] = controller_address
     data['kubernetes::token'] = SecureRandom.hex(3) + "." + SecureRandom.hex(8)
     File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
-
   end
 end

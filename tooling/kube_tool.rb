@@ -42,7 +42,6 @@ class Kube_tool
       end
       puts options
       return options
-
     rescue Slop::Error => e
       puts "ERROR: #{e.message}"
       exit 1

@@ -26,5 +26,4 @@ class CleanUp
     File.write("kubernetes.yaml",File.open("kubernetes.yaml",&:read).gsub("'",""))
     FileUtils.mv("kubernetes.yaml","#{os}.yaml")
   end
-
 end
