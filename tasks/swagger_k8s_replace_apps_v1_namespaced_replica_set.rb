@@ -13,7 +13,7 @@ def replace_apps_v1_namespaced_replica_set(*args)
   params.each { |param|
     mapValues = param.split(':', 2)
     if mapValues[1].include?(';')
-      mapValues[1].gsub! ';', ','
+      mapValues[1].tr! ';', ','
     end
     arg_hash[mapValues[0][1..-2]] = mapValues[1][1..-2]
   }
@@ -96,7 +96,7 @@ def format_params(key_values)
     if value.include?("=>")
       Puppet.debug("Running hash from string on #{value}")
       value.gsub!("=>", ":")
-      value.gsub!("'", "\"")
+      value.tr!("'", "\"")
       key_values[key] = JSON.parse(value)
       Puppet.debug("Obtained hash #{key_values[key].inspect}")
     end

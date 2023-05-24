@@ -27,7 +27,6 @@ def target_roles(roles)
 end
 
 def fetch_platform_by_node(uri)
-  # rubocop:disable Style/MultilineBlockChain
   inventory_hash['groups'].map { |group|
     group['targets'].map { |node|
       if node['uri'] == uri
@@ -37,7 +36,6 @@ def fetch_platform_by_node(uri)
       end
     }
   }
-  # rubocop:enable Style/MultilineBlockChain
 end
 
 def fetch_ip_hostname_by_role(role)
@@ -241,7 +239,7 @@ RSpec.configure do |c|
     }
     PUPPETCODE
     apply_manifest(pp)
-    if family =~ /debian|ubuntu-1604-lts/
+    if /debian|ubuntu-1604-lts/.match?(family)
       runtime = 'cri_containerd'
       cni = 'weave'
       run_shell('apt-get update && apt-get install -y apt-transport-https')
@@ -253,7 +251,7 @@ RSpec.configure do |c|
       run_shell('sudo apt install docker.io -y')
       run_shell('systemctl start docker.service')
       run_shell('systemctl enable docker.service')
-      if family =~ /ubuntu-1604-lts/
+      if /ubuntu-1604-lts/.match?(family)
         run_shell('sudo ufw disable')
       else
         # Workaround for debian as the strech repositories do not have updated kubernetes packages
@@ -261,7 +259,7 @@ RSpec.configure do |c|
         run_shell('/sbin/iptables -F')
       end
     end
-    if family =~ /redhat|centos/
+    if /redhat|centos/.match?(family)
       runtime = 'docker'
       cni = 'weave'
       ['controller', 'worker1', 'worker2'].each { |node|
@@ -295,11 +293,11 @@ RSpec.configure do |c|
 
     run_shell("sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
 
-    if family =~ /debian|ubuntu-1604-lts/
+    if /debian|ubuntu-1604-lts/.match?(family)
       run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
     end
 
-    if family =~ /redhat|centos/
+    if /redhat|centos/.match?(family)
       run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
     end
 

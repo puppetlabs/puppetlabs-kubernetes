@@ -26,21 +26,6 @@ Lint/NonAtomicFileOperation:
     - 'tooling/kube_tool/create_certs.rb'
 
 # Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Lint/RedundantCopDisableDirective:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 61
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: strict, consistent
-Lint/SymbolConversion:
-  Exclude:
-    - 'spec/classes/kube_addons_spec.rb'
-    - 'tooling/kube_tool/create_certs.rb'
-
-# Offense count: 1
 # Configuration parameters: AllowedPatterns.
 # AllowedPatterns: (?-mix:(exactly|at_least|at_most)\(\d+\)\.times)
 Lint/UnreachableLoop:
@@ -115,23 +100,11 @@ Performance/RedundantMatch:
   Exclude:
     - 'tooling/kube_tool/other_params.rb'
 
-# Offense count: 7
-# This cop supports safe autocorrection (--autocorrect).
-Performance/RegexpMatch:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'tooling/kube_tool/other_params.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Performance/StringInclude:
   Exclude:
     - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 1057
-# This cop supports safe autocorrection (--autocorrect).
-Performance/StringReplacement:
-  Enabled: false
 
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -173,12 +146,6 @@ RSpec/DescribeClass:
     - 'spec/defines/kubeadm_init_spec.rb'
     - 'spec/defines/kubeadm_join_spec.rb'
     - 'spec/defines/wait_for_default_sa_spec.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/EmptyHook:
-  Exclude:
-    - 'spec/acceptance/kubernetes_spec.rb'
 
 # Offense count: 65
 # This cop supports safe autocorrection (--autocorrect).

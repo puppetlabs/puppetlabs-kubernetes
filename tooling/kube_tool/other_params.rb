@@ -33,9 +33,9 @@ class OtherParams
       cni_pod_cidr = '192.168.0.0/16'
     when 'cilium'
       cni_pod_cidr = '10.244.0.0/16'
-      if container_runtime.match('docker')
+      if container_runtime.match?('docker')
         cni_network_provider = "https://raw.githubusercontent.com/cilium/cilium/#{opts[:cni_provider_version]}/examples/kubernetes/#{kubernetes_minor_release}/cilium.yaml"
-      elsif container_runtime.match('crio')
+      elsif container_runtime.match?('crio')
         cni_network_provider = "https://raw.githubusercontent.com/cilium/cilium/#{opts[:cni_provider_version]}/examples/kubernetes/#{kubernetes_minor_release}/cilium-crio.yaml"
       end
     end

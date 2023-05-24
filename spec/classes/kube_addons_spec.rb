@@ -31,14 +31,14 @@ describe 'kubernetes::kube_addons', :type => :class do
 
     it {
       is_expected.to contain_exec('Install calico rbac bindings').with({
-                                                                         'command': ['kubectl', 'apply', '-f', 'foo'],
-                                                                         'onlyif': ['kubectl get nodes'],
+                                                                         command: ['kubectl', 'apply', '-f', 'foo'],
+                                                                         onlyif: ['kubectl get nodes'],
                                                                        })
     }
     it {
       is_expected.to contain_exec('Install cni network provider').with({
-                                                                         'command': ['kubectl', 'apply', '-f', 'https://foo.test'],
-                                                                         'onlyif': ['kubectl get nodes'],
+                                                                         command: ['kubectl', 'apply', '-f', 'https://foo.test'],
+                                                                         onlyif: ['kubectl get nodes'],
                                                                        })
     }
     it { is_expected.to contain_exec('schedule on controller') }
@@ -69,8 +69,8 @@ describe 'kubernetes::kube_addons', :type => :class do
         when 'calico-tigera'
           it {
             is_expected.to contain_exec('Install cni network (preinstall)').with({
-                                                                                   'command': ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
-                                                                                   'onlyif': 'kubectl get nodes',
+                                                                                   command: ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
+                                                                                   onlyif: 'kubectl get nodes',
                                                                                  })
           }
           it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml') }
@@ -79,15 +79,15 @@ describe 'kubernetes::kube_addons', :type => :class do
         else
           it {
             is_expected.to contain_exec('Install cni network provider').with({
-                                                                               'onlyif': ['kubectl get nodes'],
-                                                                               'command': ['kubectl', 'apply', '-f', "https://#{provider}.test"],
-                                                                               'unless': ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
+                                                                               onlyif: ['kubectl get nodes'],
+                                                                               command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+                                                                               unless: ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
                                                                              })
           }
 
           it {
             is_expected.not_to contain_exec('Install cni network (preinstall)').with({
-                                                                                       'onlyif': ['kubectl get nodes'],
+                                                                                       onlyif: ['kubectl get nodes'],
                                                                                      })
           }
         end

@@ -23,7 +23,7 @@ class CleanUp
     os = os.capitalize
     puts "Cleaning up yaml"
     File.write("kubernetes.yaml", File.open("kubernetes.yaml", &:read).gsub(/^---$/, ""))
-    File.write("kubernetes.yaml", File.open("kubernetes.yaml", &:read).gsub("'", ""))
+    File.write("kubernetes.yaml", File.open("kubernetes.yaml", &:read).delete("'"))
     FileUtils.mv("kubernetes.yaml", "#{os}.yaml")
   end
 end

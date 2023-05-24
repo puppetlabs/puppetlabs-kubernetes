@@ -2,9 +2,6 @@ require 'spec_helper_acceptance'
 
 describe 'the Kubernetes module' do
   context 'clean up before each test' do
-    before(:each) do
-    end
-
     describe 'kubernetes class', :integration do
       context 'it should install the module and run' do
         before(:all) { change_target_host('controller') }
