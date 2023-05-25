@@ -199,48 +199,15 @@ Style/FrozenStringLiteralComment:
 Style/GlobalStdStream:
   Enabled: false
 
-# Offense count: 2644
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Enabled: false
-
 # Offense count: 2
 Style/MixinUsage:
   Exclude:
     - 'spec/spec_helper.rb'
     - 'spec/spec_helper_acceptance_local.rb'
 
-# Offense count: 1058
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Enabled: false
-
-# Offense count: 7
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'tooling/kube_tool/clean_up.rb'
-    - 'tooling/kube_tool/other_params.rb'
-
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Style/SelfAssignment:
-  Exclude:
-    - 'tooling/kube_tool/other_params.rb'
-
 # Offense count: 528
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/SlicingWithRange:
-  Enabled: false
-
-# Offense count: 528
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowModifier.
-Style/SoleNestedConditional:
   Enabled: false
 
 # Offense count: 1

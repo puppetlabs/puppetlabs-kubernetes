@@ -12,9 +12,7 @@ def list_storage_v1beta1_volume_attachment(*args)
   arg_hash = {}
   params.each do |param|
     mapValues = param.split(':', 2)
-    if mapValues[1].include?(';')
-      mapValues[1].tr! ';', ','
-    end
+    mapValues[1].tr! ';', ',' if mapValues[1].include?(';')
     arg_hash[mapValues[0][1..-2]] = mapValues[1][1..-2]
   end
 
@@ -26,22 +24,16 @@ def list_storage_v1beta1_volume_attachment(*args)
 
   uri_string = "#{arg_hash['kube_api']}/apis/storage.k8s.io/v1beta1/volumeattachments" % path_params
 
-  if query_params
-    uri_string = uri_string + '?' + to_query(query_params)
-  end
+  uri_string = uri_string + '?' + to_query(query_params) if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  if arg_hash['token']
-    header_params['Authentication'] = 'Bearer ' + arg_hash['token']
-  end
+  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
 
   uri = URI(uri_string)
 
   verify_mode = OpenSSL::SSL::VERIFY_NONE
-  if arg_hash['ca_file']
-    verify_mode = OpenSSL::SSL::VERIFY_PEER
-  end
+  verify_mode = OpenSSL::SSL::VERIFY_PEER if arg_hash['ca_file']
 
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', verify_mode: verify_mode, ca_file: arg_hash['ca_file']) do |http|
     if operation_verb == 'Get'
@@ -76,11 +68,9 @@ end
 def to_query(hash)
   if hash
     return_value = hash.map { |x, v| "#{x}=#{v}" }.reduce { |x, v| "#{x}&#{v}" }
-    unless return_value.nil?
-      return return_value
-    end
+    return return_value unless return_value.nil?
   end
-  return ''
+  ''
 end
 
 def op_param(name, inquery, paramalias, namesnake)
@@ -102,14 +92,12 @@ def format_params(key_values)
     Puppet.debug("Obtained hash #{key_values[key].inspect}")
   end
 
-  if key_values.key?('body')
-    if File.file?(key_values['body'])
-      body_params['file_content'] = if key_values['body'].include?('json')
-                                      File.read(key_values['body'])
-                                    else
-                                      JSON.pretty_generate(YAML.load_file(key_values['body']))
-                                    end
-    end
+  if key_values.key?('body') && File.file?(key_values['body'])
+    body_params['file_content'] = if key_values['body'].include?('json')
+                                    File.read(key_values['body'])
+                                  else
+                                    JSON.pretty_generate(YAML.load_file(key_values['body']))
+                                  end
   end
 
   op_params = [
@@ -144,7 +132,7 @@ def format_params(key_values)
     end
   end
 
-  return query_params, body_params, path_params
+  [query_params, body_params, path_params]
 end
 
 def task

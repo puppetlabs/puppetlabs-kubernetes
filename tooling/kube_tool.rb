@@ -36,11 +36,9 @@ class Kube_tool
     options[:container_runtime] ||= 'cri_containerd'
     options[:version] ||= '1.25.4'
     options[:os] ||= 'Debian'
-    if options[:etcd_initial_cluster].nil?
-      abort('Please provide IP addresses for etcd initial cluster -i/--etcd_initial_cluster (ENV ETCD_INITIAL_CLUSTER)')
-    end
+    abort('Please provide IP addresses for etcd initial cluster -i/--etcd_initial_cluster (ENV ETCD_INITIAL_CLUSTER)') if options[:etcd_initial_cluster].nil?
     puts options
-    return options
+    options
   rescue Slop::Error => e
     puts "ERROR: #{e.message}"
     exit 1

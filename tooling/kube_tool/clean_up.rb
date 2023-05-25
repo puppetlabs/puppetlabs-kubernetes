@@ -4,9 +4,7 @@ require 'fileutils'
 class CleanUp
   def self.all(files)
     files.each do |x|
-      if File.exist?(x)
-        FileUtils.rm_f(x)
-      end
+      FileUtils.rm_f(x) if File.exist?(x)
     end
   end
 
@@ -22,7 +20,7 @@ class CleanUp
   def self.clean_yaml(os)
     os = os.capitalize
     puts "Cleaning up yaml"
-    File.write("kubernetes.yaml", File.read("kubernetes.yaml").gsub(/^---$/, ""))
+    File.write("kubernetes.yaml", File.read("kubernetes.yaml").gsub(%r{^---$}, ""))
     File.write("kubernetes.yaml", File.read("kubernetes.yaml").delete("'"))
     FileUtils.mv("kubernetes.yaml", "#{os}.yaml")
   end

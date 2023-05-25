@@ -6,7 +6,7 @@ class OtherParams
   def self.create(opts)
     version = opts[:version]
     container_runtime = opts[:container_runtime]
-    kubernetes_minor_release = version.match(/(\d+\.)(\d+)/)[0]
+    kubernetes_minor_release = version.match(%r{(\d+\.)(\d+)})[0]
 
     kubernetes_package_version = case opts[:os].downcase
                                  when 'debian'
@@ -51,8 +51,8 @@ class OtherParams
       hostname = y[0]
       ip = y[1]
 
-      cluster = cluster + "#{hostname}=https://#{ip}:2380,"
-      peers = peers + "#{ip},"
+      cluster += "#{hostname}=https://#{ip}:2380,"
+      peers += "#{ip},"
     end
 
     etcd_initial_cluster = cluster.chop
@@ -64,9 +64,7 @@ class OtherParams
     data['kubernetes::kubernetes_version'] = version
     data['kubernetes::kubernetes_package_version'] = kubernetes_package_version
     data['kubernetes::container_runtime'] = container_runtime
-    if cni_network_preinstall
-      data['kubernetes::cni_network_preinstall'] = cni_network_preinstall
-    end
+    data['kubernetes::cni_network_preinstall'] = cni_network_preinstall if cni_network_preinstall
     data['kubernetes::cni_network_provider'] = cni_network_provider
     data['kubernetes::cni_pod_cidr'] = cni_pod_cidr
     data['kubernetes::cni_provider'] = opts[:cni_provider]
