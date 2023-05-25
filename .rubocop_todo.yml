@@ -186,13 +186,6 @@ Style/BlockDelimiters:
 Style/CaseLikeIf:
   Enabled: false
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Style/ClassMethods:
-  Exclude:
-    - 'tooling/kube_tool/other_params.rb'
-    - 'tooling/kube_tool/pre_checks.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/CollectionCompact:
@@ -204,38 +197,11 @@ Style/CombinableLoops:
   Exclude:
     - 'tooling/kube_tool/create_certs.rb'
 
-# Offense count: 1057
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, SingleLineConditionsOnly, IncludeTernaryExpressions.
-# SupportedStyles: assign_to_condition, assign_inside_condition
-Style/ConditionalAssignment:
-  Enabled: false
-
-# Offense count: 7
-# This cop supports safe autocorrection (--autocorrect).
-Style/EmptyLiteral:
-  Exclude:
-    - 'tooling/kube_tool/create_certs.rb'
-    - 'tooling/kube_tool/other_params.rb'
-
 # Offense count: 1596
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowedVars.
 Style/FetchEnvVar:
   Enabled: false
-
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Style/FileRead:
-  Exclude:
-    - 'tooling/kube_tool/clean_up.rb'
-
-# Offense count: 9
-# This cop supports safe autocorrection (--autocorrect).
-Style/FileWrite:
-  Exclude:
-    - 'tooling/kube_tool/create_certs.rb'
-    - 'tooling/kube_tool/other_params.rb'
 
 # Offense count: 543
 # This cop supports unsafe autocorrection (--autocorrect-all).

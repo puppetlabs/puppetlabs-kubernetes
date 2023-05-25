@@ -1,6 +1,6 @@
 # Pre Checks
 class PreChecks
-  def PreChecks.checks
+  def self.checks
     system('which cfssl')
     x =  $?.success?
     if x == false

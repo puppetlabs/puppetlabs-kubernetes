@@ -3,7 +3,7 @@ require 'securerandom'
 
 # OTher Parameters
 class OtherParams
-  def OtherParams.create(opts)
+  def self.create(opts)
     version = opts[:version]
     container_runtime = opts[:container_runtime]
     kubernetes_minor_release = version.match(/(\d+\.)(\d+)/)[0]
@@ -60,7 +60,7 @@ class OtherParams
     etcd_peers = etcd_peers.split(",")
     api_server_count = x.length
 
-    data = Hash.new
+    data = {}
     data['kubernetes::kubernetes_version'] = version
     data['kubernetes::kubernetes_package_version'] = kubernetes_package_version
     data['kubernetes::container_runtime'] = container_runtime
@@ -78,6 +78,6 @@ class OtherParams
     data['kubernetes::install_dashboard'] = opts[:install_dashboard]
     data['kubernetes::controller_address'] = controller_address
     data['kubernetes::token'] = SecureRandom.hex(3) + "." + SecureRandom.hex(8)
-    File.open("kubernetes.yaml", "w+") { |file| file.write(data.to_yaml) }
+    File.write("kubernetes.yaml", data.to_yaml)
   end
 end

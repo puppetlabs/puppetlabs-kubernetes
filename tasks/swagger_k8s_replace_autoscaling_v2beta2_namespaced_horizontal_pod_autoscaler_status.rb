@@ -57,11 +57,11 @@ def replace_autoscaling_v2beta2_namespaced_horizontal_pod_autoscaler_status(*arg
     header_params.each { |x, v| req[x] = v } unless header_params.empty?
 
     unless body_params.empty?
-      if body_params.key?('file_content')
-        req.body = body_params['file_content']
-      else
-        req.body = body_params.to_json
-      end
+      req.body = if body_params.key?('file_content')
+                   body_params['file_content']
+                 else
+                   body_params.to_json
+                 end
     end
 
     Puppet.debug("URI is (#{operation_verb}) #{uri} headers are #{header_params}")
@@ -104,11 +104,11 @@ def format_params(key_values)
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
-      if key_values['body'].include?('json')
-        body_params['file_content'] = File.read(key_values['body'])
-      else
-        body_params['file_content'] = JSON.pretty_generate(YAML.load_file(key_values['body']))
-      end
+      body_params['file_content'] = if key_values['body'].include?('json')
+                                      File.read(key_values['body'])
+                                    else
+                                      JSON.pretty_generate(YAML.load_file(key_values['body']))
+                                    end
     end
   end
 

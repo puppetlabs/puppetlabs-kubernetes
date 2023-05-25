@@ -44,11 +44,11 @@ def fetch_ip_hostname_by_role(role)
   platform = fetch_platform_by_node(ipaddr)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   hostname = run_shell('hostname').stdout.strip
-  if os[:family] == 'redhat'
-    int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
-  else
-    int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
-  end
+  int_ipaddr = if os[:family] == 'redhat'
+                 run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
+               else
+                 run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
+               end
   return hostname, ipaddr, int_ipaddr
 end
 
