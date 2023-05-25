@@ -2,7 +2,7 @@ require 'fileutils'
 require 'openssl'
 require 'json'
 require 'base64'
-require_relative 'clean_up.rb'
+require_relative 'clean_up'
 
 # Create Certs
 class CreateCerts

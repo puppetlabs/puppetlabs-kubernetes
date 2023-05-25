@@ -10,13 +10,13 @@ def list_apps_v1beta2_deployment_for_all_namespaces(*args)
   params = args[0][1..-1].split(',')
 
   arg_hash = {}
-  params.each { |param|
+  params.each do |param|
     mapValues = param.split(':', 2)
     if mapValues[1].include?(';')
       mapValues[1].tr! ';', ','
     end
     arg_hash[mapValues[0][1..-2]] = mapValues[1][1..-2]
-  }
+  end
 
   # Remove task name from arguments - should contain all necessary parameters for URI
   arg_hash.delete('_task')
@@ -76,7 +76,7 @@ end
 def to_query(hash)
   if hash
     return_value = hash.map { |x, v| "#{x}=#{v}" }.reduce { |x, v| "#{x}&#{v}" }
-    if !return_value.nil?
+    unless return_value.nil?
       return return_value
     end
   end
@@ -92,7 +92,7 @@ def format_params(key_values)
   body_params = {}
   path_params = {}
 
-  key_values.each { |key, value|
+  key_values.each do |key, value|
     if value.include?("=>")
       Puppet.debug("Running hash from string on #{value}")
       value.gsub!("=>", ":")
@@ -100,7 +100,7 @@ def format_params(key_values)
       key_values[key] = JSON.parse(value)
       Puppet.debug("Obtained hash #{key_values[key].inspect}")
     end
-  }
+  end
 
   if key_values.key?('body')
     if File.file?(key_values['body'])
@@ -134,13 +134,13 @@ def format_params(key_values)
     name_snake = i[:namesnake]
     if location == 'query'
       query_params[name] = key_values[name_snake] unless key_values[name_snake].nil?
-      query_params[name] = ENV["azure__#{name_snake}"] unless ENV["<no value>_#{name_snake}"].nil?
+      query_params[name] = ENV.fetch("azure__#{name_snake}", nil) unless ENV["<no value>_#{name_snake}"].nil?
     elsif location == 'body'
       body_params[name] = key_values[name_snake] unless key_values[name_snake].nil?
-      body_params[name] = ENV["azure_#{name_snake}"] unless ENV["<no value>_#{name_snake}"].nil?
+      body_params[name] = ENV.fetch("azure_#{name_snake}", nil) unless ENV["<no value>_#{name_snake}"].nil?
     else
       path_params[name_snake.to_sym] = key_values[name_snake] unless key_values[name_snake].nil?
-      path_params[name_snake.to_sym] = ENV["azure__#{name_snake}"] unless ENV["<no value>_#{name_snake}"].nil?
+      path_params[name_snake.to_sym] = ENV.fetch("azure__#{name_snake}", nil) unless ENV["<no value>_#{name_snake}"].nil?
     end
   end
 

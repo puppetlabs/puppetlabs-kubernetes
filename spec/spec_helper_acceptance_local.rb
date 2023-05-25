@@ -27,15 +27,15 @@ def target_roles(roles)
 end
 
 def fetch_platform_by_node(uri)
-  inventory_hash['groups'].map { |group|
-    group['targets'].map { |node|
+  inventory_hash['groups'].map do |group|
+    group['targets'].map do |node|
       if node['uri'] == uri
         return node['facts']['platform']
       else
         return nil
       end
-    }
-  }
+    end
+  end
 end
 
 def fetch_ip_hostname_by_role(role)
@@ -53,7 +53,7 @@ def fetch_ip_hostname_by_role(role)
 end
 
 def change_target_host(role)
-  @orig_target_host = ENV['TARGET_HOST']
+  @orig_target_host = ENV.fetch('TARGET_HOST', nil)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
 end
 
@@ -140,16 +140,16 @@ RSpec.configure do |c|
     hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-      ['controller', 'worker1', 'worker2'].each { |node|
+      ['controller', 'worker1', 'worker2'].each do |node|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
-      }
+      end
       configure_puppet_server([hostname1, int_ipaddr1], hostname2, hostname3)
     else
       c.filter_run_excluding :integration
     end
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-    family = fetch_platform_by_node(ENV['TARGET_HOST'])
+    family = fetch_platform_by_node(ENV.fetch('TARGET_HOST', nil))
 
     puts "Running acceptance test on #{hostname1} with address #{ipaddr1} and OS #{family}"
 
@@ -262,7 +262,7 @@ RSpec.configure do |c|
     if /redhat|centos/.match?(family)
       runtime = 'docker'
       cni = 'weave'
-      ['controller', 'worker1', 'worker2'].each { |node|
+      ['controller', 'worker1', 'worker2'].each do |node|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell('setenforce 0 || true')
         run_shell('swapoff -a')
@@ -277,7 +277,7 @@ RSpec.configure do |c|
         run_shell('systemctl enable docker.service')
         create_remote_file("k8repo", "/etc/yum.repos.d/kubernetes.repo", k8repo)
         run_shell('yum install -y kubectl')
-      }
+      end
     end
 
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
