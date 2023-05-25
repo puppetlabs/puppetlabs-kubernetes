@@ -43,12 +43,15 @@ describe 'kubernetes::config::worker', :type => :class do
     let(:config_yaml) { YAML.safe_load(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{apiVersion: kubeadm.k8s.io/v1alpha3\n}) }
+
     it 'has arg foo in first YAML document (JoinConfig) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['kubeletExtraArgs']).to include('foo')
     end
+
     it 'has name==foo in first YAML document (JoinConfig) NodeRegistration' do
       expect(config_yaml['nodeRegistration']).to include('name' => params['node_name'])
     end
+
     it 'does not have cloud-provider in first YAML document (JoinConfig) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-provider')
     end
@@ -65,9 +68,11 @@ describe 'kubernetes::config::worker', :type => :class do
     let(:config_yaml) { YAML.safe_load(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{apiVersion: kubeadm.k8s.io/v1alpha3\n}) }
+
     it 'does not have arg foo in first YAML document (JoinConfig) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['kubeletExtraArgs']).not_to include('foo')
     end
+
     it 'has cloud-provider==aws in first YAML document (JoinConfig) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => 'aws')
     end
@@ -99,9 +104,11 @@ describe 'kubernetes::config::worker', :type => :class do
     it 'has arg key1 in first YAML document (taints) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['taints'][0]['key']).to include('key1')
     end
+
     it 'has arg key2 in first YAML document (taints) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['taints'][1]['key']).to include('key2')
     end
+
     it 'has arg effect in first YAML document (taints) NodeRegistration' do
       expect(config_yaml['nodeRegistration']['taints'][0]['effect']).to include('NoSchedule')
     end

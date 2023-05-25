@@ -261,12 +261,15 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has node_name==foo in first YAML document (InitConfig)' do
       expect(config_yaml[0]['nodeRegistration']).to include('name' => params['node_name'])
     end
+
     it 'has cloud-provider==aws in first YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => params['cloud_provider'])
     end
+
     it 'does not have cloud-config in second YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-config')
     end
@@ -300,7 +303,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
 
     it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+      expect(subject).to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
@@ -314,7 +317,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     end
 
     it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+      expect(subject).to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
@@ -330,9 +333,11 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in API server arguments' do
       expect(config_yaml[1]['apiServer']['extraArgs']).to include('foo')
     end
+
     it 'has bar in API server arguments' do
       expect(config_yaml[1]['apiServer']['extraArgs']).to include('bar')
     end
@@ -349,10 +354,12 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in controller manager arguments' do
       expect(config_yaml[1]['controllerManager']['extraArgs']).to include('foo')
     end
-    it 'has bar in controller manager  arguments' do
+
+    it 'has bar in controller manager arguments' do
       expect(config_yaml[1]['controllerManager']['extraArgs']).to include('bar')
     end
   end
@@ -368,9 +375,11 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in scheduler arguments' do
       expect(config_yaml[1]['scheduler']['extraArgs']).to include('foo')
     end
+
     it 'has bar in scheduler arguments' do
       expect(config_yaml[1]['scheduler']['extraArgs']).to include('bar')
     end
@@ -394,6 +403,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has hostPath: /mnt in API server extra volumes' do
       expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
@@ -417,6 +427,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has hostPath: /mnt in controller manager extra volumes' do
       expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
@@ -433,6 +444,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in controlPlaneEndpoint' do
       expect(config_yaml[1]['controlPlaneEndpoint']).to include('foo')
     end
@@ -449,6 +461,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has ipvs in mode:' do
       expect(config_yaml[2]['mode']).to include('ipvs')
     end
@@ -466,9 +479,11 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0.0.0.0 in metrics_bind_address:' do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
+
     it 'has 12345 in kube_api_bind_port:' do
       expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12_345)
     end
@@ -486,9 +501,11 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0.0.0.0 in metrics_bind_address:' do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
+
     it 'has 12345 in kube_api_bind_port:' do
       expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12_345)
     end
@@ -519,15 +536,19 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0 in kube_proxy_conntrack_max_per_core:' do
       expect(config_yaml[2]['conntrack']['maxPerCore']).to eq(0)
     end
+
     it 'has 0 in kube_proxy_conntrack_min:' do
       expect(config_yaml[2]['conntrack']['min']).to eq(0)
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_wait_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpCloseWaitTimeout']).to eq('0h0m0s')
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_stablished_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
@@ -547,15 +568,19 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0 in kube_proxy_conntrack_max_per_core:' do
       expect(config_yaml[2]['conntrack']['maxPerCore']).to eq(0)
     end
+
     it 'has 0 in kube_proxy_conntrack_min:' do
       expect(config_yaml[2]['conntrack']['min']).to eq(0)
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_wait_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpCloseWaitTimeout']).to eq('0h0m0s')
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_stablished_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
@@ -571,7 +596,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+      expect(subject).to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{key: node-role.kubernetes.io/control-plane\n})
     }
   end

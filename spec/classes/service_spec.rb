@@ -103,11 +103,12 @@ describe 'kubernetes::service', :type => :class do
     end
 
     it {
-      is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-provider=aws})
     }
+
     it {
-      is_expected.not_to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).not_to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-config=})
     }
   end
@@ -126,11 +127,12 @@ describe 'kubernetes::service', :type => :class do
     end
 
     it {
-      is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-provider=openstack})
     }
+
     it {
-      is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-config=/etc/kubernetes/cloud.conf})
     }
   end

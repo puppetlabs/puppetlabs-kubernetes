@@ -41,7 +41,7 @@ describe 'kubernetes::repos', :type => :class do
     end
 
     it {
-      is_expected.to contain_apt__source('kubernetes').with(
+      expect(subject).to contain_apt__source('kubernetes').with(
         ensure: 'present',
         location: 'http://apt.kubernetes.io',
         repos: 'main',
@@ -51,7 +51,7 @@ describe 'kubernetes::repos', :type => :class do
     }
 
     it {
-      is_expected.to contain_apt__source('docker').with(
+      expect(subject).to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/ubuntu',
         repos: 'main',
@@ -102,7 +102,7 @@ describe 'kubernetes::repos', :type => :class do
     end
 
     it {
-      is_expected.to contain_apt__source('kubernetes').with(
+      expect(subject).to contain_apt__source('kubernetes').with(
         ensure: 'present',
         location: 'http://apt.kubernetes.io',
         repos: 'main',
@@ -112,7 +112,7 @@ describe 'kubernetes::repos', :type => :class do
     }
 
     it {
-      is_expected.to contain_apt__source('docker').with(
+      expect(subject).to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/ubuntu',
         repos: 'main',
