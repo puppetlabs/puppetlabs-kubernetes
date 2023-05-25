@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-describe 'kubernetes::config::worker', :type => :class do
+describe 'kubernetes::config::worker', type: :class do
   let(:pre_condition) { 'include kubernetes' }
   let(:facts) do
     {

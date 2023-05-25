@@ -69,9 +69,9 @@ describe 'kubernetes' do
       context 'with node_label => foo and cloud_provider => undef' do
         let(:params) do
           {
-            :worker => true,
-            :node_label => 'foo',
-            :cloud_provider => :undef,
+            worker: true,
+            node_label: 'foo',
+            cloud_provider: :undef,
           }
         end
 
@@ -93,9 +93,9 @@ describe 'kubernetes' do
       context 'with node_label => undef and cloud_provider => aws' do
         let(:params) do
           {
-            :worker => true,
-            :node_label => :undef,
-            :cloud_provider => 'aws',
+            worker: true,
+            node_label: :undef,
+            cloud_provider: 'aws',
           }
         end
 

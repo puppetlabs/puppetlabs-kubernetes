@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'kubernetes::packages', :type => :class do
+describe 'kubernetes::packages', type: :class do
   let(:pre_condition) do
     [
       'include kubernetes',

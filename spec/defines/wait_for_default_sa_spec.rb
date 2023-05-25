@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'kubernetes::wait_for_default_sa', :type => :define do
+describe 'kubernetes::wait_for_default_sa', type: :define do
   let(:pre_condition) { 'include kubernetes' }
   let(:title) { 'default' }
   let(:facts) do

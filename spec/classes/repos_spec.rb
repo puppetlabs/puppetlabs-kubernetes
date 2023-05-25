@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'kubernetes::repos', :type => :class do
+describe 'kubernetes::repos', type: :class do
   context 'with osfamily => Ubuntu and manage_docker => true' do
     let(:facts) do
       {

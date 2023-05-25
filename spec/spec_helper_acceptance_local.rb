@@ -29,11 +29,9 @@ end
 def fetch_platform_by_node(uri)
   inventory_hash['groups'].map do |group|
     group['targets'].map do |node|
-      if node['uri'] == uri
-        return node['facts']['platform']
-      else
-        return nil
-      end
+      return node['facts']['platform'] if node['uri'] == uri
+
+      return nil
     end
   end
 end
@@ -304,7 +302,7 @@ RSpec.configure do |c|
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::taint_master: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::manage_docker: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
-    run_shell("export KUBECONFIG=\'/etc/kubernetes/admin.conf\'")
+    run_shell("export KUBECONFIG='/etc/kubernetes/admin.conf'")
     execute_agent('controller')
     execute_agent('worker1')
     execute_agent('worker2')

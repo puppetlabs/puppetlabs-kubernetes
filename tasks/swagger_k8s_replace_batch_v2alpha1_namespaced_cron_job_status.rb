@@ -84,7 +84,7 @@ def to_query(hash)
 end
 
 def op_param(name, inquery, paramalias, namesnake)
-  { :name => name, :location => inquery, :paramalias => paramalias, :namesnake => namesnake }
+  { name: name, location: inquery, paramalias: paramalias, namesnake: namesnake }
 end
 
 def format_params(key_values)
@@ -93,13 +93,13 @@ def format_params(key_values)
   path_params = {}
 
   key_values.each do |key, value|
-    if value.include?("=>")
-      Puppet.debug("Running hash from string on #{value}")
-      value.gsub!("=>", ":")
-      value.tr!("'", "\"")
-      key_values[key] = JSON.parse(value)
-      Puppet.debug("Obtained hash #{key_values[key].inspect}")
-    end
+    next unless value.include?("=>")
+
+    Puppet.debug("Running hash from string on #{value}")
+    value.gsub!("=>", ":")
+    value.tr!("'", "\"")
+    key_values[key] = JSON.parse(value)
+    Puppet.debug("Obtained hash #{key_values[key].inspect}")
   end
 
   if key_values.key?('body')
@@ -149,11 +149,9 @@ def task
   # Get operation parameters from an input JSON
   params = STDIN.read
   result = replace_batch_v2alpha1_namespaced_cron_job_status(params)
-  if result.is_a? Net::HTTPSuccess
-    puts result.body
-  else
-    raise result.body
-  end
+  raise result.body unless result.is_a? Net::HTTPSuccess
+
+  puts result.body
 rescue StandardError => e
   result = {}
   result[:_error] = {

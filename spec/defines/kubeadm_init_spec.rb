@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'kubernetes::kubeadm_init', :type => :define do
+describe 'kubernetes::kubeadm_init', type: :define do
   let(:pre_condition) { 'include kubernetes' }
   let(:title) { 'kubeadm init' }
   let(:facts) do

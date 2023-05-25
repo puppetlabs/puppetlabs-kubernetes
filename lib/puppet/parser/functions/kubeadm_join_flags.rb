@@ -6,7 +6,7 @@ require 'shellwords'
 #
 module Puppet::Parser::Functions
   # Transforms a hash into a string of kubeadm init flags
-  newfunction(:kubeadm_join_flags, :type => :rvalue) do |args|
+  newfunction(:kubeadm_join_flags, type: :rvalue) do |args|
     opts = args[0] || {}
     flags = []
     flags << "'#{opts['controller_address']}'" if opts['controller_address'] && opts['controller_address'].to_s != 'undef'

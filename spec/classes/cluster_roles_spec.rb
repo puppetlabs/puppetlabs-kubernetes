@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'kubernetes::cluster_roles', :type => :class do
+describe 'kubernetes::cluster_roles', type: :class do
   let(:facts) do
     {
       kernel: 'Linux',
