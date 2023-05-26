@@ -8,7 +8,7 @@ require 'openssl'
 def create_node_v1beta1_runtime_class(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -134,7 +134,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = create_node_v1beta1_runtime_class(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 

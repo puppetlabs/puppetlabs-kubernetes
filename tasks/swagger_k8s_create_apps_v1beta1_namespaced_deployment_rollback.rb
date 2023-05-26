@@ -8,7 +8,7 @@ require 'openssl'
 def create_apps_v1beta1_namespaced_deployment_rollback(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -140,7 +140,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = create_apps_v1beta1_namespaced_deployment_rollback(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 

@@ -8,7 +8,7 @@ require 'openssl'
 def list_core_v1_config_map_for_all_namespaces(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -139,7 +139,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = list_core_v1_config_map_for_all_namespaces(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 

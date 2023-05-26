@@ -8,7 +8,7 @@ require 'openssl'
 def replace_core_v1_namespaced_resource_quota_status(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -137,7 +137,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = replace_core_v1_namespaced_resource_quota_status(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 

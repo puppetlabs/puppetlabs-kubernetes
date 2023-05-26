@@ -8,7 +8,7 @@ require 'openssl'
 def delete_admissionregistration_v1beta1_collection_validating_webhook_configuration(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -138,7 +138,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = delete_admissionregistration_v1beta1_collection_validating_webhook_configuration(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 

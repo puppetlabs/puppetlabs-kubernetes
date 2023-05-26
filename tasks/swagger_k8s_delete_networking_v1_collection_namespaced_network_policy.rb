@@ -8,7 +8,7 @@ require 'openssl'
 def delete_networking_v1_collection_namespaced_network_policy(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -139,7 +139,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = delete_networking_v1_collection_namespaced_network_policy(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 

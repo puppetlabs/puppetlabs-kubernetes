@@ -156,28 +156,11 @@ Style/CombinableLoops:
   Exclude:
     - 'tooling/kube_tool/create_certs.rb'
 
-# Offense count: 528
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/GlobalStdStream:
-  Enabled: false
-
 # Offense count: 2
 Style/MixinUsage:
   Exclude:
     - 'spec/spec_helper.rb'
     - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 528
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/SlicingWithRange:
-  Enabled: false
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: RequireEnglish.
-# SupportedStyles: use_perl_names, use_english_names, use_builtin_english_names
-Style/SpecialGlobalVars:
-  EnforcedStyle: use_perl_names
 
 # Offense count: 1057
 # This cop supports unsafe autocorrection (--autocorrect-all).

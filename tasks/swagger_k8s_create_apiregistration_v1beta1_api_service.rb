@@ -8,7 +8,7 @@ require 'openssl'
 def create_apiregistration_v1beta1_api_service(*args)
   header_params = {}
 
-  params = args[0][1..-1].split(',')
+  params = args[0][1..].split(',')
 
   arg_hash = {}
   params.each do |param|
@@ -135,7 +135,7 @@ end
 
 def task
   # Get operation parameters from an input JSON
-  params = STDIN.read
+  params = $stdin.read
   result = create_apiregistration_v1beta1_api_service(params)
   raise result.body unless result.is_a? Net::HTTPSuccess
 
