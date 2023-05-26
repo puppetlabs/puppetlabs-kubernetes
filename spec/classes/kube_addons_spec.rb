@@ -7,12 +7,12 @@ describe 'kubernetes::kube_addons', type: :class do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '22.04',
+          full: '22.04'
         },
         distro: {
-          codename: 'jammy',
-        },
-      },
+          codename: 'jammy'
+        }
+      }
     }
   end
 
@@ -25,21 +25,21 @@ describe 'kubernetes::kube_addons', type: :class do
         install_dashboard: false,
         kubernetes_version: '1.25.4',
         schedule_on_controller: true,
-        node_name: 'foo',
+        node_name: 'foo'
       }
     end
 
     it {
       expect(subject).to contain_exec('Install calico rbac bindings').with({
                                                                              command: ['kubectl', 'apply', '-f', 'foo'],
-                                                                             onlyif: ['kubectl get nodes'],
+                                                                             onlyif: ['kubectl get nodes']
                                                                            })
     }
 
     it {
       expect(subject).to contain_exec('Install cni network provider').with({
                                                                              command: ['kubectl', 'apply', '-f', 'https://foo.test'],
-                                                                             onlyif: ['kubectl get nodes'],
+                                                                             onlyif: ['kubectl get nodes']
                                                                            })
     }
 
@@ -61,7 +61,7 @@ describe 'kubernetes::kube_addons', type: :class do
             cni_provider: provider,
             install_dashboard: false,
             kubernetes_version: '1.25.4',
-            node_name: 'foo',
+            node_name: 'foo'
           }
         end
 
@@ -72,7 +72,7 @@ describe 'kubernetes::kube_addons', type: :class do
           it {
             expect(subject).to contain_exec('Install cni network (preinstall)').with({
                                                                                        command: ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
-                                                                                       onlyif: 'kubectl get nodes',
+                                                                                       onlyif: 'kubectl get nodes'
                                                                                      })
           }
 
@@ -84,13 +84,13 @@ describe 'kubernetes::kube_addons', type: :class do
             expect(subject).to contain_exec('Install cni network provider').with({
                                                                                    onlyif: ['kubectl get nodes'],
                                                                                    command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
-                                                                                   unless: ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
+                                                                                   unless: ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"']
                                                                                  })
           }
 
           it {
             expect(subject).not_to contain_exec('Install cni network (preinstall)').with({
-                                                                                           onlyif: ['kubectl get nodes'],
+                                                                                           onlyif: ['kubectl get nodes']
                                                                                          })
           }
         end
@@ -107,7 +107,7 @@ describe 'kubernetes::kube_addons', type: :class do
         install_dashboard: false,
         kubernetes_version: '1.25.4',
         schedule_on_controller: false,
-        node_name: 'foo',
+        node_name: 'foo'
       }
     end
 
@@ -124,7 +124,7 @@ describe 'kubernetes::kube_addons', type: :class do
         kubernetes_version: '1.25.4',
         dashboard_version: '1.10.1',
         schedule_on_controller: false,
-        node_name: 'foo',
+        node_name: 'foo'
       }
     end
 

@@ -19,7 +19,7 @@ class OtherParams
 
     case opts[:cni_provider]
     when 'weave'
-      cni_network_provider = "https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml"
+      cni_network_provider = 'https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml'
       cni_pod_cidr = '10.32.0.0/12'
     when 'flannel'
       cni_network_provider = 'https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
@@ -28,8 +28,8 @@ class OtherParams
       cni_network_provider = "https://docs.projectcalico.org/archive/v#{opts[:cni_provider_version]}/manifests/calico.yaml"
       cni_pod_cidr = '192.168.0.0/16'
     when 'calico-tigera'
-      cni_network_preinstall = "https://docs.projectcalico.org/manifests/tigera-operator.yaml"
-      cni_network_provider = "https://docs.projectcalico.org/manifests/custom-resources.yaml"
+      cni_network_preinstall = 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
+      cni_network_provider = 'https://docs.projectcalico.org/manifests/custom-resources.yaml'
       cni_pod_cidr = '192.168.0.0/16'
     when 'cilium'
       cni_pod_cidr = '10.244.0.0/16'
@@ -40,14 +40,14 @@ class OtherParams
       end
     end
 
-    x = opts[:etcd_initial_cluster].split(",")
+    x = opts[:etcd_initial_cluster].split(',')
     cluster = String.new
     peers = String.new
     bootstrap_controller = x[0]
-    z = bootstrap_controller.split(":")
+    z = bootstrap_controller.split(':')
     controller_address = "#{z[1]}:6443"
     x.each do |members|
-      y = members.split(":")
+      y = members.split(':')
       hostname = y[0]
       ip = y[1]
 
@@ -57,7 +57,7 @@ class OtherParams
 
     etcd_initial_cluster = cluster.chop
     etcd_peers = peers.chop
-    etcd_peers = etcd_peers.split(",")
+    etcd_peers = etcd_peers.split(',')
     api_server_count = x.length
 
     data = {}
@@ -75,7 +75,7 @@ class OtherParams
     data['kubernetes::api_server_count'] = api_server_count
     data['kubernetes::install_dashboard'] = opts[:install_dashboard]
     data['kubernetes::controller_address'] = controller_address
-    data['kubernetes::token'] = SecureRandom.hex(3) + "." + SecureRandom.hex(8)
-    File.write("kubernetes.yaml", data.to_yaml)
+    data['kubernetes::token'] = SecureRandom.hex(3) + '.' + SecureRandom.hex(8)
+    File.write('kubernetes.yaml', data.to_yaml)
   end
 end

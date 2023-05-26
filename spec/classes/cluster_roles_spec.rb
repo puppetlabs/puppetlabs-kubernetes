@@ -4,21 +4,21 @@ describe 'kubernetes::cluster_roles', type: :class do
     {
       kernel: 'Linux',
       networking: {
-        hostname: 'foo',
+        hostname: 'foo'
       },
       os: {
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
+          codename: 'xenial'
+        }
       },
       ec2_metadata: {
-        hostname: 'ip-10-10-10-1.ec2.internal',
-      },
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -27,7 +27,7 @@ describe 'kubernetes::cluster_roles', type: :class do
     let(:params) do
       {
         'controller' => true,
-        'worker' => false,
+        'worker' => false
       }
     end
 
@@ -39,7 +39,7 @@ describe 'kubernetes::cluster_roles', type: :class do
     let(:params) do
       {
         'controller' => false,
-        'worker' => true,
+        'worker' => true
       }
     end
 

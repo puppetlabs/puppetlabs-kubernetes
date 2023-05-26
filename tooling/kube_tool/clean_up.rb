@@ -9,7 +9,7 @@ class CleanUp
   end
 
   def self.remove_files
-    puts "Cleaning up files"
+    puts 'Cleaning up files'
     FileUtils.rm Dir.glob('*.csr')
     FileUtils.rm Dir.glob('*.json')
     FileUtils.rm Dir.glob('*.pem')
@@ -19,9 +19,9 @@ class CleanUp
 
   def self.clean_yaml(os)
     os = os.capitalize
-    puts "Cleaning up yaml"
-    File.write("kubernetes.yaml", File.read("kubernetes.yaml").gsub(%r{^---$}, ""))
-    File.write("kubernetes.yaml", File.read("kubernetes.yaml").delete("'"))
-    FileUtils.mv("kubernetes.yaml", "#{os}.yaml")
+    puts 'Cleaning up yaml'
+    File.write('kubernetes.yaml', File.read('kubernetes.yaml').gsub(%r{^---$}, ''))
+    File.write('kubernetes.yaml', File.read('kubernetes.yaml').delete("'"))
+    FileUtils.mv('kubernetes.yaml', "#{os}.yaml")
   end
 end

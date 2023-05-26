@@ -7,21 +7,21 @@ describe 'kubernetes::config::kubeadm', type: :class do
     {
       kernel: 'Linux',
       networking: {
-        hostname: 'foo',
+        hostname: 'foo'
       },
       os: {
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
+          codename: 'xenial'
+        }
       },
       ec2_metadata: {
-        hostname: 'ip-10-10-10-1.ec2.internal',
-      },
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -32,7 +32,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'manage_etcd' => true,
         'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
-        'kubelet_extra_arguments' => ['foo'],
+        'kubelet_extra_arguments' => ['foo']
       }
     end
 
@@ -68,7 +68,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
           'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
           'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
           'kubelet_extra_arguments' => ['foo'],
-          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381',
+          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381'
         }
       end
 
@@ -85,7 +85,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'delegated_pki' => true,
-        'etcd_version' => '3.3.0',
+        'etcd_version' => '3.3.0'
       }
     end
 
@@ -122,7 +122,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'manage_etcd' => false,
         'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
-        'kubelet_extra_arguments' => ['foo'],
+        'kubelet_extra_arguments' => ['foo']
       }
     end
 
@@ -157,7 +157,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
-        'etcd_version' => '3.3.0',
+        'etcd_version' => '3.3.0'
       }
     end
 
@@ -178,7 +178,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
           'kubelet_extra_arguments' => ['foo'],
           'manage_etcd' => true,
           'etcd_version' => '3.3.0',
-          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381',
+          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381'
         }
       end
 
@@ -196,7 +196,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
         'etcd_version' => '2.9.9',
-        'etcd_data_dir' => '/var/lib/foo',
+        'etcd_data_dir' => '/var/lib/foo'
       }
     end
 
@@ -217,7 +217,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
-        'etcd_version' => '2.9.9',
+        'etcd_version' => '2.9.9'
       }
     end
 
@@ -236,7 +236,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
-        'etcd_data_dir' => '/var/lib/bar',
+        'etcd_data_dir' => '/var/lib/bar'
       }
     end
 
@@ -254,7 +254,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'node_name' => 'foo',
         'cloud_provider' => 'aws',
         'cloud_config' => :undef,
-        'kubelet_extra_arguments' => ['foo: bar'],
+        'kubelet_extra_arguments' => ['foo: bar']
       }
     end
 
@@ -283,7 +283,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'cgroup_driver' => 'systemd',
         'cloud_provider' => 'aws',
         'cloud_config' => '/etc/kubernetes/cloud.conf',
-        'kubelet_extra_arguments' => ['foo: bar'],
+        'kubelet_extra_arguments' => ['foo: bar']
       }
     end
 
@@ -298,7 +298,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
-        'kubernetes_cluster_name' => 'my_own_name',
+        'kubernetes_cluster_name' => 'my_own_name'
       }
     end
 
@@ -312,7 +312,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.13.0',
-        'kubernetes_cluster_name' => 'my_own_name',
+        'kubernetes_cluster_name' => 'my_own_name'
       }
     end
 
@@ -326,7 +326,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'apiserver_extra_arguments' => ['foo', 'bar'],
+        'apiserver_extra_arguments' => ['foo', 'bar']
       }
     end
 
@@ -347,7 +347,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'controllermanager_extra_arguments' => ['foo', 'bar'],
+        'controllermanager_extra_arguments' => ['foo', 'bar']
       }
     end
 
@@ -368,7 +368,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'scheduler_extra_arguments' => ['foo', 'bar'],
+        'scheduler_extra_arguments' => ['foo', 'bar']
       }
     end
 
@@ -394,9 +394,9 @@ describe 'kubernetes::config::kubeadm', type: :class do
             'hostPath' => '/mnt',
             'mountPath' => '/data',
             'readOnly' => false,
-            'pathType' => 'Directory',
-          },
-        },
+            'pathType' => 'Directory'
+          }
+        }
       }
     end
 
@@ -418,9 +418,9 @@ describe 'kubernetes::config::kubeadm', type: :class do
             'hostPath' => '/mnt',
             'mountPath' => '/data',
             'readOnly' => false,
-            'pathType' => 'Directory',
-          },
-        },
+            'pathType' => 'Directory'
+          }
+        }
       }
     end
 
@@ -437,7 +437,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'controller_address' => 'foo',
+        'controller_address' => 'foo'
       }
     end
 
@@ -454,7 +454,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.2',
-        'proxy_mode' => 'ipvs',
+        'proxy_mode' => 'ipvs'
       }
     end
 
@@ -472,7 +472,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
       {
         'kubernetes_version' => '1.14.2',
         'metrics_bind_address' => '0.0.0.0',
-        'kube_api_bind_port' => 12_345,
+        'kube_api_bind_port' => 12_345
       }
     end
 
@@ -494,7 +494,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
       {
         'kubernetes_version' => '1.16.3',
         'metrics_bind_address' => '0.0.0.0',
-        'kube_api_bind_port' => 12_345,
+        'kube_api_bind_port' => 12_345
       }
     end
 
@@ -515,7 +515,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.2',
-        'metrics_bind_address' => 'invalid',
+        'metrics_bind_address' => 'invalid'
       }
     end
 
@@ -529,7 +529,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'conntrack_max_per_core' => 0,
         'conntrack_min' => 0,
         'conntrack_tcp_wait_timeout' => '0h0m0s',
-        'conntrack_tcp_stablished_timeout' => '0h0m0s',
+        'conntrack_tcp_stablished_timeout' => '0h0m0s'
       }
     end
 
@@ -561,7 +561,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
         'conntrack_max_per_core' => 0,
         'conntrack_min' => 0,
         'conntrack_tcp_wait_timeout' => '0h0m0s',
-        'conntrack_tcp_stablished_timeout' => '0h0m0s',
+        'conntrack_tcp_stablished_timeout' => '0h0m0s'
       }
     end
 
@@ -589,7 +589,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
   context 'set role control-plane' do
     let(:params) do
       {
-        'kubernetes_version' => '1.20.0',
+        'kubernetes_version' => '1.20.0'
       }
     end
 

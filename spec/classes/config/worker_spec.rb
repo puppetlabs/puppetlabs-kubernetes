@@ -7,21 +7,21 @@ describe 'kubernetes::config::worker', type: :class do
     {
       kernel: 'Linux',
       networking: {
-        hostname: 'foo',
+        hostname: 'foo'
       },
       os: {
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
+          codename: 'xenial'
+        }
       },
       ec2_metadata: {
-        hostname: 'ip-10-10-10-1.ec2.internal',
-      },
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -36,7 +36,7 @@ describe 'kubernetes::config::worker', type: :class do
       {
         'kubernetes_version' => '1.12.3',
         'node_name' => 'foo',
-        'kubelet_extra_arguments' => ['foo: bar'],
+        'kubelet_extra_arguments' => ['foo: bar']
       }
     end
 
@@ -61,7 +61,7 @@ describe 'kubernetes::config::worker', type: :class do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
-        'cloud_provider' => 'aws',
+        'cloud_provider' => 'aws'
       }
     end
 
@@ -87,15 +87,15 @@ describe 'kubernetes::config::worker', type: :class do
             'key' => 'key1',
             'value' => 'NewNode',
             'effect' => 'NoSchedule',
-            'operator' => 'Equal',
+            'operator' => 'Equal'
           },
           {
             'key' => 'key2',
             'value' => 'NewNode',
             'effect' => 'NoSchedule',
-            'operator' => 'Equal',
+            'operator' => 'Equal'
           },
-        ],
+        ]
       }
     end
 

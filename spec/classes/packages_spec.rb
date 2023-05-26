@@ -18,9 +18,9 @@ describe 'kubernetes::packages', type: :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -73,9 +73,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -119,9 +119,9 @@ describe 'kubernetes::packages', type: :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -174,9 +174,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -220,9 +220,9 @@ describe 'kubernetes::packages', type: :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -274,43 +274,43 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
+            }
           },
           'docker.private.example.com' => {
             'mirrors' => {},
             'tls' => {
               'ca_file' => 'ca1.pem',
               'cert_file' => 'cert1.pem',
-              'key_file' => 'key1.pem',
+              'key_file' => 'key1.pem'
             },
             'auth' => {
-              'auth' => '1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT==',
-            },
+              'auth' => '1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT=='
+            }
           },
           'docker.more-private.example.com' => {
             'mirrors' => {
               'endpoint' => 'https://docker.more-private.example.com'
             },
             'tls' => {
-              'insecure_skip_verify' => true,
+              'insecure_skip_verify' => true
             },
             'auth' => {
               'username' => 'user2',
-              'password' => 'secret2',
-            },
+              'password' => 'secret2'
+            }
           },
           'docker.even-more-private.example.com' => {
             'mirrors' => {
               'endpoint' => 'https://docker.even-more-private.example.com'
             },
             'tls' => {
-              'ca_file' => 'ca2.pem',
+              'ca_file' => 'ca2.pem'
             },
             'auth' => {
-              'identitytoken' => 'azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT',
-            },
-          },
-        },
+              'identitytoken' => 'azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT'
+            }
+          }
+        }
       }
     end
 
@@ -441,9 +441,9 @@ describe 'kubernetes::packages', type: :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -490,7 +490,7 @@ describe 'kubernetes::packages', type: :class do
         'containerd_archive_checksum' => nil,
         'etcd_archive_checksum' => nil,
         'runc_source_checksum' => nil,
-        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes'
       }
     end
 
@@ -520,12 +520,12 @@ describe 'kubernetes::packages', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -578,9 +578,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -617,12 +617,12 @@ describe 'kubernetes::packages', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -677,9 +677,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -718,12 +718,12 @@ describe 'kubernetes::packages', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -782,9 +782,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -805,12 +805,12 @@ describe 'kubernetes::packages', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -864,9 +864,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -900,12 +900,12 @@ describe 'kubernetes::packages', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -959,9 +959,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -1001,12 +1001,12 @@ describe 'kubernetes::packages', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -1059,9 +1059,9 @@ describe 'kubernetes::packages', type: :class do
           'docker.io' => {
             'mirrors' => {
               'endpoint' => 'https://registry-1.docker.io'
-            },
-          },
-        },
+            }
+          }
+        }
       }
     end
 
@@ -1096,9 +1096,9 @@ describe 'kubernetes::packages', type: :class do
             major: '11'
           },
           distro: {
-            codename: 'bullseye',
-          },
-        },
+            codename: 'bullseye'
+          }
+        }
       }
     end
     let(:pre_condition) do

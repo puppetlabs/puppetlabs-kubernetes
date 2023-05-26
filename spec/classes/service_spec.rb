@@ -8,15 +8,15 @@ describe 'kubernetes::service', type: :class do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
+          codename: 'xenial'
+        }
       },
       ec2_metadata: {
-        hostname: 'ip-10-10-10-1.ec2.internal',
-      },
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -29,7 +29,7 @@ describe 'kubernetes::service', type: :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => true,
+        'manage_etcd' => true
       }
     end
 
@@ -52,7 +52,7 @@ describe 'kubernetes::service', type: :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => false,
+        'manage_etcd' => false
       }
     end
 
@@ -71,7 +71,7 @@ describe 'kubernetes::service', type: :class do
         'cloud_config' => '',
         'manage_docker' => false,
         'manage_etcd' => true,
-        'etcd_install_method' => 'wget',
+        'etcd_install_method' => 'wget'
       }
     end
 
@@ -98,7 +98,7 @@ describe 'kubernetes::service', type: :class do
         'manage_docker' => true,
         'manage_etcd' => true,
         'cloud_provider' => 'aws',
-        'cloud_config' => '',
+        'cloud_config' => ''
       }
     end
 
@@ -122,7 +122,7 @@ describe 'kubernetes::service', type: :class do
         'manage_docker' => true,
         'manage_etcd' => true,
         'cloud_provider' => 'openstack',
-        'cloud_config' => '/etc/kubernetes/cloud.conf',
+        'cloud_config' => '/etc/kubernetes/cloud.conf'
       }
     end
 
@@ -146,7 +146,7 @@ describe 'kubernetes::service', type: :class do
         'manage_docker' => true,
         'manage_etcd' => true,
         'cloud_provider' => 'aws',
-        'cloud_config' => '',
+        'cloud_config' => ''
       }
     end
 
@@ -166,7 +166,7 @@ describe 'kubernetes::service', type: :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => true,
+        'manage_etcd' => true
       }
     end
 
@@ -190,7 +190,7 @@ describe 'kubernetes::service', type: :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => true,
+        'manage_etcd' => true
       }
     end
 

@@ -83,11 +83,11 @@ def format_params(key_values)
   path_params = {}
 
   key_values.each do |key, value|
-    next unless value.include?("=>")
+    next unless value.include?('=>')
 
     Puppet.debug("Running hash from string on #{value}")
-    value.gsub!("=>", ":")
-    value.tr!("'", "\"")
+    value.gsub!('=>', ':')
+    value.tr!("'", '"')
     key_values[key] = JSON.parse(value)
     Puppet.debug("Obtained hash #{key_values[key].inspect}")
   end
@@ -157,7 +157,7 @@ rescue StandardError => e
   result[:_error] = {
     msg: e.message,
     kind: 'puppetlabs-kubernetes/error',
-    details: { class: e.class.to_s },
+    details: { class: e.class.to_s }
   }
   puts result
   exit 1

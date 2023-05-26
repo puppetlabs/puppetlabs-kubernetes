@@ -10,12 +10,12 @@ describe 'kubernetes::kubeadm_join', type: :define do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
-      },
+          codename: 'xenial'
+        }
+      }
     }
   end
 
@@ -29,7 +29,7 @@ describe 'kubernetes::kubeadm_join', type: :define do
       'discovery_token' => 'token',
       'token' => 'token',
       'tls_bootstrap_token' => 'token',
-      'ca_cert_hash' => 'hash',
+      'ca_cert_hash' => 'hash'
     }
   end
 
@@ -59,7 +59,7 @@ describe 'kubernetes::kubeadm_join', type: :define do
     let(:params) do
       super().merge({
                       kubernetes_version: '1.12.3',
-                      ignore_preflight_errors: ['foo', 'bar'],
+                      ignore_preflight_errors: ['foo', 'bar']
                     })
     end
 
@@ -71,7 +71,7 @@ describe 'kubernetes::kubeadm_join', type: :define do
     let(:params) do
       super().merge({
                       kubernetes_version: '1.12.3',
-                      discovery_file: '/etc/kubernetes/admin.conf',
+                      discovery_file: '/etc/kubernetes/admin.conf'
                     })
     end
 

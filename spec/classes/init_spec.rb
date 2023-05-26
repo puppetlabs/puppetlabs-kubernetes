@@ -5,7 +5,7 @@ describe 'kubernetes' do
       let(:facts) do
         os_facts.merge({
                          ec2_metadata: {
-                           hostname: 'ip-10-10-10-1.ec2.internal',
+                           hostname: 'ip-10-10-10-1.ec2.internal'
                          }
                        })
       end
@@ -16,7 +16,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             controller: true,
-            worker: true,
+            worker: true
           }
         end
 
@@ -26,7 +26,7 @@ describe 'kubernetes' do
       context 'with controller => true' do
         let(:params) do
           {
-            controller: true,
+            controller: true
           }
         end
 
@@ -42,7 +42,7 @@ describe 'kubernetes' do
       context 'with worker => true and version => 1.10.2' do
         let(:params) do
           {
-            worker: true,
+            worker: true
           }
         end
 
@@ -58,7 +58,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-            kubernetes_version: '1.12.2',
+            kubernetes_version: '1.12.2'
           }
         end
 
@@ -71,7 +71,7 @@ describe 'kubernetes' do
           {
             worker: true,
             node_label: 'foo',
-            cloud_provider: :undef,
+            cloud_provider: :undef
           }
         end
 
@@ -83,7 +83,7 @@ describe 'kubernetes' do
           {
             worker: true,
             node_label: 'foo',
-            cloud_provider: 'aws',
+            cloud_provider: 'aws'
           }
         end
 
@@ -95,7 +95,7 @@ describe 'kubernetes' do
           {
             worker: true,
             node_label: :undef,
-            cloud_provider: 'aws',
+            cloud_provider: 'aws'
           }
         end
 
@@ -106,7 +106,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-            node_label: 'hostname;rm -rf /',
+            node_label: 'hostname;rm -rf /'
           }
         end
 

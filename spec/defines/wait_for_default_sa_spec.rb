@@ -10,19 +10,19 @@ describe 'kubernetes::wait_for_default_sa', type: :define do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
-      },
+          codename: 'xenial'
+        }
+      }
     }
   end
 
   context 'with namespace default and no options' do
     let(:params) do
       {
-        'namespace' => 'default',
+        'namespace' => 'default'
       }
     end
 
@@ -38,7 +38,7 @@ describe 'kubernetes::wait_for_default_sa', type: :define do
     let(:params) do
       {
         'namespace' => 'foo',
-        'path' => ['/bar'],
+        'path' => ['/bar']
       }
     end
 
@@ -72,7 +72,7 @@ describe 'kubernetes::wait_for_default_sa', type: :define do
       context "with namespace #{namespace}" do
         let(:params) do
           {
-            'namespace' => namespace,
+            'namespace' => namespace
           }
         end
 
