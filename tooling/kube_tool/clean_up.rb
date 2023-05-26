@@ -4,7 +4,7 @@ require 'fileutils'
 class CleanUp
   def self.all(files)
     files.each do |x|
-      FileUtils.rm_f(x) if File.exist?(x)
+      FileUtils.rm_f(x)
     end
   end
 

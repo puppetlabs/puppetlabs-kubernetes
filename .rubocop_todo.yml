@@ -12,13 +12,6 @@ Lint/DuplicateBranch:
   Exclude:
     - 'tooling/kube_tool/other_params.rb'
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Lint/NonAtomicFileOperation:
-  Exclude:
-    - 'tooling/kube_tool/clean_up.rb'
-    - 'tooling/kube_tool/create_certs.rb'
-
 # Offense count: 1
 # Configuration parameters: AllowedPatterns.
 # AllowedPatterns: (?-mix:(exactly|at_least|at_most)\(\d+\)\.times)
@@ -87,18 +80,6 @@ Naming/MethodParameterName:
 # SupportedStyles: snake_case, camelCase
 Naming/VariableName:
   Enabled: false
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/StringInclude:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/UnfreezeString:
-  Exclude:
-    - 'tooling/kube_tool/other_params.rb'
 
 # Offense count: 16
 # Configuration parameters: Prefixes, AllowedPatterns.

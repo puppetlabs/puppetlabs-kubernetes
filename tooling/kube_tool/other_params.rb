@@ -41,8 +41,8 @@ class OtherParams
     end
 
     x = opts[:etcd_initial_cluster].split(',')
-    cluster = String.new
-    peers = String.new
+    cluster = +''
+    peers = +''
     bootstrap_controller = x[0]
     z = bootstrap_controller.split(':')
     controller_address = "#{z[1]}:6443"

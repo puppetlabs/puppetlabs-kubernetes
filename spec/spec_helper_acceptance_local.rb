@@ -249,7 +249,7 @@ RSpec.configure do |c|
       run_shell('sudo apt install docker.io -y')
       run_shell('systemctl start docker.service')
       run_shell('systemctl enable docker.service')
-      if %r{ubuntu-1604-lts}.match?(family)
+      if family.include?('ubuntu-1604-lts')
         run_shell('sudo ufw disable')
       else
         # Workaround for debian as the strech repositories do not have updated kubernetes packages

@@ -56,7 +56,7 @@ class CreateCerts
       server = servers.split(':')
       hostname = server[0]
       ip = server[1]
-      FileUtils.rm_f("#{hostname}.yaml") if File.exist?("#{hostname}.yaml")
+      FileUtils.rm_f("#{hostname}.yaml")
       puts 'Creating etcd peer and server certificates'
       csr = { CN: "etcd-#{hostname}", hosts: etcd_server_ips, key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
       File.write('config.json', csr.to_json)
