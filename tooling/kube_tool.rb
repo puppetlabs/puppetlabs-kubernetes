@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'slop'
 require_relative 'kube_tool/pre_checks'

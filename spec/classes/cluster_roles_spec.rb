@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'kubernetes::cluster_roles', type: :class do
   let(:facts) do

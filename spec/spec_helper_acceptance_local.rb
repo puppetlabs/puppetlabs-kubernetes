@@ -17,13 +17,11 @@ def inventory_hash
 end
 
 def target_roles(roles)
-  # rubocop:disable Style/MultilineBlockChain
   inventory_hash['groups'].map { |group|
-    group['targets'].map { |node|
+    group['targets'].filter_map do |node|
       { name: node['uri'], role: node['vars']['role'] } if roles.include? node['vars']['role']
-    }.reject { |val| val.nil? }
+    end
   }.flatten
-  # rubocop:enable Style/MultilineBlockChain
 end
 
 def fetch_platform_by_node(uri)

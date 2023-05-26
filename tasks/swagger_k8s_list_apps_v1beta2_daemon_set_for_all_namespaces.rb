@@ -1,4 +1,5 @@
 #!/opt/puppetlabs/puppet/bin/ruby
+# frozen_string_literal: true
 
 require 'json'
 require 'puppet'
@@ -36,13 +37,14 @@ def list_apps_v1beta2_daemon_set_for_all_namespaces(*args)
   verify_mode = OpenSSL::SSL::VERIFY_PEER if arg_hash['ca_file']
 
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', verify_mode: verify_mode, ca_file: arg_hash['ca_file']) do |http|
-    if operation_verb == 'Get'
+    case operation_verb
+    when 'Get'
       req = Net::HTTP::Get.new(uri)
-    elsif operation_verb == 'Put'
+    when 'Put'
       req = Net::HTTP::Put.new(uri)
-    elsif operation_verb == 'Delete'
+    when 'Delete'
       req = Net::HTTP::Delete.new(uri)
-    elsif operation_verb == 'Post'
+    when 'Post'
       req = Net::HTTP::Post.new(uri)
     end
 

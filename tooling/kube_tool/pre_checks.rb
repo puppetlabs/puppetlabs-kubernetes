@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Pre Checks
 class PreChecks
   def self.checks

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'kubernetes::packages', type: :class do
   let(:pre_condition) do

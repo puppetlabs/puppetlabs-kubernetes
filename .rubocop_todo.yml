@@ -151,29 +151,10 @@ RSpec/RepeatedExampleGroupDescription:
   Exclude:
     - 'spec/classes/config/kubeadm_spec.rb'
 
-# Offense count: 528
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: MinBranchesCount.
-Style/CaseLikeIf:
-  Enabled: false
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/CollectionCompact:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
 # Offense count: 1
 Style/CombinableLoops:
   Exclude:
     - 'tooling/kube_tool/create_certs.rb'
-
-# Offense count: 543
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, always_true, never
-Style/FrozenStringLiteralComment:
-  Enabled: false
 
 # Offense count: 528
 # This cop supports unsafe autocorrection (--autocorrect-all).

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'kubernetes::wait_for_default_sa', type: :define do
