@@ -25,11 +25,11 @@ def list_policy_v1beta1_pod_disruption_budget_for_all_namespaces(*args)
 
   uri_string = "#{arg_hash['kube_api']}/apis/policy/v1beta1/poddisruptionbudgets" % path_params
 
-  uri_string = uri_string + '?' + to_query(query_params) if query_params
+  uri_string = "#{uri_string}?#{to_query(query_params)}" if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
+  header_params['Authentication'] = "Bearer #{arg_hash['token']}" if arg_hash['token']
 
   uri = URI(uri_string)
 

@@ -77,7 +77,7 @@ class OtherParams
     data['kubernetes::api_server_count'] = api_server_count
     data['kubernetes::install_dashboard'] = opts[:install_dashboard]
     data['kubernetes::controller_address'] = controller_address
-    data['kubernetes::token'] = SecureRandom.hex(3) + '.' + SecureRandom.hex(8)
+    data['kubernetes::token'] = "#{SecureRandom.hex(3)}.#{SecureRandom.hex(8)}"
     File.write('kubernetes.yaml', data.to_yaml)
   end
 end

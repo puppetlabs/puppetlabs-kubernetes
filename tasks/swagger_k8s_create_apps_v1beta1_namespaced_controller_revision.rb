@@ -25,11 +25,11 @@ def create_apps_v1beta1_namespaced_controller_revision(*args)
 
   uri_string = "#{arg_hash['kube_api']}/apis/apps/v1beta1/namespaces/%{namespace}/controllerrevisions" % path_params
 
-  uri_string = uri_string + '?' + to_query(query_params) if query_params
+  uri_string = "#{uri_string}?#{to_query(query_params)}" if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
+  header_params['Authentication'] = "Bearer #{arg_hash['token']}" if arg_hash['token']
 
   uri = URI(uri_string)
 

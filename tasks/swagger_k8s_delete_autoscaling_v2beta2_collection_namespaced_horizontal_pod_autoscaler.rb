@@ -25,11 +25,11 @@ def delete_autoscaling_v2beta2_collection_namespaced_horizontal_pod_autoscaler(*
 
   uri_string = "#{arg_hash['kube_api']}/apis/autoscaling/v2beta2/namespaces/%{namespace}/horizontalpodautoscalers" % path_params
 
-  uri_string = uri_string + '?' + to_query(query_params) if query_params
+  uri_string = "#{uri_string}?#{to_query(query_params)}" if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
+  header_params['Authentication'] = "Bearer #{arg_hash['token']}" if arg_hash['token']
 
   uri = URI(uri_string)
 

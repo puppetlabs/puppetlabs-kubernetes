@@ -161,17 +161,3 @@ Style/MixinUsage:
   Exclude:
     - 'spec/spec_helper.rb'
     - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 1057
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Mode.
-Style/StringConcatenation:
-  Enabled: false
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowMethodsWithArguments, AllowedMethods, AllowedPatterns, AllowComments.
-# AllowedMethods: define_method
-Style/SymbolProc:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'

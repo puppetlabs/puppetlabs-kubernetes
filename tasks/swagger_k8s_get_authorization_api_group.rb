@@ -25,11 +25,11 @@ def get_authorization_api_group(*args)
 
   uri_string = "#{arg_hash['kube_api']}/apis/authorization.k8s.io/" % path_params
 
-  uri_string = uri_string + '?' + to_query(query_params) if query_params
+  uri_string = "#{uri_string}?#{to_query(query_params)}" if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
+  header_params['Authentication'] = "Bearer #{arg_hash['token']}" if arg_hash['token']
 
   uri = URI(uri_string)
 

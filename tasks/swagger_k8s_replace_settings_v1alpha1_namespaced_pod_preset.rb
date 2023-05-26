@@ -25,11 +25,11 @@ def replace_settings_v1alpha1_namespaced_pod_preset(*args)
 
   uri_string = "#{arg_hash['kube_api']}/apis/settings.k8s.io/v1alpha1/namespaces/%{namespace}/podpresets/%{name}" % path_params
 
-  uri_string = uri_string + '?' + to_query(query_params) if query_params
+  uri_string = "#{uri_string}?#{to_query(query_params)}" if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
+  header_params['Authentication'] = "Bearer #{arg_hash['token']}" if arg_hash['token']
 
   uri = URI(uri_string)
 

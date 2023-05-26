@@ -25,11 +25,11 @@ def read_rbac_authorization_v1_namespaced_role_binding(*args)
 
   uri_string = "#{arg_hash['kube_api']}/apis/rbac.authorization.k8s.io/v1/namespaces/%{namespace}/rolebindings/%{name}" % path_params
 
-  uri_string = uri_string + '?' + to_query(query_params) if query_params
+  uri_string = "#{uri_string}?#{to_query(query_params)}" if query_params
 
   header_params['Content-Type'] = 'application/json' # first of #{parent_consumes}
 
-  header_params['Authentication'] = 'Bearer ' + arg_hash['token'] if arg_hash['token']
+  header_params['Authentication'] = "Bearer #{arg_hash['token']}" if arg_hash['token']
 
   uri = URI(uri_string)
 
