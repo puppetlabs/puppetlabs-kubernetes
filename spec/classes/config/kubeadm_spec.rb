@@ -322,7 +322,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     }
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - apiserver_extra_arguments' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
@@ -343,7 +343,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - controllermanager_extra_arguments' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
@@ -364,7 +364,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - scheduler_extra_arguments' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
@@ -385,7 +385,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - apiserver_extra_volumes' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
@@ -409,7 +409,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - controllermanager_extra_volumes' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
@@ -433,7 +433,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - controller_address' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
@@ -450,7 +450,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - proxy_mode' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.2',

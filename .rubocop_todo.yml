@@ -146,11 +146,6 @@ RSpec/NoExpectationExample:
   Exclude:
     - 'spec/acceptance/kubernetes_spec.rb'
 
-# Offense count: 7
-RSpec/RepeatedExampleGroupDescription:
-  Exclude:
-    - 'spec/classes/config/kubeadm_spec.rb'
-
 # Offense count: 1
 Style/CombinableLoops:
   Exclude:
