@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'kubernetes::kubeadm_join', :type => :define do
+describe 'kubernetes::kubeadm_join', type: :define do
   let(:pre_condition) { 'include kubernetes' }
   let(:title) { 'kubeadm join' }
   let(:facts) do
@@ -10,12 +12,12 @@ describe 'kubernetes::kubeadm_join', :type => :define do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
-      },
+          codename: 'xenial'
+        }
+      }
     }
   end
 
@@ -24,12 +26,12 @@ describe 'kubernetes::kubeadm_join', :type => :define do
       'config' => '/etc/kubernetes/config.yaml',
       'controller_address' => '10.0.0.1:6443',
       'node_name' => 'kube-node',
-      'path' => [ '/bin', '/usr/bin', '/sbin'],
-      'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+      'path' => ['/bin', '/usr/bin', '/sbin'],
+      'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf'],
       'discovery_token' => 'token',
       'token' => 'token',
       'tls_bootstrap_token' => 'token',
-      'ca_cert_hash' => 'hash',
+      'ca_cert_hash' => 'hash'
     }
   end
 
@@ -39,8 +41,9 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     end
 
     it { is_expected.to compile.with_all_deps }
+
     it {
-      is_expected.to contain_exec('kubeadm join')
+      expect(subject).to contain_exec('kubeadm join')
         .with_command("kubeadm join '10.0.0.1:6443' --discovery-token 'token' --discovery-token-ca-cert-hash 'sha256:hash' --node-name 'kube-node' --token 'token'")
     }
   end
@@ -58,7 +61,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     let(:params) do
       super().merge({
                       kubernetes_version: '1.12.3',
-        ignore_preflight_errors: ['foo', 'bar'],
+                      ignore_preflight_errors: ['foo', 'bar']
                     })
     end
 
@@ -70,7 +73,7 @@ describe 'kubernetes::kubeadm_join', :type => :define do
     let(:params) do
       super().merge({
                       kubernetes_version: '1.12.3',
-        discovery_file: '/etc/kubernetes/admin.conf',
+                      discovery_file: '/etc/kubernetes/admin.conf'
                     })
     end
 

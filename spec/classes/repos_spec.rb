@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-describe 'kubernetes::repos', :type => :class do
+describe 'kubernetes::repos', type: :class do
   context 'with osfamily => Ubuntu and manage_docker => true' do
     let(:facts) do
       {
@@ -9,12 +11,12 @@ describe 'kubernetes::repos', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:params) do
@@ -36,28 +38,28 @@ describe 'kubernetes::repos', :type => :class do
         'docker_key_source' => 'https://download.docker.com/linux/ubuntu/gpg',
         'containerd_install_method' => 'archive',
         'create_repos' => true,
-        'manage_docker' => true,
+        'manage_docker' => true
       }
     end
 
     it {
-      is_expected.to contain_apt__source('kubernetes').with(
-      ensure: 'present',
-      location: 'http://apt.kubernetes.io',
-      repos: 'main',
-      release: 'kubernetes-xenial',
-      key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
-    )
+      expect(subject).to contain_apt__source('kubernetes').with(
+        ensure: 'present',
+        location: 'http://apt.kubernetes.io',
+        repos: 'main',
+        release: 'kubernetes-xenial',
+        key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
+      )
     }
 
     it {
-      is_expected.to contain_apt__source('docker').with(
-      ensure: 'present',
-      location: 'https://download.docker.com/linux/ubuntu',
-      repos: 'main',
-      release: 'xenial',
-      key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
-    )
+      expect(subject).to contain_apt__source('docker').with(
+        ensure: 'present',
+        location: 'https://download.docker.com/linux/ubuntu',
+        repos: 'main',
+        release: 'xenial',
+        key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
+      )
     }
   end
 
@@ -70,12 +72,12 @@ describe 'kubernetes::repos', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:params) do
@@ -97,28 +99,28 @@ describe 'kubernetes::repos', :type => :class do
         'docker_key_source' => 'https://download.docker.com/linux/ubuntu/gpg',
         'containerd_install_method' => 'package',
         'create_repos' => true,
-        'manage_docker' => true,
+        'manage_docker' => true
       }
     end
 
     it {
-      is_expected.to contain_apt__source('kubernetes').with(
-      ensure: 'present',
-      location: 'http://apt.kubernetes.io',
-      repos: 'main',
-      release: 'kubernetes-xenial',
-      key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
-    )
+      expect(subject).to contain_apt__source('kubernetes').with(
+        ensure: 'present',
+        location: 'http://apt.kubernetes.io',
+        repos: 'main',
+        release: 'kubernetes-xenial',
+        key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
+      )
     }
 
     it {
-      is_expected.to contain_apt__source('docker').with(
-      ensure: 'present',
-      location: 'https://download.docker.com/linux/ubuntu',
-      repos: 'main',
-      release: 'xenial',
-      key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
-    )
+      expect(subject).to contain_apt__source('docker').with(
+        ensure: 'present',
+        location: 'https://download.docker.com/linux/ubuntu',
+        repos: 'main',
+        release: 'xenial',
+        key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
+      )
     }
   end
 
@@ -133,9 +135,9 @@ describe 'kubernetes::repos', :type => :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.0',
-          },
-        },
+            full: '7.0'
+          }
+        }
       }
     end
 
@@ -158,7 +160,7 @@ describe 'kubernetes::repos', :type => :class do
         'docker_key_source' => 'https://download.docker.com/linux/ubuntu/gpg',
         'containerd_install_method' => 'archive',
         'create_repos' => true,
-        'manage_docker' => false,
+        'manage_docker' => false
       }
     end
 
@@ -177,9 +179,9 @@ describe 'kubernetes::repos', :type => :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.0',
-          },
-        },
+            full: '7.0'
+          }
+        }
       }
     end
 
@@ -202,7 +204,7 @@ describe 'kubernetes::repos', :type => :class do
         'docker_key_source' => 'https://download.docker.com/linux/ubuntu/gpg',
         'containerd_install_method' => 'package',
         'create_repos' => true,
-        'manage_docker' => false,
+        'manage_docker' => false
       }
     end
 

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-describe 'kubernetes::packages', :type => :class do
+describe 'kubernetes::packages', type: :class do
   let(:pre_condition) do
     [
       'include kubernetes',
@@ -18,9 +20,9 @@ describe 'kubernetes::packages', :type => :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -35,47 +37,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'docker',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.1.ce-1.el7.centos',
-      'containerd_version' => '1.5.0',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => false,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.1.ce-1.el7.centos',
+        'containerd_version' => '1.5.0',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -99,6 +101,7 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.to contain_file('/etc/systemd/system/docker.service.d') }
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/docker') }
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/kubernetes') }
+
     it '/etc/docker/daemon.json should be valid JSON' do
       require 'json'
       json_data = catalogue
@@ -118,9 +121,9 @@ describe 'kubernetes::packages', :type => :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -135,47 +138,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'docker',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.1.ce-1.el7.centos',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '"dummy": "dummy"',
-      'docker_cgroup_driver' => 'cgroupfs',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'package',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => false,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.1.ce-1.el7.centos',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '"dummy": "dummy"',
+        'docker_cgroup_driver' => 'cgroupfs',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'package',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -200,6 +203,7 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.to contain_file('/etc/systemd/system/docker.service.d') }
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/docker') }
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/kubernetes') }
+
     it '/etc/docker/daemon.json should be valid JSON' do
       require 'json'
       json_data = catalogue
@@ -218,9 +222,9 @@ describe 'kubernetes::packages', :type => :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -234,81 +238,81 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.1.ce-1.el7.centos',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'package',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => false,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.1.ce-1.el7.centos',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'package',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
           },
-        },
           'docker.private.example.com' => {
             'mirrors' => {},
-              'tls' => {
-                'ca_file' => 'ca1.pem',
-                  'cert_file' => 'cert1.pem',
-                  'key_file' => 'key1.pem',
-              },
-              'auth' => {
-                'auth' => '1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT==',
-              },
+            'tls' => {
+              'ca_file' => 'ca1.pem',
+              'cert_file' => 'cert1.pem',
+              'key_file' => 'key1.pem'
+            },
+            'auth' => {
+              'auth' => '1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT=='
+            }
           },
           'docker.more-private.example.com' => {
             'mirrors' => {
               'endpoint' => 'https://docker.more-private.example.com'
             },
-              'tls' => {
-                'insecure_skip_verify' => true,
-              },
-              'auth' => {
-                'username' => 'user2',
-                  'password' => 'secret2',
-              },
+            'tls' => {
+              'insecure_skip_verify' => true
+            },
+            'auth' => {
+              'username' => 'user2',
+              'password' => 'secret2'
+            }
           },
           'docker.even-more-private.example.com' => {
             'mirrors' => {
               'endpoint' => 'https://docker.even-more-private.example.com'
             },
-              'tls' => {
-                'ca_file' => 'ca2.pem',
-              },
-              'auth' => {
-                'identitytoken' => 'azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT',
-              },
-          },
-      },
+            'tls' => {
+              'ca_file' => 'ca2.pem'
+            },
+            'auth' => {
+              'identitytoken' => 'azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT'
+            }
+          }
+        }
       }
     end
 
@@ -324,89 +328,107 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.to contain_package('kubeadm').with_ensure('1.10.2') }
     it { is_expected.to contain_file('/etc/containerd') }
     it { is_expected.to contain_file('/etc/containerd/config.toml').without_source }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*endpoint = \["https://registry-1.docker.io"\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').without_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').without_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.private.example.com"\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.even-more-private.example.com"\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*endpoint = \["https://docker.even-more-private.example.com"\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.configs."docker.private.example.com".auth\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*auth = "1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT=="\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*username = "user2"\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*password = "secret2"\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*identitytoken = "azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT"\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.configs."docker.private.example.com".tls\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*ca_file = "ca1.pem"\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*cert_file = "cert1.pem"\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*key_file = "key1.pem"\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*insecure_skip_verify = true\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*ca_file = "ca2.pem"\s*},
       )
     }
+
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/containerd') }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\saddress = "/run/containerd/containerd.sock"},
       )
     }
@@ -421,9 +443,9 @@ describe 'kubernetes::packages', :type => :class do
           family: 'RedHat',
           name: 'RedHat',
           release: {
-            full: '7.4',
-          },
-        },
+            full: '7.4'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -437,40 +459,40 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.1.ce-1.el7.centos',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'package',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'nvidia',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => false,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.1.ce-1.el7.centos',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'package',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'nvidia',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes'
       }
     end
 
@@ -500,12 +522,12 @@ describe 'kubernetes::packages', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -520,47 +542,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'kubernetes_package_version' => '1.10.2-00',
-      'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => false,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => true,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2-00',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => false,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -597,12 +619,12 @@ describe 'kubernetes::packages', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -619,47 +641,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'docker',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => [],
-      'docker_extra_daemon_config' => '"default-runtime": "runc"',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => true,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => [],
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -679,6 +701,7 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.to contain_file('/etc/docker/daemon.json').with_content(%r{\s*"storage-opts"\s*}) }
     it { is_expected.to contain_file('/etc/docker/daemon.json').with_content(%r{\s*"native.cgroupdriver=systemd"\s*}) }
     it { is_expected.to contain_file('/etc/apt/preferences.d/docker') }
+
     it '/etc/docker/daemon.json should be valid JSON' do
       require 'json'
       json_data = catalogue
@@ -697,12 +720,12 @@ describe 'kubernetes::packages', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -719,51 +742,51 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'docker',
-      'container_runtime_use_proxy' => true,
-      'http_proxy' => 'foo',
-      'https_proxy' => 'bar',
-      'no_proxy' => 'baz',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => [],
-      'docker_extra_daemon_config' => '"default-runtime": "runc"',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => true,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'container_runtime_use_proxy' => true,
+        'http_proxy' => 'foo',
+        'https_proxy' => 'bar',
+        'no_proxy' => 'baz',
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => [],
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -784,12 +807,12 @@ describe 'kubernetes::packages', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -805,47 +828,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'docker',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '"default-runtime": "runc"',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => false,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => false,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => false,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => false,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -879,12 +902,12 @@ describe 'kubernetes::packages', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -900,47 +923,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'kubernetes_package_version' => '1.10.2',
-      'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'package',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => [],
-      'docker_extra_daemon_config' => '"default-runtime": "runc"',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => true,
-      'containerd_archive_checksum' => nil,
-      'etcd_archive_checksum' => nil,
-      'runc_source_checksum' => nil,
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'package',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => [],
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => true,
+        'containerd_archive_checksum' => nil,
+        'etcd_archive_checksum' => nil,
+        'runc_source_checksum' => nil,
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -956,13 +979,15 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.to contain_package('containerd.io').with_ensure('1.4.3') }
     it { is_expected.to contain_file('/etc/containerd') }
     it { is_expected.to contain_file('/etc/containerd/config.toml') }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*},
       )
     }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*endpoint = \["https://registry-1.docker.io"\]\s*},
       )
     }
@@ -978,12 +1003,12 @@ describe 'kubernetes::packages', :type => :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04',
+            full: '16.04'
           },
           distro: {
-            codename: 'xenial',
-          },
-        },
+            codename: 'xenial'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -998,47 +1023,47 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'kubernetes_package_version' => '1.10.2-00',
-      'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
-      'containerd_version' => '1.4.3',
-      'containerd_install_method' => 'archive',
-      'containerd_package_name' => 'containerd.io',
-      'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
-      'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
-      'containerd_default_runtime_name' => 'runc',
-      'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
-      'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
-      'runc_source' => 'https://github.com/runcsource',
-      'controller' => true,
-      'docker_package_name' => 'docker-engine',
-      'docker_storage_driver' => 'overlay2',
-      'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
-      'docker_extra_daemon_config' => '"default-runtime": "runc"',
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => true,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'etcd_version' => '3.1.12',
-      'create_repos' => true,
-      'docker_log_max_file' => '1',
-      'docker_log_max_size' => '100m',
-      'pin_packages' => true,
-      'containerd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
-      'etcd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
-      'runc_source_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_plugins_registry' => {
-        'docker.io' => {
-          'mirrors' => {
-            'endpoint' => 'https://registry-1.docker.io'
-          },
-        },
-      },
+        'kubernetes_package_version' => '1.10.2-00',
+        'docker_version' => '17.03.0~ce-0~ubuntu-xenial',
+        'containerd_version' => '1.4.3',
+        'containerd_install_method' => 'archive',
+        'containerd_package_name' => 'containerd.io',
+        'containerd_archive' => 'containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_source' => 'https://github.com/containerd/containerd/releases/download/v1.4.3/containerd-1.4.3-linux-amd64.tar.gz',
+        'containerd_config_template' => 'kubernetes/containerd/config.toml.erb',
+        'containerd_default_runtime_name' => 'runc',
+        'etcd_archive' => 'etcd-v3.1.12-linux-amd64.tar.gz',
+        'etcd_source' => 'https://github.com/etcd-v3.1.12.tar.gz',
+        'runc_source' => 'https://github.com/runcsource',
+        'controller' => true,
+        'docker_package_name' => 'docker-engine',
+        'docker_storage_driver' => 'overlay2',
+        'docker_storage_opts' => ['dm.use_deferred_removal=true', 'dm.use_deferred_deletion=true'],
+        'docker_extra_daemon_config' => '"default-runtime": "runc"',
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'etcd_version' => '3.1.12',
+        'create_repos' => true,
+        'docker_log_max_file' => '1',
+        'docker_log_max_size' => '100m',
+        'pin_packages' => true,
+        'containerd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
+        'etcd_archive_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
+        'runc_source_checksum' => 'bcab421f6bf4111accfceb004e0a0ac2bcfb92ac93081d9429e313248dd78c41',
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_plugins_registry' => {
+          'docker.io' => {
+            'mirrors' => {
+              'endpoint' => 'https://registry-1.docker.io'
+            }
+          }
+        }
       }
     end
 
@@ -1073,9 +1098,9 @@ describe 'kubernetes::packages', :type => :class do
             major: '11'
           },
           distro: {
-            codename: 'bullseye',
-          },
-        },
+            codename: 'bullseye'
+          }
+        }
       }
     end
     let(:pre_condition) do
@@ -1090,28 +1115,28 @@ describe 'kubernetes::packages', :type => :class do
     let(:params) do
       {
         'container_runtime' => 'cri_containerd',
-      'kubernetes_package_version' => '1.24.3-00',
-      'containerd_version' => '1.6.6',
-      'etcd_version' => '3.4.19',
-      'runc_source' => 'https://github.com/opencontainers/runc/releases/download/v1.1.3/runc.amd64',
-      'containerd_install_method' => 'archive',
-      'containerd_default_runtime_name' => 'runc',
-      'controller' => true,
-      'docker_cgroup_driver' => 'systemd',
-      'disable_swap' => true,
-      'manage_docker' => false,
-      'manage_etcd' => true,
-      'manage_kernel_modules' => true,
-      'manage_sysctl_settings' => true,
-      'etcd_install_method' => 'wget',
-      'etcd_package_name' => 'etcd-server',
-      'create_repos' => true,
-      'pin_packages' => true,
-      'containerd_archive_checksum' => '0212869675742081d70600a1afc6cea4388435cc52bf5dc21f4efdcb9a92d2ef',
-      'etcd_archive_checksum' => '9ba70e27c17a1faf6d3de89040432189d8071fa27ca156d09d3503989ecd9ccd',
-      'runc_source_checksum' => '6e8b24be90fffce6b025d254846da9d2ca6d65125f9139b6354bab0272253d01',
-      'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
-      'containerd_socket' => 'unix:///run/containerd/containerd.sock'
+        'kubernetes_package_version' => '1.24.3-00',
+        'containerd_version' => '1.6.6',
+        'etcd_version' => '3.4.19',
+        'runc_source' => 'https://github.com/opencontainers/runc/releases/download/v1.1.3/runc.amd64',
+        'containerd_install_method' => 'archive',
+        'containerd_default_runtime_name' => 'runc',
+        'controller' => true,
+        'docker_cgroup_driver' => 'systemd',
+        'disable_swap' => true,
+        'manage_docker' => false,
+        'manage_etcd' => true,
+        'manage_kernel_modules' => true,
+        'manage_sysctl_settings' => true,
+        'etcd_install_method' => 'wget',
+        'etcd_package_name' => 'etcd-server',
+        'create_repos' => true,
+        'pin_packages' => true,
+        'containerd_archive_checksum' => '0212869675742081d70600a1afc6cea4388435cc52bf5dc21f4efdcb9a92d2ef',
+        'etcd_archive_checksum' => '9ba70e27c17a1faf6d3de89040432189d8071fa27ca156d09d3503989ecd9ccd',
+        'runc_source_checksum' => '6e8b24be90fffce6b025d254846da9d2ca6d65125f9139b6354bab0272253d01',
+        'tmp_directory' => '/var/tmp/puppetlabs-kubernetes',
+        'containerd_socket' => 'unix:///run/containerd/containerd.sock'
       }
     end
 
@@ -1133,8 +1158,9 @@ describe 'kubernetes::packages', :type => :class do
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/docker') }
     it { is_expected.to contain_file('/etc/apt/preferences.d/kubernetes') }
     it { is_expected.not_to contain_file('/etc/systemd/system/docker.service.d') }
+
     it {
-      is_expected.to contain_file('/etc/containerd/config.toml').with_content(
+      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\saddress = "unix:///run/containerd/containerd.sock"},
       )
     }

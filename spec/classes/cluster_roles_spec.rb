@@ -1,24 +1,26 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-describe 'kubernetes::cluster_roles', :type => :class do
+describe 'kubernetes::cluster_roles', type: :class do
   let(:facts) do
     {
       kernel: 'Linux',
-    networking: {
-      hostname: 'foo',
-    },
-    os: {
-      family: 'Debian',
-      name: 'Ubuntu',
-      release: {
-        full: '16.04',
+      networking: {
+        hostname: 'foo'
       },
-      distro: {
-        codename: 'xenial',
+      os: {
+        family: 'Debian',
+        name: 'Ubuntu',
+        release: {
+          full: '16.04'
+        },
+        distro: {
+          codename: 'xenial'
+        }
       },
-    },
-    ec2_metadata: {
-      hostname: 'ip-10-10-10-1.ec2.internal',
-    },
+      ec2_metadata: {
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -27,7 +29,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
     let(:params) do
       {
         'controller' => true,
-        'worker' => false,
+        'worker' => false
       }
     end
 
@@ -39,7 +41,7 @@ describe 'kubernetes::cluster_roles', :type => :class do
     let(:params) do
       {
         'controller' => false,
-        'worker' => true,
+        'worker' => true
       }
     end
 

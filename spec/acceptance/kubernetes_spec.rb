@@ -1,14 +1,14 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'the Kubernetes module' do
   context 'clean up before each test' do
-    before(:each) do
-    end
-
     describe 'kubernetes class', :integration do
       context 'it should install the module and run' do
         before(:all) { change_target_host('controller') }
         after(:all) { reset_target_host }
+
         # fetch_ip_hostname_by_role returns an array of 3 elements [hostname, ipaddress, internal_ipaddress]
         int_ipaddr1 = fetch_ip_hostname_by_role('controller')[2]
 
@@ -40,7 +40,7 @@ describe 'the Kubernetes module' do
             class {'kubernetes': } # any other OS are not supported
         }
       }
-    MANIFEST
+        MANIFEST
 
         it 'runs' do
           apply_manifest(pp)
@@ -58,6 +58,7 @@ describe 'the Kubernetes module' do
       context 'application deployment' do
         before(:all) { change_target_host('controller') }
         after(:all) { reset_target_host }
+
         it 'can deploy an application into a namespace and expose it' do
           run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl create -f /tmp/nginx.yml') do |r|
             expect(r.stdout).to match(%r{my-nginx created\nservice/my-nginx created\n})

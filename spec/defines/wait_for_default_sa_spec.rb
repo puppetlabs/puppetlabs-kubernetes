@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'kubernetes::wait_for_default_sa', :type => :define do
+describe 'kubernetes::wait_for_default_sa', type: :define do
   let(:pre_condition) { 'include kubernetes' }
   let(:title) { 'default' }
   let(:facts) do
@@ -10,25 +12,26 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
-      },
+          codename: 'xenial'
+        }
+      }
     }
   end
 
   context 'with namespace default and no options' do
     let(:params) do
       {
-        'namespace' => 'default',
+        'namespace' => 'default'
       }
     end
 
     it { is_expected.to compile.with_all_deps }
+
     it {
-      is_expected.to contain_exec('wait for default serviceaccount creation in default')
+      expect(subject).to contain_exec('wait for default serviceaccount creation in default')
         .with_command('kubectl -n default get serviceaccount default -o name')
     }
   end
@@ -37,13 +40,14 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
     let(:params) do
       {
         'namespace' => 'foo',
-        'path'      => ['/bar'],
+        'path' => ['/bar']
       }
     end
 
     it { is_expected.to compile.with_all_deps }
+
     it {
-      is_expected.to contain_exec('wait for default serviceaccount creation in foo')
+      expect(subject).to contain_exec('wait for default serviceaccount creation in foo')
         .with_command('kubectl -n foo get serviceaccount default -o name')
         .with_path(['/bar'])
     }
@@ -70,14 +74,15 @@ describe 'kubernetes::wait_for_default_sa', :type => :define do
       context "with namespace #{namespace}" do
         let(:params) do
           {
-            'namespace' => namespace,
+            'namespace' => namespace
           }
         end
 
         if expected
           it { is_expected.to compile.with_all_deps }
+
           it {
-            is_expected.to contain_exec("wait for default serviceaccount creation in #{namespace}")
+            expect(subject).to contain_exec("wait for default serviceaccount creation in #{namespace}")
               .with_command("kubectl -n #{namespace} get serviceaccount default -o name")
           }
         else

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'kubernetes::kubeadm_init', :type => :define do
+describe 'kubernetes::kubeadm_init', type: :define do
   let(:pre_condition) { 'include kubernetes' }
   let(:title) { 'kubeadm init' }
   let(:facts) do
@@ -10,12 +12,12 @@ describe 'kubernetes::kubeadm_init', :type => :define do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
-      },
+          codename: 'xenial'
+        }
+      }
     }
   end
 
@@ -24,8 +26,8 @@ describe 'kubernetes::kubeadm_init', :type => :define do
       {
         'config' => '/etc/kubernetes/config.yaml',
         'node_name' => 'kube-control-plane',
-        'path' => [ '/bin', '/usr/bin', '/sbin'],
-        'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+        'path' => ['/bin', '/usr/bin', '/sbin'],
+        'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf']
       }
     end
 
@@ -39,9 +41,9 @@ describe 'kubernetes::kubeadm_init', :type => :define do
       {
         'config' => '/etc/kubernetes/config.yaml',
         'node_name' => 'kube-control-plane',
-        'path' => [ '/bin', '/usr/bin', '/sbin'],
+        'path' => ['/bin', '/usr/bin', '/sbin'],
         'dry_run' => true,
-        'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+        'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf']
       }
     end
 
@@ -55,9 +57,9 @@ describe 'kubernetes::kubeadm_init', :type => :define do
       {
         'config' => '/etc/kubernetes/config.yaml',
         'node_name' => 'kube-control-plane',
-        'path' => [ '/bin', '/usr/bin', '/sbin'],
+        'path' => ['/bin', '/usr/bin', '/sbin'],
         'ignore_preflight_errors' => ['foo', 'bar'],
-        'env' => [ 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+        'env' => ['KUBECONFIG=/etc/kubernetes/admin.conf']
       }
     end
 

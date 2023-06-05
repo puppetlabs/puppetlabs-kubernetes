@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-describe 'kubernetes::service', :type => :class do
+describe 'kubernetes::service', type: :class do
   let(:pre_condition) { 'include kubernetes; include kubernetes::config::kubeadm' }
   let(:facts) do
     {
@@ -8,15 +10,15 @@ describe 'kubernetes::service', :type => :class do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
+          codename: 'xenial'
+        }
       },
       ec2_metadata: {
-        hostname: 'ip-10-10-10-1.ec2.internal',
-      },
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -29,7 +31,7 @@ describe 'kubernetes::service', :type => :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => true,
+        'manage_etcd' => true
       }
     end
 
@@ -52,7 +54,7 @@ describe 'kubernetes::service', :type => :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => false,
+        'manage_etcd' => false
       }
     end
 
@@ -65,13 +67,13 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.10.2',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'cloud_provider' => '',
-          'cloud_config' => '',
-          'manage_docker' => false,
-          'manage_etcd' => true,
-          'etcd_install_method' => 'wget',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'cloud_provider' => '',
+        'cloud_config' => '',
+        'manage_docker' => false,
+        'manage_etcd' => true,
+        'etcd_install_method' => 'wget'
       }
     end
 
@@ -93,21 +95,22 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.10.2',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'manage_docker' => true,
-          'manage_etcd' => true,
-          'cloud_provider' => 'aws',
-          'cloud_config' => '',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'cloud_provider' => 'aws',
+        'cloud_config' => ''
       }
     end
 
     it {
-      is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-provider=aws})
     }
+
     it {
-      is_expected.not_to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).not_to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-config=})
     }
   end
@@ -116,21 +119,22 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.10.2',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'manage_docker' => true,
-          'manage_etcd' => true,
-          'cloud_provider' => 'openstack',
-          'cloud_config' => '/etc/kubernetes/cloud.conf',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'cloud_provider' => 'openstack',
+        'cloud_config' => '/etc/kubernetes/cloud.conf'
       }
     end
 
     it {
-      is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-provider=openstack})
     }
+
     it {
-      is_expected.to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-config=/etc/kubernetes/cloud.conf})
     }
   end
@@ -139,12 +143,12 @@ describe 'kubernetes::service', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
-          'container_runtime' => 'docker',
-          'controller' => true,
-          'manage_docker' => true,
-          'manage_etcd' => true,
-          'cloud_provider' => 'aws',
-          'cloud_config' => '',
+        'container_runtime' => 'docker',
+        'controller' => true,
+        'manage_docker' => true,
+        'manage_etcd' => true,
+        'cloud_provider' => 'aws',
+        'cloud_config' => ''
       }
     end
 
@@ -164,7 +168,7 @@ describe 'kubernetes::service', :type => :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => true,
+        'manage_etcd' => true
       }
     end
 
@@ -188,7 +192,7 @@ describe 'kubernetes::service', :type => :class do
         'cloud_provider' => '',
         'cloud_config' => '',
         'manage_docker' => true,
-        'manage_etcd' => true,
+        'manage_etcd' => true
       }
     end
 

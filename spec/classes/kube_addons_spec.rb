@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-describe 'kubernetes::kube_addons', :type => :class do
+describe 'kubernetes::kube_addons', type: :class do
   let(:pre_condition) { 'include kubernetes' }
   let(:facts) do
     {
@@ -7,12 +9,12 @@ describe 'kubernetes::kube_addons', :type => :class do
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '22.04',
+          full: '22.04'
         },
         distro: {
-          codename: 'jammy',
-        },
-      },
+          codename: 'jammy'
+        }
+      }
     }
   end
 
@@ -25,22 +27,24 @@ describe 'kubernetes::kube_addons', :type => :class do
         install_dashboard: false,
         kubernetes_version: '1.25.4',
         schedule_on_controller: true,
-        node_name: 'foo',
+        node_name: 'foo'
       }
     end
 
     it {
-      is_expected.to contain_exec('Install calico rbac bindings').with({
-                                                                         'command': ['kubectl', 'apply', '-f', 'foo'],
-      'onlyif': ['kubectl get nodes'],
-                                                                       })
+      expect(subject).to contain_exec('Install calico rbac bindings').with({
+                                                                             command: ['kubectl', 'apply', '-f', 'foo'],
+                                                                             onlyif: ['kubectl get nodes']
+                                                                           })
     }
+
     it {
-      is_expected.to contain_exec('Install cni network provider').with({
-                                                                         'command': ['kubectl', 'apply', '-f', 'https://foo.test'],
-      'onlyif': ['kubectl get nodes'],
-                                                                       })
+      expect(subject).to contain_exec('Install cni network provider').with({
+                                                                             command: ['kubectl', 'apply', '-f', 'https://foo.test'],
+                                                                             onlyif: ['kubectl get nodes']
+                                                                           })
     }
+
     it { is_expected.to contain_exec('schedule on controller') }
 
     it { is_expected.not_to contain_exec('Install cni network (preinstall)') }
@@ -59,7 +63,7 @@ describe 'kubernetes::kube_addons', :type => :class do
             cni_provider: provider,
             install_dashboard: false,
             kubernetes_version: '1.25.4',
-            node_name: 'foo',
+            node_name: 'foo'
           }
         end
 
@@ -68,27 +72,28 @@ describe 'kubernetes::kube_addons', :type => :class do
         case provider
         when 'calico-tigera'
           it {
-            is_expected.to contain_exec('Install cni network (preinstall)').with({
-                                                                                   'command': ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
-            'onlyif': 'kubectl get nodes',
-                                                                                 })
+            expect(subject).to contain_exec('Install cni network (preinstall)').with({
+                                                                                       command: ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
+                                                                                       onlyif: 'kubectl get nodes'
+                                                                                     })
           }
+
           it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml') }
           it { is_expected.to contain_file_line('Configure calico ipPools.cidr') }
           it { is_expected.to contain_exec('Install cni network provider') }
         else
           it {
-            is_expected.to contain_exec('Install cni network provider').with({
-                                                                               'onlyif': ['kubectl get nodes'],
-              'command': ['kubectl', 'apply', '-f', "https://#{provider}.test"],
-              'unless': ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"'],
-                                                                             })
+            expect(subject).to contain_exec('Install cni network provider').with({
+                                                                                   onlyif: ['kubectl get nodes'],
+                                                                                   command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+                                                                                   unless: ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"']
+                                                                                 })
           }
 
           it {
-            is_expected.not_to contain_exec('Install cni network (preinstall)').with({
-                                                                                       'onlyif': ['kubectl get nodes'],
-                                                                                     })
+            expect(subject).not_to contain_exec('Install cni network (preinstall)').with({
+                                                                                           onlyif: ['kubectl get nodes']
+                                                                                         })
           }
         end
       end
@@ -99,12 +104,12 @@ describe 'kubernetes::kube_addons', :type => :class do
     let(:params) do
       {
         controller: true,
-      cni_rbac_binding: nil,
-      cni_network_provider: 'https://foo.test',
-      install_dashboard: false,
-      kubernetes_version: '1.25.4',
-      schedule_on_controller: false,
-      node_name: 'foo',
+        cni_rbac_binding: nil,
+        cni_network_provider: 'https://foo.test',
+        install_dashboard: false,
+        kubernetes_version: '1.25.4',
+        schedule_on_controller: false,
+        node_name: 'foo'
       }
     end
 
@@ -115,13 +120,13 @@ describe 'kubernetes::kube_addons', :type => :class do
     let(:params) do
       {
         controller: true,
-      cni_rbac_binding: nil,
-      cni_network_provider: 'https://foo.test',
-      install_dashboard: true,
-      kubernetes_version: '1.25.4',
-      dashboard_version: '1.10.1',
-      schedule_on_controller: false,
-      node_name: 'foo',
+        cni_rbac_binding: nil,
+        cni_network_provider: 'https://foo.test',
+        install_dashboard: true,
+        kubernetes_version: '1.25.4',
+        dashboard_version: '1.10.1',
+        schedule_on_controller: false,
+        node_name: 'foo'
       }
     end
 

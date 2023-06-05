@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-describe 'kubernetes::config::kubeadm', :type => :class do
+describe 'kubernetes::config::kubeadm', type: :class do
   let(:pre_condition) { 'include kubernetes' }
   let(:facts) do
     {
       kernel: 'Linux',
       networking: {
-        hostname: 'foo',
+        hostname: 'foo'
       },
       os: {
         family: 'Debian',
         name: 'Ubuntu',
         release: {
-          full: '16.04',
+          full: '16.04'
         },
         distro: {
-          codename: 'xenial',
-        },
+          codename: 'xenial'
+        }
       },
       ec2_metadata: {
-        hostname: 'ip-10-10-10-1.ec2.internal',
-      },
+        hostname: 'ip-10-10-10-1.ec2.internal'
+      }
     }
   end
 
@@ -32,7 +32,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'manage_etcd' => true,
         'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
-        'kubelet_extra_arguments' => ['foo'],
+        'kubelet_extra_arguments' => ['foo']
       }
     end
 
@@ -68,7 +68,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
           'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
           'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
           'kubelet_extra_arguments' => ['foo'],
-          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381',
+          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381'
         }
       end
 
@@ -85,7 +85,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'delegated_pki' => true,
-        'etcd_version' => '3.3.0',
+        'etcd_version' => '3.3.0'
       }
     end
 
@@ -122,7 +122,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'manage_etcd' => false,
         'kubeadm_extra_config' => { 'foo' => ['bar', 'baz'] },
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
-        'kubelet_extra_arguments' => ['foo'],
+        'kubelet_extra_arguments' => ['foo']
       }
     end
 
@@ -157,7 +157,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
-        'etcd_version' => '3.3.0',
+        'etcd_version' => '3.3.0'
       }
     end
 
@@ -167,7 +167,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_LISTEN_METRICS_URLS=.*}) }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="\/var\/lib\/etcd"}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="/var/lib/etcd"}) }
 
     context 'with etcd_listen_metric_urls defined' do
       let(:params) do
@@ -178,7 +178,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
           'kubelet_extra_arguments' => ['foo'],
           'manage_etcd' => true,
           'etcd_version' => '3.3.0',
-          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381',
+          'etcd_listen_metric_urls' => 'http://0.0.0.0:2381'
         }
       end
 
@@ -196,7 +196,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
         'etcd_version' => '2.9.9',
-        'etcd_data_dir' => '/var/lib/foo',
+        'etcd_data_dir' => '/var/lib/foo'
       }
     end
 
@@ -205,7 +205,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_AUTO_COMPACTION_MODE=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_DISCOVERY_SRV="etcd-autodiscovery".*}) }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="\/var\/lib\/foo"}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="/var/lib/foo"}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => wget and etcd_discovery_srv => etcd-autodiscovery' do
@@ -217,7 +217,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
         'etcd_discovery_srv' => 'etcd-autodiscovery',
-        'etcd_version' => '2.9.9',
+        'etcd_version' => '2.9.9'
       }
     end
 
@@ -236,7 +236,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'kubelet_extra_config' => { 'baz' => ['bar', 'foo'] },
         'kubelet_extra_arguments' => ['foo'],
         'manage_etcd' => true,
-        'etcd_data_dir' => '/var/lib/bar',
+        'etcd_data_dir' => '/var/lib/bar'
       }
     end
 
@@ -244,7 +244,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     it { is_expected.to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{.*ETCD_INITIAL_CLUSTER=.*}) }
     it { is_expected.to contain_file('/etc/default/etcd').without_content(%r{.*ETCD_DISCOVERY_SRV=.*}) }
-    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="\/var\/lib\/bar"}) }
+    it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="/var/lib/bar"}) }
   end
 
   context 'with version = 1.12 and node_name => foo and cloud_provider => aws' do
@@ -254,19 +254,22 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'node_name' => 'foo',
         'cloud_provider' => 'aws',
         'cloud_config' => :undef,
-        'kubelet_extra_arguments' => ['foo: bar'],
+        'kubelet_extra_arguments' => ['foo: bar']
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has node_name==foo in first YAML document (InitConfig)' do
       expect(config_yaml[0]['nodeRegistration']).to include('name' => params['node_name'])
     end
+
     it 'has cloud-provider==aws in first YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => params['cloud_provider'])
     end
+
     it 'does not have cloud-config in second YAML document (InitConfig) NodeRegistration' do
       expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-config')
     end
@@ -280,7 +283,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'cgroup_driver' => 'systemd',
         'cloud_provider' => 'aws',
         'cloud_config' => '/etc/kubernetes/cloud.conf',
-        'kubelet_extra_arguments' => ['foo: bar'],
+        'kubelet_extra_arguments' => ['foo: bar']
       }
     end
 
@@ -295,12 +298,12 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.12.3',
-        'kubernetes_cluster_name' => 'my_own_name',
+        'kubernetes_cluster_name' => 'my_own_name'
       }
     end
 
     it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+      expect(subject).to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
@@ -309,146 +312,156 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.13.0',
-        'kubernetes_cluster_name' => 'my_own_name',
+        'kubernetes_cluster_name' => 'my_own_name'
       }
     end
 
     it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+      expect(subject).to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - apiserver_extra_arguments' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'apiserver_extra_arguments' => ['foo', 'bar'],
+        'apiserver_extra_arguments' => ['foo', 'bar']
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in API server arguments' do
       expect(config_yaml[1]['apiServer']['extraArgs']).to include('foo')
     end
+
     it 'has bar in API server arguments' do
       expect(config_yaml[1]['apiServer']['extraArgs']).to include('bar')
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - controllermanager_extra_arguments' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'controllermanager_extra_arguments' => ['foo', 'bar'],
+        'controllermanager_extra_arguments' => ['foo', 'bar']
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in controller manager arguments' do
       expect(config_yaml[1]['controllerManager']['extraArgs']).to include('foo')
     end
-    it 'has bar in controller manager  arguments' do
+
+    it 'has bar in controller manager arguments' do
       expect(config_yaml[1]['controllerManager']['extraArgs']).to include('bar')
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - scheduler_extra_arguments' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'scheduler_extra_arguments' => ['foo', 'bar'],
+        'scheduler_extra_arguments' => ['foo', 'bar']
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in scheduler arguments' do
       expect(config_yaml[1]['scheduler']['extraArgs']).to include('foo')
     end
+
     it 'has bar in scheduler arguments' do
       expect(config_yaml[1]['scheduler']['extraArgs']).to include('bar')
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - apiserver_extra_volumes' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
         'apiserver_extra_volumes' => {
           'foo' => {
-            'hostPath'  => '/mnt',
+            'hostPath' => '/mnt',
             'mountPath' => '/data',
             'readOnly' => false,
-            'pathType' => 'Directory',
-          },
-        },
+            'pathType' => 'Directory'
+          }
+        }
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has hostPath: /mnt in API server extra volumes' do
       expect(config_yaml[1]['apiServer']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - controllermanager_extra_volumes' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
         'controllermanager_extra_volumes' => {
           'foo' => {
-            'hostPath'  => '/mnt',
+            'hostPath' => '/mnt',
             'mountPath' => '/data',
             'readOnly' => false,
-            'pathType' => 'Directory',
-          },
-        },
+            'pathType' => 'Directory'
+          }
+        }
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has hostPath: /mnt in controller manager extra volumes' do
       expect(config_yaml[1]['controllerManager']['extraVolumes']).to include('name' => 'foo', 'hostPath' => '/mnt', 'mountPath' => '/data', 'readOnly' => false, 'pathType' => 'Directory')
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - controller_address' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.1',
-        'controller_address' => 'foo',
+        'controller_address' => 'foo'
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has foo in controlPlaneEndpoint' do
       expect(config_yaml[1]['controlPlaneEndpoint']).to include('foo')
     end
   end
 
-  context 'with version = 1.14' do
+  context 'with version = 1.14 - proxy_mode' do
     let(:params) do
       {
         'kubernetes_version' => '1.14.2',
-        'proxy_mode' => 'ipvs',
+        'proxy_mode' => 'ipvs'
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has ipvs in mode:' do
       expect(config_yaml[2]['mode']).to include('ipvs')
     end
@@ -459,16 +472,18 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       {
         'kubernetes_version' => '1.14.2',
         'metrics_bind_address' => '0.0.0.0',
-        'kube_api_bind_port' => 12_345,
+        'kube_api_bind_port' => 12_345
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0.0.0.0 in metrics_bind_address:' do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
+
     it 'has 12345 in kube_api_bind_port:' do
       expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12_345)
     end
@@ -479,16 +494,18 @@ describe 'kubernetes::config::kubeadm', :type => :class do
       {
         'kubernetes_version' => '1.16.3',
         'metrics_bind_address' => '0.0.0.0',
-        'kube_api_bind_port' => 12_345,
+        'kube_api_bind_port' => 12_345
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0.0.0.0 in metrics_bind_address:' do
       expect(config_yaml[2]['metricsBindAddress']).to include('0.0.0.0')
     end
+
     it 'has 12345 in kube_api_bind_port:' do
       expect(config_yaml[0]['localAPIEndpoint']['bindPort']).to eq(12_345)
     end
@@ -498,7 +515,7 @@ describe 'kubernetes::config::kubeadm', :type => :class do
     let(:params) do
       {
         'kubernetes_version' => '1.14.2',
-        'metrics_bind_address' => 'invalid',
+        'metrics_bind_address' => 'invalid'
       }
     end
 
@@ -512,22 +529,26 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'conntrack_max_per_core' => 0,
         'conntrack_min' => 0,
         'conntrack_tcp_wait_timeout' => '0h0m0s',
-        'conntrack_tcp_stablished_timeout' => '0h0m0s',
+        'conntrack_tcp_stablished_timeout' => '0h0m0s'
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0 in kube_proxy_conntrack_max_per_core:' do
       expect(config_yaml[2]['conntrack']['maxPerCore']).to eq(0)
     end
+
     it 'has 0 in kube_proxy_conntrack_min:' do
       expect(config_yaml[2]['conntrack']['min']).to eq(0)
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_wait_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpCloseWaitTimeout']).to eq('0h0m0s')
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_stablished_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
@@ -540,22 +561,26 @@ describe 'kubernetes::config::kubeadm', :type => :class do
         'conntrack_max_per_core' => 0,
         'conntrack_min' => 0,
         'conntrack_tcp_wait_timeout' => '0h0m0s',
-        'conntrack_tcp_stablished_timeout' => '0h0m0s',
+        'conntrack_tcp_stablished_timeout' => '0h0m0s'
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
+
     it 'has 0 in kube_proxy_conntrack_max_per_core:' do
       expect(config_yaml[2]['conntrack']['maxPerCore']).to eq(0)
     end
+
     it 'has 0 in kube_proxy_conntrack_min:' do
       expect(config_yaml[2]['conntrack']['min']).to eq(0)
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_wait_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpCloseWaitTimeout']).to eq('0h0m0s')
     end
+
     it 'has 0h0m0s in kube_proxy_conntrack_tcp_stablished_timeout:' do
       expect(config_yaml[2]['conntrack']['tcpEstablishedTimeout']).to eq('0h0m0s')
     end
@@ -564,14 +589,14 @@ describe 'kubernetes::config::kubeadm', :type => :class do
   context 'set role control-plane' do
     let(:params) do
       {
-        'kubernetes_version' => '1.20.0',
+        'kubernetes_version' => '1.20.0'
       }
     end
 
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it {
-      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
+      expect(subject).to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{key: node-role.kubernetes.io/control-plane\n})
     }
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'kubernetes' do
   on_supported_os.each do |os, os_facts|
@@ -5,7 +7,7 @@ describe 'kubernetes' do
       let(:facts) do
         os_facts.merge({
                          ec2_metadata: {
-                           hostname: 'ip-10-10-10-1.ec2.internal',
+                           hostname: 'ip-10-10-10-1.ec2.internal'
                          }
                        })
       end
@@ -16,7 +18,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             controller: true,
-           worker: true,
+            worker: true
           }
         end
 
@@ -26,7 +28,7 @@ describe 'kubernetes' do
       context 'with controller => true' do
         let(:params) do
           {
-            controller: true,
+            controller: true
           }
         end
 
@@ -42,7 +44,7 @@ describe 'kubernetes' do
       context 'with worker => true and version => 1.10.2' do
         let(:params) do
           {
-            worker: true,
+            worker: true
           }
         end
 
@@ -57,8 +59,8 @@ describe 'kubernetes' do
       context 'with worker => true and version => 1.12.2' do
         let(:params) do
           {
-            worker:  true,
-          kubernetes_version: '1.12.2',
+            worker: true,
+            kubernetes_version: '1.12.2'
           }
         end
 
@@ -69,9 +71,9 @@ describe 'kubernetes' do
       context 'with node_label => foo and cloud_provider => undef' do
         let(:params) do
           {
-            :worker => true,
-          :node_label => 'foo',
-          :cloud_provider => :undef,
+            worker: true,
+            node_label: 'foo',
+            cloud_provider: :undef
           }
         end
 
@@ -82,8 +84,8 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-          node_label: 'foo',
-          cloud_provider: 'aws',
+            node_label: 'foo',
+            cloud_provider: 'aws'
           }
         end
 
@@ -93,9 +95,9 @@ describe 'kubernetes' do
       context 'with node_label => undef and cloud_provider => aws' do
         let(:params) do
           {
-            :worker => true,
-          :node_label => :undef,
-          :cloud_provider => 'aws',
+            worker: true,
+            node_label: :undef,
+            cloud_provider: 'aws'
           }
         end
 
@@ -106,7 +108,7 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-          node_label: 'hostname;rm -rf /',
+            node_label: 'hostname;rm -rf /'
           }
         end
 
