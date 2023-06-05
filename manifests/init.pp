@@ -53,7 +53,7 @@
 # [*containerd_config_template*]
 #   The template to use for containerd configuration
 #   This value is ignored if containerd_config_source is defined
-#   Default to 'kubernetes/containerd/config.toml.erb'
+#   Default to 'kubernetes/containerd/config.toml.epp'
 #
 # [*containerd_config_source*]
 #   The source of the containerd configuration
@@ -686,7 +686,7 @@ class kubernetes (
   Optional[String] $containerd_archive_checksum           = undef,
   String $containerd_source                               =
     "https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}",
-  String $containerd_config_template                      = 'kubernetes/containerd/config.toml.erb',
+  String $containerd_config_template                      = 'kubernetes/containerd/config.toml.epp',
   Variant[Stdlib::Unixpath, String] $containerd_socket    = '/run/containerd/containerd.sock',
   Optional[String] $containerd_config_source              = undef,
   Hash $containerd_plugins_registry                       = {
