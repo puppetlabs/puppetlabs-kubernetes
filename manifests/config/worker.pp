@@ -61,7 +61,7 @@
 #   Defaults to false
 # @param cgroup_driver
 #   The cgroup driver to be used.
-#   Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+#   Defaults to 'systemd'
 # @param skip_phases_join
 #   Allow kubeadm join to skip some phases
 #   Only works with Kubernetes 1.22+

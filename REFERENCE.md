@@ -1073,7 +1073,7 @@ Defaults to ""
 
 [*cgroup_driver*]
  The cgroup driver to be used.
- Defaults to 'systemd' on EL and 'cgroupfs' otherwise
+ Defaults to 'systemd'
 
 [*environment*]
 The environment passed to kubectl commands.
@@ -2290,13 +2290,8 @@ Data type: `String`
 
 
 
-Default value:
+Default value: `'systemd'`
 
-```puppet
-$facts['os']['family'] ? {
-    'RedHat' => 'systemd',
-    default  => 'cgroupfs'
-```
 
 ##### <a name="-kubernetes--environment"></a>`environment`
 
