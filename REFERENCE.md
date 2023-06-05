@@ -626,7 +626,7 @@ the files if they do not exist.
 [*containerd_config_template*]
   The template to use for containerd configuration
   This value is ignored if containerd_config_source is defined
-  Default to 'kubernetes/containerd/config.toml.erb'
+  Default to 'kubernetes/containerd/config.toml.epp'
 
 [*containerd_config_source*]
   The source of the containerd configuration
@@ -1946,7 +1946,7 @@ Data type: `String`
 
 
 
-Default value: `'kubernetes/containerd/config.toml.erb'`
+Default value: `'kubernetes/containerd/config.toml.epp'`
 
 ##### <a name="-kubernetes--containerd_socket"></a>`containerd_socket`
 

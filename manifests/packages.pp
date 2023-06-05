@@ -55,7 +55,7 @@
 #   Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 # @param containerd_config_template
 #   The template to use for containerd configuration
-#   This value is ignored if containerd_config_source is defined. Default to 'kubernetes/containerd/config.toml.erb'
+#   This value is ignored if containerd_config_source is defined. Default to 'kubernetes/containerd/config.toml.epp'
 # @param containerd_config_source
 #   The source of the containerd configuration
 #   This value overrides containerd_config_template. Default to undef
@@ -350,7 +350,13 @@ class kubernetes::packages (
         if $containerd_config_source {
           $_containerd_config_content = undef
         } else {
-          $_containerd_config_content = template($containerd_config_template)
+          $_containerd_config_content = stdlib::deferrable_epp($containerd_config_template, {
+              'containerd_plugins_registry' => $containerd_plugins_registry,
+              'containerd_socket' => $containerd_socket,
+              'containerd_sandbox_image' => $containerd_sandbox_image,
+              'docker_cgroup_driver' => $docker_cgroup_driver,
+              'containerd_default_runtime_name' => $containerd_default_runtime_name,
+          })
         }
         # Generate using 'containerd config default'
         file { '/etc/containerd/config.toml':
@@ -379,7 +385,13 @@ class kubernetes::packages (
         if $containerd_config_source {
           $_containerd_config_content = undef
         } else {
-          $_containerd_config_content = template($containerd_config_template)
+          $_containerd_config_content = stdlib::deferrable_epp($containerd_config_template, {
+              'containerd_plugins_registry' => $containerd_plugins_registry,
+              'containerd_socket' => $containerd_socket,
+              'containerd_sandbox_image' => $containerd_sandbox_image,
+              'docker_cgroup_driver' => $docker_cgroup_driver,
+              'containerd_default_runtime_name' => $containerd_default_runtime_name,
+          })
         }
         # Generate using 'containerd config default'
         file { '/etc/containerd/config.toml':
@@ -430,7 +442,13 @@ class kubernetes::packages (
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
-      content => template('kubernetes/containerd/config.toml.erb'),
+      content => stdlib::deferrable_epp('kubernetes/containerd/config.toml.epp', {
+          'containerd_plugins_registry'     => $containerd_plugins_registry,
+          'containerd_socket'               => $containerd_socket,
+          'containerd_sandbox_image'        => $containerd_sandbox_image,
+          'docker_cgroup_driver'            => $docker_cgroup_driver,
+          'containerd_default_runtime_name' => $containerd_default_runtime_name,
+      }),
       require => [File['/etc/containerd'], Archive[$containerd_archive]],
       notify  => Service['containerd'],
     }

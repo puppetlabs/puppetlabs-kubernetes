@@ -7,7 +7,7 @@ required_plugins = []
 oom_score = 0
 
 [grpc]
-  address = "<%= @containerd_socket -%>"
+  address = "<%= $containerd_socket -%>"
   tcp_address = ""
   tcp_tls_cert = ""
   tcp_tls_key = ""
@@ -54,7 +54,7 @@ oom_score = 0
     stream_idle_timeout = "4h0m0s"
     enable_selinux = false
     selinux_category_range = 1024
-    sandbox_image = "<%= @containerd_sandbox_image %>"
+    sandbox_image = "<%= $containerd_sandbox_image %>"
     stats_collect_period = 10
     systemd_cgroup = false
     enable_tls_streaming = false
@@ -70,7 +70,7 @@ oom_score = 0
     ignore_image_defined_volumes = false
     [plugins."io.containerd.grpc.v1.cri".containerd]
       snapshotter = "overlayfs"
-      default_runtime_name = "<%= @containerd_default_runtime_name %>"
+      default_runtime_name = "<%= $containerd_default_runtime_name %>"
       no_pivot = false
       disable_snapshot_annotations = true
       discard_unpacked_layers = false
@@ -94,10 +94,10 @@ oom_score = 0
           privileged_without_host_devices = false
           base_runtime_spec = ""
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-<%- if @docker_cgroup_driver == 'systemd' -%>
+<% if $docker_cgroup_driver == 'systemd' { -%>
             SystemdCgroup = true
-<%- end -%>
-<%- if @containerd_default_runtime_name == 'nvidia' -%>
+<% } -%>
+<% if $containerd_default_runtime_name == 'nvidia' { -%>
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
           runtime_type = "io.containerd.runc.v2"
           runtime_engine = ""
@@ -106,7 +106,7 @@ oom_score = 0
           base_runtime_spec = ""
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
             BinaryName = "/usr/bin/nvidia-container-runtime"
-<%- end -%>
+<% } -%>
     [plugins."io.containerd.grpc.v1.cri".cni]
       bin_dir = "/opt/cni/bin"
       conf_dir = "/etc/cni/net.d"
@@ -114,49 +114,49 @@ oom_score = 0
       conf_template = ""
     [plugins."io.containerd.grpc.v1.cri".registry]
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-      <%- @containerd_plugins_registry.each do |registry, sections| -%>
-      <%- if sections['mirrors'] and not sections['mirrors'].empty? -%>
-        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."<%= registry %>"]
-        <%- if sections['mirrors']['endpoint'] -%>
-          endpoint = ["<%= sections['mirrors']['endpoint'] %>"]
-        <%- end -%>
-      <%- end -%>
-      <%- end -%>
+      <% $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
+      <% if $sections['mirrors'] and !$sections['mirrors'].empty { -%>
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."<%= $registry %>"]
+        <% if $sections['mirrors']['endpoint'] { -%>
+          endpoint = ["<%= $sections['mirrors']['endpoint'] %>"]
+        <% } -%>
+      <% } -%>
+      <% } -%>
       [plugins."io.containerd.grpc.v1.cri".registry.configs]
-      <%- @containerd_plugins_registry.each do |registry, sections| -%>
-      <%- if sections['auth'] and not sections['auth'].empty? -%>
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= registry %>".auth]
-        <%- if sections['auth']['username'] -%>
-          username = "<%= sections['auth']['username'] %>"
-        <%- end -%>
-        <%- if sections['auth']['password'] -%>
-          password = "<%= sections['auth']['password'] %>"
-        <%- end -%>
-        <%- if sections['auth']['auth'] -%>
-          auth = "<%= sections['auth']['auth'] %>"
-        <%- end -%>
-        <%- if sections['auth']['identitytoken'] -%>
-          identitytoken = "<%= sections['auth']['identitytoken'] %>"
-        <%- end -%>
-      <%- end -%>
-      <%- end -%>
-      <%- @containerd_plugins_registry.each do |registry, sections| -%>
-      <%- if sections['tls'] and not sections['tls'].empty? -%>
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= registry %>".tls]
-        <%- if sections['tls']['ca_file'] -%>
-          ca_file = "<%= sections['tls']['ca_file'] %>"
-        <%- end -%>
-        <%- if sections['tls']['cert_file'] -%>
-          cert_file = "<%= sections['tls']['cert_file'] %>"
-        <%- end -%>
-        <%- if sections['tls']['key_file'] -%>
-          key_file = "<%= sections['tls']['key_file'] %>"
-        <%- end -%>
-        <%- if sections['tls']['insecure_skip_verify'] -%>
-          insecure_skip_verify = <%= sections['tls']['insecure_skip_verify'] %>
-        <%- end -%>
-      <%- end -%>
-      <%- end -%>
+      <% $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
+      <% if $sections['auth'] and !$sections['auth'].empty { -%>
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= $registry %>".auth]
+        <% if $sections['auth']['username'] { -%>
+          username = "<%= $sections['auth']['username'] %>"
+        <% } -%>
+        <% if $sections['auth']['password'] { -%>
+          password = "<%= $sections['auth']['password'] %>"
+        <% } -%>
+        <% if $sections['auth']['auth'] { -%>
+          auth = "<%= $sections['auth']['auth'] %>"
+        <% } -%>
+        <% if $sections['auth']['identitytoken'] { -%>
+          identitytoken = "<%= $sections['auth']['identitytoken'] %>"
+        <% } -%>
+      <% } -%>
+      <% } -%>
+      <% $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
+      <% if $sections['tls'] and !$sections['tls'].empty { -%>
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= $registry %>".tls]
+        <% if $sections['tls']['ca_file'] { -%>
+          ca_file = "<%= $sections['tls']['ca_file'] %>"
+        <% } -%>
+        <% if $sections['tls']['cert_file'] { -%>
+          cert_file = "<%= $sections['tls']['cert_file'] %>"
+        <% } -%>
+        <% if $sections['tls']['key_file'] { -%>
+          key_file = "<%= $sections['tls']['key_file'] %>"
+        <% } -%>
+        <% if $sections['tls']['insecure_skip_verify'] { -%>
+          insecure_skip_verify = <%= $sections['tls']['insecure_skip_verify'] %>
+        <% } -%>
+      <% } -%>
+      <% } -%>
     [plugins."io.containerd.grpc.v1.cri".image_decryption]
       key_model = ""
     [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
