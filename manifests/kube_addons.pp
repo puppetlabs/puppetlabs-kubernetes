@@ -79,7 +79,7 @@ class kubernetes::kube_addons (
       'calico-tigera': {
         if $cni_network_preinstall {
           exec { 'Install cni network (preinstall)':
-            command     => ['kubectl', 'apply', '-f', $cni_network_preinstall],
+            command     => ['kubectl', 'create', '-f', $cni_network_preinstall],
             onlyif      => $exec_onlyif,
             unless      => 'kubectl -n tigera-operator get deployments | egrep "^tigera-operator"',
             environment => $env,
@@ -110,7 +110,7 @@ class kubernetes::kube_addons (
       }
       'flannel': {
         exec { 'Install cni network provider':
-          command     => ['kubectl', 'apply', '-f', $cni_network_provider],
+          command     => ['kubectl', 'create', '-f', $cni_network_provider],
           onlyif      => $exec_onlyif,
           unless      => 'kubectl -n kube-flannel get daemonset | egrep "^kube-flannel"',
           environment => $env,

@@ -30,8 +30,8 @@ class OtherParams
       cni_network_provider = "https://docs.projectcalico.org/archive/v#{opts[:cni_provider_version]}/manifests/calico.yaml"
       cni_pod_cidr = '192.168.0.0/16'
     when 'calico-tigera'
-      cni_network_preinstall = 'https://docs.projectcalico.org/manifests/tigera-operator.yaml'
-      cni_network_provider = 'https://docs.projectcalico.org/manifests/custom-resources.yaml'
+      cni_network_preinstall = "https://raw.githubusercontent.com/projectcalico/calico/v#{opts[:cni_provider_version]}/manifests/tigera-operator.yaml"
+      cni_network_provider = "https://raw.githubusercontent.com/projectcalico/calico/v#{opts[:cni_provider_version]}/manifests/custom-resources.yaml"
       cni_pod_cidr = '192.168.0.0/16'
     when 'cilium'
       cni_pod_cidr = '10.244.0.0/16'
