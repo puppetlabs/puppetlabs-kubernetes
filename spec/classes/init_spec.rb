@@ -72,13 +72,8 @@ describe 'kubernetes' do
         let(:params) do
           {
             worker: true,
-<<<<<<< HEAD
             node_label: 'foo',
             cloud_provider: :undef
-=======
-          node_label: 'foo',
-          cloud_provider: :undef,
->>>>>>> 565bf33 (Fix ruby 1.8 style hashes.)
           }
         end
 
