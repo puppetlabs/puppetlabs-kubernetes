@@ -128,6 +128,27 @@ class {'kubernetes':
 }
 ```
 
+#### Network Plugins
+
+Kubernetes supports multiple [networking plugins](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/) that implements the [networking model](https://kubernetes.io/docs/concepts/services-networking/#the-kubernetes-network-model).
+
+This module supports following [Container Network Interface](https://github.com/containernetworking/cni) (CNI) plugins:
+
+- `flannel`
+```yaml
+kubernetes::cni_network_provider: https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+kubernetes::cni_pod_cidr: 10.244.0.0/16
+kubernetes::cni_provider: flannel
+```
+- `weave`
+- `calico-node`
+- `cilium`
+```yaml
+kubernetes::cni_network_provider: https://raw.githubusercontent.com/cilium/cilium/1.4.3/examples/kubernetes/1.26/cilium.yaml
+kubernetes::cni_pod_cidr: 10.244.0.0/16
+kubernetes::cni_provider: cilium
+```
+
 #### Installing Kubernetes on different OS
 
 Currently, `puppetlab-kubernetes` is compatible with Ubuntu Xenial. For different OS, below parameters can be assigned.
