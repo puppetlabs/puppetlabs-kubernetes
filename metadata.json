@@ -18,7 +18,7 @@
     },
     {
       "name": "puppet-archive",
-      "version_requirement": ">= 2.0.0 < 7.0.0"
+      "version_requirement": ">= 2.0.0 < 8.0.0"
     },
     {
       "name": "puppet-augeasproviders_sysctl",
@@ -26,7 +26,7 @@
     },
     {
       "name": "puppet-augeasproviders_core",
-      "version_requirement": ">= 2.1.0 < 4.0.0"
+      "version_requirement": ">= 2.1.0 < 5.0.0"
     },
     {
       "name": "puppet-kmod",
