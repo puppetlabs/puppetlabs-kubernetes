@@ -25,10 +25,6 @@ Rakefile:
       end
   extra_disabled_lint_checks:
     - params_empty_string_assignment
-
-.rubocop.yml:
-  include_todos:
-    inherit_from: '.rubocop_todo.yml'
   profiles:
     strict:
       configs:
