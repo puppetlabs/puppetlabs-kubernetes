@@ -41,7 +41,10 @@ Rakefile:
           - rakelib/*
           - plans/*.pp
           - tasks/*
-
+spec/default_facts.yml:
+  extra_facts:
+    networking:
+      hostname: "kubernetes.localhost"
 spec/spec_helper.rb:
   mock_with: ':rspec'
   coverage_report: true
