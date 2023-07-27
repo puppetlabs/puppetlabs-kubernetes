@@ -14,7 +14,9 @@ fixtures:
     puppet_agent:
       repo: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
       ref: v4.13.0
-    provision: 'https://github.com/puppetlabs/provision.git'
+    provision:
+      repo: 'https://github.com/puppetlabs/provision.git'
+      branch: CAT-1211-bolt-command-failure
     yumrepo_core:
       repo: https://github.com/puppetlabs/puppetlabs-yumrepo_core.git
       puppet_version: ">= 6.0.0"

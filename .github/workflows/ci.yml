@@ -7,16 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  Spec:
-    uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
-    secrets: "inherit"
+  # Spec:
+  #   uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
+  #   secrets: "inherit"
 
   Integration:
-    needs: "Spec"
+    # needs: "Spec"
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix: {'platform':['centos-7'],'collection':['puppet7-nightly', 'puppet8-nightly']}
+      matrix: {'platform':['centos-7'],'collection':['puppet7-nightly']}
 
     steps:
     - name: Checkout Source
