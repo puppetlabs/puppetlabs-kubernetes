@@ -106,12 +106,31 @@ class kubernetes::config::worker (
     recurse => true,
   }
 
+  $config_worker_params = {
+    'kubernetes_cluster_name' => $kubernetes_cluster_name,
+    'discovery_token' => $discovery_token,
+    'controller_address' => $controller_address,
+    'discovery_token_hash' => $discovery_token_hash,
+    'skip_ca_verification' => $skip_ca_verification,
+    'feature_gates' => $feature_gates,
+    'tls_bootstrap_token' => $tls_bootstrap_token,
+    'token' => $token,
+    'node_name' => $node_name,
+    'node_extra_taints' => $node_extra_taints,
+    'container_runtime' => $container_runtime,
+    'cgroup_driver' => $cgroup_driver,
+    'cloud_provider' => $cloud_provider,
+    'cloud_config' => $cloud_config,
+    'kubelet_extra_arguments' => $kubelet_extra_arguments,
+    'skip_phases_join' => $skip_phases_join,
+  }
+
   file { $config_file:
     ensure    => file,
     owner     => 'root',
     group     => 'root',
     mode      => '0644',
-    content   => template("kubernetes/${template}/config_worker.yaml.erb"),
+    content   => epp("kubernetes/${template}/config_worker.yaml.epp", $config_worker_params),
     show_diff => false,
   }
 }
