@@ -1,2 +1,0 @@
-kubernetes::kubernetes_yum_baseurl: 'https://pkgs.k8s.io/core:/stable:'
-kubernetes::docker_yum_baseurl: 'https://download.docker.com/linux'
