@@ -65,13 +65,17 @@ class kubernetes::repos (
   if $create_repos {
     $parts = split($kubernetes_version, '[.]')
     $minor_version = "${parts[0]}.${parts[1]}"
+    $_repos = $kubernetes_apt_repos ? {
+      undef   => '',
+      default => $kubernetes_apt_repos
+    }
     case $facts['os']['family'] {
       'Debian': {
         $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
           location => pick($kubernetes_apt_location,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb"),
           release  => pick($kubernetes_apt_release, '/'),
-          repos    => $kubernetes_apt_repos,
+          repos    => $_repos,
           key      => {
             'id'     => pick($kubernetes_key_id,'DE15B14486CD377B9E876E1A234654DA9A296436'),
             'source' => pick($kubernetes_key_source,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb/Release.key"),

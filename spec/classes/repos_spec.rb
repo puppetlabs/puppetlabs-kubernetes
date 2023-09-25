@@ -53,6 +53,11 @@ describe 'kubernetes::repos', type: :class do
     }
 
     it {
+      expect(subject).to contain_file('/etc/apt/sources.list.d/kubernetes.list')
+      .with_content(%r{^deb https://pkgs.k8s.io/core:/stable:/v1.28/deb /\s$})
+    }
+
+    it {
       expect(subject).to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/ubuntu',
