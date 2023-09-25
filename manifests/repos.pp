@@ -71,17 +71,39 @@ class kubernetes::repos (
     }
     case $facts['os']['family'] {
       'Debian': {
-        $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
           location => pick($kubernetes_apt_location,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb"),
           release  => pick($kubernetes_apt_release, '/'),
           repos    => $_repos,
-          key      => {
-            'id'     => pick($kubernetes_key_id,'DE15B14486CD377B9E876E1A234654DA9A296436'),
-            'source' => pick($kubernetes_key_source,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb/Release.key"),
-          },
         }
 
+        if $kubernetes_apt_location =~ String[1] {
+          Apt::Source<| title == 'kubernetes' |> {
+            key => {
+              'id'     => $kubernetes_key_id,
+              'source' => $kubernetes_key_source,
+            }
+          }
+        } else {
+          # For pkgs.k8s.io use GPG siging key
+          $_keyring = '/usr/share/keyrings/kubernetes-apt-keyring.gpg'
+          # TODO: Switch to apt::keyring once supported by puppetlabs-apt
+          # see: https://github.com/puppetlabs/puppetlabs-apt/pull/1128
+          archive { '/tmp/kubernetes-apt-keyring.gpg':
+            source          => "https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb/Release.key",
+            extract         => true,
+            extract_path    => '/usr/share/keyrings',
+            extract_command => 'gpg --dearmor < %s > kubernetes-apt-keyring.gpg',
+            creates         => $_keyring,
+          }
+
+          Apt::Source<| title == 'kubernetes' |> {
+            keyring  => $_keyring,
+            require  => Archive['/tmp/kubernetes-apt-keyring.gpg'],
+          }
+        }
+
+        $codename = fact('os.distro.codename')
         if ($container_runtime == 'docker' and $manage_docker == true) or
         ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           apt::source { 'docker':

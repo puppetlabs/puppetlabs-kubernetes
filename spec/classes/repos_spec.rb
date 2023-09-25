@@ -48,13 +48,13 @@ describe 'kubernetes::repos', type: :class do
         ensure: 'present',
         location: 'https://pkgs.k8s.io/core:/stable:/v1.28/deb',
         release: '/',
-        key: { 'id' => 'DE15B14486CD377B9E876E1A234654DA9A296436', 'source' => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key' },
+        keyring: '/usr/share/keyrings/kubernetes-apt-keyring.gpg',
       )
     }
 
     it {
       expect(subject).to contain_file('/etc/apt/sources.list.d/kubernetes.list')
-      .with_content(%r{^deb https://pkgs.k8s.io/core:/stable:/v1.28/deb /\s$})
+        .with_content(%r{^deb \[signed-by=/usr/share/keyrings/kubernetes-apt-keyring.gpg\] https://pkgs.k8s.io/core:/stable:/v1.28/deb /\s$})
     }
 
     it {
