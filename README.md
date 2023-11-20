@@ -16,8 +16,9 @@
    * [Defined types](#definedtypes)
    * [Parameters](#parameters)
 4. [Limitations - OS compatibility, etc.](#limitations)
-5. [Development - Guide for contributing to the module](#development)
-6. [Examples - Puppet Bolt task examples](#examples)
+5. [License](#license)
+6. [Development - Guide for contributing to the module](#development)
+7. [Examples - Puppet Bolt task examples](#examples)
 
 ## Description
 
@@ -927,6 +928,10 @@ This module has been tested on the following operating systems:
 * Ubuntu 16.04
 
 Docker is the supported container runtime for this module.
+
+## License
+
+This codebase is licensed under the Apache2.0 licensing, however due to the nature of the codebase the open source dependencies may also use a combination of [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html), [BSD-2](https://opensource.org/license/bsd-2-claus), [BSD-3](https://opensource.org/license/bsd-3-claus), [GPL2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html), [LGPL](https://opensource.org/license/lgpl-3-0/), [MIT](https://opensource.org/license/mit/) and [MPL](https://opensource.org/license/mpl-2-0/) Licensing.
 
 ## Development
 
