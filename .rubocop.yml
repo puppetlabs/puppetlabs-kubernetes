@@ -9,7 +9,7 @@ AllCops:
   DisplayCopNames: true
   ExtraDetails: true
   DisplayStyleGuide: true
-  TargetRubyVersion: '2.6'
+  TargetRubyVersion: '2.7'
   Include:
   - "**/*.rb"
   Exclude:
