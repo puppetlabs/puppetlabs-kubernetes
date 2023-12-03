@@ -73,7 +73,7 @@ describe 'kubernetes::kube_addons', type: :class do
         when 'calico-tigera'
           it {
             expect(subject).to contain_exec('Install cni network (preinstall)').with({
-                                                                                       command: ['kubectl', 'apply', '-f', 'https://foo.test/tigera-operator'],
+                                                                                       command: ['kubectl', 'create', '-f', 'https://foo.test/tigera-operator'],
                                                                                        onlyif: 'kubectl get nodes'
                                                                                      })
           }
@@ -86,7 +86,7 @@ describe 'kubernetes::kube_addons', type: :class do
             expect(subject).to contain_exec('Install cni network provider').with(
               {
                 onlyif: ['kubectl get nodes'],
-                command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+                command: ['kubectl', 'create', '-f', "https://#{provider}.test"],
                 unless: ['kubectl -n kube-flannel get daemonset | egrep "^kube-flannel"']
               },
             )
