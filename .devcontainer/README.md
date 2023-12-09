@@ -1,38 +1,37 @@
 # devcontainer
 
-
-For format details, see https://aka.ms/devcontainer.json. 
+For format details, see https://aka.ms/devcontainer.json.
 
 For config options, see the README at:
 https://github.com/microsoft/vscode-dev-containers/tree/v0.140.1/containers/puppet
- 
-``` json
+
+```json
 {
-	"name": "Puppet Development Kit (Community)",
-	"dockerFile": "Dockerfile",
+  "name": "Puppet Development Kit (Community)",
+  "dockerFile": "Dockerfile",
+  "customizations": {
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+          }
+        }
+      },
 
-	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"terminal.integrated.profiles.linux": {
-			"bash": {
-				"path": "bash",
-			}
-		}
-	},
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "puppet.puppet-vscode",
+        "shopify.ruby-lsp"
+      ]
+    }
+  }
 
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"puppet.puppet-vscode",
-		"rebornix.Ruby"
-	],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [],
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pdk --version",
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "pdk --version",
 }
 ```
-
-
-
