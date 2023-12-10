@@ -219,71 +219,71 @@
 #   Default: undefined, no feature gates
 #
 class kubernetes::config::kubeadm (
-  String $config_file = $kubernetes::config_file,
-  String $controller_address = $kubernetes::controller_address,
-  String $dns_domain = $kubernetes::dns_domain,
-  Boolean $manage_etcd = $kubernetes::manage_etcd,
-  Boolean $delegated_pki = $kubernetes::delegated_pki,
-  String $etcd_install_method = $kubernetes::etcd_install_method,
-  String $kubernetes_version  = $kubernetes::kubernetes_version,
-  String $kubernetes_cluster_name  = $kubernetes::kubernetes_cluster_name,
-  Optional[String] $etcd_ca_key = $kubernetes::etcd_ca_key,
-  Optional[String] $etcd_ca_crt = $kubernetes::etcd_ca_crt,
-  Optional[String] $etcdclient_key = $kubernetes::etcdclient_key,
-  Optional[String] $etcdclient_crt = $kubernetes::etcdclient_crt,
-  Optional[String] $etcdserver_crt = $kubernetes::etcdserver_crt,
-  Optional[String] $etcdserver_key = $kubernetes::etcdserver_key,
-  Optional[String] $etcdpeer_crt = $kubernetes::etcdpeer_crt,
-  Optional[String] $etcdpeer_key = $kubernetes::etcdpeer_key,
-  Array $etcd_peers = $kubernetes::etcd_peers,
-  String $etcd_hostname = $kubernetes::etcd_hostname,
-  String $etcd_data_dir = $kubernetes::etcd_data_dir,
-  String $etcd_ip = $kubernetes::etcd_ip,
-  String $cni_pod_cidr = $kubernetes::cni_pod_cidr,
-  Integer $kube_api_bind_port = $kubernetes::kube_api_bind_port,
-  String $kube_api_advertise_address = $kubernetes::kube_api_advertise_address,
-  Optional[String] $etcd_initial_cluster = $kubernetes::etcd_initial_cluster,
-  Optional[String] $etcd_discovery_srv = $kubernetes::etcd_discovery_srv,
-  String $etcd_initial_cluster_state = $kubernetes::etcd_initial_cluster_state,
-  String $etcd_compaction_method = $kubernetes::etcd_compaction_method,
-  Variant[Integer,String] $etcd_compaction_retention = $kubernetes::etcd_compaction_retention,
-  Integer $api_server_count = $kubernetes::api_server_count,
-  String $etcd_version = $kubernetes::etcd_version,
-  Integer $etcd_max_wals = $kubernetes::etcd_max_wals,
-  Integer $etcd_max_request_bytes = $kubernetes::etcd_max_request_bytes,
-  Optional[String] $etcd_listen_metric_urls = $kubernetes::etcd_listen_metric_urls,
-  String $token = $kubernetes::token,
-  String $ttl_duration = $kubernetes::ttl_duration,
-  String $discovery_token_hash = $kubernetes::discovery_token_hash,
-  Optional[String] $kubernetes_ca_crt = $kubernetes::kubernetes_ca_crt,
-  Optional[String] $kubernetes_ca_key = $kubernetes::kubernetes_ca_key,
-  Optional[String] $kubernetes_front_proxy_ca_crt = $kubernetes::kubernetes_front_proxy_ca_crt,
-  Optional[String] $kubernetes_front_proxy_ca_key = $kubernetes::kubernetes_front_proxy_ca_key,
-  String $container_runtime = $kubernetes::container_runtime,
-  Optional[String] $sa_pub = $kubernetes::sa_pub,
-  Optional[String] $sa_key = $kubernetes::sa_key,
-  Optional[Array] $apiserver_cert_extra_sans = $kubernetes::apiserver_cert_extra_sans,
-  Optional[Array] $apiserver_extra_arguments = $kubernetes::apiserver_extra_arguments,
-  Optional[Array] $controllermanager_extra_arguments = $kubernetes::controllermanager_extra_arguments,
-  Optional[Array] $scheduler_extra_arguments = $kubernetes::scheduler_extra_arguments,
-  Optional[Array] $kubelet_extra_arguments = $kubernetes::kubelet_extra_arguments,
-  String $service_cidr = $kubernetes::service_cidr,
-  Stdlib::Fqdn $node_name = $kubernetes::node_name,
-  Optional[String] $cloud_provider = $kubernetes::cloud_provider,
-  Optional[String] $cloud_config = $kubernetes::cloud_config,
-  Optional[Hash] $apiserver_extra_volumes = $kubernetes::apiserver_extra_volumes,
-  Optional[Hash] $controllermanager_extra_volumes = $kubernetes::controllermanager_extra_volumes,
-  Optional[Hash] $kubeadm_extra_config = $kubernetes::kubeadm_extra_config,
-  Optional[Hash] $kubelet_extra_config = $kubernetes::kubelet_extra_config,
-  String $image_repository = $kubernetes::image_repository,
-  String $cgroup_driver = $kubernetes::cgroup_driver,
-  String $proxy_mode = $kubernetes::proxy_mode,
-  Stdlib::IP::Address $metrics_bind_address = $kubernetes::metrics_bind_address,
-  Integer $conntrack_max_per_core = $kubernetes::conntrack_max_per_core,
-  Integer $conntrack_min = $kubernetes::conntrack_min,
-  String $conntrack_tcp_wait_timeout = $kubernetes::conntrack_tcp_wait_timeout,
-  String $conntrack_tcp_stablished_timeout = $kubernetes::conntrack_tcp_stablished_timeout,
-  Hash[String[1], Boolean] $feature_gates = $kubernetes::feature_gates,
+  String $config_file                                 = $kubernetes::config_file,
+  String $controller_address                          = $kubernetes::controller_address,
+  String $dns_domain                                  = $kubernetes::dns_domain,
+  Boolean $manage_etcd                                = $kubernetes::manage_etcd,
+  Boolean $delegated_pki                              = $kubernetes::delegated_pki,
+  String $etcd_install_method                         = $kubernetes::etcd_install_method,
+  String $kubernetes_version                          = $kubernetes::kubernetes_version,
+  String $kubernetes_cluster_name                     = $kubernetes::kubernetes_cluster_name,
+  Optional[String] $etcd_ca_key                       = $kubernetes::etcd_ca_key,
+  Optional[String] $etcd_ca_crt                       = $kubernetes::etcd_ca_crt,
+  Optional[String] $etcdclient_key                    = $kubernetes::etcdclient_key,
+  Optional[String] $etcdclient_crt                    = $kubernetes::etcdclient_crt,
+  Optional[String] $etcdserver_crt                    = $kubernetes::etcdserver_crt,
+  Optional[String] $etcdserver_key                    = $kubernetes::etcdserver_key,
+  Optional[String] $etcdpeer_crt                      = $kubernetes::etcdpeer_crt,
+  Optional[String] $etcdpeer_key                      = $kubernetes::etcdpeer_key,
+  Array $etcd_peers                                   = $kubernetes::etcd_peers,
+  String $etcd_hostname                               = $kubernetes::etcd_hostname,
+  String $etcd_data_dir                               = $kubernetes::etcd_data_dir,
+  String $etcd_ip                                     = $kubernetes::etcd_ip,
+  String $cni_pod_cidr                                = $kubernetes::cni_pod_cidr,
+  Integer $kube_api_bind_port                         = $kubernetes::kube_api_bind_port,
+  String $kube_api_advertise_address                  = $kubernetes::kube_api_advertise_address,
+  Optional[String] $etcd_initial_cluster              = $kubernetes::etcd_initial_cluster,
+  Optional[String] $etcd_discovery_srv                = $kubernetes::etcd_discovery_srv,
+  String $etcd_initial_cluster_state                  = $kubernetes::etcd_initial_cluster_state,
+  String $etcd_compaction_method                      = $kubernetes::etcd_compaction_method,
+  Variant[Integer, String] $etcd_compaction_retention = $kubernetes::etcd_compaction_retention,
+  Integer $api_server_count                           = $kubernetes::api_server_count,
+  String $etcd_version                                = $kubernetes::etcd_version,
+  Integer $etcd_max_wals                              = $kubernetes::etcd_max_wals,
+  Integer $etcd_max_request_bytes                     = $kubernetes::etcd_max_request_bytes,
+  Optional[String] $etcd_listen_metric_urls           = $kubernetes::etcd_listen_metric_urls,
+  String $token                                       = $kubernetes::token,
+  String $ttl_duration                                = $kubernetes::ttl_duration,
+  String $discovery_token_hash                        = $kubernetes::discovery_token_hash,
+  Optional[String] $kubernetes_ca_crt                 = $kubernetes::kubernetes_ca_crt,
+  Optional[String] $kubernetes_ca_key                 = $kubernetes::kubernetes_ca_key,
+  Optional[String] $kubernetes_front_proxy_ca_crt     = $kubernetes::kubernetes_front_proxy_ca_crt,
+  Optional[String] $kubernetes_front_proxy_ca_key     = $kubernetes::kubernetes_front_proxy_ca_key,
+  String $container_runtime                           = $kubernetes::container_runtime,
+  Optional[String] $sa_pub                            = $kubernetes::sa_pub,
+  Optional[String] $sa_key                            = $kubernetes::sa_key,
+  Optional[Array] $apiserver_cert_extra_sans          = $kubernetes::apiserver_cert_extra_sans,
+  Optional[Array] $apiserver_extra_arguments          = $kubernetes::apiserver_extra_arguments,
+  Optional[Array] $controllermanager_extra_arguments  = $kubernetes::controllermanager_extra_arguments,
+  Optional[Array] $scheduler_extra_arguments          = $kubernetes::scheduler_extra_arguments,
+  Optional[Array] $kubelet_extra_arguments            = $kubernetes::kubelet_extra_arguments,
+  String $service_cidr                                = $kubernetes::service_cidr,
+  Stdlib::Fqdn $node_name                             = $kubernetes::node_name,
+  Optional[String] $cloud_provider                    = $kubernetes::cloud_provider,
+  Optional[String] $cloud_config                      = $kubernetes::cloud_config,
+  Optional[Hash] $apiserver_extra_volumes             = $kubernetes::apiserver_extra_volumes,
+  Optional[Hash] $controllermanager_extra_volumes     = $kubernetes::controllermanager_extra_volumes,
+  Optional[Hash] $kubeadm_extra_config                = $kubernetes::kubeadm_extra_config,
+  Optional[Hash] $kubelet_extra_config                = $kubernetes::kubelet_extra_config,
+  String $image_repository                            = $kubernetes::image_repository,
+  String $cgroup_driver                               = $kubernetes::cgroup_driver,
+  String $proxy_mode                                  = $kubernetes::proxy_mode,
+  Stdlib::IP::Address $metrics_bind_address           = $kubernetes::metrics_bind_address,
+  Integer $conntrack_max_per_core                     = $kubernetes::conntrack_max_per_core,
+  Integer $conntrack_min                              = $kubernetes::conntrack_min,
+  String $conntrack_tcp_wait_timeout                  = $kubernetes::conntrack_tcp_wait_timeout,
+  String $conntrack_tcp_stablished_timeout            = $kubernetes::conntrack_tcp_stablished_timeout,
+  Hash[String[1], Boolean] $feature_gates             = $kubernetes::feature_gates,
 ) {
   if !($proxy_mode in ['', 'userspace', 'iptables', 'ipvs', 'kernelspace']) {
     fail('Invalid kube-proxy mode! Must be one of "", userspace, iptables, ipvs, kernelspace.')
@@ -293,45 +293,79 @@ class kubernetes::config::kubeadm (
     fail('One of $etcd_discovery_srv or $etcd_initial_cluster variables must be defined')
   }
 
-  $kube_dirs = ['/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/etc/kubernetes/pki/etcd']
-  $etcd = ['ca.crt', 'ca.key', 'client.crt', 'client.key','peer.crt', 'peer.key', 'server.crt', 'server.key']
-  $pki = ['ca.crt','ca.key','front-proxy-ca.crt','front-proxy-ca.key','sa.pub','sa.key']
+  $kube_dirs = ['/etc/kubernetes', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/pki/etcd']
   $kube_dirs.each | String $dir | {
-    file { $dir :
+    file { $dir:
       ensure  => directory,
       mode    => '0600',
       recurse => true,
     }
   }
 
+  $etcd_params = {
+    'ca.crt'     => $etcd_ca_crt,
+    'ca.key'     => $etcd_ca_key,
+    'client.crt' => $etcdclient_crt,
+    'client.key' => $etcdclient_key,
+    'peer.crt'   => $etcdpeer_crt,
+    'peer.key'   => $etcdpeer_key,
+    'server.crt' => $etcdserver_crt,
+    'server.key' => $etcdserver_key,
+  }
+
   if $manage_etcd {
     if !$delegated_pki {
-      $etcd.each | String $etcd_files | {
-        file { "/etc/kubernetes/pki/etcd/${etcd_files}":
+      $etcd_params.keys.each | $etcd_file | {
+        $file_content = $etcd_params[$etcd_file]
+        file { "/etc/kubernetes/pki/etcd/${etcd_file}":
           ensure  => file,
-          content => template("kubernetes/etcd/${etcd_files}.erb"),
+          content => $file_content,
           mode    => '0600',
         }
       }
     }
+    $etcd_service_params = {
+      'etcd_hostname'              => $etcd_hostname,
+      'etcd_data_dir'              => $etcd_data_dir,
+      'etcd_ip'                    => $etcd_ip,
+      'etcd_discovery_srv'         => $etcd_discovery_srv,
+      'etcd_initial_cluster'       => $etcd_initial_cluster,
+      'etcd_initial_cluster_state' => $etcd_initial_cluster_state,
+      'etcd_compaction_retention'  => $etcd_compaction_retention,
+      'etcd_version'               => $etcd_version,
+      'etcd_compaction_method'     => $etcd_compaction_method,
+      'etcd_max_request_bytes'     => $etcd_max_request_bytes,
+      'etcd_listen_metric_urls'    => $etcd_listen_metric_urls,
+      'etcd_max_wals'              => $etcd_max_wals,
+    }
+
     if $etcd_install_method == 'wget' {
       file { '/etc/systemd/system/etcd.service':
         ensure  => file,
-        content => template('kubernetes/etcd/etcd.service.erb'),
+        content => epp('kubernetes/etcd/etcd.service.epp', $etcd_service_params),
       }
     } else {
       file { '/etc/default/etcd':
         ensure  => file,
-        content => template('kubernetes/etcd/etcd.erb'),
+        content => epp('kubernetes/etcd/etcd.epp', $etcd_service_params),
       }
     }
   }
 
+  $pki_params = {
+    'ca.crt'             => $kubernetes_ca_crt,
+    'ca.key'             => $kubernetes_ca_key,
+    'front-proxy-ca.crt' => $kubernetes_front_proxy_ca_crt,
+    'front-proxy-ca.key' => $kubernetes_front_proxy_ca_key,
+    'sa.key'             => $sa_key,
+    'sa.pub'             => $sa_pub,
+  }
   if !$delegated_pki {
-    $pki.each | String $pki_files | {
-      file { "/etc/kubernetes/pki/${pki_files}":
+    $pki_params.keys.each | String $pki_file | {
+      $file_content = $pki_params[$pki_file]
+      file { "/etc/kubernetes/pki/${pki_file}":
         ensure  => file,
-        content => template("kubernetes/pki/${pki_files}.erb"),
+        content => $file_content,
         mode    => '0600',
       }
     }
@@ -390,7 +424,7 @@ class kubernetes::config::kubeadm (
     /^1\.12/                  => 'v1alpha3',
     /^1\.1(3|4|5\.[012])/     => 'v1beta1',
     /^1\.(16|17|18|19|20|21)/ => 'v1beta2',
-    default                  => 'v1beta3',
+    default                   => 'v1beta3',
   }
 
   # master role is DEPRECATED
@@ -399,10 +433,52 @@ class kubernetes::config::kubeadm (
   } else {
     $node_role = 'master'
   }
+  $config_kubeadm_params = {
+    'kube_api_advertise_address'               => $kube_api_advertise_address,
+    'manage_etcd'                              => $manage_etcd,
+    'etcd_peers'                               => $etcd_peers,
+    'image_repository'                         => $image_repository,
+    'kubernetes_version'                       => $kubernetes_version,
+    'node_name'                                => $node_name,
+    'cni_pod_cidr'                             => $cni_pod_cidr,
+    'service_cidr'                             => $service_cidr,
+    'apiserver_merged_extra_arguments'         => $apiserver_merged_extra_arguments,
+    'token'                                    => $token,
+    'container_runtime'                        => $container_runtime,
+    'apiserver_cert_extra_sans'                => $apiserver_cert_extra_sans,
+    'cloud_provider'                           => $cloud_provider,
+    'kubeadm_extra_config'                     => $kubeadm_extra_config,
+    'kubeadm_extra_config_yaml'                => $kubeadm_extra_config_yaml,
+    'kubelet_extra_config_yaml'                => $kubelet_extra_config_yaml,
+    'kubelet_extra_config'                     => $kubelet_extra_config,
+    'ttl_duration'                             => $ttl_duration,
+    'kube_api_bind_port'                       => $kube_api_bind_port,
+    'cgroup_driver'                            => $cgroup_driver,
+    'cloud_config'                             => $cloud_config,
+    'kubelet_extra_arguments'                  => $kubelet_extra_arguments,
+    'apiserver_merged_extra_volumes'           => $apiserver_merged_extra_volumes,
+    'kubernetes_cluster_name'                  => $kubernetes_cluster_name,
+    'controller_address'                       => $controller_address,
+    'controllermanager_merged_extra_arguments' => $controllermanager_merged_extra_arguments,
+    'controllermanager_merged_extra_volumes'   => $controllermanager_merged_extra_volumes,
+    'scheduler_extra_arguments'                => $scheduler_extra_arguments,
+    'dns_domain'                               => $dns_domain,
+    'conntrack_max_per_core'                   => $conntrack_max_per_core,
+    'conntrack_min'                            => $conntrack_min,
+    'conntrack_tcp_wait_timeout'               => $conntrack_tcp_wait_timeout,
+    'conntrack_tcp_stablished_timeout'         => $conntrack_tcp_stablished_timeout,
+    'metrics_bind_address'                     => $metrics_bind_address,
+    'proxy_mode'                               => $proxy_mode,
+    'kubelet_extra_config_alpha1_yaml'         => $kubelet_extra_config_alpha1_yaml,
+    'node_role'                                => $node_role,
+    'skip_phases'                              => $kubernetes::skip_phases,
+    'scheduler_merged_extra_arguments'         => undef,
+    'feature_gates'                            => $feature_gates,
+  }
 
   file { $config_file:
     ensure  => file,
-    content => template("kubernetes/${config_version}/config_kubeadm.yaml.erb"),
+    content => epp("kubernetes/${config_version}/config_kubeadm.yaml.epp", $config_kubeadm_params),
     mode    => '0600',
   }
 }

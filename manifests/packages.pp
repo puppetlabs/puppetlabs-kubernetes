@@ -129,7 +129,7 @@ class kubernetes::packages (
   String $docker_log_max_size                           = $kubernetes::docker_log_max_size,
   Boolean $controller                                   = $kubernetes::controller,
   Optional[String] $containerd_version                  = $kubernetes::containerd_version,
-  Enum['archive','package'] $containerd_install_method  = $kubernetes::containerd_install_method,
+  Enum['archive', 'package'] $containerd_install_method = $kubernetes::containerd_install_method,
   String $containerd_package_name                       = $kubernetes::containerd_package_name,
   Optional[String] $containerd_archive                  = $kubernetes::containerd_archive,
   Optional[String] $containerd_archive_checksum         = $kubernetes::containerd_archive_checksum,
@@ -137,7 +137,7 @@ class kubernetes::packages (
   String $containerd_config_template                    = $kubernetes::containerd_config_template,
   Optional[String] $containerd_config_source            = $kubernetes::containerd_config_source,
   Optional[Hash] $containerd_plugins_registry           = $kubernetes::containerd_plugins_registry,
-  Enum['runc','nvidia']
+  Enum['runc', 'nvidia']
   $containerd_default_runtime_name                      = $kubernetes::containerd_default_runtime_name,
   String $etcd_archive                                  = $kubernetes::etcd_archive,
   Optional[String] $etcd_archive_checksum               = $kubernetes::etcd_archive_checksum,
@@ -225,12 +225,17 @@ class kubernetes::packages (
             ensure  => $docker_version,
             require => Class['Apt::Update'],
           }
+          $docker_apt_package_pins_params = {
+            'docker_package_name'  => $docker_package_name,
+            'docker_version'       => $docker_version,
+            'package_pin_priority' => $package_pin_priority,
+          }
           if $pin_packages {
             file { '/etc/apt/preferences.d/docker':
               mode    => '0444',
               owner   => 'root',
               group   => 'root',
-              content => template('kubernetes/docker_apt_package_pins.erb'),
+              content => epp('kubernetes/docker_apt_package_pins.epp', $docker_apt_package_pins_params),
               notify  => Service['docker'],
             }
           } else {
@@ -254,12 +259,21 @@ class kubernetes::packages (
           group  => 'root',
         }
 
+        $daemon_debian_params = {
+          'docker_cgroup_driver'       => $docker_cgroup_driver,
+          'docker_log_max_size'        => $docker_log_max_size,
+          'docker_log_max_file'        => $docker_log_max_file,
+          'docker_extra_daemon_config' => $docker_extra_daemon_config,
+          'docker_storage_driver'      => $docker_storage_driver,
+          'docker_storage_opts'        => $docker_storage_opts,
+        }
+
         file { '/etc/docker/daemon.json':
           ensure  => file,
           owner   => 'root',
           group   => 'root',
           mode    => '0644',
-          content => template('kubernetes/docker/daemon_debian.json.erb'),
+          content => epp('kubernetes/docker/daemon_debian.json.epp', $daemon_debian_params),
           require => [File['/etc/docker'], Package[$docker_package_name]],
           notify  => Service['docker'],
         }
@@ -276,12 +290,21 @@ class kubernetes::packages (
           group  => 'root',
         }
 
+        $daemon_linux_params = {
+          'docker_cgroup_driver'       => $docker_cgroup_driver,
+          'docker_log_max_size'        => $docker_log_max_size,
+          'docker_log_max_file'        => $docker_log_max_file,
+          'docker_extra_daemon_config' => $docker_extra_daemon_config,
+          'docker_storage_driver'      => $docker_storage_driver,
+          'docker_storage_opts'        => $docker_storage_opts,
+        }
+
         file { '/etc/docker/daemon.json':
           ensure  => file,
           owner   => 'root',
           group   => 'root',
           mode    => '0644',
-          content => template('kubernetes/docker/daemon_redhat.json.erb'),
+          content => epp('kubernetes/docker/daemon_redhat.json.epp', $daemon_linux_params),
           require => [File['/etc/docker'], Package[$docker_package_name]],
           notify  => Service['docker'],
         }
@@ -298,6 +321,12 @@ class kubernetes::packages (
       notify  => Exec['kubernetes-systemd-reload'],
     }
 
+    $http_proxy_params = {
+      'http_proxy'  => $http_proxy,
+      'https_proxy' => $https_proxy,
+      'no_proxy'    => $no_proxy,
+    }
+
     if $container_runtime_use_proxy {
       file { '/etc/systemd/system/docker.service.d/http-proxy.conf':
         ensure  => file,
@@ -305,7 +334,7 @@ class kubernetes::packages (
         owner   => root,
         group   => root,
         mode    => '0644',
-        content => template("${module_name}/http-proxy.conf.erb"),
+        content => epp("${module_name}/http-proxy.conf.epp", $http_proxy_params),
       }
     }
   }
@@ -318,12 +347,17 @@ class kubernetes::packages (
             ensure  => $containerd_version,
             require => Class['Apt::Update'],
           }
+          $containerd_apt_package_pins_params = {
+            'containerd_package_name' => $containerd_package_name,
+            'containerd_version'      => $containerd_version,
+            'package_pin_priority'    => $package_pin_priority,
+          }
           if $pin_packages {
             file { '/etc/apt/preferences.d/containerd':
               mode    => '0444',
               owner   => 'root',
               group   => 'root',
-              content => template('kubernetes/containerd_apt_package_pins.erb'),
+              content => epp('kubernetes/containerd_apt_package_pins.epp', $containerd_apt_package_pins_params),
               notify  => Service['containerd'],
             }
           } else {
@@ -351,10 +385,10 @@ class kubernetes::packages (
           $_containerd_config_content = undef
         } else {
           $_containerd_config_content = stdlib::deferrable_epp($containerd_config_template, {
-              'containerd_plugins_registry' => $containerd_plugins_registry,
-              'containerd_socket' => $containerd_socket,
-              'containerd_sandbox_image' => $containerd_sandbox_image,
-              'docker_cgroup_driver' => $docker_cgroup_driver,
+              'containerd_plugins_registry'     => $containerd_plugins_registry,
+              'containerd_socket'               => $containerd_socket,
+              'containerd_sandbox_image'        => $containerd_sandbox_image,
+              'docker_cgroup_driver'            => $docker_cgroup_driver,
               'containerd_default_runtime_name' => $containerd_default_runtime_name,
           })
         }
@@ -386,10 +420,10 @@ class kubernetes::packages (
           $_containerd_config_content = undef
         } else {
           $_containerd_config_content = stdlib::deferrable_epp($containerd_config_template, {
-              'containerd_plugins_registry' => $containerd_plugins_registry,
-              'containerd_socket' => $containerd_socket,
-              'containerd_sandbox_image' => $containerd_sandbox_image,
-              'docker_cgroup_driver' => $docker_cgroup_driver,
+              'containerd_plugins_registry'     => $containerd_plugins_registry,
+              'containerd_socket'               => $containerd_socket,
+              'containerd_sandbox_image'        => $containerd_sandbox_image,
+              'docker_cgroup_driver'            => $docker_cgroup_driver,
               'containerd_default_runtime_name' => $containerd_default_runtime_name,
           })
         }
@@ -512,12 +546,17 @@ class kubernetes::packages (
       ensure  => $kubernetes_package_version,
       require => Class['Apt::Update'],
     }
+    $kubernetes_apt_package_pins_params = {
+      'kube_packages'              => $kube_packages,
+      'kubernetes_package_version' => $kubernetes_package_version,
+      'package_pin_priority'       => $package_pin_priority,
+    }
     if $pin_packages {
       file { '/etc/apt/preferences.d/kubernetes':
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        content => template('kubernetes/kubernetes_apt_package_pins.erb'),
+        content => epp('kubernetes/kubernetes_apt_package_pins.epp', $kubernetes_apt_package_pins_params),
       }
     } else {
       file { '/etc/apt/preferences.d/kubernetes':

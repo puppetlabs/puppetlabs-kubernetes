@@ -1,0 +1,20 @@
+{
+  "exec-opts": ["native.cgroupdriver=<%= $docker_cgroup_driver %>"],
+  "live-restore": true,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "<%= $docker_log_max_size %>",
+    "max-file": "<%= $docker_log_max_file %>"
+  },
+  <%- if $docker_extra_daemon_config and $docker_extra_daemon_config != '' {-%>
+  <%= $docker_extra_daemon_config -%>,
+  <%- } -%>
+  "storage-driver": "<%= $docker_storage_driver %>"<%= if $docker_storage_opts { "," } %>
+  <%- if $docker_storage_opts {-%>
+  "storage-opts": [
+  <%- $docker_storage_opts.each |$opt| {-%>
+    "<%= $opt %>"<%= if $opt != $docker_storage_opts[-1] { "," } %>
+  <%- } -%>
+  ]
+  <%- } -%>
+}

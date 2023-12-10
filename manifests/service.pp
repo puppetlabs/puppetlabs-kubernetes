@@ -55,7 +55,7 @@
 class kubernetes::service (
   String $container_runtime                             = $kubernetes::container_runtime,
   Boolean $container_runtime_use_proxy                  = $kubernetes::container_runtime_use_proxy,
-  Enum['archive','package'] $containerd_install_method  = $kubernetes::containerd_install_method,
+  Enum['archive', 'package'] $containerd_install_method = $kubernetes::containerd_install_method,
   Boolean $controller                                   = $kubernetes::controller,
   Boolean $manage_docker                                = $kubernetes::manage_docker,
   Boolean $manage_etcd                                  = $kubernetes::manage_etcd,
@@ -78,6 +78,12 @@ class kubernetes::service (
     refreshonly => true,
   }
 
+  $http_proxy_params = {
+    'http_proxy'  => $http_proxy,
+    'https_proxy' => $https_proxy,
+    'no_proxy'    => $no_proxy,
+  }
+
   case $container_runtime {
     'docker': {
       if $manage_docker == true {
@@ -97,7 +103,7 @@ class kubernetes::service (
           owner   => 'root',
           group   => 'root',
           mode    => '0644',
-          content => template('kubernetes/0-containerd.conf.erb'),
+          content => epp('kubernetes/0-containerd.conf.epp'),
           require => File['/etc/systemd/system/kubelet.service.d'],
           notify  => [Exec['kubernetes-systemd-reload'], Service['containerd']],
         }
@@ -107,7 +113,7 @@ class kubernetes::service (
           owner   => 'root',
           group   => 'root',
           mode    => '0644',
-          content => template('kubernetes/containerd.service.erb'),
+          content => epp('kubernetes/containerd.service.epp'),
           notify  => [Exec['kubernetes-systemd-reload'], Service['containerd']],
         }
       }
@@ -127,7 +133,7 @@ class kubernetes::service (
           owner   => root,
           group   => root,
           mode    => '0644',
-          content => template("${module_name}/http-proxy.conf.erb"),
+          content => epp("${module_name}/http-proxy.conf.epp", $http_proxy_params),
         }
       }
 
@@ -186,12 +192,15 @@ class kubernetes::service (
     } else {
       $kubelet_extra_args = "--cloud-provider=${cloud_provider} --cloud-config=${cloud_config}"
     }
+    $cloud_conf_params = {
+      'kubelet_extra_args' => $kubelet_extra_args,
+    }
     file { '/etc/systemd/system/kubelet.service.d/20-cloud.conf':
       ensure  => file,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
-      content => template('kubernetes/20-cloud.conf.erb'),
+      content => epp('kubernetes/20-cloud.conf.epp', $cloud_conf_params),
       require => File['/etc/systemd/system/kubelet.service.d'],
       notify  => Exec['kubernetes-systemd-reload'],
     }
@@ -204,7 +213,7 @@ class kubernetes::service (
       owner   => root,
       group   => root,
       mode    => '0644',
-      content => template("${module_name}/http-proxy.conf.erb"),
+      content => epp("${module_name}/http-proxy.conf.epp", $http_proxy_params),
     }
   }
 
