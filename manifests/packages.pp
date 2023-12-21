@@ -112,6 +112,8 @@
 #   no_proxy values. Defaults to false
 # @param containerd_socket
 #   The path to containerd GRPC socket. Defaults to /run/containerd/containerd.sock
+# @param containerd_snapshotter
+#   Configure whcih containerd snapshotter to user. Can be overlayfs or zfs. Defaults to overlayfs
 #
 class kubernetes::packages (
   String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
