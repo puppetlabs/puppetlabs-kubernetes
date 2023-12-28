@@ -84,9 +84,9 @@ controllerManager:
   <%- end -%>
 <%- end -%>
 scheduler:
-<%- if @scheduler_merged_extra_arguments -%>
+<%- if @scheduler_extra_arguments -%>
   extraArgs:
-  <%- @scheduler_merged_extra_arguments.each do |arg| -%>
+  <%- @scheduler_extra_arguments.each do |arg| -%>
     <%= arg %>
   <%- end -%>
 <%- end -%>
