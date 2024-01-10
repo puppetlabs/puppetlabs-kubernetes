@@ -600,4 +600,20 @@ describe 'kubernetes::config::kubeadm', type: :class do
         .with_content(%r{key: node-role.kubernetes.io/control-plane\n})
     }
   end
+
+  context 'when scheduler_extra_arguments is defined' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.26.0',
+        'scheduler_extra_arguments' => ['bind-address: 0.0.0.0']
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it 'has scheduler extra arguments' do
+      cluster_config = config_yaml.find { |c| c['kind'] == 'ClusterConfiguration' }
+      expect(cluster_config['scheduler']['extraArgs']['bind-address']).to eq('0.0.0.0')
+    end
+  end
 end
