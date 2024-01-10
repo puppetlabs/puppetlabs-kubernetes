@@ -5,12 +5,6 @@
 appveyor.yml:
   delete: true
 
-Gemfile:
-  optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        version: '= 1.15.2'
-
 Rakefile:
   changelog_user: puppetlabs
   changelog_since_tag: '4.0.0'
@@ -60,4 +54,4 @@ spec/spec_helper.rb:
 .travis.yml:
   delete: true
 .rubocop.yml:
-  unmanaged: true
+  include_todos: true
