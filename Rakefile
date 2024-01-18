@@ -8,3 +8,11 @@ require 'puppet-strings/tasks' if Gem.loaded_specs.key? 'puppet-strings'
 
 PuppetLint.configuration.send('disable_relative')
 PuppetLint.configuration.send('disable_params_empty_string_assignment')
+
+require 'rspec/core/rake_task'
+namespace :kubernetes do
+  RSpec::Core::RakeTask.new(:integration) do |t|
+    t.pattern = 'spec/acceptance/**{,/*/**}/*_spec.rb'
+    t.rspec_opts = "--tag integration"
+  end
+end
