@@ -23,10 +23,10 @@
 ## Description
 
 [<img
-src="https://github.com/cncf/artwork/blob/04763c0f5f72b23d6a20bfc9c68c88cee805dbcc/projects/kubernetes/certified-kubernetes/1.13/color/certified-kubernetes-1.13-color.png"
-align="right" width="150px" alt="certified kubernetes 1.13">][certified]
+src="https://github.com/cncf/artwork/blob/main/projects/kubernetes/certified-kubernetes/1.26/color/certified-kubernetes-1.26-color.png"
+align="right" width="150px" alt="certified kubernetes 1.26">][certified]
 
-[certified]: https://github.com/cncf/k8s-conformance/tree/main/v1.13/puppetlabs-kubernetes
+[certified]: https://github.com/cncf/k8s-conformance/tree/master/v1.26/puppetlabs-kubernetes
 
 This module installs and configures [Kubernetes](https://kubernetes.io/) which is an open-source system for automating deployment, scaling, and management of containerized applications. For efficient management and discovery, containers that make up an application are grouped into logical units.
 
