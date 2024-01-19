@@ -360,6 +360,7 @@ class kubernetes::packages (
               'containerd_sandbox_image' => $containerd_sandbox_image,
               'docker_cgroup_driver' => $docker_cgroup_driver,
               'containerd_default_runtime_name' => $containerd_default_runtime_name,
+              'containerd_snapshotter' => $containerd_snapshotter,
           })
         }
         # Generate using 'containerd config default'
