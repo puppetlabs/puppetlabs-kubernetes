@@ -72,8 +72,8 @@ def configure_puppet_server(controller, worker1, worker2)
   site_pp = <<-EOS
   node /#{controller[0]}/ {
     class {'kubernetes':
-      kubernetes_version => '1.20.6',
-      kubernetes_package_version => '1.20.6',
+      kubernetes_version => '1.28.1',
+      kubernetes_package_version => '1.28.1',
       controller_address => "#{controller[1]}:6443",
       container_runtime => 'docker',
       manage_docker => false,
@@ -86,6 +86,8 @@ def configure_puppet_server(controller, worker1, worker2)
   }
   node /#{worker1}/ {
     class {'kubernetes':
+      kubernetes_version => '1.28.1',
+      kubernetes_package_version => '1.28.1',
       worker => true,
       manage_docker => false,
       cgroup_driver => 'systemd',
@@ -93,6 +95,8 @@ def configure_puppet_server(controller, worker1, worker2)
   }
   node /#{worker2}/  {
     class {'kubernetes':
+      kubernetes_version => '1.28.1',
+      kubernetes_package_version => '1.28.1',
       worker => true,
       manage_docker => false,
       cgroup_driver => 'systemd',
