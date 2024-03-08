@@ -11,10 +11,10 @@ describe 'kubernetes::repos', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04'
+            full: '22.04'
           },
           distro: {
-            codename: 'xenial'
+            codename: 'jammy'
           }
         }
       }
@@ -31,7 +31,7 @@ describe 'kubernetes::repos', type: :class do
         'kubernetes_yum_baseurl' => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
         'kubernetes_yum_gpgkey' => 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
         'docker_apt_location' => 'https://download.docker.com/linux/ubuntu',
-        'docker_apt_release' => 'xenial',
+        'docker_apt_release' => 'jammy',
         'docker_apt_repos' => 'main',
         'docker_yum_baseurl' => 'https://download.docker.com/linux/centos/7/x86_64/stable',
         'docker_yum_gpgkey' => 'https://download.docker.com/linux/centos/gpg',
@@ -62,7 +62,7 @@ describe 'kubernetes::repos', type: :class do
         ensure: 'present',
         location: 'https://download.docker.com/linux/ubuntu',
         repos: 'main',
-        release: 'xenial',
+        release: 'jammy',
         key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
       )
     }
@@ -77,10 +77,10 @@ describe 'kubernetes::repos', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04'
+            full: '22.04'
           },
           distro: {
-            codename: 'xenial'
+            codename: 'jammy'
           }
         }
       }
@@ -88,16 +88,16 @@ describe 'kubernetes::repos', type: :class do
     let(:params) do
       {
         'container_runtime' => 'docker',
-        'kubernetes_version' => '1.28.1',
-        'kubernetes_apt_location' => 'http://apt.kubernetes.io',
-        'kubernetes_apt_release' => 'kubernetes-xenial',
+        'kubernetes_version' => '1.29.2',
+        'kubernetes_apt_location' => 'http://myapt.example.org',
+        'kubernetes_apt_release' => 'jammy',
         'kubernetes_apt_repos' => 'main',
         'kubernetes_key_id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB',
         'kubernetes_key_source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg',
         'kubernetes_yum_baseurl' => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
         'kubernetes_yum_gpgkey' => 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
         'docker_apt_location' => 'https://download.docker.com/linux/ubuntu',
-        'docker_apt_release' => 'xenial',
+        'docker_apt_release' => 'jammy',
         'docker_apt_repos' => 'main',
         'docker_yum_baseurl' => 'https://download.docker.com/linux/centos/7/x86_64/stable',
         'docker_yum_gpgkey' => 'https://download.docker.com/linux/centos/gpg',
@@ -112,9 +112,9 @@ describe 'kubernetes::repos', type: :class do
     it {
       expect(subject).to contain_apt__source('kubernetes').with(
         ensure: 'present',
-        location: 'http://apt.kubernetes.io',
+        location: 'http://myapt.example.org',
         repos: 'main',
-        release: 'kubernetes-xenial',
+        release: 'jammy',
         key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' },
       )
     }
@@ -124,7 +124,7 @@ describe 'kubernetes::repos', type: :class do
         ensure: 'present',
         location: 'https://download.docker.com/linux/ubuntu',
         repos: 'main',
-        release: 'xenial',
+        release: 'jammy',
         key: { 'id' => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88', 'source' => 'https://download.docker.com/linux/ubuntu/gpg' },
       )
     }
@@ -139,10 +139,10 @@ describe 'kubernetes::repos', type: :class do
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            full: '16.04'
+            full: '22.04'
           },
           distro: {
-            codename: 'xenial'
+            codename: 'jammy'
           }
         }
       }
@@ -325,7 +325,7 @@ describe 'kubernetes::repos', type: :class do
         'kubernetes_yum_baseurl' => 'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64',
         'kubernetes_yum_gpgkey' => 'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg',
         'docker_apt_location' => 'https://download.docker.com/linux/ubuntu',
-        'docker_apt_release' => 'xenial',
+        'docker_apt_release' => 'jammy',
         'docker_apt_repos' => 'main',
         'docker_yum_baseurl' => 'https://download.docker.com/linux/centos/7/x86_64/stable',
         'docker_yum_gpgkey' => 'https://download.docker.com/linux/centos/gpg',
