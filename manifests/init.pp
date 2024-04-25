@@ -23,7 +23,7 @@
 # [*container_runtime*]
 #   This is the runtime that the Kubernetes cluster will use.
 #   It can only be set to "cri_containerd" or "docker"
-#   Defaults to cri_containerd
+#   Defaults to docker
 #
 # [*containerd_version*]
 #   This is the version of the containerd runtime the module will install.
