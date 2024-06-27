@@ -16,8 +16,8 @@ describe 'the Kubernetes module' do
         case $facts['os']['family'] {
           'RedHat', 'CentOS':  {
             class {'kubernetes':
-              kubernetes_version => '1.22.0',
-              kubernetes_package_version => '1.22.0',
+              kubernetes_version => '1.28.2',
+              kubernetes_package_version => '1.28.2-1.1',
               controller_address => "#{int_ipaddr1}:6443",
               container_runtime => 'docker',
               manage_docker => false,
