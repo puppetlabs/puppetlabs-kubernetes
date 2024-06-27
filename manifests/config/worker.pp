@@ -91,7 +91,7 @@ class kubernetes::config::worker (
   Optional[Array] $skip_phases_join        = $kubernetes::skip_phases_join,
 ) {
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
-  $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')
+  $kubelet_extra_config_yaml = regsubst(stdlib::to_yaml($kubelet_extra_config), '^---\n', '')
 
   $template = $kubernetes_version ? {
     /1\.12/                  => 'v1alpha3',
