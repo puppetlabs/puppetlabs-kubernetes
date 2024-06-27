@@ -366,8 +366,8 @@ class kubernetes::config::kubeadm (
         fail('Cannot use "cloud" as volume name')
       }
 
-      $apiserver_merged_extra_volumes = merge($apiserver_extra_volumes, $cloud_volume)
-      $controllermanager_merged_extra_volumes = merge($controllermanager_extra_volumes, $cloud_volume)
+      $apiserver_merged_extra_volumes = stdlib::merge($apiserver_extra_volumes, $cloud_volume)
+      $controllermanager_merged_extra_volumes = stdlib::merge($controllermanager_extra_volumes, $cloud_volume)
     } else {
       $apiserver_merged_extra_volumes = $apiserver_extra_volumes
       $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes
@@ -381,9 +381,9 @@ class kubernetes::config::kubeadm (
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
-  $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
-  $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')
-  $kubelet_extra_config_alpha1_yaml = regsubst(to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
+  $kubeadm_extra_config_yaml = regsubst(stdlib::to_yaml($kubeadm_extra_config), '^---\n', '')
+  $kubelet_extra_config_yaml = regsubst(stdlib::to_yaml($kubelet_extra_config), '^---\n', '')
+  $kubelet_extra_config_alpha1_yaml = regsubst(stdlib::to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
 
   $config_version = $kubernetes_version ? {
     /^1\.1(0|1)/              => 'v1alpha1',
