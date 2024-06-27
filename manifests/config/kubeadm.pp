@@ -366,8 +366,8 @@ class kubernetes::config::kubeadm (
         fail('Cannot use "cloud" as volume name')
       }
 
-      $apiserver_merged_extra_volumes = stdlib::merge($apiserver_extra_volumes, $cloud_volume)
-      $controllermanager_merged_extra_volumes = stdlib::merge($controllermanager_extra_volumes, $cloud_volume)
+      $apiserver_merged_extra_volumes = $apiserver_extra_volumes + $cloud_volume
+      $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes + $cloud_volume
     } else {
       $apiserver_merged_extra_volumes = $apiserver_extra_volumes
       $controllermanager_merged_extra_volumes = $controllermanager_extra_volumes
