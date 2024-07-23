@@ -3,6 +3,8 @@
 # @param container_runtime
 #   This is the runtime that the Kubernetes cluster will use.
 #   It can only be set to "cri_containerd" or "docker". Defaults to cri_containerd
+# @param kubernetes_version
+#   The kubernetes version used to determine major release version.
 # @param kubernetes_apt_location
 #   The APT repo URL for the Kubernetes packages. Defaults to https://apt.kubernetes.io
 # @param kubernetes_apt_release
@@ -40,6 +42,7 @@
 #
 class kubernetes::repos (
   String $container_runtime                   = $kubernetes::container_runtime,
+  Optional[String] $kubernetes_version        = $kubernetes::kubernetes_version,
   Optional[String] $kubernetes_apt_location   = $kubernetes::kubernetes_apt_location,
   Optional[String] $kubernetes_apt_release    = $kubernetes::kubernetes_apt_release,
   Optional[String] $kubernetes_apt_repos      = $kubernetes::kubernetes_apt_repos,
@@ -60,19 +63,47 @@ class kubernetes::repos (
 
 ) {
   if $create_repos {
+    $parts = split($kubernetes_version, '[.]')
+    $minor_version = "${parts[0]}.${parts[1]}"
+    $_repos = $kubernetes_apt_repos ? {
+      undef   => '',
+      default => $kubernetes_apt_repos
+    }
     case $facts['os']['family'] {
       'Debian': {
-        $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
-          location => pick($kubernetes_apt_location,'https://apt.kubernetes.io'),
-          repos    => pick($kubernetes_apt_repos,'main'),
-          release  => pick($kubernetes_apt_release,'kubernetes-xenial'),
-          key      => {
-            'id'     => pick($kubernetes_key_id,'A362B822F6DEDC652817EA46B53DC80D13EDEF05'),
-            'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
-          },
+          location => pick($kubernetes_apt_location,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb"),
+          release  => pick($kubernetes_apt_release, '/'),
+          repos    => $_repos,
         }
 
+        if $kubernetes_apt_location =~ String[1] {
+          Apt::Source<| title == 'kubernetes' |> {
+            key => {
+              'id'     => $kubernetes_key_id,
+              'source' => $kubernetes_key_source,
+            }
+          }
+        } else {
+          # For pkgs.k8s.io use GPG siging key
+          $_keyring = '/usr/share/keyrings/kubernetes-apt-keyring.gpg'
+          # TODO: Switch to apt::keyring once supported by puppetlabs-apt
+          # see: https://github.com/puppetlabs/puppetlabs-apt/pull/1128
+          archive { '/tmp/kubernetes-apt-keyring.gpg':
+            source          => "https://pkgs.k8s.io/core:/stable:/v${minor_version}/deb/Release.key",
+            extract         => true,
+            extract_path    => '/usr/share/keyrings',
+            extract_command => 'gpg --dearmor < %s > kubernetes-apt-keyring.gpg',
+            creates         => $_keyring,
+          }
+
+          Apt::Source<| title == 'kubernetes' |> {
+            keyring  => $_keyring,
+            require  => Archive['/tmp/kubernetes-apt-keyring.gpg'],
+          }
+        }
+
+        $codename = fact('os.distro.codename')
         if ($container_runtime == 'docker' and $manage_docker == true) or
         ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           apt::source { 'docker':
@@ -99,9 +130,10 @@ class kubernetes::repos (
 
         yumrepo { 'kubernetes':
           descr    => 'Kubernetes',
-          baseurl  => pick($kubernetes_yum_baseurl,'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
-          gpgkey   => pick($kubernetes_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
-          gpgcheck => true,
+          baseurl  => pick($kubernetes_yum_baseurl,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/rpm/"),
+          gpgkey   => pick($kubernetes_yum_gpgkey,"https://pkgs.k8s.io/core:/stable:/v${minor_version}/rpm/repodata/repomd.xml.key"),
+          enabled  => 1,
+          gpgcheck => 1,
         }
       }
 
