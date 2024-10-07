@@ -255,7 +255,7 @@ RSpec.configure do |c|
         run_shell('/sbin/iptables -F')
       end
     end
-    if %r{redhat|centos}.match?(family)
+    if %r{centos|rhel}.match?(family)
       runtime = 'docker'
       cni = 'weave'
       ['controller', 'worker1', 'worker2'].each do |node|
@@ -271,7 +271,6 @@ RSpec.configure do |c|
         run_shell('usermod -aG docker $(whoami)')
         run_shell('systemctl start docker.service')
         run_shell('systemctl enable docker.service')
-        create_remote_file('k8repo', '/etc/yum.repos.d/kubernetes.repo', k8repo)
         run_shell('yum install -y kubectl')
       end
     end

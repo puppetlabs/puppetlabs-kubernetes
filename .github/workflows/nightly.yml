@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix: {'platform':['centos-7'],'collection':['puppet7-nightly', 'puppet8-nightly']}
+      matrix: {'platform':['rhel-7'],'collection':['puppet7-nightly', 'puppet8-nightly']}
 
     steps:
     - name: Checkout Source
