@@ -7,13 +7,13 @@
 ### Classes
 
 * [`kubernetes`](#kubernetes): Class: kubernetes ===========================  A module to build a Kubernetes cluster https://kubernetes.io/  Parameters ---------- [*kuberne
-* [`kubernetes::cluster_roles`](#kubernetes--cluster_roles)
+* [`kubernetes::cluster_roles`](#kubernetes--cluster_roles): This class configures the RBAC roles for Kubernetes 1.10.x
 * [`kubernetes::config::kubeadm`](#kubernetes--config--kubeadm): Class kubernetes config kubeadm, populates kubeadm config file with params to bootstrap cluster
 * [`kubernetes::config::worker`](#kubernetes--config--worker): Class kubernetes config_worker, populates worker config files with joinconfig
 * [`kubernetes::kube_addons`](#kubernetes--kube_addons): Class kubernetes kube_addons
 * [`kubernetes::packages`](#kubernetes--packages)
 * [`kubernetes::repos`](#kubernetes--repos)
-* [`kubernetes::service`](#kubernetes--service)
+* [`kubernetes::service`](#kubernetes--service): Puppet class that controls the Kubelet service
 
 ### Defined types
 
@@ -596,7 +596,7 @@ Parameters
 [*container_runtime*]
   This is the runtime that the Kubernetes cluster will use.
   It can only be set to "cri_containerd" or "docker"
-  Defaults to cri_containerd
+  Defaults to docker
 
 [*containerd_version*]
   This is the version of the containerd runtime the module will install.
@@ -1076,77 +1076,95 @@ Defaults to ""
  Defaults to 'systemd'
 
 [*environment*]
-The environment passed to kubectl commands.
-Defaults to setting HOME and KUBECONFIG variables
+ The environment passed to kubectl commands.
+ Defaults to setting HOME and KUBECONFIG variables
 
 [*ttl_duration*]
-Availability of the token
-Default to 24h
+ Availability of the token
+ Default to 24h
 
 [*metrics_bind_address*]
-Set the metricsBindAddress (to allow prometheus)
-Default to 127.0.0.1
+ Set the metricsBindAddress (to allow prometheus)
+ Default to 127.0.0.1
 
 [*conntrack_max_per_core*]
-Maximum number of NAT connections to track per CPU core.
-Set to 0 to leave the limit as-is and ignore conntrack_min.
-Default to 32768
+ Maximum number of NAT connections to track per CPU core.
+ Set to 0 to leave the limit as-is and ignore conntrack_min.
+ Default to 32768
 
 [*conntrack_min*]
-Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
-Set conntrack_max_per_core to 0 to leave the limit as-is
-Default to 131072
+  Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
+  Set conntrack_max_per_core to 0 to leave the limit as-is
+  Default to 131072
 
 [*conntrack_tcp_wait_timeout*]
-NAT timeout for TCP connections in the CLOSE_WAIT state.
-Default to 1h0m0s
+  NAT timeout for TCP connections in the CLOSE_WAIT state.
+  Default to 1h0m0s
 
 [*conntrack_tcp_stablished_timeout*]
-Idle timeout for established TCP connections (0 to leave as-is).
-Default to 24h0m0s
+  Idle timeout for established TCP connections (0 to leave as-is).
+  Default to 24h0m0s
 
 [*tmp_directory*]
-Directory to use when downloading archives for install.
-Default to /var/tmp/puppetlabs-kubernetes
+  Directory to use when downloading archives for install.
+  Default to /var/tmp/puppetlabs-kubernetes
 
 [*skip_phases*]
-Allow kubeadm init skip some phases
-Default: none phases skipped
+  Allow kubeadm init skip some phases
+  Default: none phases skipped
 
 [*skip_phases_join*]
-Allow kubeadm join to skip some phases
-Only works with Kubernetes 1.22+
-Default: no phases skipped
+  Allow kubeadm join to skip some phases
+  Only works with Kubernetes 1.22+
+  Default: no phases skipped
 
 [*feature_gates*]
-Feature gate hash to be added to kubeadm configuration
-Example:
+ Feature gate hash to be added to kubeadm configuration
+ Example:
   {'RootlessControlPlane' => true}
-Default: undefined, no feature gates
+  Default: undefined, no feature gates
 
 [*http_proxy*]
- Configure the HTTP_PROXY environment variable
- Defaults to undef
+  Configure the HTTP_PROXY environment variable
+  Defaults to undef
 
 [*https_proxy*]
- Configure the HTTPS_PROXY environment variable
- Defaults to undef
+  Configure the HTTPS_PROXY environment variable
+  Defaults to undef
 
 [*no_proxy*]
- Configure the NO_PROXY environment variable
- Defaults to undef
+  Configure the NO_PROXY environment variable
+  Defaults to undef
 
 [*container_runtime_use_proxy*]
- Configure whether the container runtime should be configured to use a proxy.
- If set to true, the container runtime will use the http_proxy, https_proxy and
- no_proxy values.
- Defaults to false
+  Configure whether the container runtime should be configured to use a proxy.
+  If set to true, the container runtime will use the http_proxy, https_proxy and
+  no_proxy values.
+  Defaults to false
 
 [*kubelet_use_proxy*]
- Configure whether the kubelet should be configured to use a proxy.
- If set to true, the kubelet will use the http_proxy, https_proxy and
- no_proxy values.
- Defaults to false
+  Configure whether the kubelet should be configured to use a proxy.
+  If set to true, the kubelet will use the http_proxy, https_proxy and
+  no_proxy values.
+  Defaults to false
+
+[*api_server_count*]
+  Defaults to undef
+
+[*runc_source_checksum*]
+  Defaults to undef
+
+[*ignore_preflight_errors*]
+  Defaults to undef
+
+[*join_discovery_file*]
+  Defaults to undef
+
+[*wait_for_default_sa_tries*]
+  Defaults to 5
+
+[*wait_for_default_sa_try_sleep*]
+  Defaults to 6
 
 Authors
 -------
@@ -2292,7 +2310,6 @@ Data type: `String`
 
 Default value: `'systemd'`
 
-
 ##### <a name="-kubernetes--environment"></a>`environment`
 
 Data type: `Array[String]`
@@ -2413,7 +2430,7 @@ Default value: `{}`
 
 ### <a name="kubernetes--cluster_roles"></a>`kubernetes::cluster_roles`
 
-The kubernetes::cluster_roles class.
+This class configures the RBAC roles for Kubernetes 1.10.x
 
 #### Parameters
 
@@ -2432,7 +2449,7 @@ The following parameters are available in the `kubernetes::cluster_roles` class:
 
 Data type: `Optional[Boolean]`
 
-
+This is a bool that sets the node as a Kubernetes controller. Defaults to false.
 
 Default value: `$kubernetes::controller`
 
@@ -2440,7 +2457,7 @@ Default value: `$kubernetes::controller`
 
 Data type: `Optional[Boolean]`
 
-
+This is a bool that sets a node to a worker. Defaults to false.
 
 Default value: `$kubernetes::worker`
 
@@ -2448,7 +2465,7 @@ Default value: `$kubernetes::worker`
 
 Data type: `Stdlib::Fqdn`
 
-
+Sets the name of the node. Defaults to a networking fact.
 
 Default value: `$kubernetes::node_name`
 
@@ -2456,7 +2473,9 @@ Default value: `$kubernetes::node_name`
 
 Data type: `String`
 
-
+Configure whether the container runtime should be configured to use a proxy.
+If set to true, the container runtime will use the http_proxy, https_proxy and no_proxy values.
+Defaults to false
 
 Default value: `$kubernetes::container_runtime`
 
@@ -2464,7 +2483,7 @@ Default value: `$kubernetes::container_runtime`
 
 Data type: `Optional[String]`
 
-
+Sets the name of the discovery file. Defaults to undef.
 
 Default value: `$kubernetes::join_discovery_file`
 
@@ -2472,7 +2491,7 @@ Default value: `$kubernetes::join_discovery_file`
 
 Data type: `Optional[Array]`
 
-
+List of errors to ignore pre_flight. Defaults to undef.
 
 Default value: `$kubernetes::ignore_preflight_errors`
 
@@ -2480,7 +2499,8 @@ Default value: `$kubernetes::ignore_preflight_errors`
 
 Data type: `Optional[Array]`
 
-
+The environment passed to kubectl commands.
+Defaults to setting HOME and KUBECONFIG variables
 
 Default value: `$kubernetes::environment`
 
@@ -2488,7 +2508,8 @@ Default value: `$kubernetes::environment`
 
 Data type: `Optional[String]`
 
-
+Allow kubeadm init skip some phases
+Default: none phases skipped
 
 Default value: `$kubernetes::skip_phases`
 
@@ -2570,7 +2591,7 @@ The following parameters are available in the `kubernetes::config::kubeadm` clas
 
 Data type: `String`
 
-
+Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
 
 Default value: `$kubernetes::config_file`
 
@@ -2578,7 +2599,8 @@ Default value: `$kubernetes::config_file`
 
 Data type: `String`
 
-
+The IP address and Port of the controller that worker node will join. eg 172.17.10.101:6443
+Defaults to undef
 
 Default value: `$kubernetes::controller_address`
 
@@ -2586,7 +2608,8 @@ Default value: `$kubernetes::controller_address`
 
 Data type: `String`
 
-
+This is a string that sets the dns domain in kubernetes cluster
+Default cluster.local
 
 Default value: `$kubernetes::dns_domain`
 
@@ -2594,7 +2617,8 @@ Default value: `$kubernetes::dns_domain`
 
 Data type: `Boolean`
 
-
+When set to true, etcd will be downloaded from the specified source URL.
+Defaults to true.
 
 Default value: `$kubernetes::manage_etcd`
 
@@ -2602,7 +2626,8 @@ Default value: `$kubernetes::manage_etcd`
 
 Data type: `Boolean`
 
-
+Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
+Defaults to false
 
 Default value: `$kubernetes::delegated_pki`
 
@@ -2610,7 +2635,8 @@ Default value: `$kubernetes::delegated_pki`
 
 Data type: `String`
 
-
+The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
+Defaults to wget
 
 Default value: `$kubernetes::etcd_install_method`
 
@@ -2618,7 +2644,9 @@ Default value: `$kubernetes::etcd_install_method`
 
 Data type: `String`
 
-
+The version of Kubernetes containers you want to install.
+ie api server,
+Defaults to  1.10.2
 
 Default value: `$kubernetes::kubernetes_version`
 
@@ -2626,7 +2654,9 @@ Default value: `$kubernetes::kubernetes_version`
 
 Data type: `String`
 
-
+The name of the cluster, for use when multiple clusters are accessed from the same source
+Only used by Kubernetes 1.12+
+Defaults to "kubernetes"
 
 Default value: `$kubernetes::kubernetes_cluster_name`
 
@@ -2634,7 +2664,8 @@ Default value: `$kubernetes::kubernetes_cluster_name`
 
 Data type: `Optional[String]`
 
-
+This is the ca certificate key data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcd_ca_key`
 
@@ -2642,7 +2673,8 @@ Default value: `$kubernetes::etcd_ca_key`
 
 Data type: `Optional[String]`
 
-
+This is the ca certificate data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcd_ca_crt`
 
@@ -2650,7 +2682,8 @@ Default value: `$kubernetes::etcd_ca_crt`
 
 Data type: `Optional[String]`
 
-
+This is the client certificate key data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcdclient_key`
 
@@ -2658,7 +2691,8 @@ Default value: `$kubernetes::etcdclient_key`
 
 Data type: `Optional[String]`
 
-
+This is the client certificate data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcdclient_crt`
 
@@ -2666,7 +2700,8 @@ Default value: `$kubernetes::etcdclient_crt`
 
 Data type: `Optional[String]`
 
-
+This is the server certificate data for the etcd cluster . This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcdserver_crt`
 
@@ -2674,7 +2709,8 @@ Default value: `$kubernetes::etcdserver_crt`
 
 Data type: `Optional[String]`
 
-
+This is the server certificate key data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcdserver_key`
 
@@ -2682,7 +2718,8 @@ Default value: `$kubernetes::etcdserver_key`
 
 Data type: `Optional[String]`
 
-
+This is the peer certificate data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcdpeer_crt`
 
@@ -2690,7 +2727,8 @@ Default value: `$kubernetes::etcdpeer_crt`
 
 Data type: `Optional[String]`
 
-
+This is the peer certificate key data for the etcd cluster. This must be passed as string not as a file.
+Defaults to undef
 
 Default value: `$kubernetes::etcdpeer_key`
 
@@ -2698,7 +2736,12 @@ Default value: `$kubernetes::etcdpeer_key`
 
 Data type: `Array`
 
-
+This will tell etcd how the list of peers to connect to into the cluster.
+An example with hiera would be kubernetes::etcd_peers:
+    - 172.17.10.101
+    - 172.17.10.102
+    - 172.17.10.103
+Defaults to undef
 
 Default value: `$kubernetes::etcd_peers`
 
@@ -2706,7 +2749,9 @@ Default value: `$kubernetes::etcd_peers`
 
 Data type: `String`
 
-
+The name of the etcd instance.
+An example with hiera would be kubernetes::etcd_hostname: "%{::fqdn}"
+Defaults to hostname
 
 Default value: `$kubernetes::etcd_hostname`
 
@@ -2714,7 +2759,8 @@ Default value: `$kubernetes::etcd_hostname`
 
 Data type: `String`
 
-
+Directory, where etcd data is stored.
+Defaults to /var/lib/etcd.
 
 Default value: `$kubernetes::etcd_data_dir`
 
@@ -2722,7 +2768,10 @@ Default value: `$kubernetes::etcd_data_dir`
 
 Data type: `String`
 
-
+The ip address that you want etcd to use for communications.
+An example with hiera would be kubernetes::etcd_ip: "%{networking.ip}"
+Or to pin explicitly to a specific interface kubernetes::etcd_ip: "%{::ipaddress_enp0s8}"
+Defaults to undef
 
 Default value: `$kubernetes::etcd_ip`
 
@@ -2730,7 +2779,8 @@ Default value: `$kubernetes::etcd_ip`
 
 Data type: `String`
 
-
+The overlay (internal) network range to use.
+Defaults to undef. kube_tool sets this per cni provider.
 
 Default value: `$kubernetes::cni_pod_cidr`
 
@@ -2738,7 +2788,8 @@ Default value: `$kubernetes::cni_pod_cidr`
 
 Data type: `Integer`
 
-
+Apiserver bind port
+Defaults to 6443
 
 Default value: `$kubernetes::kube_api_bind_port`
 
@@ -2746,7 +2797,10 @@ Default value: `$kubernetes::kube_api_bind_port`
 
 Data type: `String`
 
-
+This is the ip address that the want to api server to expose.
+An example with hiera would be kubernetes::kube_api_advertise_address: "%{networking.ip}"
+Or to pin explicitly to a specific interface kubernetes::kube_api_advertise_address: "%{::ipaddress_enp0s8}"
+defaults to undef
 
 Default value: `$kubernetes::kube_api_advertise_address`
 
@@ -2754,7 +2808,9 @@ Default value: `$kubernetes::kube_api_advertise_address`
 
 Data type: `Optional[String]`
 
-
+This will tell etcd how many nodes will be in the cluster and is passed as a string.
+An example with hiera would be kubernetes::etcd_initial_cluster: etcd-kube-control-plane=http://172.17.10.101:2380,etcd-kube-replica-control-plane-01=http://172.17.10.210:2380,etcd-kube-replica-control-plane-02=http://172.17.10.220:2380
+Defaults to undef
 
 Default value: `$kubernetes::etcd_initial_cluster`
 
@@ -2762,7 +2818,10 @@ Default value: `$kubernetes::etcd_initial_cluster`
 
 Data type: `Optional[String]`
 
-
+This will tell etcd to use DNS SRV discovery method. This option is exclusive with `etcd_initial_cluster`, taking precedence
+over it if both are present.
+An example with hiera would be kubernetes::etcd_discovery_srv: etcd-gen.example.org
+Defaults to undef
 
 Default value: `$kubernetes::etcd_discovery_srv`
 
@@ -2770,7 +2829,9 @@ Default value: `$kubernetes::etcd_discovery_srv`
 
 Data type: `String`
 
-
+This will tell etcd the initial state of the cluster. Useful for adding a node to the cluster. Allowed values are
+"new" or "existing"
+Defaults to "new"
 
 Default value: `$kubernetes::etcd_initial_cluster_state`
 
@@ -2778,7 +2839,9 @@ Default value: `$kubernetes::etcd_initial_cluster_state`
 
 Data type: `String`
 
-
+This will tell etcd the compaction method to be used.
+"periodic" or "revision"
+Defaults to "periodic"
 
 Default value: `$kubernetes::etcd_compaction_method`
 
@@ -2786,7 +2849,9 @@ Default value: `$kubernetes::etcd_compaction_method`
 
 Data type: `Variant[Integer,String]`
 
-
+This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`. An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
+Integer or String
+Defaults to 0 (disabled)
 
 Default value: `$kubernetes::etcd_compaction_retention`
 
@@ -2794,7 +2859,7 @@ Default value: `$kubernetes::etcd_compaction_retention`
 
 Data type: `Integer`
 
-
+Defaults to undef
 
 Default value: `$kubernetes::api_server_count`
 
@@ -2802,7 +2867,8 @@ Default value: `$kubernetes::api_server_count`
 
 Data type: `String`
 
-
+The version of etcd that you would like to use.
+Defaults to 3.2.18
 
 Default value: `$kubernetes::etcd_version`
 
@@ -2810,7 +2876,8 @@ Default value: `$kubernetes::etcd_version`
 
 Data type: `Integer`
 
-
+This will tell etcd how many WAL files to be kept
+Defaults to 5
 
 Default value: `$kubernetes::etcd_max_wals`
 
@@ -2818,7 +2885,8 @@ Default value: `$kubernetes::etcd_max_wals`
 
 Data type: `Integer`
 
-
+This will tell etcd the maximum size of a request in bytes
+Defaults to 1572864
 
 Default value: `$kubernetes::etcd_max_request_bytes`
 
@@ -2826,7 +2894,8 @@ Default value: `$kubernetes::etcd_max_request_bytes`
 
 Data type: `Optional[String]`
 
-
+The URL(s) to listen on to respond to /metrics and /health for etcd
+Defaults to undef
 
 Default value: `$kubernetes::etcd_listen_metric_urls`
 
@@ -2834,7 +2903,8 @@ Default value: `$kubernetes::etcd_listen_metric_urls`
 
 Data type: `String`
 
-
+A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -2842,7 +2912,8 @@ Default value: `$kubernetes::token`
 
 Data type: `String`
 
-
+Availability of the token
+Default to 24h
 
 Default value: `$kubernetes::ttl_duration`
 
@@ -2850,7 +2921,8 @@ Default value: `$kubernetes::ttl_duration`
 
 Data type: `String`
 
-
+A string to validate to the root CA public key when joining a cluster. Created by kubetool
+Defaults to undef
 
 Default value: `$kubernetes::discovery_token_hash`
 
@@ -2858,7 +2930,8 @@ Default value: `$kubernetes::discovery_token_hash`
 
 Data type: `Optional[String]`
 
-
+The clusters ca certificate. Must be passed as a string not a file.
+Defaults to undef
 
 Default value: `$kubernetes::kubernetes_ca_crt`
 
@@ -2866,7 +2939,8 @@ Default value: `$kubernetes::kubernetes_ca_crt`
 
 Data type: `Optional[String]`
 
-
+The clusters ca key. Must be passed as a string not a file.
+Defaults to undef
 
 Default value: `$kubernetes::kubernetes_ca_key`
 
@@ -2874,7 +2948,8 @@ Default value: `$kubernetes::kubernetes_ca_key`
 
 Data type: `Optional[String]`
 
-
+The clusters front-proxy ca certificate. Must be passed as a string not a file.
+Defaults to undef
 
 Default value: `$kubernetes::kubernetes_front_proxy_ca_crt`
 
@@ -2882,7 +2957,8 @@ Default value: `$kubernetes::kubernetes_front_proxy_ca_crt`
 
 Data type: `Optional[String]`
 
-
+The clusters front-proxy ca key. Must be passed as a string not a file.
+Defaults to undef
 
 Default value: `$kubernetes::kubernetes_front_proxy_ca_key`
 
@@ -2890,7 +2966,9 @@ Default value: `$kubernetes::kubernetes_front_proxy_ca_key`
 
 Data type: `String`
 
-
+This is the runtime that the Kubernetes cluster will use.
+It can only be set to "cri_containerd" or "docker"
+Defaults to cri_containerd
 
 Default value: `$kubernetes::container_runtime`
 
@@ -2898,7 +2976,8 @@ Default value: `$kubernetes::container_runtime`
 
 Data type: `Optional[String]`
 
-
+The service account public key. Must be passed as cert not a file.
+Defaults to undef
 
 Default value: `$kubernetes::sa_pub`
 
@@ -2906,7 +2985,8 @@ Default value: `$kubernetes::sa_pub`
 
 Data type: `Optional[String]`
 
-
+The service account key. Must be passed as string not a file.
+Defaults to undef
 
 Default value: `$kubernetes::sa_key`
 
@@ -2914,7 +2994,8 @@ Default value: `$kubernetes::sa_key`
 
 Data type: `Optional[Array]`
 
-
+A string array of Subhect Alternative Names for the api server certificates.
+Defaults to []
 
 Default value: `$kubernetes::apiserver_cert_extra_sans`
 
@@ -2922,7 +3003,8 @@ Default value: `$kubernetes::apiserver_cert_extra_sans`
 
 Data type: `Optional[Array]`
 
-
+A string array of extra arguments to be passed to the api server.
+Defaults to []
 
 Default value: `$kubernetes::apiserver_extra_arguments`
 
@@ -2930,7 +3012,8 @@ Default value: `$kubernetes::apiserver_extra_arguments`
 
 Data type: `Optional[Array]`
 
-
+A string array of extra arguments to be passed to the controller manager.
+Defaults to []
 
 Default value: `$kubernetes::controllermanager_extra_arguments`
 
@@ -2938,7 +3021,8 @@ Default value: `$kubernetes::controllermanager_extra_arguments`
 
 Data type: `Optional[Array]`
 
-
+A string array of extra arguments to be passed to scheduler.
+Defaults to []
 
 Default value: `$kubernetes::scheduler_extra_arguments`
 
@@ -2946,7 +3030,9 @@ Default value: `$kubernetes::scheduler_extra_arguments`
 
 Data type: `Optional[Array]`
 
-
+A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
+Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+Defaults to []
 
 Default value: `$kubernetes::kubelet_extra_arguments`
 
@@ -2954,7 +3040,8 @@ Default value: `$kubernetes::kubelet_extra_arguments`
 
 Data type: `String`
 
-
+The IP assdress range for service VIPs
+Defaults to 10.96.0.0/12
 
 Default value: `$kubernetes::service_cidr`
 
@@ -2962,7 +3049,7 @@ Default value: `$kubernetes::service_cidr`
 
 Data type: `Stdlib::Fqdn`
 
-
+Name of the node. Defaults to a fact
 
 Default value: `$kubernetes::node_name`
 
@@ -2970,7 +3057,9 @@ Default value: `$kubernetes::node_name`
 
 Data type: `Optional[String]`
 
-
+The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
+Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+Defaults to undef
 
 Default value: `$kubernetes::cloud_provider`
 
@@ -2978,7 +3067,9 @@ Default value: `$kubernetes::cloud_provider`
 
 Data type: `Optional[String]`
 
-
+The file location of the cloud config to be used by cloud_provider [*For use with v1.12 and above*]
+Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+Defaults to undef
 
 Default value: `$kubernetes::cloud_config`
 
@@ -2986,7 +3077,8 @@ Default value: `$kubernetes::cloud_config`
 
 Data type: `Optional[Hash]`
 
-
+A hash of extra volume mounts mounted on the api server.
+Defaults to {}
 
 Default value: `$kubernetes::apiserver_extra_volumes`
 
@@ -2994,7 +3086,8 @@ Default value: `$kubernetes::apiserver_extra_volumes`
 
 Data type: `Optional[Hash]`
 
-
+A hash of extra volume mounts mounted on the controller manager.
+Defaults to []
 
 Default value: `$kubernetes::controllermanager_extra_volumes`
 
@@ -3002,7 +3095,8 @@ Default value: `$kubernetes::controllermanager_extra_volumes`
 
 Data type: `Optional[Hash]`
 
-
+A hash containing extra configuration data to be serialised with `to_yaml` and appended to the config.yaml file used by kubeadm.
+Defaults to {}
 
 Default value: `$kubernetes::kubeadm_extra_config`
 
@@ -3010,7 +3104,9 @@ Default value: `$kubernetes::kubeadm_extra_config`
 
 Data type: `Optional[Hash]`
 
-
+A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster.
+Requires DynamicKubeletConfig.
+Defaults to {}
 
 Default value: `$kubernetes::kubelet_extra_config`
 
@@ -3018,7 +3114,8 @@ Default value: `$kubernetes::kubelet_extra_config`
 
 Data type: `String`
 
-
+The container registry to pull control plane images from
+Defaults to k8s.gcr.io
 
 Default value: `$kubernetes::image_repository`
 
@@ -3026,7 +3123,8 @@ Default value: `$kubernetes::image_repository`
 
 Data type: `String`
 
-
+The cgroup driver to be used.
+Defaults to 'systemd'
 
 Default value: `$kubernetes::cgroup_driver`
 
@@ -3034,7 +3132,8 @@ Default value: `$kubernetes::cgroup_driver`
 
 Data type: `String`
 
-
+The mode for kubeproxy to run. It should be one of: "" (default), "userspace", "kernelspace", "iptables", or "ipvs".
+Defaults to ""
 
 Default value: `$kubernetes::proxy_mode`
 
@@ -3042,7 +3141,8 @@ Default value: `$kubernetes::proxy_mode`
 
 Data type: `Stdlib::IP::Address`
 
-
+Set the metricsBindAddress (to allow prometheus)
+Default to 127.0.0.1
 
 Default value: `$kubernetes::metrics_bind_address`
 
@@ -3050,7 +3150,9 @@ Default value: `$kubernetes::metrics_bind_address`
 
 Data type: `Integer`
 
-
+Maximum number of NAT connections to track per CPU core.
+Set to 0 to leave the limit as-is and ignore conntrack_min.
+Default to 32768
 
 Default value: `$kubernetes::conntrack_max_per_core`
 
@@ -3058,7 +3160,9 @@ Default value: `$kubernetes::conntrack_max_per_core`
 
 Data type: `Integer`
 
-
+Minimum number of conntrack entries to allocate, regardless of conntrack-max-per-core.
+Set conntrack_max_per_core to 0 to leave the limit as-is
+Default to 131072
 
 Default value: `$kubernetes::conntrack_min`
 
@@ -3066,7 +3170,8 @@ Default value: `$kubernetes::conntrack_min`
 
 Data type: `String`
 
-
+NAT timeout for TCP connections in the CLOSE_WAIT state.
+Default to 1h0m0s
 
 Default value: `$kubernetes::conntrack_tcp_wait_timeout`
 
@@ -3074,7 +3179,8 @@ Default value: `$kubernetes::conntrack_tcp_wait_timeout`
 
 Data type: `String`
 
-
+Idle timeout for established TCP connections (0 to leave as-is).
+Default to 24h0m0s
 
 Default value: `$kubernetes::conntrack_tcp_stablished_timeout`
 
@@ -3082,7 +3188,10 @@ Default value: `$kubernetes::conntrack_tcp_stablished_timeout`
 
 Data type: `Hash[String[1], Boolean]`
 
-
+Feature gate hash to be added to kubeadm configuration
+Example:
+ {'RootlessControlPlane' => true}
+ Default: undefined, no feature gates
 
 Default value: `$kubernetes::feature_gates`
 
@@ -3120,7 +3229,7 @@ The following parameters are available in the `kubernetes::config::worker` class
 
 Data type: `Stdlib::Fqdn`
 
-
+Name of the node. Defaults to a fact
 
 Default value: `$kubernetes::node_name`
 
@@ -3128,7 +3237,7 @@ Default value: `$kubernetes::node_name`
 
 Data type: `String`
 
-
+Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
 
 Default value: `$kubernetes::config_file`
 
@@ -3136,7 +3245,9 @@ Default value: `$kubernetes::config_file`
 
 Data type: `String`
 
-
+The version of Kubernetes containers you want to install.
+ie api server,
+Defaults to  1.10.2
 
 Default value: `$kubernetes::kubernetes_version`
 
@@ -3144,7 +3255,9 @@ Default value: `$kubernetes::kubernetes_version`
 
 Data type: `String`
 
-
+The name of the cluster, for use when multiple clusters are accessed from the same source
+Only used by Kubernetes 1.12+
+Defaults to "kubernetes"
 
 Default value: `$kubernetes::kubernetes_cluster_name`
 
@@ -3152,7 +3265,8 @@ Default value: `$kubernetes::kubernetes_cluster_name`
 
 Data type: `String`
 
-
+The IP address and Port of the controller that worker node will join. eg 172.17.10.101:6443
+Defaults to undef
 
 Default value: `$kubernetes::controller_address`
 
@@ -3160,7 +3274,8 @@ Default value: `$kubernetes::controller_address`
 
 Data type: `String`
 
-
+A string to validate to the root CA public key when joining a cluster. Created by kubetool
+Defaults to undef
 
 Default value: `$kubernetes::discovery_token_hash`
 
@@ -3168,7 +3283,9 @@ Default value: `$kubernetes::discovery_token_hash`
 
 Data type: `String`
 
-
+This is the runtime that the Kubernetes cluster will use.
+It can only be set to "cri_containerd" or "docker"
+Defaults to cri_containerd
 
 Default value: `$kubernetes::container_runtime`
 
@@ -3176,7 +3293,8 @@ Default value: `$kubernetes::container_runtime`
 
 Data type: `String`
 
-
+A string to validate to the root CA public key when joining a cluster. Created by kubetool
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -3184,7 +3302,8 @@ Default value: `$kubernetes::token`
 
 Data type: `String`
 
-
+A string to validate to the root CA public key when joining a cluster. Created by kubetool
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -3192,7 +3311,8 @@ Default value: `$kubernetes::token`
 
 Data type: `String`
 
-
+A string to validate to the root CA public key when joining a cluster. Created by kubetool
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -3200,7 +3320,7 @@ Default value: `$kubernetes::token`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -3208,7 +3328,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -3216,7 +3336,9 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
+Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+Defaults to undef
 
 Default value: `$kubernetes::cloud_provider`
 
@@ -3224,7 +3346,9 @@ Default value: `$kubernetes::cloud_provider`
 
 Data type: `Optional[String]`
 
-
+The file location of the cloud config to be used by cloud_provider [*For use with v1.12 and above*]
+Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+Defaults to undef
 
 Default value: `$kubernetes::cloud_config`
 
@@ -3232,7 +3356,10 @@ Default value: `$kubernetes::cloud_config`
 
 Data type: `Optional[Array[Hash]]`
 
-
+Additional taints for node.
+Example:
+  [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule', 'operator' => 'Equal'}]
+Defaults to undef
 
 Default value: `$kubernetes::node_extra_taints`
 
@@ -3240,7 +3367,9 @@ Default value: `$kubernetes::node_extra_taints`
 
 Data type: `Optional[Array]`
 
-
+A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
+Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+Defaults to []
 
 Default value: `$kubernetes::kubelet_extra_arguments`
 
@@ -3248,7 +3377,9 @@ Default value: `$kubernetes::kubelet_extra_arguments`
 
 Data type: `Optional[Hash]`
 
-
+A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster.
+Requires DynamicKubeletConfig.
+Defaults to {}
 
 Default value: `$kubernetes::kubelet_extra_config`
 
@@ -3256,7 +3387,7 @@ Default value: `$kubernetes::kubelet_extra_config`
 
 Data type: `Optional[Array]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -3264,7 +3395,7 @@ Default value: `undef`
 
 Data type: `Boolean`
 
-
+Defaults to false
 
 Default value: `false`
 
@@ -3272,7 +3403,8 @@ Default value: `false`
 
 Data type: `String`
 
-
+The cgroup driver to be used.
+Defaults to 'systemd'
 
 Default value: `$kubernetes::cgroup_driver`
 
@@ -3280,7 +3412,9 @@ Default value: `$kubernetes::cgroup_driver`
 
 Data type: `Optional[Array]`
 
-
+Allow kubeadm join to skip some phases
+Only works with Kubernetes 1.22+
+Default: no phases skipped
 
 Default value: `$kubernetes::skip_phases_join`
 
@@ -3311,7 +3445,7 @@ The following parameters are available in the `kubernetes::kube_addons` class:
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `$kubernetes::cni_network_preinstall`
 
@@ -3319,7 +3453,7 @@ Default value: `$kubernetes::cni_network_preinstall`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `$kubernetes::cni_network_provider`
 
@@ -3327,7 +3461,8 @@ Default value: `$kubernetes::cni_network_provider`
 
 Data type: `Optional[String]`
 
-
+The overlay (internal) network range to use.
+Defaults to undef. kube_tool sets this per cni provider.
 
 Default value: `$kubernetes::cni_pod_cidr`
 
@@ -3335,7 +3470,7 @@ Default value: `$kubernetes::cni_pod_cidr`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `$kubernetes::cni_provider`
 
@@ -3343,7 +3478,8 @@ Default value: `$kubernetes::cni_provider`
 
 Data type: `Optional[String]`
 
-
+The URL get the cni providers rbac rules. This is for use with Calico only.
+Defaults to `undef`.
 
 Default value: `$kubernetes::cni_rbac_binding`
 
@@ -3351,7 +3487,8 @@ Default value: `$kubernetes::cni_rbac_binding`
 
 Data type: `Boolean`
 
-
+This is a bool that determines if the kubernetes dashboard is installed.
+Defaults to false
 
 Default value: `$kubernetes::install_dashboard`
 
@@ -3359,7 +3496,8 @@ Default value: `$kubernetes::install_dashboard`
 
 Data type: `String`
 
-
+The version of Kubernetes dashboard you want to install.
+Defaults to 1.10.1
 
 Default value: `$kubernetes::dashboard_version`
 
@@ -3367,7 +3505,8 @@ Default value: `$kubernetes::dashboard_version`
 
 Data type: `String`
 
-
+The URL to get the Kubernetes Dashboard yaml file.
+Default is based on dashboard_version.
 
 Default value: `$kubernetes::dashboard_url`
 
@@ -3375,7 +3514,8 @@ Default value: `$kubernetes::dashboard_url`
 
 Data type: `String`
 
-
+The version of Kubernetes containers you want to install.
+ie api server, Defaults to  1.10.2
 
 Default value: `$kubernetes::kubernetes_version`
 
@@ -3383,7 +3523,8 @@ Default value: `$kubernetes::kubernetes_version`
 
 Data type: `Boolean`
 
-
+This is a bool that sets the node as a Kubernetes controller
+Defaults to false
 
 Default value: `$kubernetes::controller`
 
@@ -3391,7 +3532,8 @@ Default value: `$kubernetes::controller`
 
 Data type: `Optional[Boolean]`
 
-
+A flag to remove the control plane role and allow pod scheduling on controllers
+Defaults to true
 
 Default value: `$kubernetes::schedule_on_controller`
 
@@ -3399,7 +3541,7 @@ Default value: `$kubernetes::schedule_on_controller`
 
 Data type: `Stdlib::Fqdn`
 
-
+Name of the node. Defaults to a fact
 
 Default value: `$kubernetes::node_name`
 
@@ -3407,7 +3549,8 @@ Default value: `$kubernetes::node_name`
 
 Data type: `Array`
 
-
+The path to be used when running kube* commands
+Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
 
 Default value: `$kubernetes::default_path`
 
@@ -3415,7 +3558,8 @@ Default value: `$kubernetes::default_path`
 
 Data type: `Optional[Array]`
 
-
+The environment passed to kubectl commands.
+Defaults to setting HOME and KUBECONFIG variables
 
 Default value: `$kubernetes::environment`
 
@@ -3477,7 +3621,8 @@ The following parameters are available in the `kubernetes::packages` class:
 
 Data type: `String`
 
-
+The version of the packages the Kubernetes os packages to install
+ie kubectl and kubelet. Defaults to 1.10.2
 
 Default value: `$kubernetes::kubernetes_package_version`
 
@@ -3485,7 +3630,8 @@ Default value: `$kubernetes::kubernetes_package_version`
 
 Data type: `String`
 
-
+This is the runtime that the Kubernetes cluster will use.
+It can only be set to "cri_containerd" or "docker". Defaults to cri_containerd
 
 Default value: `$kubernetes::container_runtime`
 
@@ -3493,7 +3639,7 @@ Default value: `$kubernetes::container_runtime`
 
 Data type: `String`
 
-
+The configuration for the image pause container. Defaults k8s.gcr.io/pause:3.2
 
 Default value: `$kubernetes::containerd_sandbox_image`
 
@@ -3501,7 +3647,8 @@ Default value: `$kubernetes::containerd_sandbox_image`
 
 Data type: `Boolean`
 
-
+Whether or not to install Docker repositories and packages via this module.
+Defaults to true.
 
 Default value: `$kubernetes::manage_docker`
 
@@ -3509,7 +3656,8 @@ Default value: `$kubernetes::manage_docker`
 
 Data type: `Boolean`
 
-
+When set to true, etcd will be downloaded from the specified source URL.
+Defaults to true.
 
 Default value: `$kubernetes::manage_etcd`
 
@@ -3517,7 +3665,9 @@ Default value: `$kubernetes::manage_etcd`
 
 Data type: `Optional[String]`
 
-
+This is the version of the docker runtime that you want to install.
+Defaults to 17.03.0.ce-1.el7.centos on RedHat
+Defaults to 5:20.10.11~3-0~ubuntu-(distro codename) on Ubuntu
 
 Default value: `$kubernetes::docker_version`
 
@@ -3525,7 +3675,7 @@ Default value: `$kubernetes::docker_version`
 
 Data type: `Optional[String]`
 
-
+The docker package name to download from an upstream repo. Defaults to docker-engine
 
 Default value: `$kubernetes::docker_package_name`
 
@@ -3533,7 +3683,7 @@ Default value: `$kubernetes::docker_package_name`
 
 Data type: `Optional[String]`
 
-
+Storage Driver to be added to `/etc/docker/daemon.json`. Defaults to overlay2
 
 Default value: `$kubernetes::docker_storage_driver`
 
@@ -3541,7 +3691,7 @@ Default value: `$kubernetes::docker_storage_driver`
 
 Data type: `Optional[String]`
 
-
+The cgroup driver to be used. Defaults to 'systemd'
 
 Default value: `$kubernetes::cgroup_driver`
 
@@ -3549,7 +3699,7 @@ Default value: `$kubernetes::cgroup_driver`
 
 Data type: `Optional[Array]`
 
-
+Storage options to be added to `/etc/docker/daemon.json`. Defaults to undef
 
 Default value: `$kubernetes::docker_storage_opts`
 
@@ -3557,7 +3707,7 @@ Default value: `$kubernetes::docker_storage_opts`
 
 Data type: `Optional[String]`
 
-
+Extra configuration to be added to `/etc/docker/daemon.json`. Defaults to undef
 
 Default value: `$kubernetes::docker_extra_daemon_config`
 
@@ -3565,7 +3715,8 @@ Default value: `$kubernetes::docker_extra_daemon_config`
 
 Data type: `String`
 
-
+The maximum number of log files that can be present.
+Defaults to 1. See https://docs.docker.com/config/containers/logging/json-file/
 
 Default value: `$kubernetes::docker_log_max_file`
 
@@ -3573,7 +3724,9 @@ Default value: `$kubernetes::docker_log_max_file`
 
 Data type: `String`
 
-
+The maximum size of the log before it is rolled.
+A positive integer plus a modifier representing the unit of measure (k, m, or g).
+Defaults to 100m. See https://docs.docker.com/config/containers/logging/json-file/
 
 Default value: `$kubernetes::docker_log_max_size`
 
@@ -3581,7 +3734,7 @@ Default value: `$kubernetes::docker_log_max_size`
 
 Data type: `Boolean`
 
-
+This is a bool that sets the node as a Kubernetes controller. Defaults to false
 
 Default value: `$kubernetes::controller`
 
@@ -3589,7 +3742,7 @@ Default value: `$kubernetes::controller`
 
 Data type: `Optional[String]`
 
-
+This is the version of the containerd runtime the module will install. Defaults to 1.1.0
 
 Default value: `$kubernetes::containerd_version`
 
@@ -3597,7 +3750,7 @@ Default value: `$kubernetes::containerd_version`
 
 Data type: `Enum['archive','package']`
 
-
+Whether to install containerd via archive or package. Defaults to archive
 
 Default value: `$kubernetes::containerd_install_method`
 
@@ -3605,7 +3758,7 @@ Default value: `$kubernetes::containerd_install_method`
 
 Data type: `String`
 
-
+containerd package name. Defaults to containerd.io
 
 Default value: `$kubernetes::containerd_package_name`
 
@@ -3613,7 +3766,8 @@ Default value: `$kubernetes::containerd_package_name`
 
 Data type: `Optional[String]`
 
-
+The name of the containerd archive
+Defaults to containerd-${containerd_version}.linux-amd64.tar.gz
 
 Default value: `$kubernetes::containerd_archive`
 
@@ -3621,7 +3775,9 @@ Default value: `$kubernetes::containerd_archive`
 
 Data type: `Optional[String]`
 
-
+A checksum (sha-256) of the archive. If the checksum does not match, a reinstall will be executed and the related service will be
+restarted. If no checksum is defined, the puppet module checks for the extracted files of the archive and downloads and extracts
+the files if they do not exist.
 
 Default value: `$kubernetes::containerd_archive_checksum`
 
@@ -3629,7 +3785,8 @@ Default value: `$kubernetes::containerd_archive_checksum`
 
 Data type: `Optional[String]`
 
-
+The URL to download the containerd archive
+Defaults to https://github.com/containerd/containerd/releases/download/v${containerd_version}/${containerd_archive}
 
 Default value: `$kubernetes::containerd_source`
 
@@ -3637,7 +3794,8 @@ Default value: `$kubernetes::containerd_source`
 
 Data type: `String`
 
-
+The template to use for containerd configuration
+This value is ignored if containerd_config_source is defined. Default to 'kubernetes/containerd/config.toml.epp'
 
 Default value: `$kubernetes::containerd_config_template`
 
@@ -3645,7 +3803,8 @@ Default value: `$kubernetes::containerd_config_template`
 
 Data type: `Optional[String]`
 
-
+The source of the containerd configuration
+This value overrides containerd_config_template. Default to undef
 
 Default value: `$kubernetes::containerd_config_source`
 
@@ -3653,7 +3812,8 @@ Default value: `$kubernetes::containerd_config_source`
 
 Data type: `Optional[Hash]`
 
-
+The configuration for the image registries used by containerd when containerd_install_method is package.
+See https://github.com/containerd/containerd/blob/master/docs/cri/registry.md. Defaults to `undef`
 
 Default value: `$kubernetes::containerd_plugins_registry`
 
@@ -3661,7 +3821,7 @@ Default value: `$kubernetes::containerd_plugins_registry`
 
 Data type: `Enum['runc','nvidia']`
 
-
+The default runtime to use with containerd. Defaults to runc
 
 Default value: `$kubernetes::containerd_default_runtime_name`
 
@@ -3669,7 +3829,7 @@ Default value: `$kubernetes::containerd_default_runtime_name`
 
 Data type: `String`
 
-
+The name of the etcd archive. Defaults to etcd-v${etcd_version}-linux-amd64.tar.gz
 
 Default value: `$kubernetes::etcd_archive`
 
@@ -3677,7 +3837,9 @@ Default value: `$kubernetes::etcd_archive`
 
 Data type: `Optional[String]`
 
-
+A checksum (sha-256) of the archive. If the checksum does not match, a reinstall will be executed and the related service will be
+restarted. If no checksum is defined, the puppet module checks for the extracted files of the archive and downloads and extracts
+the files if they do not exist.
 
 Default value: `$kubernetes::etcd_archive_checksum`
 
@@ -3685,7 +3847,7 @@ Default value: `$kubernetes::etcd_archive_checksum`
 
 Data type: `String`
 
-
+The version of etcd that you would like to use. Defaults to 3.2.18
 
 Default value: `$kubernetes::etcd_version`
 
@@ -3693,7 +3855,7 @@ Default value: `$kubernetes::etcd_version`
 
 Data type: `String`
 
-
+The URL to download the etcd archive. Defaults to https://github.com/coreos/etcd/releases/download/v${etcd_version}/${etcd_archive}
 
 Default value: `$kubernetes::etcd_source`
 
@@ -3701,7 +3863,7 @@ Default value: `$kubernetes::etcd_source`
 
 Data type: `String`
 
-
+The system package name for installing etcd. Defaults to etcd-server
 
 Default value: `$kubernetes::etcd_package_name`
 
@@ -3709,7 +3871,7 @@ Default value: `$kubernetes::etcd_package_name`
 
 Data type: `String`
 
-
+The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name). Defaults to wget
 
 Default value: `$kubernetes::etcd_install_method`
 
@@ -3717,7 +3879,7 @@ Default value: `$kubernetes::etcd_install_method`
 
 Data type: `Optional[String]`
 
-
+The URL to download runc. Defaults to https://github.com/opencontainers/runc/releases/download/v${runc_version}/runc.amd64
 
 Default value: `$kubernetes::runc_source`
 
@@ -3725,7 +3887,7 @@ Default value: `$kubernetes::runc_source`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `$kubernetes::runc_source_checksum`
 
@@ -3733,7 +3895,7 @@ Default value: `$kubernetes::runc_source_checksum`
 
 Data type: `Boolean`
 
-
+A flag to turn off the swap setting. This is required for kubeadm. Defaults to true
 
 Default value: `$kubernetes::disable_swap`
 
@@ -3741,7 +3903,7 @@ Default value: `$kubernetes::disable_swap`
 
 Data type: `Boolean`
 
-
+A flag to manage required Kernel modules. Defaults to true
 
 Default value: `$kubernetes::manage_kernel_modules`
 
@@ -3749,7 +3911,7 @@ Default value: `$kubernetes::manage_kernel_modules`
 
 Data type: `Boolean`
 
-
+A flag to manage required sysctl settings. Defaults to true
 
 Default value: `$kubernetes::manage_sysctl_settings`
 
@@ -3757,7 +3919,7 @@ Default value: `$kubernetes::manage_sysctl_settings`
 
 Data type: `Boolean`
 
-
+A flag to install the upstream Kubernetes and Docker repos. Defaults to true
 
 Default value: `$kubernetes::repos::create_repos`
 
@@ -3765,7 +3927,8 @@ Default value: `$kubernetes::repos::create_repos`
 
 Data type: `Boolean`
 
-
+Enable pinning of the docker and kubernetes packages to prevent accidential updates.
+This is currently only implemented for debian based distributions. Defaults to false
 
 Default value: `$kubernetes::pin_packages`
 
@@ -3773,7 +3936,7 @@ Default value: `$kubernetes::pin_packages`
 
 Data type: `Integer`
 
-
+Defaults to 32767
 
 Default value: `32767`
 
@@ -3781,7 +3944,7 @@ Default value: `32767`
 
 Data type: `String`
 
-
+Defaults to 'sha256'
 
 Default value: `'sha256'`
 
@@ -3789,7 +3952,8 @@ Default value: `'sha256'`
 
 Data type: `String`
 
-
+Directory to use when downloading archives for install.
+Default to /var/tmp/puppetlabs-kubernetes
 
 Default value: `$kubernetes::tmp_directory`
 
@@ -3797,7 +3961,7 @@ Default value: `$kubernetes::tmp_directory`
 
 Data type: `Optional[String]`
 
-
+Configure the HTTP_PROXY environment variable. Defaults to undef
 
 Default value: `$kubernetes::http_proxy`
 
@@ -3805,7 +3969,7 @@ Default value: `$kubernetes::http_proxy`
 
 Data type: `Optional[String]`
 
-
+Configure the HTTPS_PROXY environment variable. Defaults to undef
 
 Default value: `$kubernetes::https_proxy`
 
@@ -3813,7 +3977,7 @@ Default value: `$kubernetes::https_proxy`
 
 Data type: `Optional[String]`
 
-
+Configure the NO_PROXY environment variable. Defaults to undef
 
 Default value: `$kubernetes::no_proxy`
 
@@ -3821,7 +3985,9 @@ Default value: `$kubernetes::no_proxy`
 
 Data type: `Boolean`
 
-
+Configure whether the container runtime should be configured to use a proxy.
+If set to true, the container runtime will use the http_proxy, https_proxy and
+no_proxy values. Defaults to false
 
 Default value: `$kubernetes::container_runtime_use_proxy`
 
@@ -3829,7 +3995,7 @@ Default value: `$kubernetes::container_runtime_use_proxy`
 
 Data type: `Variant[Stdlib::Unixpath, String]`
 
-
+The path to containerd GRPC socket. Defaults to /run/containerd/containerd.sock
 
 Default value: `$kubernetes::containerd_socket`
 
@@ -3864,7 +4030,8 @@ The following parameters are available in the `kubernetes::repos` class:
 
 Data type: `String`
 
-
+This is the runtime that the Kubernetes cluster will use.
+It can only be set to "cri_containerd" or "docker". Defaults to cri_containerd
 
 Default value: `$kubernetes::container_runtime`
 
@@ -3872,7 +4039,7 @@ Default value: `$kubernetes::container_runtime`
 
 Data type: `Optional[String]`
 
-
+The APT repo URL for the Kubernetes packages. Defaults to https://apt.kubernetes.io
 
 Default value: `$kubernetes::kubernetes_apt_location`
 
@@ -3880,7 +4047,7 @@ Default value: `$kubernetes::kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
-
+The release name for the APT repo for the Kubernetes packages. Defaults to 'kubernetes-${facts.os.distro.codename}'
 
 Default value: `$kubernetes::kubernetes_apt_release`
 
@@ -3888,7 +4055,7 @@ Default value: `$kubernetes::kubernetes_apt_release`
 
 Data type: `Optional[String]`
 
-
+The repos to install from the Kubernetes APT url. Defaults to main
 
 Default value: `$kubernetes::kubernetes_apt_repos`
 
@@ -3896,7 +4063,7 @@ Default value: `$kubernetes::kubernetes_apt_repos`
 
 Data type: `Optional[String]`
 
-
+The gpg key for the Kubernetes APT repo. Defaults to '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
 
 Default value: `$kubernetes::kubernetes_key_id`
 
@@ -3904,7 +4071,7 @@ Default value: `$kubernetes::kubernetes_key_id`
 
 Data type: `Optional[String]`
 
-
+The URL for the APT repo gpg key. Defaults to https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
 Default value: `$kubernetes::kubernetes_key_source`
 
@@ -3912,7 +4079,7 @@ Default value: `$kubernetes::kubernetes_key_source`
 
 Data type: `Optional[String]`
 
-
+The YUM repo URL for the Kubernetes packages. Defaults to https://download.docker.com/linux/centos/
 
 Default value: `$kubernetes::kubernetes_yum_baseurl`
 
@@ -3920,7 +4087,7 @@ Default value: `$kubernetes::kubernetes_yum_baseurl`
 
 Data type: `Optional[String]`
 
-
+The URL for the Kubernetes yum repo gpg key. Defaults to https://download.docker.com/linux/centos/gpg
 
 Default value: `$kubernetes::kubernetes_yum_gpgkey`
 
@@ -3928,7 +4095,7 @@ Default value: `$kubernetes::kubernetes_yum_gpgkey`
 
 Data type: `Optional[String]`
 
-
+The APT repo URL for the Docker packages. Defaults to https://apt.dockerproject.org/repo
 
 Default value: `$kubernetes::docker_apt_location`
 
@@ -3936,7 +4103,7 @@ Default value: `$kubernetes::docker_apt_location`
 
 Data type: `Optional[String]`
 
-
+The release name for the APT repo for the Docker packages. Defaults to $facts.os.distro.codename
 
 Default value: `$kubernetes::docker_apt_release`
 
@@ -3944,7 +4111,7 @@ Default value: `$kubernetes::docker_apt_release`
 
 Data type: `Optional[String]`
 
-
+The repos to install from the Docker APT url. Defaults to main
 
 Default value: `$kubernetes::docker_apt_repos`
 
@@ -3952,7 +4119,7 @@ Default value: `$kubernetes::docker_apt_repos`
 
 Data type: `Optional[String]`
 
-
+The YUM repo URL for the Docker packages. Defaults to https://download.docker.com/linux/centos/7/x86_64/stable
 
 Default value: `$kubernetes::docker_yum_baseurl`
 
@@ -3960,7 +4127,7 @@ Default value: `$kubernetes::docker_yum_baseurl`
 
 Data type: `Optional[String]`
 
-
+The URL for the Docker yum repo gpg key. Defaults to https://download.docker.com/linux/centos/gpg
 
 Default value: `$kubernetes::docker_yum_gpgkey`
 
@@ -3968,7 +4135,7 @@ Default value: `$kubernetes::docker_yum_gpgkey`
 
 Data type: `Optional[String]`
 
-
+The gpg key for the Docker APT repo. Defaults to '58118E89F3A912897C070ADBF76221572C52609D'
 
 Default value: `$kubernetes::docker_key_id`
 
@@ -3976,7 +4143,7 @@ Default value: `$kubernetes::docker_key_id`
 
 Data type: `Optional[String]`
 
-
+The URL for the Docker APT repo gpg key. Defaults to https://apt.dockerproject.org/gpg
 
 Default value: `$kubernetes::docker_key_source`
 
@@ -3984,7 +4151,7 @@ Default value: `$kubernetes::docker_key_source`
 
 Data type: `Optional[String]`
 
-
+Whether to install containerd via archive or package. Defaults to archive
 
 Default value: `$kubernetes::containerd_install_method`
 
@@ -3992,7 +4159,7 @@ Default value: `$kubernetes::containerd_install_method`
 
 Data type: `Boolean`
 
-
+Whether or not to install Docker repositories and packages via this module. Defaults to true.
 
 Default value: `$kubernetes::manage_docker`
 
@@ -4000,13 +4167,13 @@ Default value: `$kubernetes::manage_docker`
 
 Data type: `Boolean`
 
-
+A flag to install the upstream Kubernetes and Docker repos. Defaults to true
 
 Default value: `$kubernetes::create_repos`
 
 ### <a name="kubernetes--service"></a>`kubernetes::service`
 
-The kubernetes::service class.
+Puppet class that controls the Kubelet service
 
 #### Parameters
 
@@ -4031,7 +4198,9 @@ The following parameters are available in the `kubernetes::service` class:
 
 Data type: `String`
 
-
+This is the runtime that the Kubernetes cluster will use.
+It can only be set to "cri_containerd" or "docker"
+Defaults to cri_containerd
 
 Default value: `$kubernetes::container_runtime`
 
@@ -4039,7 +4208,10 @@ Default value: `$kubernetes::container_runtime`
 
 Data type: `Boolean`
 
-
+Configure whether the container runtime should be configured to use a proxy.
+If set to true, the container runtime will use the http_proxy, https_proxy and
+no_proxy values.
+Defaults to false
 
 Default value: `$kubernetes::container_runtime_use_proxy`
 
@@ -4047,7 +4219,8 @@ Default value: `$kubernetes::container_runtime_use_proxy`
 
 Data type: `Enum['archive','package']`
 
-
+Whether to install containerd via archive or package.
+Defaults to archive
 
 Default value: `$kubernetes::containerd_install_method`
 
@@ -4055,7 +4228,8 @@ Default value: `$kubernetes::containerd_install_method`
 
 Data type: `Boolean`
 
-
+This is a bool that sets the node as a Kubernetes controller
+Defaults to false
 
 Default value: `$kubernetes::controller`
 
@@ -4063,7 +4237,8 @@ Default value: `$kubernetes::controller`
 
 Data type: `Boolean`
 
-
+Whether or not to install Docker repositories and packages via this module.
+Defaults to true.
 
 Default value: `$kubernetes::manage_docker`
 
@@ -4071,7 +4246,8 @@ Default value: `$kubernetes::manage_docker`
 
 Data type: `Boolean`
 
-
+When set to true, etcd will be downloaded from the specified source URL.
+Defaults to true.
 
 Default value: `$kubernetes::manage_etcd`
 
@@ -4079,7 +4255,8 @@ Default value: `$kubernetes::manage_etcd`
 
 Data type: `String`
 
-
+The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
+Defaults to wget
 
 Default value: `$kubernetes::etcd_install_method`
 
@@ -4087,7 +4264,9 @@ Default value: `$kubernetes::etcd_install_method`
 
 Data type: `String`
 
-
+The version of Kubernetes containers you want to install.
+ie api server,
+Defaults to  1.10.2
 
 Default value: `$kubernetes::kubernetes_version`
 
@@ -4095,7 +4274,9 @@ Default value: `$kubernetes::kubernetes_version`
 
 Data type: `Optional[String]`
 
-
+The name of the cloud provider of the cloud provider configured in /etc/kubernetes/cloud-config
+Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+Defaults to undef
 
 Default value: `$kubernetes::cloud_provider`
 
@@ -4103,7 +4284,9 @@ Default value: `$kubernetes::cloud_provider`
 
 Data type: `Optional[String]`
 
-
+The file location of the cloud config to be used by cloud_provider [*For use with v1.12 and above*]
+Note: this file is not managed within this module and must be present before bootstrapping the kubernetes controller
+Defaults to undef
 
 Default value: `$kubernetes::cloud_config`
 
@@ -4111,7 +4294,8 @@ Default value: `$kubernetes::cloud_config`
 
 Data type: `Optional[String]`
 
-
+Configure the HTTP_PROXY environment variable
+Defaults to undef
 
 Default value: `$kubernetes::http_proxy`
 
@@ -4119,7 +4303,8 @@ Default value: `$kubernetes::http_proxy`
 
 Data type: `Optional[String]`
 
-
+Configure the HTTPS_PROXY environment variable
+Defaults to undef
 
 Default value: `$kubernetes::https_proxy`
 
@@ -4127,7 +4312,8 @@ Default value: `$kubernetes::https_proxy`
 
 Data type: `Optional[String]`
 
-
+Configure the NO_PROXY environment variable
+Defaults to undef
 
 Default value: `$kubernetes::no_proxy`
 
@@ -4135,7 +4321,10 @@ Default value: `$kubernetes::no_proxy`
 
 Data type: `Boolean`
 
-
+Configure whether the kubelet should be configured to use a proxy.
+If set to true, the kubelet will use the http_proxy, https_proxy and
+no_proxy values.
+Defaults to false
 
 Default value: `$kubernetes::kubelet_use_proxy`
 
@@ -4161,7 +4350,7 @@ The following parameters are available in the `kubernetes::kubeadm_init` defined
 
 Data type: `Stdlib::Fqdn`
 
-
+Name of the node. Defaults to a fact
 
 Default value: `$kubernetes::node_name`
 
@@ -4169,7 +4358,7 @@ Default value: `$kubernetes::node_name`
 
 Data type: `Optional[String]`
 
-
+Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
 
 Default value: `$kubernetes::config_file`
 
@@ -4177,7 +4366,7 @@ Default value: `$kubernetes::config_file`
 
 Data type: `Boolean`
 
-
+Defaults to false
 
 Default value: `false`
 
@@ -4185,7 +4374,7 @@ Default value: `false`
 
 Data type: `Array`
 
-
+The path to be used when running kube* commands. Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
 
 Default value: `$kubernetes::default_path`
 
@@ -4193,7 +4382,7 @@ Default value: `$kubernetes::default_path`
 
 Data type: `Optional[Array]`
 
-
+The environment passed to kubectl commands. Defaults to setting HOME and KUBECONFIG variables
 
 Default value: `$kubernetes::environment`
 
@@ -4201,7 +4390,7 @@ Default value: `$kubernetes::environment`
 
 Data type: `Optional[Array]`
 
-
+Defaults to undef
 
 Default value: `$kubernetes::ignore_preflight_errors`
 
@@ -4209,7 +4398,7 @@ Default value: `$kubernetes::ignore_preflight_errors`
 
 Data type: `Optional[String]`
 
-
+Allow kubeadm init skip some phases. Default: none phases skipped
 
 Default value: `$kubernetes::skip_phases`
 
@@ -4241,7 +4430,7 @@ The following parameters are available in the `kubernetes::kubeadm_join` defined
 
 Data type: `Stdlib::Fqdn`
 
-
+Name of the node. Defaults to a fact
 
 Default value: `$kubernetes::node_name`
 
@@ -4249,7 +4438,9 @@ Default value: `$kubernetes::node_name`
 
 Data type: `String`
 
-
+The version of Kubernetes containers you want to install.
+ie api server,
+Defaults to  1.10.2
 
 Default value: `$kubernetes::kubernetes_version`
 
@@ -4257,7 +4448,7 @@ Default value: `$kubernetes::kubernetes_version`
 
 Data type: `String`
 
-
+Path to the configuration file. Defaults to '/etc/kubernetes/config.yaml'
 
 Default value: `$kubernetes::config_file`
 
@@ -4265,7 +4456,8 @@ Default value: `$kubernetes::config_file`
 
 Data type: `String`
 
-
+The IP address and Port of the controller that worker node will join. eg 172.17.10.101:6443
+Defaults to undef
 
 Default value: `$kubernetes::controller_address`
 
@@ -4273,7 +4465,8 @@ Default value: `$kubernetes::controller_address`
 
 Data type: `String`
 
-
+A string to validate to the root CA public key when joining a cluster. Created by kubetool
+Defaults to undef
 
 Default value: `$kubernetes::discovery_token_hash`
 
@@ -4281,7 +4474,8 @@ Default value: `$kubernetes::discovery_token_hash`
 
 Data type: `String`
 
-
+A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -4289,7 +4483,8 @@ Default value: `$kubernetes::token`
 
 Data type: `String`
 
-
+A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -4297,7 +4492,8 @@ Default value: `$kubernetes::token`
 
 Data type: `String`
 
-
+A string to use when joining nodes to the cluster. Must be in the form of '[a-z0-9]{6}.[a-z0-9]{16}'
+Defaults to undef
 
 Default value: `$kubernetes::token`
 
@@ -4305,7 +4501,7 @@ Default value: `$kubernetes::token`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -4313,7 +4509,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -4321,7 +4517,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -4329,7 +4525,7 @@ Default value: `undef`
 
 Data type: `Optional[Array]`
 
-
+The environment passed to kubectl commands. Defaults to setting HOME and KUBECONFIG variables
 
 Default value: `$kubernetes::environment`
 
@@ -4337,7 +4533,7 @@ Default value: `$kubernetes::environment`
 
 Data type: `Optional[Array]`
 
-
+Defaults to undef
 
 Default value: `undef`
 
@@ -4345,7 +4541,7 @@ Default value: `undef`
 
 Data type: `Array`
 
-
+The path to be used when running kube* commands. Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
 
 Default value: `$kubernetes::default_path`
 
@@ -4353,7 +4549,7 @@ Default value: `$kubernetes::default_path`
 
 Data type: `Boolean`
 
-
+Check to determine whether to skip the ca verification. Defaults to false
 
 Default value: `false`
 
@@ -4385,7 +4581,8 @@ Default value: `$title`
 
 Data type: `Array`
 
-
+The path to be used when running kube* commands
+Defaults to ['/usr/bin','/bin','/sbin','/usr/local/bin']
 
 Default value: `$kubernetes::default_path`
 
@@ -4393,7 +4590,7 @@ Default value: `$kubernetes::default_path`
 
 Data type: `Optional[Integer]`
 
-
+Sets the timeout time. Defaults to undef.
 
 Default value: `undef`
 
@@ -4401,7 +4598,7 @@ Default value: `undef`
 
 Data type: `Optional[Integer]`
 
-
+Sets the amount of attempts to be carried out. Defaults to 5.
 
 Default value: `$kubernetes::wait_for_default_sa_tries`
 
@@ -4409,7 +4606,7 @@ Default value: `$kubernetes::wait_for_default_sa_tries`
 
 Data type: `Optional[Integer]`
 
-
+Defaults to 6.
 
 Default value: `$kubernetes::wait_for_default_sa_try_sleep`
 
@@ -4417,7 +4614,8 @@ Default value: `$kubernetes::wait_for_default_sa_try_sleep`
 
 Data type: `Optional[Array]`
 
-
+The environment passed to kubectl commands.
+Defaults to setting HOME and KUBECONFIG variables
 
 Default value: `$kubernetes::environment`
 
