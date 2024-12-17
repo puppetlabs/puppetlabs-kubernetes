@@ -39,6 +39,7 @@ end
 group :development, :release_prep do
   gem "puppet-strings", '~> 4.0',         require: false
   gem "puppetlabs_spec_helper", '~> 7.0', require: false
+  gem 'puppet-modulebuilder', '~> 1.1',   require: false
 end
 group :system_tests do
   gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :x64_mingw]
