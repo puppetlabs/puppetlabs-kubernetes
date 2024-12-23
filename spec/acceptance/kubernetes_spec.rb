@@ -14,10 +14,10 @@ describe 'the Kubernetes module' do
 
         pp = <<-MANIFEST
         case $facts['os']['family'] {
-          'RedHat', 'CentOS':  {
+          /^(RedHat|CentOS)$/:  {
             class {'kubernetes':
-              kubernetes_version => '1.22.0',
-              kubernetes_package_version => '1.22.0',
+              kubernetes_version => '1.28.15',
+              kubernetes_package_version => '1.28.15',
               controller_address => "#{int_ipaddr1}:6443",
               container_runtime => 'docker',
               manage_docker => false,
@@ -26,6 +26,7 @@ describe 'the Kubernetes module' do
               environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
               ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
               cgroup_driver => 'systemd',
+              service_cidr => '10.138.0.0/12',
             }
           }
           /^(Debian|Ubuntu)$/: {
@@ -59,6 +60,8 @@ describe 'the Kubernetes module' do
         before(:all) { change_target_host('controller') }
         after(:all) { reset_target_host }
 
+        int_ipaddr1 = fetch_ip_hostname_by_role('controller')[2]
+
         it 'can deploy an application into a namespace and expose it' do
           run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl create -f /tmp/nginx.yml') do |r|
             expect(r.stdout).to match(%r{my-nginx created\nservice/my-nginx created\n})
@@ -67,7 +70,8 @@ describe 'the Kubernetes module' do
 
         it 'can access the deployed service' do
           run_shell('sleep 60')
-          run_shell('curl --retry 10 --retry-delay 15 -s 10.96.188.5') do |r|
+          shell_command = "curl --retry 10 --retry-delay 15 -s #{int_ipaddr1}"
+          run_shell(shell_command) do |r|
             expect(r.stdout).to match(%r{Welcome to nginx!})
           end
         end

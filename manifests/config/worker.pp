@@ -48,8 +48,9 @@
 #     [{'key' => 'dedicated','value' => 'NewNode','effect' => 'NoSchedule', 'operator' => 'Equal'}]
 #   Defaults to undef
 # @param kubelet_extra_arguments
-#   A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
-#   Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+#   A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied
+#   to both control planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image`
+#   which may be problematic to configure via kubelet_extra_config
 #   Defaults to []
 # @param kubelet_extra_config
 #   A hash containing extra configuration data to be serialised with `to_yaml` and appended to Kubelet configuration file for the cluster.
