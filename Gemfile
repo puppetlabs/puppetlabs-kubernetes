@@ -76,3 +76,8 @@ extra_gemfiles.each do |gemfile|
   end
 end
 # vim: syntax=ruby
+
+
+# Fixed version for puppet-modulebuilder gem, as newer version of this gem does not include tooling folder.
+# We will keep this until we find a solution to either move the tooling folder in to some other folder or get rid of it altogether.
+gem 'puppet-modulebuilder', '1.1.0'

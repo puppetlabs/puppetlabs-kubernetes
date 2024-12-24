@@ -55,7 +55,7 @@ describe 'we are able to setup a controller and workers', :integration do
       it 'verify the k8 nodes' do
         run_shell('sleep 20')
         run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl get nodes') do |r|
-          expect(r.stdout).to match(%r{#{hostname1}(\s)+Ready(\s)+control-plane,master})
+          expect(r.stdout).to match(%r{#{hostname1}(\s)+Ready(\s)+control-plane})
           expect(r.stdout).to match(%r{#{hostname2}(\s)+Ready})
           expect(r.stdout).to match(%r{#{hostname3}(\s)+Ready})
         end

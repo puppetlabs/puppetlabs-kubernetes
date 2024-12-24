@@ -40,7 +40,8 @@ def fetch_ip_hostname_by_role(role)
   platform = fetch_platform_by_node(ipaddr)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   hostname = run_shell('hostname').stdout.strip
-  int_ipaddr = if os[:family] == 'redhat'
+  os_family = run_shell("facter -y os.family | cut -d':' -f2 | tr -d ' '").stdout.strip
+  int_ipaddr = if os_family.casecmp('redhat').zero?
                  run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
                else
                  run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
@@ -72,8 +73,8 @@ def configure_puppet_server(controller, worker1, worker2)
   site_pp = <<-EOS
   node /#{controller[0]}/ {
     class {'kubernetes':
-      kubernetes_version => '1.20.6',
-      kubernetes_package_version => '1.20.6',
+      kubernetes_version => '1.28.15',
+      kubernetes_package_version => '1.28.15',
       controller_address => "#{controller[1]}:6443",
       container_runtime => 'docker',
       manage_docker => false,
@@ -82,6 +83,7 @@ def configure_puppet_server(controller, worker1, worker2)
       environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
       ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
       cgroup_driver => 'systemd',
+      service_cidr => '10.138.0.0/12',
     }
   }
   node /#{worker1}/ {
@@ -126,6 +128,27 @@ end
 def execute_agent(role)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   run_shell('puppet agent --test', expect_failures: true)
+end
+
+def reset_and_restart_containerd
+  ['controller', 'worker1', 'worker2'].each do |node|
+    ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+    run_shell('rm -f /etc/containerd/config.toml')
+    run_shell('systemctl restart containerd')
+  end
+end
+
+def open_communication_ports
+  ['controller', 'worker1', 'worker2'].each do |node|
+    ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+    if node == 'controller'
+      run_shell('iptables -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT')
+    else
+      run_shell('iptables -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT')
+    end
+    run_shell('iptables -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT')
+    run_shell('iptables-save > /etc/sysconfig/iptables')
+  end
 end
 
 RSpec.configure do |c|
@@ -189,7 +212,7 @@ RSpec.configure do |c|
         labels:
           run: my-nginx
       spec:
-        clusterIP: 10.96.188.5
+        clusterIP: #{int_ipaddr1}
         ports:
         - port: 80
           protocol: TCP
@@ -216,24 +239,26 @@ RSpec.configure do |c|
             - "Redhat.yaml"
             - "common.yaml"
     EOS
+
     k8repo = <<~EOS
       [kubernetes]
       name=Kubernetes
-      baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      baseurl=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/
       enabled=1
-      gpgcheck=0
-      repo_gpgcheck=0
-      gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      gpgcheck=1
+      gpgkey=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key
     EOS
+
     pp = <<-PUPPETCODE
-    # needed by tests
-    package { 'curl':
-      ensure   => 'latest',
-    }
-    package { 'git':
-      ensure   => 'latest',
-    }
+      # needed by tests
+      package { 'curl':
+        ensure   => 'latest',
+      }
+      package { 'git':
+        ensure   => 'latest',
+      }
     PUPPETCODE
+
     apply_manifest(pp)
     if %r{debian|ubuntu-1604-lts}.match?(family)
       runtime = 'cri_containerd'
@@ -255,7 +280,7 @@ RSpec.configure do |c|
         run_shell('/sbin/iptables -F')
       end
     end
-    if %r{redhat|centos}.match?(family)
+    if %r{rhel|redhat|centos}.match?(family)
       runtime = 'docker'
       cni = 'weave'
       ['controller', 'worker1', 'worker2'].each do |node|
@@ -265,9 +290,9 @@ RSpec.configure do |c|
         run_shell('systemctl stop firewalld && systemctl disable firewalld')
         run_shell('yum install -y yum-utils device-mapper-persistent-data lvm2')
         run_shell('yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo')
-        run_shell('yum update -y')
-        run_shell('yum install -y docker-ce-cli-18.09.0-3.el7.x86_64')
-        run_shell('yum install -y docker-ce-18.09.5-3.el7.x86_64')
+        run_shell('yum update -y --nobest')
+        run_shell('yum install -y docker-ce-cli')
+        run_shell('yum install -y docker-ce')
         run_shell('usermod -aG docker $(whoami)')
         run_shell('systemctl start docker.service')
         run_shell('systemctl enable docker.service')
@@ -278,7 +303,20 @@ RSpec.configure do |c|
 
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
     run_shell('docker build -t kubetool:latest /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
-    run_shell("docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} -e VERSION=1.20.6 -e CONTAINER_RUNTIME=#{runtime} -e CNI_PROVIDER=#{cni} -e ETCD_INITIAL_CLUSTER=#{hostname1}:#{int_ipaddr1} -e ETCD_IP=#{int_ipaddr1} -e ETCD_PEERS=[#{int_ipaddr1},#{int_ipaddr2},#{int_ipaddr3}] -e KUBE_API_ADVERTISE_ADDRESS=#{int_ipaddr1} -e INSTALL_DASHBOARD=true kubetool:latest") # rubocop:disable Layout/LineLength
+
+    docker_run = <<~DOCKER
+      docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} \
+                                               -e VERSION=1.28.15 \
+                                               -e CONTAINER_RUNTIME=#{runtime} \
+                                               -e CNI_PROVIDER=#{cni} \
+                                               -e ETCD_INITIAL_CLUSTER=#{hostname1}:#{int_ipaddr1} \
+                                               -e ETCD_IP=#{int_ipaddr1} \
+                                               -e ETCD_PEERS=[#{int_ipaddr1},#{int_ipaddr2},#{int_ipaddr3}] \
+                                               -e KUBE_API_ADVERTISE_ADDRESS=#{int_ipaddr1} \
+                                               -e INSTALL_DASHBOARD=true kubetool:latest
+    DOCKER
+
+    run_shell(docker_run)
     create_remote_file('nginx', '/tmp/nginx.yml', nginx)
     create_remote_file('hiera', '/etc/puppetlabs/puppet/hiera.yaml', hiera)
     run_shell('chmod 644 /etc/puppetlabs/puppet/hiera.yaml')
@@ -288,7 +326,6 @@ RSpec.configure do |c|
     run_shell('cp $HOME/hieradata/*.yaml /etc/puppetlabs/code/environments/production/hieradata/')
 
     run_shell("sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
-
     if %r{debian|ubuntu-1604-lts}.match?(family)
       run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
     end
@@ -300,10 +337,14 @@ RSpec.configure do |c|
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::taint_master: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::manage_docker: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+
     run_shell("export KUBECONFIG='/etc/kubernetes/admin.conf'")
+    reset_and_restart_containerd
+    open_communication_ports
     execute_agent('controller')
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
+    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
   end
 end

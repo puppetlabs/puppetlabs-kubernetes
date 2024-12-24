@@ -11,7 +11,8 @@
 #   When set to true, etcd will be downloaded from the specified source URL.
 #   Defaults to true.
 # @param delegated_pki
-#   Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
+#   Set to true if all required X509 certificates will be provided by external means. 
+#   Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
 #   Defaults to false
 # @param etcd_install_method
 #   The method on how to install etcd. Can be either wget (using etcd_source) or package (using $etcd_package_name)
@@ -96,7 +97,8 @@
 #   "periodic" or "revision"
 #   Defaults to "periodic"
 # @param etcd_compaction_retention
-#   This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`. An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
+#   This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`.
+#   An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
 #   Integer or String
 #   Defaults to 0 (disabled)
 # @param api_server_count
@@ -157,8 +159,9 @@
 #   A string array of extra arguments to be passed to scheduler.
 #   Defaults to []
 # @param kubelet_extra_arguments
-#   A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
-#   Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+#   A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied
+#   to both control planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` 
+#   which may be problematic to configure via kubelet_extra_config
 #   Defaults to []
 # @param service_cidr
 #   The IP assdress range for service VIPs
@@ -381,9 +384,9 @@ class kubernetes::config::kubeadm (
   }
 
   # to_yaml emits a complete YAML document, so we must remove the leading '---'
-  $kubeadm_extra_config_yaml = regsubst(to_yaml($kubeadm_extra_config), '^---\n', '')
-  $kubelet_extra_config_yaml = regsubst(to_yaml($kubelet_extra_config), '^---\n', '')
-  $kubelet_extra_config_alpha1_yaml = regsubst(to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
+  $kubeadm_extra_config_yaml = regsubst(stdlib::to_yaml($kubeadm_extra_config), '^---\n', '')
+  $kubelet_extra_config_yaml = regsubst(stdlib::to_yaml($kubelet_extra_config), '^---\n', '')
+  $kubelet_extra_config_alpha1_yaml = regsubst(stdlib::to_yaml($kubelet_extra_config_alpha1), '^---\n', '')
 
   $config_version = $kubernetes_version ? {
     /^1\.1(0|1)/              => 'v1alpha1',

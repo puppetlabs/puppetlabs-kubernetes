@@ -64,24 +64,24 @@ class kubernetes::repos (
       'Debian': {
         $codename = fact('os.distro.codename')
         apt::source { 'kubernetes':
-          location => pick($kubernetes_apt_location,'https://apt.kubernetes.io'),
-          repos    => pick($kubernetes_apt_repos,'main'),
-          release  => pick($kubernetes_apt_release,'kubernetes-xenial'),
+          location => pick($kubernetes_apt_location, 'https://apt.kubernetes.io'),
+          repos    => pick($kubernetes_apt_repos, 'main'),
+          release  => pick($kubernetes_apt_release, 'kubernetes-xenial'),
           key      => {
-            'id'     => pick($kubernetes_key_id,'A362B822F6DEDC652817EA46B53DC80D13EDEF05'),
-            'source' => pick($kubernetes_key_source,'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
+            'id'     => pick($kubernetes_key_id, 'A362B822F6DEDC652817EA46B53DC80D13EDEF05'),
+            'source' => pick($kubernetes_key_source, 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'),
           },
         }
 
         if ($container_runtime == 'docker' and $manage_docker == true) or
         ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           apt::source { 'docker':
-            location => pick($docker_apt_location,'https://download.docker.com/linux/ubuntu/'),
-            repos    => pick($docker_apt_repos,'stable'),
+            location => pick($docker_apt_location, 'https://download.docker.com/linux/ubuntu/'),
+            repos    => pick($docker_apt_repos, 'stable'),
             release  => pick($docker_apt_release,$codename),
             key      => {
-              'id'     => pick($docker_key_id,'9DC858229FC7DD38854AE2D88D81803C0EBFCD88'),
-              'source' => pick($docker_key_source,'https://download.docker.com/linux/ubuntu/gpg'),
+              'id'     => pick($docker_key_id, '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'),
+              'source' => pick($docker_key_source, 'https://download.docker.com/linux/ubuntu/gpg'),
             },
           }
         }
@@ -91,16 +91,16 @@ class kubernetes::repos (
         ($container_runtime == 'cri_containerd' and $containerd_install_method == 'package') {
           yumrepo { 'docker':
             descr    => 'docker',
-            baseurl  => pick($docker_yum_baseurl,'https://download.docker.com/linux/centos/7/x86_64/stable'),
-            gpgkey   => pick($docker_yum_gpgkey,'https://download.docker.com/linux/centos/gpg'),
+            baseurl  => pick($docker_yum_baseurl, 'https://download.docker.com/linux/centos/7/x86_64/stable'),
+            gpgkey   => pick($docker_yum_gpgkey, 'https://download.docker.com/linux/centos/gpg'),
             gpgcheck => true,
           }
         }
 
         yumrepo { 'kubernetes':
           descr    => 'Kubernetes',
-          baseurl  => pick($kubernetes_yum_baseurl,'https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64'),
-          gpgkey   => pick($kubernetes_yum_gpgkey,'https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'),
+          baseurl  => pick($kubernetes_yum_baseurl, 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/'),
+          gpgkey   => pick($kubernetes_yum_gpgkey, 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key'),
           gpgcheck => true,
         }
       }
