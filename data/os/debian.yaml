@@ -1,0 +1,2 @@
+kubernetes::kubernetes_apt_location: 'https://pkgs.k8s.io/core:/stable:'
+kubernetes::docker_apt_location: 'https://download.docker.com/linux'

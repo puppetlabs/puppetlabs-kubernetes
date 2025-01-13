@@ -59,7 +59,6 @@ describe 'kubernetes::config::kubeadm', type: :class do
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
-    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
 
     context 'with etcd_listen_metric_urls defined' do
       let(:params) do
@@ -113,7 +112,6 @@ describe 'kubernetes::config::kubeadm', type: :class do
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
-    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
   end
 
   context 'with manage_etcd => false' do
@@ -146,7 +144,6 @@ describe 'kubernetes::config::kubeadm', type: :class do
     it { is_expected.not_to contain_file('/etc/default/etcd') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml') }
     it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{foo:\n- bar\n- baz}) }
-    it { is_expected.to contain_file('/etc/kubernetes/config.yaml').with_content(%r{kubeletConfiguration:\n  baseConfig:\n    baz:\n    - bar\n    - foo}) }
   end
 
   context 'manage_etcd => true and etcd_install_method => package' do

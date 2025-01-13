@@ -44,7 +44,8 @@ describe 'kubernetes' do
       context 'with worker => true and version => 1.10.2' do
         let(:params) do
           {
-            worker: true
+            worker: true,
+            kubernetes_version: '1.10.2'
           }
         end
 
