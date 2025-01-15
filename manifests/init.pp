@@ -604,14 +604,14 @@
 #
 #
 class kubernetes (
-  String $kubernetes_version                              = '1.10.2',
+  String $kubernetes_version                              = '1.32.0',
   String $kubernetes_cluster_name                         = 'kubernetes',
   String $kubernetes_package_version                      = $facts['os']['family'] ? {
     'Debian' => "${kubernetes_version}-00",
     'RedHat' => $kubernetes::kubernetes_version,
   },
   String $container_runtime                               = 'docker',
-  String $containerd_version                              = '1.4.3',
+  String $containerd_version                              = '1.6.12',
   Enum['archive','package'] $containerd_install_method    = 'archive',
   String $containerd_package_name                         = 'containerd.io',
   String $docker_package_name                             = 'docker-engine',
@@ -625,7 +625,7 @@ class kubernetes (
   Boolean $manage_etcd                                    = true,
   Integer $kube_api_bind_port                             = 6443,
   Optional[String] $kube_api_advertise_address            = undef,
-  String $etcd_version                                    = '3.2.18',
+  String $etcd_version                                    = '3.4.13',
   Optional[String] $etcd_hostname                         = $facts['networking']['hostname'],
   String $etcd_data_dir                                   = '/var/lib/etcd',
   Optional[String] $etcd_ip                               = undef,

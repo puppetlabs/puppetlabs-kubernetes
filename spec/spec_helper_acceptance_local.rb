@@ -40,18 +40,17 @@ def fetch_ip_hostname_by_role(role)
   platform = fetch_platform_by_node(ipaddr)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   hostname = run_shell('hostname').stdout.strip
-  os_family = run_shell("facter -y os.family | cut -d':' -f2 | tr -d ' '").stdout.strip
-  int_ipaddr = if os_family.casecmp('redhat').zero?
-                 run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
-               else
-                 run_shell("ip route get 8.8.8.8 | awk '{print $NF; exit}'").stdout.strip
-               end
+  int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
   [hostname, ipaddr, int_ipaddr]
 end
 
 def change_target_host(role)
   @orig_target_host = ENV.fetch('TARGET_HOST', nil)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
+end
+
+def os_family
+  run_shell("facter -y os.family | cut -d':' -f2 | tr -d ' '").stdout.strip
 end
 
 def reset_target_host
@@ -70,37 +69,103 @@ def configure_puppet_server(controller, worker1, worker2)
   configure_puppet_agent('worker2')
   puppet_cert_sign
   # Create site.pp
-  site_pp = <<-EOS
-  node /#{controller[0]}/ {
-    class {'kubernetes':
-      kubernetes_version => '1.28.15',
-      kubernetes_package_version => '1.28.15',
-      controller_address => "#{controller[1]}:6443",
-      container_runtime => 'docker',
-      manage_docker => false,
-      controller => true,
-      schedule_on_controller => true,
-      environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
-      ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
-      cgroup_driver => 'systemd',
-      service_cidr => '10.138.0.0/12',
-    }
-  }
-  node /#{worker1}/ {
-    class {'kubernetes':
-      worker => true,
-      manage_docker => false,
-      cgroup_driver => 'systemd',
-    }
-  }
-  node /#{worker2}/  {
-    class {'kubernetes':
-      worker => true,
-      manage_docker => false,
-      cgroup_driver => 'systemd',
-    }
-  }
-  EOS
+
+  site_pp = if os_family.casecmp('redhat').zero?
+              <<-EOS
+                node /#{controller[0]}/ {
+                  class {'kubernetes':
+                    kubernetes_version => '1.28.15',
+                    kubernetes_package_version => '1.28.15',
+                    kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
+                    kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
+                    controller_address => "#{controller[1]}:6443",
+                    container_runtime => 'docker',
+                    manage_docker => false,
+                    controller => true,
+                    schedule_on_controller => true,
+                    environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
+                    cgroup_driver => 'systemd',
+                    service_cidr => '10.138.0.0/12',
+                  }
+                }
+
+                node /#{worker1}/ {
+                  class {'kubernetes':
+                    kubernetes_version => '1.28.15',
+                    kubernetes_package_version => '1.28.15',
+                    kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
+                    kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
+                    worker => true,
+                    manage_docker => false,
+                    cgroup_driver => 'systemd',
+                  }
+                }
+
+                node /#{worker2}/  {
+                  class {'kubernetes':
+                    kubernetes_version => '1.28.15',
+                    kubernetes_package_version => '1.28.15',
+                    kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
+                    kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
+                    worker => true,
+                    manage_docker => false,
+                    cgroup_driver => 'systemd',
+                  }
+                }
+              EOS
+            else
+              <<-EOS
+                node /#{controller[0]}/ {
+                  class {'kubernetes':
+                    kubernetes_version => '1.28.15',
+                    kubernetes_package_version => '1.28.15-1.1',
+                    kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
+                    kubernetes_apt_repos => ' ',
+                    kubernetes_apt_release => ' /',
+                    kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    controller_address => "#{controller[1]}:6443",
+                    container_runtime => 'cri_containerd',
+                    manage_docker => false,
+                    controller => true,
+                    schedule_on_controller => true,
+                    environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
+                    cgroup_driver => 'systemd',
+                    service_cidr => '10.138.0.0/12',
+                  }
+                }
+
+                node /#{worker1}/ {
+                  class {'kubernetes':
+                    kubernetes_version => '1.28.15',
+                    kubernetes_package_version => '1.28.15-1.1',
+                    kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
+                    kubernetes_apt_repos => ' ',
+                    kubernetes_apt_release => ' /',
+                    kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    worker => true,
+                    manage_docker => false,
+                    cgroup_driver => 'systemd',
+                  }
+                }
+
+                node /#{worker2}/  {
+                  class {'kubernetes':
+                    kubernetes_version => '1.28.15',
+                    kubernetes_package_version => '1.28.15-1.1',
+                    kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
+                    kubernetes_apt_repos => ' ',
+                    kubernetes_apt_release => ' /',
+                    kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    worker => true,
+                    manage_docker => false,
+                    cgroup_driver => 'systemd',
+                  }
+                }
+              EOS
+            end
+
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   create_remote_file('site', '/etc/puppetlabs/code/environments/production/manifests/site.pp', site_pp)
   run_shell('chmod 644 /etc/puppetlabs/code/environments/production/manifests/site.pp')
@@ -133,8 +198,15 @@ end
 def reset_and_restart_containerd
   ['controller', 'worker1', 'worker2'].each do |node|
     ENV['TARGET_HOST'] = target_roles(node)[0][:name]
-    run_shell('rm -f /etc/containerd/config.toml')
-    run_shell('systemctl restart containerd')
+    if os_family.casecmp('redhat').zero?
+      run_shell('rm -f /etc/containerd/config.toml')
+      run_shell('systemctl restart containerd')
+    else
+      run_shell('wget https://github.com/containerd/containerd/releases/download/v1.6.12/containerd-1.6.12-linux-amd64.tar.gz && tar xvf containerd-1.6.12-linux-amd64.tar.gz')
+      run_shell('systemctl stop containerd')
+      run_shell('cd bin && cp * /usr/bin/')
+      run_shell('systemctl start containerd')
+    end
   end
 end
 
@@ -147,7 +219,11 @@ def open_communication_ports
       run_shell('iptables -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT')
     end
     run_shell('iptables -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT')
-    run_shell('iptables-save > /etc/sysconfig/iptables')
+    if os_family.casecmp('redhat').zero?
+      run_shell('iptables-save > /etc/sysconfig/iptables')
+    else
+      run_shell('iptables-save > /etc/iptables/rules.v4')
+    end
   end
 end
 
@@ -157,6 +233,7 @@ RSpec.configure do |c|
     hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
     hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
     hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
+
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
       ['controller', 'worker1', 'worker2'].each do |node|
@@ -260,26 +337,48 @@ RSpec.configure do |c|
     PUPPETCODE
 
     apply_manifest(pp)
-    if %r{debian|ubuntu-1604-lts}.match?(family)
+
+    if %r{debian|ubuntu}.match?(family)
       runtime = 'cri_containerd'
       cni = 'weave'
-      run_shell('apt-get update && apt-get install -y apt-transport-https')
-      run_shell('curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -')
-      run_shell('echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list')
-      run_shell('apt-get update')
-      run_shell('apt-get install -y kubectl')
-      run_shell('sudo apt install docker-ce=18.06.0~ce~3-0~ubuntu  docker-ce-cli=18.06.0~ce~3-0~ubuntu -y')
-      run_shell('sudo apt install docker.io -y')
-      run_shell('systemctl start docker.service')
-      run_shell('systemctl enable docker.service')
-      if family.include?('ubuntu-1604-lts')
-        run_shell('sudo ufw disable')
-      else
-        # Workaround for debian as the strech repositories do not have updated kubernetes packages
-        run_shell('echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kube-xenial.list')
-        run_shell('/sbin/iptables -F')
+      ['controller', 'worker1', 'worker2'].each do |node|
+        ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+
+        run_shell('apt update && apt install apt-transport-https -y')
+        run_shell('mkdir -p /etc/apt/keyrings')
+        run_shell('apt-get install -y curl gnupg2 software-properties-common')
+
+        if %r{debian-(10|11)}.match?(family)
+          run_shell('curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -')
+          run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"')
+        else
+          run_shell('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
+          run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"')
+        end
+        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
+        run_shell('echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list')
+
+        run_shell('apt-get update')
+        run_shell('apt install containerd -y')
+        run_shell('apt install kubectl kubelet kubeadm -y')
+        run_shell('apt-mark hold kubectl kubelet kubeadm')
+        run_shell('apt install docker-ce docker-ce-cli -y')
+        run_shell('apt install docker.io -y')
+        run_shell('systemctl start docker.service')
+        run_shell('systemctl enable docker.service')
+        run_shell('echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections')
+        run_shell('echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections')
+        run_shell('apt install iptables-persistent -y')
+        if family.include?('ubuntu')
+          run_shell('sudo ufw disable')
+        else
+          # Workaround for debian as the strech repositories do not have updated kubernetes packages
+          # run_shell('echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kube-xenial.list')
+          run_shell('/sbin/iptables -F')
+        end
       end
     end
+
     if %r{rhel|redhat|centos}.match?(family)
       runtime = 'docker'
       cni = 'weave'
@@ -302,7 +401,8 @@ RSpec.configure do |c|
     end
 
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-    run_shell('docker build -t kubetool:latest /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
+
+    run_shell('docker build -t kubetool:latest --network host /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
 
     docker_run = <<~DOCKER
       docker run --rm -v $(pwd)/hieradata:/mnt -e OS=#{family} \
@@ -317,6 +417,7 @@ RSpec.configure do |c|
     DOCKER
 
     run_shell(docker_run)
+
     create_remote_file('nginx', '/tmp/nginx.yml', nginx)
     create_remote_file('hiera', '/etc/puppetlabs/puppet/hiera.yaml', hiera)
     run_shell('chmod 644 /etc/puppetlabs/puppet/hiera.yaml')

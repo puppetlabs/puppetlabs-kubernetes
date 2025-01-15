@@ -18,6 +18,8 @@ describe 'the Kubernetes module' do
             class {'kubernetes':
               kubernetes_version => '1.28.15',
               kubernetes_package_version => '1.28.15',
+              kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
+              kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
               controller_address => "#{int_ipaddr1}:6443",
               container_runtime => 'docker',
               manage_docker => false,
@@ -30,12 +32,18 @@ describe 'the Kubernetes module' do
             }
           }
           /^(Debian|Ubuntu)$/: {
-          class {'kubernetes':
-                  controller => true,
-                  schedule_on_controller => true,
-                  environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
-                  ignore_preflight_errors => ['NumCPU'],
-                }
+            class {'kubernetes':
+              kubernetes_version => '1.28.15',
+              kubernetes_package_version => '1.28.15-1.1',
+              kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
+              kubernetes_apt_repos => ' ',
+              kubernetes_apt_release => ' /',
+              kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+              controller => true,
+              schedule_on_controller => true,
+              environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
+              ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
+            }
           }
           default:  {
             class {'kubernetes': } # any other OS are not supported
