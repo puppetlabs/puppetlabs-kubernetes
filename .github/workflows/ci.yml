@@ -13,7 +13,7 @@ jobs:
 
   Integration:
     needs: "Spec"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppet7-nightly', 'puppet8-nightly']}
@@ -22,10 +22,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v3
 
-    - name: Activate Ruby 2.7
+    - name: Activate Ruby 3.1
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.7"
+        ruby-version: "3.1"
         bundler-cache: true
 
     - name: Print bundle environment
