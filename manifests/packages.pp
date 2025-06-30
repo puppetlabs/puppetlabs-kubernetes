@@ -112,6 +112,8 @@
 #   no_proxy values. Defaults to false
 # @param containerd_socket
 #   The path to containerd GRPC socket. Defaults to /run/containerd/containerd.sock
+# @param containerd_snapshotter
+#   Configure whcih containerd snapshotter to user. Can be overlayfs or zfs. Defaults to overlayfs
 #
 class kubernetes::packages (
   String $kubernetes_package_version                    = $kubernetes::kubernetes_package_version,
@@ -139,6 +141,8 @@ class kubernetes::packages (
   Optional[Hash] $containerd_plugins_registry           = $kubernetes::containerd_plugins_registry,
   Enum['runc','nvidia']
   $containerd_default_runtime_name                      = $kubernetes::containerd_default_runtime_name,
+  Enum['overlayfs', 'zfs']
+  $containerd_snapshotter                               = $kubernetes::containerd_snapshotter,
   String $etcd_archive                                  = $kubernetes::etcd_archive,
   Optional[String] $etcd_archive_checksum               = $kubernetes::etcd_archive_checksum,
   String $etcd_version                                  = $kubernetes::etcd_version,
@@ -356,6 +360,7 @@ class kubernetes::packages (
               'containerd_sandbox_image' => $containerd_sandbox_image,
               'docker_cgroup_driver' => $docker_cgroup_driver,
               'containerd_default_runtime_name' => $containerd_default_runtime_name,
+              'containerd_snapshotter' => $containerd_snapshotter,
           })
         }
         # Generate using 'containerd config default'
