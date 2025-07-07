@@ -18,7 +18,15 @@ jobs:
       fail-fast: false
       matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppet7-nightly', 'puppet8-nightly']}
 
+    env:
+      TWINGATE_PUBLIC_REPO_KEY: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
+
     steps:
+    - name: "Install Twingate"
+      uses: "twingate/github-action@v1"
+      with:
+        service-key: ${{ env.TWINGATE_PUBLIC_REPO_KEY }}
+
     - name: Checkout Source
       uses: actions/checkout@v3
 
