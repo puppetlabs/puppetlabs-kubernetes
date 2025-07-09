@@ -18,7 +18,7 @@
     },
     {
       "name": "puppet-archive",
-      "version_requirement": ">= 2.0.0 < 8.0.0"
+      "version_requirement": ">= 2.0.0 <= 8.1.0"
     },
     {
       "name": "puppet-augeasproviders_sysctl",
