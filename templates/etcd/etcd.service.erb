@@ -44,6 +44,9 @@ ExecStart=/usr/local/bin/etcd --name <%= @etcd_hostname %> \
 <%- if @etcd_listen_metric_urls -%>
     --listen-metrics-urls <%= @etcd_listen_metric_urls %> \
 <%- end -%>
+<%- if @etcd_quota_backend_bytes -%>
+    --quota-backend-bytes <%= @etcd_quota_backend_bytes %> \
+<%- end -%>
     --max-wals <%= @etcd_max_wals %>
 
 
