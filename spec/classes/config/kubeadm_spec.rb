@@ -2,8 +2,6 @@
 
 require 'spec_helper'
 describe 'kubernetes::config::kubeadm', type: :class do
-  subject(:catalogue) { catalogue }
-
   let(:pre_condition) { 'include kubernetes' }
   let(:facts) do
     {
@@ -302,7 +300,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
 
     it {
-      expect(catalogue).to contain_file('/etc/kubernetes/config.yaml') \
+      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
@@ -316,7 +314,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
 
     it {
-      expect(catalogue).to contain_file('/etc/kubernetes/config.yaml') \
+      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{clusterName: my_own_name\n})
     }
   end
@@ -595,7 +593,7 @@ describe 'kubernetes::config::kubeadm', type: :class do
     let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
 
     it {
-      expect(catalogue).to contain_file('/etc/kubernetes/config.yaml') \
+      is_expected.to contain_file('/etc/kubernetes/config.yaml') \
         .with_content(%r{key: node-role.kubernetes.io/control-plane\n})
     }
   end
