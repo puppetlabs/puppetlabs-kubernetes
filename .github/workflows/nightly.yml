@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppetcore8']}
+      matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppetcore8-nightly']}
 
     steps:
     - name: "Install Twingate"
