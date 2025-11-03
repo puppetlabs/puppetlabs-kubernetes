@@ -10,17 +10,8 @@
 Lint/UselessAssignment:
   Enabled: false
 
-
 # Offense count: 2640
 # Configuration parameters: EnforcedStyle, AllowedIdentifiers, AllowedPatterns.
 # SupportedStyles: snake_case, camelCase
 Naming/VariableName:
-  Enabled: false
-
-# Offense count: 2112
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, EnforcedShorthandSyntax, UseHashRocketsWithSymbolValues, PreferHashRocketsForNonAlnumEndingSymbols.
-# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
-# SupportedShorthandSyntax: always, never, either, consistent
-Style/HashSyntax:
   Enabled: false
