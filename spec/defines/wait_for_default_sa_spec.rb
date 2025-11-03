@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'kubernetes::wait_for_default_sa', type: :define do
+  subject(:catalogue) { catalogue }
+
   let(:pre_condition) { 'include kubernetes' }
   let(:title) { 'default' }
   let(:facts) do
@@ -31,7 +33,7 @@ describe 'kubernetes::wait_for_default_sa', type: :define do
     it { is_expected.to compile.with_all_deps }
 
     it {
-      expect(subject).to contain_exec('wait for default serviceaccount creation in default')
+      expect(catalogue).to contain_exec('wait for default serviceaccount creation in default')
         .with_command('kubectl -n default get serviceaccount default -o name')
     }
   end
@@ -47,7 +49,7 @@ describe 'kubernetes::wait_for_default_sa', type: :define do
     it { is_expected.to compile.with_all_deps }
 
     it {
-      expect(subject).to contain_exec('wait for default serviceaccount creation in foo')
+      expect(catalogue).to contain_exec('wait for default serviceaccount creation in foo')
         .with_command('kubectl -n foo get serviceaccount default -o name')
         .with_path(['/bar'])
     }
@@ -82,7 +84,7 @@ describe 'kubernetes::wait_for_default_sa', type: :define do
           it { is_expected.to compile.with_all_deps }
 
           it {
-            expect(subject).to contain_exec("wait for default serviceaccount creation in #{namespace}")
+            expect(catalogue).to contain_exec("wait for default serviceaccount creation in #{namespace}")
               .with_command("kubectl -n #{namespace} get serviceaccount default -o name")
           }
         else

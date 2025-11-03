@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 describe 'kubernetes::kube_addons', type: :class do
+  subject(:catalogue) { catalogue }
+
   let(:pre_condition) { 'include kubernetes' }
   let(:facts) do
     {
@@ -32,17 +34,17 @@ describe 'kubernetes::kube_addons', type: :class do
     end
 
     it {
-      expect(subject).to contain_exec('Install calico rbac bindings').with({
-                                                                             command: ['kubectl', 'apply', '-f', 'foo'],
-                                                                             onlyif: ['kubectl get nodes']
-                                                                           })
+      expect(catalogue).to contain_exec('Install calico rbac bindings').with({
+                                                                               command: ['kubectl', 'apply', '-f', 'foo'],
+                                                                               onlyif: ['kubectl get nodes']
+                                                                             })
     }
 
     it {
-      expect(subject).to contain_exec('Install cni network provider').with({
-                                                                             command: ['kubectl', 'apply', '-f', 'https://foo.test'],
-                                                                             onlyif: ['kubectl get nodes']
-                                                                           })
+      expect(catalogue).to contain_exec('Install cni network provider').with({
+                                                                               command: ['kubectl', 'apply', '-f', 'https://foo.test'],
+                                                                               onlyif: ['kubectl get nodes']
+                                                                             })
     }
 
     it { is_expected.to contain_exec('schedule on controller') }
@@ -72,10 +74,12 @@ describe 'kubernetes::kube_addons', type: :class do
         case provider
         when 'calico-tigera'
           it {
-            expect(subject).to contain_exec('Install cni network (preinstall)').with({
-                                                                                       command: ['kubectl', 'create', '-f', 'https://foo.test/tigera-operator'],
-                                                                                       onlyif: 'kubectl get nodes'
-                                                                                     })
+            expect(catalogue).to contain_exec('Install cni network (preinstall)').with(
+              {
+                command: ['kubectl', 'create', '-f', 'https://foo.test/tigera-operator'],
+                onlyif: 'kubectl get nodes'
+              },
+            )
           }
 
           it { is_expected.to contain_file('/etc/kubernetes/calico-installation.yaml') }
@@ -83,7 +87,7 @@ describe 'kubernetes::kube_addons', type: :class do
           it { is_expected.to contain_exec('Install cni network provider') }
         when 'flannel'
           it {
-            expect(subject).to contain_exec('Install cni network provider').with(
+            expect(catalogue).to contain_exec('Install cni network provider').with(
               {
                 onlyif: ['kubectl get nodes'],
                 command: ['kubectl', 'create', '-f', "https://#{provider}.test"],
@@ -93,17 +97,17 @@ describe 'kubernetes::kube_addons', type: :class do
           }
         else
           it {
-            expect(subject).to contain_exec('Install cni network provider').with({
-                                                                                   onlyif: ['kubectl get nodes'],
-                                                                                   command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
-                                                                                   unless: ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"']
-                                                                                 })
+            expect(catalogue).to contain_exec('Install cni network provider').with({
+                                                                                     onlyif: ['kubectl get nodes'],
+                                                                                     command: ['kubectl', 'apply', '-f', "https://#{provider}.test"],
+                                                                                     unless: ['kubectl -n kube-system get daemonset | egrep "(flannel|weave|calico-node|cilium)"']
+                                                                                   })
           }
 
           it {
-            expect(subject).not_to contain_exec('Install cni network (preinstall)').with({
-                                                                                           onlyif: ['kubectl get nodes']
-                                                                                         })
+            expect(catalogue).not_to contain_exec('Install cni network (preinstall)').with({
+                                                                                             onlyif: ['kubectl get nodes']
+                                                                                           })
           }
         end
       end

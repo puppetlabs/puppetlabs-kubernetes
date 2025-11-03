@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 describe 'kubernetes::service', type: :class do
+  subject(:catalogue) { catalogue }
+
   let(:pre_condition) { 'include kubernetes; include kubernetes::config::kubeadm' }
   let(:facts) do
     {
@@ -105,12 +107,12 @@ describe 'kubernetes::service', type: :class do
     end
 
     it {
-      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(catalogue).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-provider=aws})
     }
 
     it {
-      expect(subject).not_to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(catalogue).not_to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-config=})
     }
   end
@@ -129,12 +131,12 @@ describe 'kubernetes::service', type: :class do
     end
 
     it {
-      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(catalogue).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-provider=openstack})
     }
 
     it {
-      expect(subject).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
+      expect(catalogue).to contain_file('/etc/systemd/system/kubelet.service.d/20-cloud.conf') \
         .with_content(%r{--cloud-config=/etc/kubernetes/cloud.conf})
     }
   end

@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 describe 'kubernetes::packages', type: :class do
+  subject(:catalogue) { catalogue }
+
   let(:pre_condition) do
     [
       'include kubernetes',
@@ -330,97 +332,97 @@ describe 'kubernetes::packages', type: :class do
     it { is_expected.to contain_file('/etc/containerd/config.toml').without_source }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*endpoint = \["https://registry-1.docker.io"\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').without_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').without_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.private.example.com"\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.even-more-private.example.com"\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*endpoint = \["https://docker.even-more-private.example.com"\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.configs."docker.private.example.com".auth\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*auth = "1azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT=="\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*username = "user2"\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*password = "secret2"\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*identitytoken = "azhzLXVuaXQtdGVzdDpCQ0NwNWZUUXlyd3c1aUxoMXpEQXJnUT"\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.configs."docker.private.example.com".tls\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*ca_file = "ca1.pem"\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*cert_file = "cert1.pem"\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*key_file = "key1.pem"\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*insecure_skip_verify = true\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*ca_file = "ca2.pem"\s*},
       )
     }
@@ -428,7 +430,7 @@ describe 'kubernetes::packages', type: :class do
     it { is_expected.not_to contain_file('/etc/apt/preferences.d/containerd') }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\saddress = "/run/containerd/containerd.sock"},
       )
     }
@@ -981,13 +983,13 @@ describe 'kubernetes::packages', type: :class do
     it { is_expected.to contain_file('/etc/containerd/config.toml') }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]\s*},
       )
     }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\s*endpoint = \["https://registry-1.docker.io"\]\s*},
       )
     }
@@ -1160,7 +1162,7 @@ describe 'kubernetes::packages', type: :class do
     it { is_expected.not_to contain_file('/etc/systemd/system/docker.service.d') }
 
     it {
-      expect(subject).to contain_file('/etc/containerd/config.toml').with_content(
+      expect(catalogue).to contain_file('/etc/containerd/config.toml').with_content(
         %r{\saddress = "unix:///run/containerd/containerd.sock"},
       )
     }

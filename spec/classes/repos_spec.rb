@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 describe 'kubernetes::repos', type: :class do
+  subject(:catalogue) { catalogue }
+
   context 'with osfamily => Ubuntu and manage_docker => true' do
     let(:facts) do
       {
@@ -43,7 +45,7 @@ describe 'kubernetes::repos', type: :class do
     end
 
     it {
-      expect(subject).to contain_apt__source('kubernetes').with(
+      expect(catalogue).to contain_apt__source('kubernetes').with(
         ensure: 'present',
         location: 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/',
         repos: ' ',
@@ -53,7 +55,7 @@ describe 'kubernetes::repos', type: :class do
     }
 
     it {
-      expect(subject).to contain_apt__source('docker').with(
+      expect(catalogue).to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/debian',
         repos: 'main',
@@ -104,7 +106,7 @@ describe 'kubernetes::repos', type: :class do
     end
 
     it {
-      expect(subject).to contain_apt__source('kubernetes').with(
+      expect(catalogue).to contain_apt__source('kubernetes').with(
         ensure: 'present',
         location: 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/',
         repos: ' ',
@@ -114,7 +116,7 @@ describe 'kubernetes::repos', type: :class do
     }
 
     it {
-      expect(subject).to contain_apt__source('docker').with(
+      expect(catalogue).to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/debian',
         repos: 'main',
