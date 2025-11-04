@@ -68,6 +68,7 @@ jobs:
         bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_cluster image_type=${{ matrix.platform }}
         FILE='spec/fixtures/litmus_inventory.yaml'
         echo INVENTORY_PATH=$FILE >> $GITHUB_ENV
+        cat $FILE
 
     - name: Puppet server setup
       run: |
