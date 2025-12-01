@@ -355,7 +355,7 @@ RSpec.configure do |c|
           run_shell('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
           run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"')
         end
-        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
+        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor --batch --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
         run_shell('echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list')
 
         run_shell('apt-get update')
@@ -401,6 +401,10 @@ RSpec.configure do |c|
     end
 
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+
+    # Upload tooling directory for Docker build
+    run_shell('mkdir -p /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
+    bolt_upload_file('tooling', '/etc/puppetlabs/code/environments/production/modules/kubernetes/')
 
     run_shell('docker build -t kubetool:latest --network host /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
 
