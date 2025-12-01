@@ -14,7 +14,7 @@ fixtures:
     puppet_agent: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
     provision:
       repo: 'https://github.com/puppetlabs/provision.git'
-      ref: 'd4b6b9fa10ae9929beb129dfbb89e2db77d687e9'
+      ref: 'a65a2ceabd658a059ea8026312763ede027ebc3f'
     yumrepo_core:
       repo: https://github.com/puppetlabs/puppetlabs-yumrepo_core.git
       puppet_version: ">= 6.0.0"
