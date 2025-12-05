@@ -403,8 +403,10 @@ RSpec.configure do |c|
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
 
     # Upload tooling directory for Docker build
-    run_shell('mkdir -p /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
-    bolt_upload_file('tooling', '/etc/puppetlabs/code/environments/production/modules/kubernetes/')
+    run_shell('rm -rf /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling || true')
+    run_shell('mkdir -p /etc/puppetlabs/code/environments/production/modules/kubernetes')
+    tooling_path = File.expand_path('tooling', __dir__ + '/..')
+    bolt_upload_file(tooling_path, '/etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
 
     run_shell('docker build -t kubetool:latest --network host /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
 
@@ -450,6 +452,8 @@ RSpec.configure do |c|
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
-    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
+    # Wait for API server to be ready
+    run_shell('for i in {1..60}; do KUBECONFIG=/etc/kubernetes/admin.conf kubectl cluster-info && break || sleep 5; done')
+    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply --validate=false -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
   end
 end
