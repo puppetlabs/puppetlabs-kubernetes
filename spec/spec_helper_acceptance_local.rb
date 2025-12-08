@@ -86,6 +86,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
                     cgroup_driver => 'systemd',
+                    pod_network_cidr => '10.244.0.0/16',
                     service_cidr => '10.138.0.0/12',
                   }
                 }
@@ -132,6 +133,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
                     cgroup_driver => 'systemd',
+                    pod_network_cidr => '10.244.0.0/16',
                     service_cidr => '10.138.0.0/12',
                   }
                 }
@@ -289,7 +291,6 @@ RSpec.configure do |c|
         labels:
           run: my-nginx
       spec:
-        clusterIP: #{int_ipaddr1}
         ports:
         - port: 80
           protocol: TCP
@@ -355,7 +356,7 @@ RSpec.configure do |c|
           run_shell('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
           run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"')
         end
-        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor --batch --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
+        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor --batch --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
         run_shell('echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list')
 
         run_shell('apt-get update')
@@ -402,12 +403,6 @@ RSpec.configure do |c|
 
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
 
-    # Upload tooling directory for Docker build
-    run_shell('rm -rf /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling || true')
-    run_shell('mkdir -p /etc/puppetlabs/code/environments/production/modules/kubernetes')
-    tooling_path = File.expand_path('tooling', __dir__ + '/..')
-    bolt_upload_file(tooling_path, '/etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
-
     run_shell('docker build -t kubetool:latest --network host /etc/puppetlabs/code/environments/production/modules/kubernetes/tooling')
 
     docker_run = <<~DOCKER
@@ -452,8 +447,6 @@ RSpec.configure do |c|
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
-    # Wait for API server to be ready
-    run_shell('for i in {1..60}; do KUBECONFIG=/etc/kubernetes/admin.conf kubectl cluster-info && break || sleep 5; done')
-    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply --validate=false -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
+    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
   end
 end
