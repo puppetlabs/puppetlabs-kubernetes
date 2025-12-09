@@ -62,6 +62,8 @@ def configure_puppet_server(controller, worker1, worker2)
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('systemctl start puppetserver')
   run_shell('systemctl enable puppetserver')
+  # Point local agent to this server
+  run_shell('puppet config set server puppet --section main')
   execute_agent('controller')
   # Configure the puppet agents
   configure_puppet_agent('worker1')
@@ -174,6 +176,8 @@ end
 def configure_puppet_agent(role)
   # Configure the puppet agents
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
+  # Ensure agent knows server hostname
+  run_shell('puppet config set server puppet --section main')
   run_shell('systemctl start puppet')
   run_shell('systemctl enable puppet')
   execute_agent(role)
@@ -230,9 +234,9 @@ end
 RSpec.configure do |c|
   c.before :suite do
     # Fetch hostname and  ip adress for each node
-    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
-    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
-    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
+    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
+    hostname2, _ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
+    hostname3, _ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
 
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
@@ -445,25 +449,14 @@ RSpec.configure do |c|
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
-    # Re-run agent on controller until kubeadm init produces admin.conf
+    # Trigger one agent run on controller, then briefly wait for admin.conf
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-    pre_admin_conf_wait = <<~SH
-      for i in {1..8}; do
-        if [ -f /etc/kubernetes/admin.conf ]; then
-          echo "admin.conf present (pre)"
-          break
-        fi
-        echo "Re-running puppet agent to complete kubeadm init... ($i)"
-        puppet agent --test || true
-        sleep 30
-      done
-    SH
-    run_shell(pre_admin_conf_wait)
+    run_shell('puppet agent --test || true')
     # Wait for kubeadm to produce admin.conf, then ensure kubeconfig points to a reachable API server
-    run_shell('for i in {1..60}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
+    run_shell('for i in {1..6}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
     ensure_kubeconfig_server = <<~SH
       if [ -f /etc/kubernetes/admin.conf ]; then
-        IP=$(hostname -I | awk '{print $1}')
+        IP=$(ip route get 8.8.8.8 | awk '{for(i=1;i<=NF;i++){if($i=="src"){print $(i+1); exit}}}')
         CTX=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config current-context || echo kubernetes-admin@kubernetes)
         CLUSTER=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config view -o jsonpath='{.contexts[?(@.name=="'"$CTX"'")].context.cluster}' || echo kubernetes)
         kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster "$CLUSTER" --server="https://$IP:6443"
