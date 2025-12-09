@@ -230,9 +230,9 @@ end
 RSpec.configure do |c|
   c.before :suite do
     # Fetch hostname and  ip adress for each node
-    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
-    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
-    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
+    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
+    hostname2, _ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
+    hostname3, _ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
 
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
@@ -426,12 +426,14 @@ RSpec.configure do |c|
     run_shell('cp $HOME/hieradata/*.yaml /etc/puppetlabs/code/environments/production/hieradata/')
 
     run_shell("sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    weave_url = 'https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml'
+    target_yaml = "/etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml"
     if %r{debian|ubuntu-1604-lts}.match?(family)
-      run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
+      run_shell("echo 'kubernetes::cni_network_provider: #{weave_url}' >> #{target_yaml}")
     end
 
     if %r{redhat|centos}.match?(family)
-      run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
+      run_shell("echo 'kubernetes::cni_network_provider: #{weave_url}' >> #{target_yaml}")
     end
 
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
@@ -447,15 +449,39 @@ RSpec.configure do |c|
     puppet_cert_sign
     # Re-run agent on controller until kubeadm init produces admin.conf
     ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-    run_shell('for i in {1..8}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present (pre)" && break; echo "Re-running puppet agent to complete kubeadm init... ($i)"; puppet agent --test || true; sleep 30; done')
+    pre_admin_conf_wait = <<~SH
+      for i in {1..8}; do
+        if [ -f /etc/kubernetes/admin.conf ]; then
+          echo "admin.conf present (pre)"
+          break
+        fi
+        echo "Re-running puppet agent to complete kubeadm init... ($i)"
+        puppet agent --test || true
+        sleep 30
+      done
+    SH
+    run_shell(pre_admin_conf_wait)
     # Wait for kubeadm to produce admin.conf, then ensure kubeconfig points to a reachable API server
     run_shell('for i in {1..60}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
-    run_shell(
-'if [ -f /etc/kubernetes/admin.conf ]; then IP=$(hostname -I | awk "{print $1}"); CTX=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config current-context || echo kubernetes-admin@kubernetes); CLUSTER=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config view -o jsonpath="{.contexts[?(@.name==\"$CTX\")].context.cluster}" || echo kubernetes); kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster "$CLUSTER" --server="https://$IP:6443"; fi', expect_failures: true
-)
+    ensure_kubeconfig_server = <<~SH
+      if [ -f /etc/kubernetes/admin.conf ]; then
+        IP=$(hostname -I | awk '{print $1}')
+        CTX=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config current-context || echo kubernetes-admin@kubernetes)
+        CLUSTER=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config view -o jsonpath='{.contexts[?(@.name=="'"$CTX"'")].context.cluster}' || echo kubernetes)
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster "$CLUSTER" --server="https://$IP:6443"
+      fi
+    SH
+    run_shell(ensure_kubeconfig_server, expect_failures: true)
     # Apply Weave CNI with validation disabled to avoid openapi call issues
-    run_shell(
-'if [ -f /etc/kubernetes/admin.conf ]; then kubectl --kubeconfig=/etc/kubernetes/admin.conf apply --validate=false -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml; else echo "Skipping CNI apply: /etc/kubernetes/admin.conf missing"; journalctl -u kubelet --no-pager -n 200 || true; fi', expect_failures: true
-)
+    apply_weave_cni = <<~SH
+      if [ -f /etc/kubernetes/admin.conf ]; then
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf apply --validate=false \
+          -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+      else
+        echo "Skipping CNI apply: /etc/kubernetes/admin.conf missing"
+        journalctl -u kubelet --no-pager -n 200 || true
+      fi
+    SH
+    run_shell(apply_weave_cni, expect_failures: true)
   end
 end
