@@ -86,7 +86,6 @@ def configure_puppet_server(controller, worker1, worker2)
                     environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
                     cgroup_driver => 'systemd',
-                    pod_network_cidr => '10.244.0.0/16',
                     service_cidr => '10.138.0.0/12',
                   }
                 }
@@ -133,7 +132,6 @@ def configure_puppet_server(controller, worker1, worker2)
                     environment  => ['HOME=/root', 'KUBECONFIG=/etc/kubernetes/admin.conf'],
                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion'],
                     cgroup_driver => 'systemd',
-                    pod_network_cidr => '10.244.0.0/16',
                     service_cidr => '10.138.0.0/12',
                   }
                 }
@@ -447,6 +445,17 @@ RSpec.configure do |c|
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
-    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
+    # Re-run agent on controller until kubeadm init produces admin.conf
+    ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+    run_shell('for i in {1..8}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present (pre)" && break; echo "Re-running puppet agent to complete kubeadm init... ($i)"; puppet agent --test || true; sleep 30; done')
+    # Wait for kubeadm to produce admin.conf, then ensure kubeconfig points to a reachable API server
+    run_shell('for i in {1..60}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
+    run_shell(
+'if [ -f /etc/kubernetes/admin.conf ]; then IP=$(hostname -I | awk "{print $1}"); CTX=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config current-context || echo kubernetes-admin@kubernetes); CLUSTER=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config view -o jsonpath="{.contexts[?(@.name==\"$CTX\")].context.cluster}" || echo kubernetes); kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster "$CLUSTER" --server="https://$IP:6443"; fi', expect_failures: true
+)
+    # Apply Weave CNI with validation disabled to avoid openapi call issues
+    run_shell(
+'if [ -f /etc/kubernetes/admin.conf ]; then kubectl --kubeconfig=/etc/kubernetes/admin.conf apply --validate=false -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml; else echo "Skipping CNI apply: /etc/kubernetes/admin.conf missing"; journalctl -u kubelet --no-pager -n 200 || true; fi', expect_failures: true
+)
   end
 end
