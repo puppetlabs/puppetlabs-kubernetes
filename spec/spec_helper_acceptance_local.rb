@@ -230,9 +230,9 @@ end
 RSpec.configure do |c|
   c.before :suite do
     # Fetch hostname and  ip adress for each node
-    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
-    hostname2, _ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
-    hostname3, _ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
+    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
+    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
+    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
 
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
@@ -426,14 +426,12 @@ RSpec.configure do |c|
     run_shell('cp $HOME/hieradata/*.yaml /etc/puppetlabs/code/environments/production/hieradata/')
 
     run_shell("sed -i /cni_network_provider/d /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
-    weave_url = 'https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml'
-    target_yaml = "/etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml"
     if %r{debian|ubuntu-1604-lts}.match?(family)
-      run_shell("echo 'kubernetes::cni_network_provider: #{weave_url}' >> #{target_yaml}")
+      run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
     end
 
     if %r{redhat|centos}.match?(family)
-      run_shell("echo 'kubernetes::cni_network_provider: #{weave_url}' >> #{target_yaml}")
+      run_shell("echo 'kubernetes::cni_network_provider: https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml") # rubocop:disable Layout/LineLength
     end
 
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
