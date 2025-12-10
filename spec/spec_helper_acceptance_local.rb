@@ -101,6 +101,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
 
@@ -113,6 +114,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
               EOS
@@ -146,9 +148,11 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_repos => ' ',
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
 
@@ -160,9 +164,11 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_repos => ' ',
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
               EOS
