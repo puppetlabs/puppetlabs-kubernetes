@@ -475,7 +475,7 @@ RSpec.configure do |c|
     SH
     run_shell(ensure_kubeconfig_server, expect_failures: true)
     # Connectivity diagnostics from workers to controller API on 6443
-    ["worker1", "worker2"].each do |node|
+    ['worker1', 'worker2'].each do |node|
       ENV['TARGET_HOST'] = target_roles(node)[0][:name]
       diag = <<~SH
         echo "Checking connectivity to controller API #{int_ipaddr1}:6443 from #{node}..."
