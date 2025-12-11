@@ -81,6 +81,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
                     kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
                     controller_address => "#{controller[1]}:6443",
+                    apiserver_cert_extra_sans => ['#{controller[1]}'],
                     container_runtime => 'docker',
                     manage_docker => false,
                     controller => true,
@@ -98,6 +99,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_package_version => '1.28.15',
                     kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
                     kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
+                    controller_address => "#{controller[1]}:6443",
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
@@ -129,6 +131,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
                     controller_address => "#{controller[1]}:6443",
+                    apiserver_cert_extra_sans => ['#{controller[1]}'],
                     container_runtime => 'cri_containerd',
                     manage_docker => false,
                     controller => true,
@@ -148,6 +151,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_repos => ' ',
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    controller_address => "#{controller[1]}:6443",
                     container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
@@ -162,6 +166,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_package_version => '1.28.15-1.1',
                     kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
                     kubernetes_apt_repos => ' ',
+                    controller_address => "#{controller[1]}:6443",
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
                     container_runtime => 'cri_containerd',
@@ -250,7 +255,7 @@ RSpec.configure do |c|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
       end
-      configure_puppet_server([hostname1, int_ipaddr1], hostname2, hostname3)
+      configure_puppet_server([hostname1, int_ipaddr1, ipaddr1], hostname2, hostname3)
     else
       c.filter_run_excluding :integration
     end
@@ -462,13 +467,24 @@ RSpec.configure do |c|
     run_shell('for i in {1..6}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
     ensure_kubeconfig_server = <<~SH
       if [ -f /etc/kubernetes/admin.conf ]; then
-        IP=$(ip route get 8.8.8.8 | awk '{for(i=1;i<=NF;i++){if($i=="src"){print $(i+1); exit}}}')
-        CTX=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config current-context || echo kubernetes-admin@kubernetes)
-        CLUSTER=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf config view -o jsonpath='{.contexts[?(@.name=="'"$CTX"'")].context.cluster}' || echo kubernetes)
-        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster "$CLUSTER" --server="https://$IP:6443"
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster kubernetes --server="https://#{int_ipaddr1}:6443"
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-context kubernetes-admin@kubernetes --cluster=kubernetes --user=kubernetes-admin
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config use-context kubernetes-admin@kubernetes
+        echo "Controller API set to internal IP #{int_ipaddr1}:6443"
       fi
     SH
     run_shell(ensure_kubeconfig_server, expect_failures: true)
+    # Connectivity diagnostics from workers to controller API on 6443
+    ["worker1", "worker2"].each do |node|
+      ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+      diag = <<~SH
+        echo "Checking connectivity to controller API #{int_ipaddr1}:6443 from #{node}..."
+        timeout 5 bash -c "</dev/tcp/#{int_ipaddr1}/6443" && echo "TCP 6443 reachable" || echo "TCP 6443 unreachable"
+        command -v nc >/dev/null 2>&1 && nc -vz #{int_ipaddr1} 6443 -w 5 || true
+        command -v curl >/dev/null 2>&1 && curl -sk --max-time 5 https://#{int_ipaddr1}:6443/healthz || true
+      SH
+      run_shell(diag, expect_failures: true)
+    end
     # Apply Weave CNI with validation disabled to avoid openapi call issues
     apply_weave_cni = <<~SH
       if [ -f /etc/kubernetes/admin.conf ]; then
