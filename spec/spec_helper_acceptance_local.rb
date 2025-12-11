@@ -452,6 +452,16 @@ RSpec.configure do |c|
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::taint_master: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::manage_docker: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    # Ensure required values so worker catalogs compile
+    run_shell("echo 'kubernetes::api_server_count: 1' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    # Prefer kubeadm-generated token if available; fallback to a dummy but valid-format token
+    token_cmd = <<~SH
+      TOKEN=$(kubeadm token create 2>/dev/null || echo 012345.0123456789abcdef)
+      echo "kubernetes::token: '${TOKEN}'" >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml
+    SH
+    run_shell(token_cmd)
+    # Skip CA verification on workers to avoid discovery_token_hash requirement
+    run_shell("echo 'kubernetes::skip_ca_verification: true' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
 
     run_shell("export KUBECONFIG='/etc/kubernetes/admin.conf'")
     reset_and_restart_containerd
