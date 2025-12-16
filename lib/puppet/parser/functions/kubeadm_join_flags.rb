@@ -22,7 +22,7 @@ module Puppet::Parser::Functions
     if opts['ignore_preflight_errors'] && opts['ignore_preflight_errors'].to_s != 'undef'
       cleaned = Array(opts['ignore_preflight_errors']).reject { |e| e.nil? || e.to_s.strip.empty? }
       # kubeadm accepts comma-separated list without quoting
-      flags << "--ignore-preflight-errors=#{cleaned.join(',')}" unless cleaned.empty?
+      flags << "--ignore-preflight-errors '#{cleaned.join(',')}'" unless cleaned.empty?
     end
     flags << "--node-name '#{opts['node_name']}'" if opts['node_name'] && opts['node_name'].to_s != 'undef'
     flags << "--token '#{opts['token']}'" if opts['token'] && opts['token'].to_s != 'undef'
