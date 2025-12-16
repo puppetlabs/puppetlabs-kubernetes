@@ -232,6 +232,8 @@ def open_communication_ports
       run_shell('iptables -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT')
     else
       run_shell('iptables -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT')
+      # Ensure workers can open outbound connections to controller API 6443
+      run_shell('iptables -I OUTPUT -p tcp --dport 6443 -j ACCEPT')
     end
     run_shell('iptables -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT')
     if os_family.casecmp('redhat').zero?
@@ -475,6 +477,8 @@ RSpec.configure do |c|
     run_shell('puppet agent --test || true')
     # Wait for kubeadm to produce admin.conf, then ensure kubeconfig points to a reachable API server
     run_shell('for i in {1..6}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
+    # Refresh the controller's internal IP in case it changed after init
+    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
     ensure_kubeconfig_server = <<~SH
       if [ -f /etc/kubernetes/admin.conf ]; then
         kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster kubernetes --server="https://#{int_ipaddr1}:6443"

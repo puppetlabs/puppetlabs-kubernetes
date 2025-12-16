@@ -16,11 +16,13 @@ module Puppet::Parser::Functions
     flags << "--discovery-file '#{opts['discovery_file']}'" if opts['discovery_file'] && opts['discovery_file'].to_s != 'undef'
     flags << "--discovery-token '#{opts['discovery_token']}'" if opts['discovery_token'] && opts['discovery_token'].to_s != 'undef'
     flags << "--discovery-token-ca-cert-hash 'sha256:#{opts['ca_cert_hash']}'" if opts['ca_cert_hash'] && opts['ca_cert_hash'].to_s != 'undef'
-    flags << "--discovery-token-unsafe-skip-ca-verification '#{opts['skip_ca_verification']}'" if opts['skip_ca_verification']
+    # This is a boolean flag and should not take a value
+    flags << '--discovery-token-unsafe-skip-ca-verification' if opts['skip_ca_verification']
     flags << "--feature-gates '#{opts['feature_gates'].join(',')}'" if opts['feature_gates'] && opts['feature_gates'].to_s != 'undef'
     if opts['ignore_preflight_errors'] && opts['ignore_preflight_errors'].to_s != 'undef'
       cleaned = Array(opts['ignore_preflight_errors']).reject { |e| e.nil? || e.to_s.strip.empty? }
-      flags << "--ignore-preflight-errors '#{cleaned.join(',')}'" unless cleaned.empty?
+      # kubeadm accepts comma-separated list without quoting
+      flags << "--ignore-preflight-errors=#{cleaned.join(',')}" unless cleaned.empty?
     end
     flags << "--node-name '#{opts['node_name']}'" if opts['node_name'] && opts['node_name'].to_s != 'undef'
     flags << "--token '#{opts['token']}'" if opts['token'] && opts['token'].to_s != 'undef'
