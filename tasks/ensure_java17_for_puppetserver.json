@@ -1,0 +1,16 @@
+{
+  "description": "Ensure Java 17 is installed and selected for the puppetserver service on Debian/RedHat",
+  "input_method": "environment",
+  "parameters": {
+    "collection": {
+      "description": "Puppet collection (e.g., puppetcore8-nightly, puppet8-nightly)",
+      "type": "String",
+      "default": "puppet7-nightly"
+    },
+    "platform": {
+      "description": "Platform string or os/facts used to infer family",
+      "type": "String",
+      "default": ""
+    }
+  }
+}
