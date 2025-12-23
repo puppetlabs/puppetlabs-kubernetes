@@ -16,7 +16,11 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppet7-nightly', 'puppet8-nightly']}
+      matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppetcore8-nightly']}
+
+    env:
+      PUPPET_FORGE_TOKEN: ${{ secrets.PUPPET_FORGE_TOKEN || secrets.PUPPET_FORGE_TOKEN_PUBLIC }}
+      BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM: "forge-key:${{ secrets.PUPPET_FORGE_TOKEN || secrets.PUPPET_FORGE_TOKEN_PUBLIC }}"
 
     steps:
     - name: "Install Twingate"
@@ -49,8 +53,8 @@ jobs:
       run: |
         bundle exec bolt --modulepath spec/fixtures/modules plan run kubernetes::provision_cluster image_type=${{ matrix.platform }}
         FILE='spec/fixtures/litmus_inventory.yaml'
-        sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
         echo INVENTORY_PATH=$FILE >> $GITHUB_ENV
+        cat $FILE
 
     - name: Puppet server setup
       run: |
@@ -67,9 +71,3 @@ jobs:
     - name: Run integration tests
       run: |
         bundle exec rake kubernetes:integration
-
-    - name: Remove test environment
-      if: ${{ always() }}
-      continue-on-error: true
-      run: |
-        bundle exec rake 'litmus:tear_down'
