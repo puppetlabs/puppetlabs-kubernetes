@@ -14,13 +14,31 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppet7-nightly', 'puppet8-nightly']}
+      matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppetcore8-nightly']}
 
     steps:
     - name: "Install Twingate"
       uses: "twingate/github-action@v1"
       with:
         service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
+
+    - name: Fix DNS
+      run: |
+        echo "=== Remove Azure DNS from eth0 interface ==="
+        sudo resolvectl dns eth0 ""
+
+        echo "=== Configure Twingate DNS properly ==="
+        sudo resolvectl dns sdwan0 100.95.0.251 100.95.0.252
+        sudo resolvectl domain sdwan0 delivery.puppetlabs.net
+
+        echo "=== Flush DNS cache ==="
+        sudo resolvectl flush-caches
+
+        echo "=== Check new configuration ==="
+        resolvectl status
+
+        echo "=== Test DNS resolution ==="
+        nslookup artifactory.delivery.puppetlabs.net
 
     - name: Checkout Source
       uses: actions/checkout@v3

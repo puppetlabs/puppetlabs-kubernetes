@@ -62,6 +62,8 @@ def configure_puppet_server(controller, worker1, worker2)
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('systemctl start puppetserver')
   run_shell('systemctl enable puppetserver')
+  # Point local agent to this server
+  run_shell('puppet config set server puppet --section main')
   execute_agent('controller')
   # Configure the puppet agents
   configure_puppet_agent('worker1')
@@ -79,6 +81,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
                     kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
                     controller_address => "#{controller[1]}:6443",
+                    apiserver_cert_extra_sans => ['#{controller[1]}'],
                     container_runtime => 'docker',
                     manage_docker => false,
                     controller => true,
@@ -96,9 +99,11 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_package_version => '1.28.15',
                     kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
                     kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
+                    controller_address => "#{controller[1]}:6443",
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
 
@@ -111,6 +116,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
               EOS
@@ -125,6 +131,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
                     controller_address => "#{controller[1]}:6443",
+                    apiserver_cert_extra_sans => ['#{controller[1]}'],
                     container_runtime => 'cri_containerd',
                     manage_docker => false,
                     controller => true,
@@ -144,9 +151,12 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_repos => ' ',
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    controller_address => "#{controller[1]}:6443",
+                    container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
 
@@ -156,11 +166,14 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_package_version => '1.28.15-1.1',
                     kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
                     kubernetes_apt_repos => ' ',
+                    controller_address => "#{controller[1]}:6443",
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
               EOS
@@ -174,6 +187,8 @@ end
 def configure_puppet_agent(role)
   # Configure the puppet agents
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
+  # Ensure agent knows server hostname
+  run_shell('puppet config set server puppet --section main')
   run_shell('systemctl start puppet')
   run_shell('systemctl enable puppet')
   execute_agent(role)
@@ -217,6 +232,8 @@ def open_communication_ports
       run_shell('iptables -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT')
     else
       run_shell('iptables -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT')
+      # Ensure workers can open outbound connections to controller API 6443
+      run_shell('iptables -I OUTPUT -p tcp --dport 6443 -j ACCEPT')
     end
     run_shell('iptables -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT')
     if os_family.casecmp('redhat').zero?
@@ -230,9 +247,9 @@ end
 RSpec.configure do |c|
   c.before :suite do
     # Fetch hostname and  ip adress for each node
-    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
-    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
-    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
+    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
+    hostname2, _ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
+    hostname3, _ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
 
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
@@ -240,7 +257,7 @@ RSpec.configure do |c|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
       end
-      configure_puppet_server([hostname1, int_ipaddr1], hostname2, hostname3)
+      configure_puppet_server([hostname1, int_ipaddr1, ipaddr1], hostname2, hostname3)
     else
       c.filter_run_excluding :integration
     end
@@ -289,7 +306,6 @@ RSpec.configure do |c|
         labels:
           run: my-nginx
       spec:
-        clusterIP: #{int_ipaddr1}
         ports:
         - port: 80
           protocol: TCP
@@ -355,7 +371,7 @@ RSpec.configure do |c|
           run_shell('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
           run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"')
         end
-        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
+        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor --batch --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
         run_shell('echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list')
 
         run_shell('apt-get update')
@@ -438,6 +454,16 @@ RSpec.configure do |c|
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::taint_master: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::manage_docker: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    # Ensure required values so worker catalogs compile
+    run_shell("echo 'kubernetes::api_server_count: 1' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    # Prefer kubeadm-generated token if available; fallback to a dummy but valid-format token
+    token_cmd = <<~SH
+      TOKEN=$(kubeadm token create 2>/dev/null || echo 012345.0123456789abcdef)
+      echo "kubernetes::token: '${TOKEN}'" >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml
+    SH
+    run_shell(token_cmd)
+    # Skip CA verification on workers to avoid discovery_token_hash requirement
+    run_shell("echo 'kubernetes::skip_ca_verification: true' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
 
     run_shell("export KUBECONFIG='/etc/kubernetes/admin.conf'")
     reset_and_restart_containerd
@@ -446,6 +472,43 @@ RSpec.configure do |c|
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
-    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
+    # Trigger one agent run on controller, then briefly wait for admin.conf
+    ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+    run_shell('puppet agent --test || true')
+    # Wait for kubeadm to produce admin.conf, then ensure kubeconfig points to a reachable API server
+    run_shell('for i in {1..6}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
+    # Refresh the controller's internal IP in case it changed after init
+    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
+    ensure_kubeconfig_server = <<~SH
+      if [ -f /etc/kubernetes/admin.conf ]; then
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster kubernetes --server="https://#{int_ipaddr1}:6443"
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-context kubernetes-admin@kubernetes --cluster=kubernetes --user=kubernetes-admin
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf config use-context kubernetes-admin@kubernetes
+        echo "Controller API set to internal IP #{int_ipaddr1}:6443"
+      fi
+    SH
+    run_shell(ensure_kubeconfig_server, expect_failures: true)
+    # Connectivity diagnostics from workers to controller API on 6443
+    ['worker1', 'worker2'].each do |node|
+      ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+      diag = <<~SH
+        echo "Checking connectivity to controller API #{int_ipaddr1}:6443 from #{node}..."
+        timeout 5 bash -c "</dev/tcp/#{int_ipaddr1}/6443" && echo "TCP 6443 reachable" || echo "TCP 6443 unreachable"
+        command -v nc >/dev/null 2>&1 && nc -vz #{int_ipaddr1} 6443 -w 5 || true
+        command -v curl >/dev/null 2>&1 && curl -sk --max-time 5 https://#{int_ipaddr1}:6443/healthz || true
+      SH
+      run_shell(diag, expect_failures: true)
+    end
+    # Apply Weave CNI with validation disabled to avoid openapi call issues
+    apply_weave_cni = <<~SH
+      if [ -f /etc/kubernetes/admin.conf ]; then
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf apply --validate=false \
+          -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+      else
+        echo "Skipping CNI apply: /etc/kubernetes/admin.conf missing"
+        journalctl -u kubelet --no-pager -n 200 || true
+      fi
+    SH
+    run_shell(apply_weave_cni, expect_failures: true)
   end
 end

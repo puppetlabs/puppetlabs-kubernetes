@@ -8,7 +8,7 @@ require_relative 'kube_tool/clean_up'
 require_relative 'kube_tool/other_params'
 
 # Kube Tool
-class Kube_tool
+class KubeTool
   def self.parse_args
     opts = Slop.parse do |o|
       o.string '-o', '--os', 'The OS that Kubernetes will run on', default: ENV.fetch('OS', nil)
@@ -59,4 +59,4 @@ class Kube_tool
     CleanUp.clean_yaml(opts[:os])
   end
 end
-Kube_tool.build_hiera(Kube_tool.parse_args)
+KubeTool.build_hiera(KubeTool.parse_args)

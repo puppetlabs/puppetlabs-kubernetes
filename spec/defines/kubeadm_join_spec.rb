@@ -43,7 +43,7 @@ describe 'kubernetes::kubeadm_join', type: :define do
     it { is_expected.to compile.with_all_deps }
 
     it {
-      expect(subject).to contain_exec('kubeadm join')
+      is_expected.to contain_exec('kubeadm join')
         .with_command("kubeadm join '10.0.0.1:6443' --discovery-token 'token' --discovery-token-ca-cert-hash 'sha256:hash' --node-name 'kube-node' --token 'token'")
     }
   end
