@@ -67,6 +67,38 @@ jobs:
         FILE='spec/fixtures/litmus_inventory.yaml'
         sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
         echo INVENTORY_PATH=$FILE >> $GITHUB_ENV
+    
+    - name: Wait for SSH to be ready on RHEL nodes
+      if: contains(matrix.platform, 'rhel') || contains(matrix.platform, 'redhat') || contains(matrix.platform, 'centos')
+      run: |
+        echo "Waiting for SSH to be available on all RHEL nodes..."
+        max_attempts=5
+        sleep_time=10
+        
+        for attempt in $(seq 1 $max_attempts); do
+          echo "Attempt $attempt of $max_attempts"
+          output=$(bundle exec bolt command run "echo 'SSH Ready'" -t ssh_nodes -i ./$INVENTORY_PATH 2>&1 || true)
+          if echo "$output" | grep -q "Failed on"; then
+            if [ $attempt -eq $max_attempts ]; then
+              echo "Failed to connect to all nodes after $max_attempts attempts"
+              echo "$output"
+              exit 1
+            fi
+            echo "Not all nodes ready, waiting ${sleep_time}s..."
+            sleep $sleep_time
+          else
+            echo "All nodes are accessible via SSH"
+            echo "$output"
+            break
+          fi
+        done
+  
+    - name: Install Java 17 for RHEL
+      if: contains(matrix.platform, 'rhel') || contains(matrix.platform, 'redhat') || contains(matrix.platform, 'centos')
+      run: |
+        bundle exec bolt command run "yum install -y java-17-openjdk java-17-openjdk-devel" -t ssh_nodes -i ./$INVENTORY_PATH
+        bundle exec bolt command run "alternatives --set java /usr/lib/jvm/java-17-openjdk-*/bin/java" -t ssh_nodes -i ./$INVENTORY_PATH
+        bundle exec bolt command run "java -version" -t ssh_nodes -i ./$INVENTORY_PATH
 
     - name: Puppet server setup
       run: |
@@ -79,6 +111,12 @@ jobs:
     - name: Install module
       run: |
         bundle exec rake 'litmus:install_module'
+    
+    - name: "Authenticate to GCP"
+      run: |
+        echo '${{ secrets.GCP_CONNECTION }}' >> creds.json
+        bundle exec bolt file upload creds.json creds.json -t ssh_nodes -i spec/fixtures/litmus_inventory.yaml
+        bundle exec bolt command run "gcloud auth activate-service-account --key-file creds.json" -t ssh_nodes -i spec/fixtures/litmus_inventory.yaml
 
     - name: Run integration tests
       run: |

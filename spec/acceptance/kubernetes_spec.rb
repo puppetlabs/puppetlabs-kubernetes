@@ -68,7 +68,7 @@ describe 'the Kubernetes module' do
         before(:all) { change_target_host('controller') }
         after(:all) { reset_target_host }
 
-        int_ipaddr1 = fetch_ip_hostname_by_role('controller')[2]
+        # int_ipaddr1 = fetch_ip_hostname_by_role('controller')[2]
 
         it 'can deploy an application into a namespace and expose it' do
           run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl create -f /tmp/nginx.yml') do |r|
@@ -78,7 +78,9 @@ describe 'the Kubernetes module' do
 
         it 'can access the deployed service' do
           run_shell('sleep 60')
-          shell_command = "curl --retry 10 --retry-delay 15 -s #{int_ipaddr1}"
+          # Get the NodePort assigned to the service
+          node_port = run_shell("KUBECONFIG=/etc/kubernetes/admin.conf kubectl get svc my-nginx -o jsonpath='{.spec.ports[0].nodePort}'").stdout.strip
+          shell_command = "curl --retry 10 --retry-delay 15 -s localhost:#{node_port}"
           run_shell(shell_command) do |r|
             expect(r.stdout).to match(%r{Welcome to nginx!})
           end

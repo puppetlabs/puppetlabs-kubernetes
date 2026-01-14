@@ -37,7 +37,7 @@ end
 def fetch_ip_hostname_by_role(role)
   # Fetch hostname and  ip adress for each node
   ipaddr = target_roles(role)[0][:name]
-  platform = fetch_platform_by_node(ipaddr)
+  _platform = fetch_platform_by_node(ipaddr)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   hostname = run_shell('hostname').stdout.strip
   int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
@@ -225,21 +225,55 @@ def reset_and_restart_containerd
   end
 end
 
+def setup_gcp_firewall
+  # Collect internal IPs from all nodes
+  node_ips = []
+  ['controller', 'worker1', 'worker2'].each do |node|
+    ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+    int_ip = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
+    node_ips << int_ip
+  end
+
+  # Switch back to controller for firewall setup
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+
+  # Get the VPC network the controller instance is on
+  controller_name = run_shell('hostname').stdout.strip
+  network_info = run_shell("gcloud compute instances describe #{controller_name} --format='get(networkInterfaces[0].network)' --zone=$(gcloud compute instances list --filter=\"name=#{controller_name}\" --format='get(zone)')").stdout.strip # rubocop:disable Layout/LineLength
+  network_name = network_info.split('/').last
+
+  # Determine subnet(s) to allow - use /24 subnet of first IP
+  # All nodes should be in same subnet, but we verify by including all IPs
+  first_ip = node_ips.first
+  subnet = first_ip.split('.')[0..2].join('.') + '.0/24'
+
+  # Delete existing rule if it exists (might be on wrong network)
+  run_shell('gcloud compute firewall-rules delete allow-k8s-internal --quiet', expect_failures: true)
+
+  # Create firewall rule on the correct network
+  run_shell("gcloud compute firewall-rules create allow-k8s-internal --network=#{network_name} --allow=tcp,udp,icmp --source-ranges=#{subnet} --description='Allow all traffic between Kubernetes cluster nodes'") # rubocop:disable Layout/LineLength
+end
+
 def open_communication_ports
   ['controller', 'worker1', 'worker2'].each do |node|
     ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+    # Use iptables-nft explicitly for Debian/Ubuntu systems
+    ipt_cmd = os_family.casecmp('redhat').zero? ? 'iptables' : 'iptables-nft'
+    # Allow ICMP (ping) from internal network
+    run_shell("#{ipt_cmd} -I INPUT -p icmp -s 10.217.0.0/24 -j ACCEPT")
+    run_shell("#{ipt_cmd} -I OUTPUT -p icmp -d 10.217.0.0/24 -j ACCEPT")
     if node == 'controller'
-      run_shell('iptables -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT')
+      run_shell("#{ipt_cmd} -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT")
     else
-      run_shell('iptables -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT')
-      # Ensure workers can open outbound connections to controller API 6443
-      run_shell('iptables -I OUTPUT -p tcp --dport 6443 -j ACCEPT')
+      run_shell("#{ipt_cmd} -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT")
     end
-    run_shell('iptables -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT')
+    run_shell("#{ipt_cmd} -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT")
+    # Set FORWARD policy to ACCEPT for inter-node communication
+    run_shell("#{ipt_cmd} -P FORWARD ACCEPT")
     if os_family.casecmp('redhat').zero?
       run_shell('iptables-save > /etc/sysconfig/iptables')
     else
-      run_shell('iptables-save > /etc/iptables/rules.v4')
+      run_shell('iptables-nft-save > /etc/iptables/rules.v4')
     end
   end
 end
@@ -306,6 +340,7 @@ RSpec.configure do |c|
         labels:
           run: my-nginx
       spec:
+        type: NodePort
         ports:
         - port: 80
           protocol: TCP
@@ -467,48 +502,13 @@ RSpec.configure do |c|
 
     run_shell("export KUBECONFIG='/etc/kubernetes/admin.conf'")
     reset_and_restart_containerd
+    setup_gcp_firewall
     open_communication_ports
     execute_agent('controller')
+    open_communication_ports # Re-apply after controller init to ensure ports are open
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign
-    # Trigger one agent run on controller, then briefly wait for admin.conf
-    ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
-    run_shell('puppet agent --test || true')
-    # Wait for kubeadm to produce admin.conf, then ensure kubeconfig points to a reachable API server
-    run_shell('for i in {1..6}; do [ -f /etc/kubernetes/admin.conf ] && echo "admin.conf present" && break; echo "Waiting for /etc/kubernetes/admin.conf... ($i)"; sleep 10; done')
-    # Refresh the controller's internal IP in case it changed after init
-    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
-    ensure_kubeconfig_server = <<~SH
-      if [ -f /etc/kubernetes/admin.conf ]; then
-        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-cluster kubernetes --server="https://#{int_ipaddr1}:6443"
-        kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-context kubernetes-admin@kubernetes --cluster=kubernetes --user=kubernetes-admin
-        kubectl --kubeconfig=/etc/kubernetes/admin.conf config use-context kubernetes-admin@kubernetes
-        echo "Controller API set to internal IP #{int_ipaddr1}:6443"
-      fi
-    SH
-    run_shell(ensure_kubeconfig_server, expect_failures: true)
-    # Connectivity diagnostics from workers to controller API on 6443
-    ['worker1', 'worker2'].each do |node|
-      ENV['TARGET_HOST'] = target_roles(node)[0][:name]
-      diag = <<~SH
-        echo "Checking connectivity to controller API #{int_ipaddr1}:6443 from #{node}..."
-        timeout 5 bash -c "</dev/tcp/#{int_ipaddr1}/6443" && echo "TCP 6443 reachable" || echo "TCP 6443 unreachable"
-        command -v nc >/dev/null 2>&1 && nc -vz #{int_ipaddr1} 6443 -w 5 || true
-        command -v curl >/dev/null 2>&1 && curl -sk --max-time 5 https://#{int_ipaddr1}:6443/healthz || true
-      SH
-      run_shell(diag, expect_failures: true)
-    end
-    # Apply Weave CNI with validation disabled to avoid openapi call issues
-    apply_weave_cni = <<~SH
-      if [ -f /etc/kubernetes/admin.conf ]; then
-        kubectl --kubeconfig=/etc/kubernetes/admin.conf apply --validate=false \
-          -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
-      else
-        echo "Skipping CNI apply: /etc/kubernetes/admin.conf missing"
-        journalctl -u kubelet --no-pager -n 200 || true
-      fi
-    SH
-    run_shell(apply_weave_cni, expect_failures: true)
+    run_shell('KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml')
   end
 end

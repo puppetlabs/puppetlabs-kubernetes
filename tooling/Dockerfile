@@ -1,14 +1,18 @@
-FROM golang:1.19-alpine3.16
+FROM golang:1.25.3-alpine3.21
 
-ENV USER root
+ENV USER=root
+ENV CGO_ENABLED=1 \
+    CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 
 RUN set -x && \
-  apk --no-cache add gcc libc-dev git && \
+  apk --no-cache add gcc git libc-dev && \
   go install github.com/cloudflare/cfssl/cmd/...@v1.6.3 && \
+  go install github.com/cloudflare/cfssl_trust/...@latest && \
   echo "Build complete."
 
-FROM ruby:3.0-alpine3.16
-RUN mkdir -p /etc/cfssl
+FROM ruby:3.2-alpine3.21
+RUN mkdir /etc/cfssl
+COPY --from=0 /go/pkg/mod/github.com/cloudflare/cfssl_trust@*/*.crt* /etc/cfssl/
 COPY --from=0 /go/bin/ /usr/bin/
 RUN gem install slop
 COPY . /etc/k8s
