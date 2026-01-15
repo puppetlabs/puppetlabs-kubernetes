@@ -43,7 +43,7 @@ describe 'kubernetes::repos', type: :class do
     end
 
     it {
-      expect(subject).to contain_apt__source('kubernetes').with(
+      is_expected.to contain_apt__source('kubernetes').with(
         ensure: 'present',
         location: 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/',
         repos: ' ',
@@ -53,7 +53,7 @@ describe 'kubernetes::repos', type: :class do
     }
 
     it {
-      expect(subject).to contain_apt__source('docker').with(
+      is_expected.to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/debian',
         repos: 'main',
@@ -104,7 +104,7 @@ describe 'kubernetes::repos', type: :class do
     end
 
     it {
-      expect(subject).to contain_apt__source('kubernetes').with(
+      is_expected.to contain_apt__source('kubernetes').with(
         ensure: 'present',
         location: 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/',
         repos: ' ',
@@ -114,7 +114,7 @@ describe 'kubernetes::repos', type: :class do
     }
 
     it {
-      expect(subject).to contain_apt__source('docker').with(
+      is_expected.to contain_apt__source('docker').with(
         ensure: 'present',
         location: 'https://download.docker.com/linux/debian',
         repos: 'main',

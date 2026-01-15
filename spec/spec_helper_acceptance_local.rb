@@ -37,7 +37,7 @@ end
 def fetch_ip_hostname_by_role(role)
   # Fetch hostname and  ip adress for each node
   ipaddr = target_roles(role)[0][:name]
-  platform = fetch_platform_by_node(ipaddr)
+  _platform = fetch_platform_by_node(ipaddr)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   hostname = run_shell('hostname').stdout.strip
   int_ipaddr = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
@@ -62,6 +62,8 @@ def configure_puppet_server(controller, worker1, worker2)
   ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('systemctl start puppetserver')
   run_shell('systemctl enable puppetserver')
+  # Point local agent to this server
+  run_shell('puppet config set server puppet --section main')
   execute_agent('controller')
   # Configure the puppet agents
   configure_puppet_agent('worker1')
@@ -79,6 +81,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
                     kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
                     controller_address => "#{controller[1]}:6443",
+                    apiserver_cert_extra_sans => ['#{controller[1]}'],
                     container_runtime => 'docker',
                     manage_docker => false,
                     controller => true,
@@ -96,9 +99,11 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_package_version => '1.28.15',
                     kubernetes_yum_baseurl => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/',
                     kubernetes_yum_gpgkey => 'https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key',
+                    controller_address => "#{controller[1]}:6443",
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
 
@@ -111,6 +116,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                     ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
               EOS
@@ -125,6 +131,7 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
                     controller_address => "#{controller[1]}:6443",
+                    apiserver_cert_extra_sans => ['#{controller[1]}'],
                     container_runtime => 'cri_containerd',
                     manage_docker => false,
                     controller => true,
@@ -144,9 +151,12 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_apt_repos => ' ',
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    controller_address => "#{controller[1]}:6443",
+                    container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
 
@@ -156,11 +166,14 @@ def configure_puppet_server(controller, worker1, worker2)
                     kubernetes_package_version => '1.28.15-1.1',
                     kubernetes_apt_location => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/',
                     kubernetes_apt_repos => ' ',
+                    controller_address => "#{controller[1]}:6443",
                     kubernetes_apt_release => ' /',
                     kubernetes_key_source => 'https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key',
+                    container_runtime => 'cri_containerd',
                     worker => true,
                     manage_docker => false,
                     cgroup_driver => 'systemd',
+                    ignore_preflight_errors => ['NumCPU','ExternalEtcdVersion','Service-Docker'],
                   }
                 }
               EOS
@@ -174,6 +187,8 @@ end
 def configure_puppet_agent(role)
   # Configure the puppet agents
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
+  # Ensure agent knows server hostname
+  run_shell('puppet config set server puppet --section main')
   run_shell('systemctl start puppet')
   run_shell('systemctl enable puppet')
   execute_agent(role)
@@ -210,19 +225,55 @@ def reset_and_restart_containerd
   end
 end
 
+def setup_gcp_firewall
+  # Collect internal IPs from all nodes
+  node_ips = []
+  ['controller', 'worker1', 'worker2'].each do |node|
+    ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+    int_ip = run_shell("ip route get 8.8.8.8 | awk '{print $7; exit}'").stdout.strip
+    node_ips << int_ip
+  end
+
+  # Switch back to controller for firewall setup
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+
+  # Get the VPC network the controller instance is on
+  controller_name = run_shell('hostname').stdout.strip
+  network_info = run_shell("gcloud compute instances describe #{controller_name} --format='get(networkInterfaces[0].network)' --zone=$(gcloud compute instances list --filter=\"name=#{controller_name}\" --format='get(zone)')").stdout.strip # rubocop:disable Layout/LineLength
+  network_name = network_info.split('/').last
+
+  # Determine subnet(s) to allow - use /24 subnet of first IP
+  # All nodes should be in same subnet, but we verify by including all IPs
+  first_ip = node_ips.first
+  subnet = first_ip.split('.')[0..2].join('.') + '.0/24'
+
+  # Delete existing rule if it exists (might be on wrong network)
+  run_shell('gcloud compute firewall-rules delete allow-k8s-internal --quiet', expect_failures: true)
+
+  # Create firewall rule on the correct network
+  run_shell("gcloud compute firewall-rules create allow-k8s-internal --network=#{network_name} --allow=tcp,udp,icmp --source-ranges=#{subnet} --description='Allow all traffic between Kubernetes cluster nodes'") # rubocop:disable Layout/LineLength
+end
+
 def open_communication_ports
   ['controller', 'worker1', 'worker2'].each do |node|
     ENV['TARGET_HOST'] = target_roles(node)[0][:name]
+    # Use iptables-nft explicitly for Debian/Ubuntu systems
+    ipt_cmd = os_family.casecmp('redhat').zero? ? 'iptables' : 'iptables-nft'
+    # Allow ICMP (ping) from internal network
+    run_shell("#{ipt_cmd} -I INPUT -p icmp -s 10.217.0.0/24 -j ACCEPT")
+    run_shell("#{ipt_cmd} -I OUTPUT -p icmp -d 10.217.0.0/24 -j ACCEPT")
     if node == 'controller'
-      run_shell('iptables -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT')
+      run_shell("#{ipt_cmd} -I INPUT -p tcp -m multiport --dports 2379,2380,6443,10250,10251,10252,30000:32767 -j ACCEPT")
     else
-      run_shell('iptables -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT')
+      run_shell("#{ipt_cmd} -I INPUT -p tcp -m multiport --dports 10251,10252,10255,30000:32767 -j ACCEPT")
     end
-    run_shell('iptables -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT')
+    run_shell("#{ipt_cmd} -I INPUT -p udp -m multiport --dports 8472 -j ACCEPT")
+    # Set FORWARD policy to ACCEPT for inter-node communication
+    run_shell("#{ipt_cmd} -P FORWARD ACCEPT")
     if os_family.casecmp('redhat').zero?
       run_shell('iptables-save > /etc/sysconfig/iptables')
     else
-      run_shell('iptables-save > /etc/iptables/rules.v4')
+      run_shell('iptables-nft-save > /etc/iptables/rules.v4')
     end
   end
 end
@@ -230,9 +281,9 @@ end
 RSpec.configure do |c|
   c.before :suite do
     # Fetch hostname and  ip adress for each node
-    hostname1, ipaddr1, int_ipaddr1 =  fetch_ip_hostname_by_role('controller')
-    hostname2, ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
-    hostname3, ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
+    hostname1, ipaddr1, int_ipaddr1 = fetch_ip_hostname_by_role('controller')
+    hostname2, _ipaddr2, int_ipaddr2 =  fetch_ip_hostname_by_role('worker1')
+    hostname3, _ipaddr3, int_ipaddr3 =  fetch_ip_hostname_by_role('worker2')
 
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
@@ -240,7 +291,7 @@ RSpec.configure do |c|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
         run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
       end
-      configure_puppet_server([hostname1, int_ipaddr1], hostname2, hostname3)
+      configure_puppet_server([hostname1, int_ipaddr1, ipaddr1], hostname2, hostname3)
     else
       c.filter_run_excluding :integration
     end
@@ -289,7 +340,7 @@ RSpec.configure do |c|
         labels:
           run: my-nginx
       spec:
-        clusterIP: #{int_ipaddr1}
+        type: NodePort
         ports:
         - port: 80
           protocol: TCP
@@ -355,7 +406,7 @@ RSpec.configure do |c|
           run_shell('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
           run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"')
         end
-        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
+        run_shell('curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor --batch --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg')
         run_shell('echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list')
 
         run_shell('apt-get update')
@@ -438,11 +489,23 @@ RSpec.configure do |c|
     run_shell("echo 'kubernetes::schedule_on_controller: true'  >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::taint_master: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
     run_shell("echo 'kubernetes::manage_docker: false' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    # Ensure required values so worker catalogs compile
+    run_shell("echo 'kubernetes::api_server_count: 1' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
+    # Prefer kubeadm-generated token if available; fallback to a dummy but valid-format token
+    token_cmd = <<~SH
+      TOKEN=$(kubeadm token create 2>/dev/null || echo 012345.0123456789abcdef)
+      echo "kubernetes::token: '${TOKEN}'" >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml
+    SH
+    run_shell(token_cmd)
+    # Skip CA verification on workers to avoid discovery_token_hash requirement
+    run_shell("echo 'kubernetes::skip_ca_verification: true' >> /etc/puppetlabs/code/environments/production/hieradata/#{family.capitalize}.yaml")
 
     run_shell("export KUBECONFIG='/etc/kubernetes/admin.conf'")
     reset_and_restart_containerd
+    setup_gcp_firewall
     open_communication_ports
     execute_agent('controller')
+    open_communication_ports # Re-apply after controller init to ensure ports are open
     execute_agent('worker1')
     execute_agent('worker2')
     puppet_cert_sign

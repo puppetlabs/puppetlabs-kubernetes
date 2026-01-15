@@ -36,7 +36,7 @@ def create_events_v1beta1_namespaced_event(*args)
   verify_mode = OpenSSL::SSL::VERIFY_NONE
   verify_mode = OpenSSL::SSL::VERIFY_PEER if arg_hash['ca_file']
 
-  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', verify_mode: verify_mode, ca_file: arg_hash['ca_file']) do |http|
+  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', verify_mode:, ca_file: arg_hash['ca_file']) do |http|
     case operation_verb
     when 'Get'
       req = Net::HTTP::Get.new(uri)
@@ -76,7 +76,7 @@ def to_query(hash)
 end
 
 def op_param(name, inquery, paramalias, namesnake)
-  { name: name, location: inquery, paramalias: paramalias, namesnake: namesnake }
+  { name:, location: inquery, paramalias:, namesnake: }
 end
 
 def format_params(key_values)
