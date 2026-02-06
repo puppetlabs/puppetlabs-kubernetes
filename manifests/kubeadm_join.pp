@@ -87,6 +87,6 @@ define kubernetes::kubeadm_join (
     path        => $path,
     logoutput   => true,
     timeout     => 0,
-    unless      => "kubectl get nodes | grep ${node_name}",
+    unless      => "kubectl get nodes ${node_name}",
   }
 }
