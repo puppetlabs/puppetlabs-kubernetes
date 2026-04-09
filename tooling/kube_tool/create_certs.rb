@@ -15,14 +15,17 @@ class CreateCerts
   def etcd_ca
     puts 'Creating etcd ca'
     CleanUp.all(['ca-conf.json', 'ca-csr.json', 'ca-key.pem', 'ca-key.pem'])
-    csr = { CN: 'etcd', key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
-    conf = { signing: { default: { expiry: '43800h' },
-                        profiles: { server: { expiry: '43800h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] },
-                                    client: { expiry: '43800h', usages: ['signing', 'key encipherment', 'client auth'] },
-                                    peer: { expiry: '43800h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] } } } }
+    csr = { CA: { expiry: '87600h' }, CN: 'etcd', key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
+    conf = { signing: { default: { expiry: '87600h' },
+                        profiles: { ca: { expiry: '87600h', usages: ['cert sign', 'crl sign'] },
+                                    server: { expiry: '87600h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] },
+                                    client: { expiry: '87600h', usages: ['signing', 'key encipherment', 'client auth'] },
+                                    peer: { expiry: '87600h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] } } } }
     File.write('ca-csr.json', csr.to_json)
     File.write('ca-conf.json', conf.to_json)
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare ca')
+    puts "ETCD CA"
+    system('openssl x509 -enddate -noout -in ca.pem')
     FileUtils.rm_f('ca.csr')
     data = {}
     cer = File.read('ca.pem')
@@ -41,6 +44,8 @@ class CreateCerts
     data = {}
     cer = File.read('client.pem')
     key = File.read('client-key.pem')
+    puts "ETCD CLIENT"
+    system('openssl x509 -enddate -noout -in client.pem')
     data['kubernetes::etcdclient_crt'] = cer
     data['kubernetes::etcdclient_key'] = key
     File.open('kubernetes.yaml', 'a') { |file| file.write(data.to_yaml) }
@@ -86,15 +91,18 @@ class CreateCerts
   def kube_ca
     puts 'Creating kube ca'
     CleanUp.all(['ca-conf.json', 'ca-csr.json', 'ca-key.pem', 'ca-key.pem'])
-    csr = { CN: 'kubernetes', key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
-    conf = { signing: { default: { expiry: '43800h' },
-                        profiles: { server: { expiry: '43800h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] },
-                                    client: { expiry: '43800h', usages: ['signing', 'key encipherment', 'client auth'] },
-                                    peer: { expiry: '43800h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] } } } }
+    csr = { CA: { expiry: '87600h' }, CN: 'kubernetes', key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
+    conf = { signing: { default: { expiry: '87600h' },
+                        profiles: { ca: { expiry: '87600h', usages: ['cert sign', 'crl sign'] },
+                                    server: { expiry: '87600h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] },
+                                    client: { expiry: '87600h', usages: ['signing', 'key encipherment', 'client auth'] },
+                                    peer: { expiry: '87600h', usages: ['signing', 'key encipherment', 'server auth', 'client auth'] } } } }
     File.write('ca-csr.json', csr.to_json)
     File.write('ca-conf.json', conf.to_json)
     system('cfssl gencert -initca ca-csr.json | cfssljson -bare ca')
     system("openssl x509 -pubkey -in ca.pem | openssl pkey -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //' > discovery_token_hash")
+    puts "KUBERNETES CA"
+    system('openssl x509 -enddate -noout -in ca.pem')
     FileUtils.rm_f('ca.csr')
     data = {}
     cer = File.read('ca.pem')
@@ -110,11 +118,13 @@ class CreateCerts
   def kube_front_proxy_ca
     puts 'Creating kube front-proxy ca'
     CleanUp.all(['front-proxy-ca-conf.json', 'front-proxy-ca-csr.json', 'front-proxy-ca-key.pem', 'front-proxy-ca-key.pem'])
-    csr = { CN: 'front-proxy-ca', key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
+    csr = { CA: { expiry: '87600h' }, CN: 'front-proxy-ca', key: { algo: @opts[:ca_algo], size: @opts[:key_size] } }
     conf = { signing: { default: { expiry: '87600h' } } }
     File.write('front-proxy-ca-csr.json', csr.to_json)
     File.write('front-proxy-ca-conf.json', conf.to_json)
     system('cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca')
+    puts "FRONT PROXY CA"
+    system('openssl x509 -enddate -noout -in front-proxy-ca.pem')
     FileUtils.rm_f('front-proxy-ca.csr')
     data = {}
     cer = File.read('front-proxy-ca.pem')
