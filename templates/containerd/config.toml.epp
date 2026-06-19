@@ -106,6 +106,9 @@ oom_score = 0
           base_runtime_spec = ""
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
             BinaryName = "/usr/bin/nvidia-container-runtime"
+<% if $docker_cgroup_driver == 'systemd' { -%>
+            SystemdCgroup = true
+<% } -%>
 <% } -%>
     [plugins."io.containerd.grpc.v1.cri".cni]
       bin_dir = "/opt/cni/bin"
