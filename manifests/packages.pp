@@ -97,6 +97,10 @@
 #   Defaults to 32767
 # @param archive_checksum_type
 #   Defaults to 'sha256'
+# @param archive_cleanup
+#   Whether downloaded archives should be deleted after extracting. Cleaning files will save some space,
+#   but might lead to frequent corrective changes (service restarts)
+#   Default: false
 # @param tmp_directory
 #   Directory to use when downloading archives for install.
 #   Default to /var/tmp/puppetlabs-kubernetes
@@ -154,6 +158,7 @@ class kubernetes::packages (
   Boolean $pin_packages                                 = $kubernetes::pin_packages,
   Integer $package_pin_priority                         = 32767,
   String $archive_checksum_type                         = 'sha256',
+  Boolean $archive_cleanup                              = false,
   String $tmp_directory                                 = $kubernetes::tmp_directory,
   Optional[String] $http_proxy                          = $kubernetes::http_proxy,
   Optional[String] $https_proxy                         = $kubernetes::https_proxy,
@@ -422,7 +427,7 @@ class kubernetes::packages (
       checksum        => $runc_source_checksum,
       checksum_verify => $runc_source_checksum_verify,
       extract         => false,
-      cleanup         => false,
+      cleanup         => $archive_cleanup,
       creates         => $runc_source_creates,
     }
     -> file { '/usr/bin/runc':
@@ -469,7 +474,7 @@ class kubernetes::packages (
       extract         => true,
       extract_command => 'tar xfz %s --strip-components=1 -C /usr/bin/',
       extract_path    => '/',
-      cleanup         => true,
+      cleanup         => $archive_cleanup,
       creates         => $containerd_archive_creates,
       notify          => Service['containerd'],
       require         => File[$tmp_directory],
@@ -494,7 +499,7 @@ class kubernetes::packages (
         extract         => true,
         extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
         extract_path    => '/usr/local/bin',
-        cleanup         => true,
+        cleanup         => $archive_cleanup,
         creates         => $etcd_archive_creates,
         notify          => Service['etcd'],
         require         => File[$tmp_directory],
