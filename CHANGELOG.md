@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.1.1](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v8.1.1) - 2026-06-25
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v8.1.0...v8.1.1)
+
+### Other
+
+- (MODULES-11840) Allow puppetlabs/stdlib 10.x [#718](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/718) ([imaqsood](https://github.com/imaqsood))
+- CAT-2378: Update puppetlabs-kubernetes to use puppetcore 8 [#712](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/712) ([span786](https://github.com/span786))
+- Fix kubernetes_version matching [#705](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/705) ([xbulat](https://github.com/xbulat))
+- ci(MODULES-11557): add Twingate setup step to GitHub Actions workflow [#704](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/704) ([imaqsood](https://github.com/imaqsood))
+- MODULES-11577 chore(ruby): upgrade Ruby from 2.7 to 3.1 [#702](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/702) ([imaqsood](https://github.com/imaqsood))
+- (MAINT): Updated the version for puppetlabs-apt module in metadata.json file [#698](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/698) ([span786](https://github.com/span786))
+- (CAT-2193): Fixed kubernetes environment setup for Debian. [#694](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/694) ([span786](https://github.com/span786))
+- (CAT-2095): Fixed puppetlabs-kubernetes modules CI & nightly failures [#693](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/693) ([span786](https://github.com/span786))
+
 ## [v8.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v8.1.0) - 2024-12-17
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v8.0.0...v8.1.0)
