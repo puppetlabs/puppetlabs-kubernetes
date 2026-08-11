@@ -789,7 +789,8 @@ Defaults to /var/lib/etcd.
   Defaults to "new"
 
 [*etcd_compaction_retention*]
-    This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`. An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
+    This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`.
+    An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
   Integer or String
   Defaults to 0 (disabled)
 
@@ -867,7 +868,8 @@ Defaults to /var/lib/etcd.
   Defaults to []
 
 [*delegated_pki*]
-  Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
+  Set to true if all required X509 certificates will be provided by external means.
+  Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
   Defaults to false
 
 [*kubernetes_ca_crt*]
@@ -961,8 +963,9 @@ Example:
  Defaults to {}
 
 [*kubelet_extra_arguments*]
- A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
- Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+ A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied
+ to both control planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image`
+ which may be problematic to configure via kubelet_extra_config
  Defaults to []
 
 [*proxy_mode*]
@@ -1318,7 +1321,7 @@ Data type: `String`
 
 
 
-Default value: `'1.10.2'`
+Default value: `'1.32.0'`
 
 ##### <a name="-kubernetes--kubernetes_cluster_name"></a>`kubernetes_cluster_name`
 
@@ -1356,7 +1359,7 @@ Data type: `String`
 
 
 
-Default value: `'1.4.3'`
+Default value: `'1.6.12'`
 
 ##### <a name="-kubernetes--containerd_install_method"></a>`containerd_install_method`
 
@@ -1468,7 +1471,7 @@ Data type: `String`
 
 
 
-Default value: `'3.2.18'`
+Default value: `'3.4.13'`
 
 ##### <a name="-kubernetes--etcd_hostname"></a>`etcd_hostname`
 
@@ -2626,7 +2629,8 @@ Default value: `$kubernetes::manage_etcd`
 
 Data type: `Boolean`
 
-Set to true if all required X509 certificates will be provided by external means. Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
+Set to true if all required X509 certificates will be provided by external means.
+Setting this to true will ignore all *_crt and *_key including sa.key and sa.pub files.
 Defaults to false
 
 Default value: `$kubernetes::delegated_pki`
@@ -2849,7 +2853,8 @@ Default value: `$kubernetes::etcd_compaction_method`
 
 Data type: `Variant[Integer,String]`
 
-This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`. An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
+This will tell etcd how much retention to be applied. This value can change depending on `etcd_compaction_method`.
+An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
 Integer or String
 Defaults to 0 (disabled)
 
@@ -3030,8 +3035,9 @@ Default value: `$kubernetes::scheduler_extra_arguments`
 
 Data type: `Optional[Array]`
 
-A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
-Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied
+to both control planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image`
+which may be problematic to configure via kubelet_extra_config
 Defaults to []
 
 Default value: `$kubernetes::kubelet_extra_arguments`
@@ -3367,8 +3373,9 @@ Default value: `$kubernetes::node_extra_taints`
 
 Data type: `Optional[Array]`
 
-A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied to both control planes and nodes.
-Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config
+A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration applied
+to both control planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image`
+which may be problematic to configure via kubelet_extra_config
 Defaults to []
 
 Default value: `$kubernetes::kubelet_extra_arguments`
