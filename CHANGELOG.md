@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.1.1](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v8.1.1) - 2026-08-11
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v8.1.0...v8.1.1)
+
+### Other
+
+- fix(MODULES-11856): Bump augeasproviders_sysctl to <5.0.0 and core to <6.0.0 [#722](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/722) ([imaqsood](https://github.com/imaqsood))
+- (MODULES-11840) Allow puppetlabs/stdlib 10.x [#718](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/718) ([imaqsood](https://github.com/imaqsood))
+- CAT-2378: Update puppetlabs-kubernetes to use puppetcore 8 [#712](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/712) ([span786](https://github.com/span786))
+- Fix kubernetes_version matching [#705](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/705) ([xbulat](https://github.com/xbulat))
+- ci(MODULES-11557): add Twingate setup step to GitHub Actions workflow [#704](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/704) ([imaqsood](https://github.com/imaqsood))
+- MODULES-11577 chore(ruby): upgrade Ruby from 2.7 to 3.1 [#702](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/702) ([imaqsood](https://github.com/imaqsood))
+- (MAINT): Updated the version for puppetlabs-apt module in metadata.json file [#698](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/698) ([span786](https://github.com/span786))
+- (CAT-2193): Fixed kubernetes environment setup for Debian. [#694](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/694) ([span786](https://github.com/span786))
+- (CAT-2095): Fixed puppetlabs-kubernetes modules CI & nightly failures [#693](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/693) ([span786](https://github.com/span786))
+
 ## [v8.1.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v8.1.0) - 2024-12-17
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v8.0.0...v8.1.0)
@@ -337,7 +353,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Dashboard no longer has deploy YAML on master branch [#228](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/228) ([jorhett](https://github.com/jorhett))
 - Fix cni network provider [#227](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/227) ([kkuehlz](https://github.com/kkuehlz))
 - Reduce redundant test fill by using Hiera for default values [#226](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/226) ([jorhett](https://github.com/jorhett))
-- Fix CentOS repos [#225](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/225) ([jorhett](https://github.com/jorhett))
 - Build config file for worker nodes too [#224](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/224) ([jorhett](https://github.com/jorhett))
 - Fix cloud_provider hostnames [#223](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/223) ([jorhett](https://github.com/jorhett))
 - Defer os-specific default value test to avoid fact availability issues [#222](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/222) ([jorhett](https://github.com/jorhett))
@@ -557,7 +572,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Other
 
 - Readme edits [#23](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/23) ([EamonnTP](https://github.com/EamonnTP))
-- Kubetool [#22](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/22) ([davejrt](https://github.com/davejrt))
 - Kube 1.8.3 support [#21](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/21) ([scotty-c](https://github.com/scotty-c))
 
 ## [0.1.2](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/0.1.2) - 2017-11-18
