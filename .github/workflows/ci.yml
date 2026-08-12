@@ -9,6 +9,13 @@ on:
 jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
+    with:
+      # voxpupuli-puppet-lint-plugins 7.0 (needed for Puppet 9 support) requires
+      # ruby >= 3.2; the default (3.1) can no longer resolve the :development group.
+      ruby_version: "3.2"
+      # puppet_litmus -> bolt 4.x -> faraday-patron -> patron builds a libcurl native extension;
+      # the runner has no libcurl headers, so install them before bundle (Puppet 9 lane, Ruby 4).
+      additional_packages: "libcurl4-openssl-dev"
     secrets: "inherit"
 
   Integration:
@@ -45,10 +52,12 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v3
 
-    - name: Activate Ruby 3.1
+    - name: Activate Ruby 3.2
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.1"
+        # voxpupuli-puppet-lint-plugins 7.0 (needed for Puppet 9 support) requires
+        # ruby >= 3.2; bundler-cache: true resolves every group, including :development.
+        ruby-version: "3.2"
         bundler-cache: true
 
     - name: Print bundle environment
