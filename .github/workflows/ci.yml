@@ -19,6 +19,15 @@ jobs:
       matrix: {'platform':['rhel-8', 'debian-11'],'collection':['puppetcore8-nightly']}
 
     steps:
+    - name: "Configure forge authentication"
+      env:
+        FORGE_TOKEN: ${{ secrets.PUPPET_FORGE_TOKEN || secrets.PUPPET_FORGE_TOKEN_PUBLIC }}
+      run: |
+        if [ -n "$FORGE_TOKEN" ]; then
+          echo "PUPPET_FORGE_TOKEN=$FORGE_TOKEN" >> $GITHUB_ENV
+          echo "BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM=forge-key:$FORGE_TOKEN" >> $GITHUB_ENV
+        fi
+
     - name: "Install Twingate"
       uses: "twingate/github-action@v1"
       with:
