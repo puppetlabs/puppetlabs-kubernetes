@@ -101,6 +101,10 @@
 #   An integer or time string (i.e.: "5m") can be used in case of "periodic". Only integer allowed in case of "revision"
 #   Integer or String
 #   Defaults to 0 (disabled)
+# @param etcd_quota_backend_bytes
+#   Raise alarms when backend size exceeds the given quota.
+#   An string. set a very small 16MB quota 16*1024*1024
+#   Default to 0 (size 2G )
 # @param api_server_count
 #   Defaults to undef
 # @param etcd_version
@@ -255,6 +259,7 @@ class kubernetes::config::kubeadm (
   Integer $etcd_max_wals = $kubernetes::etcd_max_wals,
   Integer $etcd_max_request_bytes = $kubernetes::etcd_max_request_bytes,
   Optional[String] $etcd_listen_metric_urls = $kubernetes::etcd_listen_metric_urls,
+  Optional[String] $etcd_quota_backend_bytes = $kubernetes::etcd_quota_backend_bytes,
   String $token = $kubernetes::token,
   String $ttl_duration = $kubernetes::ttl_duration,
   String $discovery_token_hash = $kubernetes::discovery_token_hash,
