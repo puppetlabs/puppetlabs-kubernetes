@@ -393,7 +393,8 @@ class kubernetes::config::kubeadm (
     /^1\.12/                  => 'v1alpha3',
     /^1\.1(3|4|5\.[012])/     => 'v1beta1',
     /^1\.(16|17|18|19|20|21)/ => 'v1beta2',
-    default                  => 'v1beta3',
+    /^1\.(2[2-9]|30)/         => 'v1beta3',
+    default                   => 'v1beta4',
   }
 
   # master role is DEPRECATED

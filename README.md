@@ -233,6 +233,8 @@ Defaults to `[]`.
 
 A string array of extra arguments passed to the API server.
 
+**For Kubernetes 1.31+ the format of each array element is `{'name' => '<flag>', 'value' => '<value>'}`**
+
 Defaults to `[]`.
 
 #### `apiserver_extra_volumes`
@@ -410,6 +412,8 @@ Defaults to `undef`.
 
 A string array of extra arguments passed to the controller manager.
 
+**For Kubernetes 1.31+ the format of each array element is `{'name' => '<flag>', 'value' => '<value>'}`**
+
 Defaults to `[]`.
 
 #### `controllermanager_extra_volumes`
@@ -434,6 +438,8 @@ Defaults to `{}`.
 #### `scheduler_extra_arguments`
 
 A string array of extra arguments passed to the scheduler.
+
+**For Kubernetes 1.31+ the format of each array element is `{'name' => '<flag>', 'value' => '<value>'}`**
 
 Defaults to `[]`.
 
@@ -755,6 +761,8 @@ Defaults to `{}`.
 #### `kubelet_extra_arguments`
 
 A string array to be appended to kubeletExtraArgs in the Kubelet's nodeRegistration configuration. It is applied to both control-planes and nodes. Use this for critical Kubelet settings such as `pod-infra-container-image` which may be problematic to configure via kubelet_extra_config and DynamicKubeletConfig.
+
+**For Kubernetes 1.31+ the format of each array element is `{'name' => '<flag>', 'value' => '<value>'}`**
 
 Defaults to `[]`.
 
