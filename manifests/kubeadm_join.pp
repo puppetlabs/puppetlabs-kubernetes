@@ -58,25 +58,25 @@ define kubernetes::kubeadm_join (
     # K1.11 and below don't use the config file
     /^1.1(0|1)/: {
       $kubeadm_join_flags = kubeadm_join_flags({
-          controller_address       => $controller_address,
-          cri_socket               => $cri_socket,
-          discovery_file           => $discovery_file,
-          discovery_token          => $discovery_token,
-          ca_cert_hash             => $ca_cert_hash,
-          skip_ca_verification     => $skip_ca_verification,
-          feature_gates            => $feature_gates,
-          ignore_preflight_errors  => $ignore_preflight_errors,
-          node_name                => $node_name,
-          tls_bootstrap_token      => $tls_bootstrap_token,
-          token                    => $token,
+        controller_address       => $controller_address,
+        cri_socket               => $cri_socket,
+        discovery_file           => $discovery_file,
+        discovery_token          => $discovery_token,
+        ca_cert_hash             => $ca_cert_hash,
+        skip_ca_verification     => $skip_ca_verification,
+        feature_gates            => $feature_gates,
+        ignore_preflight_errors  => $ignore_preflight_errors,
+        node_name                => $node_name,
+        tls_bootstrap_token      => $tls_bootstrap_token,
+        token                    => $token,
       })
     }
     default: {
       $kubeadm_join_flags = kubeadm_join_flags({
-          config                   => $config,
-          discovery_file           => $discovery_file,
-          feature_gates            => $feature_gates,
-          ignore_preflight_errors  => $ignore_preflight_errors,
+        config                   => $config,
+        discovery_file           => $discovery_file,
+        feature_gates            => $feature_gates,
+        ignore_preflight_errors  => $ignore_preflight_errors,
       })
     }
   }

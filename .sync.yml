@@ -19,6 +19,9 @@ Rakefile:
       end
   extra_disabled_lint_checks:
     - params_empty_string_assignment
+    # MODULES-11735: new in voxpupuli-puppet-lint-plugins 7.0 (needed for Puppet 9 support);
+    # see the matching comment in Rakefile.
+    - params_not_optional_with_undef
   profiles:
     strict:
       configs:
@@ -45,6 +48,12 @@ spec/spec_helper.rb:
   unmanaged: false
 .github/workflows/auto_release.yml:
   unmanaged: false
+# ci.yml and nightly.yml were already unmanaged for the hand-written Integration job
+# (bolt-based cluster provisioning; not expressible via pdk-templates). MODULES-11735
+# adds a second reason: the Spec `with: ruby_version` input and the Integration job's
+# Ruby 3.2 bump, both needed because voxpupuli-puppet-lint-plugins 7.0 (Puppet 9 support)
+# requires ruby >= 3.2 and the templates emit no `ruby_version` key. Leaving them managed
+# would let a scheduled `pdk update` PR silently revert this.
 .github/workflows/ci.yml:
   unmanaged: true
 .github/workflows/nightly.yml:
@@ -55,3 +64,15 @@ spec/spec_helper.rb:
   delete: true
 .rubocop.yml:
   include_todos: true
+# MODULES-11735: pin puppetlabs_spec_helper and puppet_litmus above pdk-templates'
+# own defaults (>= 8.0 and ~> 2.5 respectively), which are loose enough for a
+# scheduled `pdk update` to silently revert this PR: puppetlabs_spec_helper 8.0.0
+# still pins puppet-lint ~> 4.0 (conflicts with voxpupuli-puppet-lint-plugins ~> 7.0,
+# needed for Puppet 9), and puppet_litmus below 2.8.0 lacks the Puppet 9 collection
+# support matrix_from_metadata_v3 needs to generate this module's Puppet 9 Spec lane.
+Gemfile:
+  overrides:
+    - gem: 'puppetlabs_spec_helper'
+      version: '~> 9.0'
+    - gem: 'puppet_litmus'
+      version: '~> 2.8'
