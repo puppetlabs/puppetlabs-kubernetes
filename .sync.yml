@@ -55,3 +55,7 @@ spec/spec_helper.rb:
   delete: true
 .rubocop.yml:
   include_todos: true
+Gemfile:
+  overrides:
+    - gem: 'puppet_litmus'
+      version: '~> 2.0'
