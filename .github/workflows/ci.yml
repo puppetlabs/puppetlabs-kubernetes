@@ -113,11 +113,22 @@ jobs:
           fi
         done
 
-    - name: Install Java 17 for RHEL
+    - name: Install Java for RHEL
       if: contains(matrix.platform, 'rhel') || contains(matrix.platform, 'redhat') || contains(matrix.platform, 'centos')
       run: |
-        bundle exec bolt command run "yum install -y java-17-openjdk java-17-openjdk-devel" -t ssh_nodes -i ./$INVENTORY_PATH
-        bundle exec bolt command run "alternatives --set java /usr/lib/jvm/java-17-openjdk-*/bin/java" -t ssh_nodes -i ./$INVENTORY_PATH
+        # puppetserver 9.x (puppetcore9-nightly) requires java-21-openjdk-headless --
+        # its jars are compiled to class file version 65 (Java 21), which a Java 17
+        # JVM can't load (UnsupportedClassVersionError). puppetserver 8.x still
+        # requires only Java 17. Forcing `alternatives` to the wrong version breaks
+        # `systemctl start puppetserver` even though yum installs cleanly, since the
+        # service resolves `java` via PATH/alternatives, not a hardcoded path.
+        if [[ "${{ matrix.collection }}" == puppetcore9* ]]; then
+          JAVA_VERSION=21
+        else
+          JAVA_VERSION=17
+        fi
+        bundle exec bolt command run "yum install -y java-${JAVA_VERSION}-openjdk java-${JAVA_VERSION}-openjdk-devel" -t ssh_nodes -i ./$INVENTORY_PATH
+        bundle exec bolt command run "alternatives --set java /usr/lib/jvm/java-${JAVA_VERSION}-openjdk-*/bin/java" -t ssh_nodes -i ./$INVENTORY_PATH
         bundle exec bolt command run "java -version" -t ssh_nodes -i ./$INVENTORY_PATH
 
     - name: Puppet server setup
