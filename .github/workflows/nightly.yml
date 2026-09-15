@@ -21,7 +21,17 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      matrix: {'platform':['rhel-8', 'debian-12'],'collection':['puppetcore8-nightly', 'puppetcore9-nightly']}
+      matrix:
+        platform: ['rhel-8', 'debian-12']
+        collection: ['puppetcore8-nightly', 'puppetcore9-nightly']
+        exclude:
+          # puppet9-nightly's apt repo doesn't publish a puppetserver package for any
+          # Debian codename yet (only Ubuntu), so `apt-get install puppetserver` falls
+          # back to Debian's own unrelated 7.9.5 community package, which fails to start
+          # (missing `puppet` user). Drop this leg until Puppet 9 ships puppetserver for
+          # Debian; MODULES-11735.
+          - platform: debian-12
+            collection: puppetcore9-nightly
 
     steps:
     - name: "Configure forge authentication"
