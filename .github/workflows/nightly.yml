@@ -22,15 +22,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ['rhel-8', 'debian-12']
-        collection: ['puppetcore8-nightly', 'puppetcore9-nightly']
-        exclude:
-          # puppet9-nightly's apt repo doesn't publish a puppetserver package for any
-          # Debian codename yet (only Ubuntu), so `apt-get install puppetserver` falls
-          # back to Debian's own unrelated 7.9.5 community package, which fails to start
-          # (missing `puppet` user). Drop this leg until Puppet 9 ships puppetserver for
-          # Debian; MODULES-11735.
+        # Explicit combinations, not a platform x collection cross product: puppet9-nightly's
+        # apt repo doesn't publish a puppetserver package for any Debian codename (only Ubuntu),
+        # so `apt-get install puppetserver` falls back to Debian's own unrelated 7.9.5 community
+        # package, which fails to start (missing `puppet` user). Swapping the puppetcore9-nightly
+        # leg to ubuntu-2204-lts (jammy, where puppetserver 9 nightlies do exist) keeps real
+        # Puppet 9 coverage instead of just dropping it; MODULES-11735.
+        include:
+          - platform: rhel-8
+            collection: puppetcore8-nightly
+          - platform: rhel-8
+            collection: puppetcore9-nightly
           - platform: debian-12
+            collection: puppetcore8-nightly
+          - platform: ubuntu-2204-lts
             collection: puppetcore9-nightly
 
     steps:
