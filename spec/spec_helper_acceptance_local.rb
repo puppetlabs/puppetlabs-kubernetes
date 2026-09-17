@@ -414,7 +414,6 @@ RSpec.configure do |c|
         run_shell('apt install kubectl kubelet kubeadm -y')
         run_shell('apt-mark hold kubectl kubelet kubeadm')
         run_shell('apt install docker-ce docker-ce-cli -y')
-        run_shell('apt install docker.io -y')
         run_shell('systemctl start docker.service')
         run_shell('systemctl enable docker.service')
         run_shell('echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections')
