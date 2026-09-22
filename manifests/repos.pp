@@ -65,8 +65,11 @@ class kubernetes::repos (
 ) inherits kubernetes {
   if $create_repos {
     # pkgs.k8s.io publishes one repository per minor release, e.g. https://pkgs.k8s.io/core:/stable:/v1.28/
-    $parts = split($kubernetes_version, '[.]')
-    $minor_version = "${parts[0]}.${parts[1]}"
+    if $kubernetes_version =~ Pattern[/^\d+\.\d+(\.\d+)?$/] {
+      $minor_version = regsubst($kubernetes_version, '^(\d+\.\d+)(?:\.\d+)?$', '\1')
+    } else {
+      fail("kubernetes::repos: kubernetes_version must be in 'major.minor' or 'major.minor.patch' format (for example '1.28' or '1.28.1'); got '${kubernetes_version}'")
+    }
     $k8s_repo_base = "https://pkgs.k8s.io/core:/stable:/v${minor_version}"
 
     $manage_docker_repo = ($container_runtime == 'docker' and $manage_docker == true) or
