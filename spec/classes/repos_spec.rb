@@ -250,7 +250,7 @@ describe 'kubernetes::repos', type: :class do
         location: 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/',
         repos: ' ',
         release: ' /',
-        key: { 'name' => 'kubernetes-apt-keyring.gpg', 'source' => 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key' },
+        key: { 'id' => '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB', 'source' => 'https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key' },
       )
     }
 
