@@ -59,10 +59,11 @@ end
 
 def configure_puppet_server(controller, worker1, worker2)
   # Configure the puppet server
-  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+  ENV['TARGET_HOST'] = target_roles(puppet_server_role)[0][:name]
   run_shell('systemctl start puppetserver')
   run_shell('systemctl enable puppetserver')
-  # Point local agent to this server
+  # Point the controller's agent to this server, then run it
+  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
   run_shell('puppet config set server puppet --section main')
   execute_agent('controller')
   # Configure the puppet agents
@@ -194,9 +195,16 @@ def configure_puppet_agent(role)
   execute_agent(role)
 end
 
+def puppet_server_role
+  # Falls back to 'controller' so single-node-primary inventories (controller doubles as
+  # both Puppet primary and Kubernetes control-plane) keep working unchanged; tag a node
+  # 'puppetserver' instead when the primary is a separate, dedicated node.
+  target_roles('puppetserver').empty? ? 'controller' : 'puppetserver'
+end
+
 def puppet_cert_sign
   # Sign the certs
-  ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+  ENV['TARGET_HOST'] = target_roles(puppet_server_role)[0][:name]
   run_shell('puppetserver ca sign --all', expect_failures: true)
 end
 
@@ -287,9 +295,12 @@ RSpec.configure do |c|
 
     if c.filter.rules.key? :integration
       ENV['TARGET_HOST'] = target_roles('controller')[0][:name]
+      # Falls back to controller's own address when no separate 'puppetserver'-role node
+      # is in the inventory, so single-node-primary runs are unaffected.
+      _, _, int_ipaddr_server = fetch_ip_hostname_by_role(puppet_server_role)
       ['controller', 'worker1', 'worker2'].each do |node|
         ENV['TARGET_HOST'] = target_roles(node)[0][:name]
-        run_shell("echo #{int_ipaddr1} puppet  >> /etc/hosts")
+        run_shell("echo #{int_ipaddr_server} puppet  >> /etc/hosts")
       end
       configure_puppet_server([hostname1, int_ipaddr1, ipaddr1], hostname2, hostname3)
     else
