@@ -979,35 +979,35 @@ Defaults to ""
 
 [*kubernetes_apt_location*]
  The APT repo URL for the Kubernetes packages.
- Defaults to https://apt.kubernetes.io
+ Defaults to https://pkgs.k8s.io/core:/stable:/v<major.minor>/deb
 
 [*kubernetes_apt_release*]
  The release name for the APT repo for the Kubernetes packages.
- Defaults to 'kubernetes-${facts.os.distro.codename}'
+ Defaults to '/' (pkgs.k8s.io is a flat repository)
 
 [*kubernetes_apt_repos*]
- The repos to install from the Kubernetes APT url
+ The repos to install from the Kubernetes APT url. Ignored when the release ends with '/'
  Defaults to main
 
 [*kubernetes_key_id*]
- The gpg key for the Kubernetes APT repo
- Defaults to '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
+ The gpg key id for the Kubernetes APT repo. When set, the key is installed with the legacy apt-key mechanism.
+ Defaults to undef, the repository signing key is then installed with apt::keyring and referenced via signed-by
 
 [*kubernetes_key_source*]
  The URL for the APT repo gpg key
- Defaults to https://packages.cloud.google.com/apt/doc/apt-key.gpg
+ Defaults to <kubernetes_apt_location>/Release.key
 
 [*kubernetes_yum_baseurl*]
  The YUM repo URL for the Kubernetes packages.
- Defaults to https://download.docker.com/linux/centos/
+ Defaults to https://pkgs.k8s.io/core:/stable:/v<major.minor>/rpm/
 
 [*kubernetes_yum_gpgkey*]
  The URL for the Kubernetes yum repo gpg key
- Defaults to https://download.docker.com/linux/centos/gpg
+ Defaults to <kubernetes_yum_baseurl>/repodata/repomd.xml.key
 
 [*docker_apt_location*]
  The APT repo URL for the Docker packages
- Defaults to https://apt.dockerproject.org/repo
+ Defaults to https://download.docker.com/linux/<os name>
 
 [*docker_apt_release*]
  The release name for the APT repo for the Docker packages.
@@ -1015,15 +1015,15 @@ Defaults to ""
 
 [*docker_apt_repos*]
  The repos to install from the Docker APT url
- Defaults to main
+ Defaults to stable
 
 [*docker_key_id*]
  The gpg key for the Docker APT repo
- Defaults to '58118E89F3A912897C070ADBF76221572C52609D'
+ Defaults to '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
 
 [*docker_key_source*]
  The URL for the Docker APT repo gpg key
- Defaults to https://apt.dockerproject.org/gpg
+ Defaults to <docker_apt_location>/gpg
 
 [*docker_yum_baseurl*]
  The YUM repo URL for the Docker packages.
@@ -4015,6 +4015,7 @@ The kubernetes::repos class.
 The following parameters are available in the `kubernetes::repos` class:
 
 * [`container_runtime`](#-kubernetes--repos--container_runtime)
+* [`kubernetes_version`](#-kubernetes--repos--kubernetes_version)
 * [`kubernetes_apt_location`](#-kubernetes--repos--kubernetes_apt_location)
 * [`kubernetes_apt_release`](#-kubernetes--repos--kubernetes_apt_release)
 * [`kubernetes_apt_repos`](#-kubernetes--repos--kubernetes_apt_repos)
@@ -4042,11 +4043,19 @@ It can only be set to "cri_containerd" or "docker". Defaults to cri_containerd
 
 Default value: `$kubernetes::container_runtime`
 
+##### <a name="-kubernetes--repos--kubernetes_version"></a>`kubernetes_version`
+
+Data type: `String[1]`
+
+The kubernetes version used to determine the minor release of the pkgs.k8s.io repository.
+
+Default value: `$kubernetes::kubernetes_version`
+
 ##### <a name="-kubernetes--repos--kubernetes_apt_location"></a>`kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
-The APT repo URL for the Kubernetes packages. Defaults to https://apt.kubernetes.io
+The APT repo URL for the Kubernetes packages. Defaults to https://pkgs.k8s.io/core:/stable:/v<major.minor>/deb
 
 Default value: `$kubernetes::kubernetes_apt_location`
 
@@ -4054,7 +4063,7 @@ Default value: `$kubernetes::kubernetes_apt_location`
 
 Data type: `Optional[String]`
 
-The release name for the APT repo for the Kubernetes packages. Defaults to 'kubernetes-${facts.os.distro.codename}'
+The release name for the APT repo for the Kubernetes packages. Defaults to '/' (flat repository)
 
 Default value: `$kubernetes::kubernetes_apt_release`
 
@@ -4062,7 +4071,7 @@ Default value: `$kubernetes::kubernetes_apt_release`
 
 Data type: `Optional[String]`
 
-The repos to install from the Kubernetes APT url. Defaults to main
+The repos to install from the Kubernetes APT url. Defaults to main. Ignored when the release ends with '/'
 
 Default value: `$kubernetes::kubernetes_apt_repos`
 
@@ -4070,7 +4079,8 @@ Default value: `$kubernetes::kubernetes_apt_repos`
 
 Data type: `Optional[String]`
 
-The gpg key for the Kubernetes APT repo. Defaults to '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
+The gpg key id for the Kubernetes APT repo. When set, the key is installed with the legacy apt-key mechanism.
+Defaults to undef, the signing key is then installed with apt::keyring and referenced via signed-by.
 
 Default value: `$kubernetes::kubernetes_key_id`
 
@@ -4078,7 +4088,7 @@ Default value: `$kubernetes::kubernetes_key_id`
 
 Data type: `Optional[String]`
 
-The URL for the APT repo gpg key. Defaults to https://packages.cloud.google.com/apt/doc/apt-key.gpg
+The URL for the APT repo gpg key. Defaults to <kubernetes_apt_location>/Release.key
 
 Default value: `$kubernetes::kubernetes_key_source`
 
@@ -4086,7 +4096,7 @@ Default value: `$kubernetes::kubernetes_key_source`
 
 Data type: `Optional[String]`
 
-The YUM repo URL for the Kubernetes packages. Defaults to https://download.docker.com/linux/centos/
+The YUM repo URL for the Kubernetes packages. Defaults to https://pkgs.k8s.io/core:/stable:/v<major.minor>/rpm/
 
 Default value: `$kubernetes::kubernetes_yum_baseurl`
 
@@ -4094,7 +4104,7 @@ Default value: `$kubernetes::kubernetes_yum_baseurl`
 
 Data type: `Optional[String]`
 
-The URL for the Kubernetes yum repo gpg key. Defaults to https://download.docker.com/linux/centos/gpg
+The URL for the Kubernetes yum repo gpg key. Defaults to <kubernetes_yum_baseurl>/repodata/repomd.xml.key
 
 Default value: `$kubernetes::kubernetes_yum_gpgkey`
 
@@ -4102,7 +4112,7 @@ Default value: `$kubernetes::kubernetes_yum_gpgkey`
 
 Data type: `Optional[String]`
 
-The APT repo URL for the Docker packages. Defaults to https://apt.dockerproject.org/repo
+The APT repo URL for the Docker packages. Defaults to https://download.docker.com/linux/<os name>
 
 Default value: `$kubernetes::docker_apt_location`
 
@@ -4118,7 +4128,7 @@ Default value: `$kubernetes::docker_apt_release`
 
 Data type: `Optional[String]`
 
-The repos to install from the Docker APT url. Defaults to main
+The repos to install from the Docker APT url. Defaults to stable
 
 Default value: `$kubernetes::docker_apt_repos`
 
@@ -4142,7 +4152,7 @@ Default value: `$kubernetes::docker_yum_gpgkey`
 
 Data type: `Optional[String]`
 
-The gpg key for the Docker APT repo. Defaults to '58118E89F3A912897C070ADBF76221572C52609D'
+The gpg key for the Docker APT repo. Defaults to '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
 
 Default value: `$kubernetes::docker_key_id`
 
@@ -4150,7 +4160,7 @@ Default value: `$kubernetes::docker_key_id`
 
 Data type: `Optional[String]`
 
-The URL for the Docker APT repo gpg key. Defaults to https://apt.dockerproject.org/gpg
+The URL for the Docker APT repo gpg key. Defaults to https://download.docker.com/linux/<os name>/gpg
 
 Default value: `$kubernetes::docker_key_source`
 

@@ -479,19 +479,19 @@ Defaults to `undef`.
 
 The APT repo URL for the Docker packages.
 
-Defaults to `https://apt.dockerproject.org/repo`.
+Defaults to `https://download.docker.com/linux/<os name>`, e.g. `https://download.docker.com/linux/debian`.
 
 #### `docker_apt_release`
 
 The release name for the APT repo for the Docker packages.
 
-Defaults to `'ubuntu-${::lsbdistcodename}'`.
+Defaults to `$facts['os']['distro']['codename']`.
 
 #### `docker_apt_repos`
 
 The repos to install from the Docker APT url.
 
-Defaults to `main`.
+Defaults to `stable`.
 
 #### `docker_version`
 
@@ -512,13 +512,13 @@ Defaults to `docker-engine`.
 
 The gpg key for the Docker APT repo.
 
-Defaults to `'58118E89F3A912897C070ADBF76221572C52609D'`.
+Defaults to `'9DC858229FC7DD38854AE2D88D81803C0EBFCD88'`.
 
 #### `docker_key_source`
 
 The URL for the Docker APT repo gpg key.
 
-Defaults to `https://apt.dockerproject.org/gpg`.
+Defaults to `<docker_apt_location>/gpg`.
 
 #### `docker_yum_baseurl`
 
@@ -762,31 +762,31 @@ Defaults to `[]`.
 
 The APT repo URL for the Kubernetes packages.
 
-Defaults to `https://apt.kubernetes.io`.
+Defaults to `https://pkgs.k8s.io/core:/stable:/v<major.minor>/deb`, derived from `kubernetes_version`.
 
 #### `kubernetes_apt_release`
 
 The release name for the APT repo for the Kubernetes packages.
 
-Defaults to `'kubernetes-${::lsbdistcodename}'`.
+Defaults to `/`, as pkgs.k8s.io is a flat repository.
 
 #### `kubernetes_apt_repos`
 
-The repos to install using the Kubernetes APT URL.
+The repos to install using the Kubernetes APT URL. Ignored when `kubernetes_apt_release` ends with `/`.
 
 Defaults to `main`.
 
 #### `kubernetes_key_id`
 
-The gpg key for the Kubernetes APT repo.
+The gpg key id for the Kubernetes APT repo. When set, the key is installed with the legacy `apt-key` mechanism.
 
-Defaults to `'54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'`.
+Defaults to `undef`. The repository signing key is then installed from `kubernetes_key_source` as `/etc/apt/keyrings/kubernetes-apt-keyring.asc` via `apt::keyring` and referenced from the source entry via `signed-by`.
 
 #### `kubernetes_key_source`
 
 The URL for the APT repo gpg key.
 
-Defaults to `https://packages.cloud.google.com/apt/doc/apt-key.gpg`.
+Defaults to `<kubernetes_apt_location>/Release.key`.
 
 #### `kubelet_use_proxy`
 
@@ -800,13 +800,13 @@ Defaults to `false`.
 
 The YUM repo URL for the Kubernetes packages.
 
-Defaults to `https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64`.
+Defaults to `https://pkgs.k8s.io/core:/stable:/v<major.minor>/rpm/`, derived from `kubernetes_version`.
 
 #### `kubernetes_yum_gpgkey`
 
 The URL for the Kubernetes yum repo gpg key.
 
-Defaults to `https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg`.
+Defaults to `<kubernetes_yum_baseurl>/repodata/repomd.xml.key`.
 
 #### `manage_docker`
 
