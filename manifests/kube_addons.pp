@@ -128,9 +128,14 @@ class kubernetes::kube_addons (
   }
 
   if $schedule_on_controller {
-    exec { 'schedule on controller':
-      command => "kubectl taint nodes ${node_name} node-role.kubernetes.io/master-",
-      onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'Taints: node-role.kubernetes.io/master:NoSchedule'",
+    # kubeadm taints control planes with "master" (<=1.23), both keys (1.24),
+    # or "control-plane" (>=1.25). Remove either; each is guarded independently
+    # because kubectl taint errors on a key that is not present.
+    ['control-plane', 'master'].each |String $role| {
+      exec { "schedule on controller ${role}":
+        command => "kubectl taint nodes ${node_name} node-role.kubernetes.io/${role}-",
+        onlyif  => "kubectl describe nodes ${node_name} | tr -s ' ' | grep 'node-role.kubernetes.io/${role}:NoSchedule'",
+      }
     }
   }
 
