@@ -51,6 +51,9 @@
 #   If set to true, the kubelet will use the http_proxy, https_proxy and
 #   no_proxy values.
 #   Defaults to false
+# @param manage_service_d_dir
+#   Manage service systemd service.d directory
+#   Defaults to true
 #
 class kubernetes::service (
   String $container_runtime                             = $kubernetes::container_runtime,
@@ -67,9 +70,12 @@ class kubernetes::service (
   Optional[String] $https_proxy                         = $kubernetes::https_proxy,
   Optional[String] $no_proxy                            = $kubernetes::no_proxy,
   Boolean $kubelet_use_proxy                            = $kubernetes::kubelet_use_proxy,
+  Boolean $manage_service_d_dir                         = $kubernetes::manage_service_d_dir,
 ) {
-  file { '/etc/systemd/system/kubelet.service.d':
-    ensure => directory,
+  if $manage_service_d_dir {
+    file { '/etc/systemd/system/kubelet.service.d':
+      ensure => directory,
+    }
   }
 
   exec { 'kubernetes-systemd-reload':
@@ -112,12 +118,14 @@ class kubernetes::service (
         }
       }
 
-      file { '/etc/systemd/system/containerd.service.d':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-        notify => Exec['kubernetes-systemd-reload'],
+      if $manage_service_d_dir {
+        file { '/etc/systemd/system/containerd.service.d':
+          ensure => directory,
+          owner  => 'root',
+          group  => 'root',
+          mode   => '0755',
+          notify => Exec['kubernetes-systemd-reload'],
+        }
       }
 
       if $container_runtime_use_proxy {
