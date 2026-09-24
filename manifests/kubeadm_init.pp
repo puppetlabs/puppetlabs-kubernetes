@@ -24,10 +24,10 @@ define kubernetes::kubeadm_init (
   Optional[String] $skip_phases                 = $kubernetes::skip_phases,
 ) {
   $kubeadm_init_flags = kubeadm_init_flags({
-      config                  => $config,
-      dry_run                 => $dry_run,
-      ignore_preflight_errors => $ignore_preflight_errors,
-      skip_phases             => $skip_phases,
+    config                  => $config,
+    dry_run                 => $dry_run,
+    ignore_preflight_errors => $ignore_preflight_errors,
+    skip_phases             => $skip_phases,
   })
 
   exec { 'kubeadm init':

@@ -399,7 +399,7 @@ RSpec.configure do |c|
         run_shell('mkdir -p /etc/apt/keyrings')
         run_shell('apt-get install -y curl gnupg2 software-properties-common')
 
-        if %r{debian-(10|11)}.match?(family)
+        if family.include?('debian')
           run_shell('curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -')
           run_shell('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"')
         else
@@ -414,7 +414,6 @@ RSpec.configure do |c|
         run_shell('apt install kubectl kubelet kubeadm -y')
         run_shell('apt-mark hold kubectl kubelet kubeadm')
         run_shell('apt install docker-ce docker-ce-cli -y')
-        run_shell('apt install docker.io -y')
         run_shell('systemctl start docker.service')
         run_shell('systemctl enable docker.service')
         run_shell('echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections')
