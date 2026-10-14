@@ -406,35 +406,35 @@
 #
 # [*kubernetes_apt_location*]
 #  The APT repo URL for the Kubernetes packages.
-#  Defaults to https://apt.kubernetes.io
+#  Defaults to https://pkgs.k8s.io/core:/stable:/v<major.minor>/deb
 #
 # [*kubernetes_apt_release*]
 #  The release name for the APT repo for the Kubernetes packages.
-#  Defaults to 'kubernetes-${facts.os.distro.codename}'
+#  Defaults to '/' (pkgs.k8s.io is a flat repository)
 #
 # [*kubernetes_apt_repos*]
-#  The repos to install from the Kubernetes APT url
+#  The repos to install from the Kubernetes APT url. Ignored when the release ends with '/'
 #  Defaults to main
 #
 # [*kubernetes_key_id*]
-#  The gpg key for the Kubernetes APT repo
-#  Defaults to '54A647F9048D5688D7DA2ABE6A030B21BA07F4FB'
+#  The gpg key id for the Kubernetes APT repo. When set, the key is installed with the legacy apt-key mechanism.
+#  Defaults to undef, the repository signing key is then installed with apt::keyring and referenced via signed-by
 #
 # [*kubernetes_key_source*]
 #  The URL for the APT repo gpg key
-#  Defaults to https://packages.cloud.google.com/apt/doc/apt-key.gpg
+#  Defaults to <kubernetes_apt_location>/Release.key
 #
 # [*kubernetes_yum_baseurl*]
 #  The YUM repo URL for the Kubernetes packages.
-#  Defaults to https://download.docker.com/linux/centos/
+#  Defaults to https://pkgs.k8s.io/core:/stable:/v<major.minor>/rpm/
 #
 # [*kubernetes_yum_gpgkey*]
 #  The URL for the Kubernetes yum repo gpg key
-#  Defaults to https://download.docker.com/linux/centos/gpg
+#  Defaults to <kubernetes_yum_baseurl>/repodata/repomd.xml.key
 #
 # [*docker_apt_location*]
 #  The APT repo URL for the Docker packages
-#  Defaults to https://apt.dockerproject.org/repo
+#  Defaults to https://download.docker.com/linux/<os name>
 #
 # [*docker_apt_release*]
 #  The release name for the APT repo for the Docker packages.
@@ -442,15 +442,15 @@
 #
 # [*docker_apt_repos*]
 #  The repos to install from the Docker APT url
-#  Defaults to main
+#  Defaults to stable
 #
 # [*docker_key_id*]
 #  The gpg key for the Docker APT repo
-#  Defaults to '58118E89F3A912897C070ADBF76221572C52609D'
+#  Defaults to '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
 #
 # [*docker_key_source*]
 #  The URL for the Docker APT repo gpg key
-#  Defaults to https://apt.dockerproject.org/gpg
+#  Defaults to <docker_apt_location>/gpg
 #
 # [*docker_yum_baseurl*]
 #  The YUM repo URL for the Docker packages.
