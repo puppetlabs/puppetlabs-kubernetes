@@ -230,6 +230,10 @@
 #     This will tell etcd how many WAL files to be kept
 #   Defaults to 5
 #
+# [*etcd_quota_backend_bytes*]
+#    Raise alarms when backend size exceeds the given quota (0 defaults to low space quota).
+#   Default to undef
+#
 # [*etcd_max_request_bytes*]
 #     This will tell etcd the maximum size of a request in bytes
 #   Defaults to 1572864
@@ -637,6 +641,7 @@ class kubernetes (
   Variant[String, Integer] $etcd_compaction_retention     = 0,
   Integer $etcd_max_wals                                  = 5,
   Integer $etcd_max_request_bytes                         = 1572864,
+  Optional[String] $etcd_quota_backend_bytes              = undef,
   Optional[String] $etcd_listen_metric_urls               = undef,
   Optional[String] $etcd_ca_key                           = undef,
   Optional[String] $etcd_ca_crt                           = undef,
