@@ -598,6 +598,21 @@ describe 'kubernetes::config::kubeadm', type: :class do
     }
   end
 
+  context 'does not override kubeadm default control-plane taints (v1beta3)' do
+    let(:params) do
+      {
+        'kubernetes_version' => '1.28.0'
+      }
+    end
+
+    let(:config_yaml) { YAML.load_stream(catalogue.resource('file', '/etc/kubernetes/config.yaml').send(:parameters)[:content]) }
+
+    it 'omits nodeRegistration.taints so kubeadm applies its version-correct default' do
+      init = config_yaml.find { |doc| doc['kind'] == 'InitConfiguration' }
+      expect(init['nodeRegistration']).not_to have_key('taints')
+    end
+  end
+
   context 'when scheduler_extra_arguments is defined' do
     let(:params) do
       {
