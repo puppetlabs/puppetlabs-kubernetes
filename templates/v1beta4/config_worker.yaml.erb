@@ -1,0 +1,53 @@
+apiVersion: kubeadm.k8s.io/v1beta4
+caCertPath: /etc/kubernetes/pki/ca.crt
+kind: JoinConfiguration
+<%- if @kubernetes_cluster_name != "kubernetes"  -%>
+clusterName: <%= @kubernetes_cluster_name %>
+<%- end -%>
+discovery:
+  bootstrapToken:
+    token: <%= @discovery_token %>
+    apiServerEndpoint: '<%= @controller_address %>'
+    unsafeSkipCAVerification: false
+    caCertHashes:
+    - 'sha256:<%= @discovery_token_hash %>'
+nodeRegistration:
+  name: <%= @node_name %>
+<%- if @node_extra_taints -%>
+  taints:
+  <%- @node_extra_taints.each do |item| -%>
+  - key: <%= item['key'] %>
+    <%- if item['value'] -%>
+    value: <%= item['value'] %>
+    <%- end -%>
+    <%- if item['operator'] -%>
+    operator: <%= item['operator'] %>
+    <%- end -%>
+    effect: <%= item['effect'] %>
+  <%- end -%>
+<%- end -%>
+  <%- if @container_runtime == "cri_containerd" -%>
+  criSocket: unix:///run/containerd/containerd.sock
+  <%- end -%>
+  kubeletExtraArgs:
+    <%- if @cloud_provider -%>
+    - name: cloud-provider
+      value: <%= @cloud_provider %>
+    <%- end -%>
+    <%- if @cloud_config -%>
+    - name: cloud-config
+      value: <%= @cloud_config %>
+    <%- end -%>
+    <%- @kubelet_extra_arguments.each do |arg| -%>
+    - name: <%= arg['name'] %>
+      value: <%= arg['value'] %>
+    <%- end %>
+<% if @feature_gates -%>
+featureGates: <%= @feature_gates %>
+<% end -%>
+<% if @skip_phases_join -%>
+skipPhases:
+<% @skip_phases_join.each do |skip_phase| -%>
+- <%= skip_phase %>
+<% end -%>
+<% end -%>
