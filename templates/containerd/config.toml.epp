@@ -114,49 +114,49 @@ oom_score = 0
       conf_template = ""
     [plugins."io.containerd.grpc.v1.cri".registry]
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-      <% $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
-      <% if $sections['mirrors'] and !$sections['mirrors'].empty { -%>
+      <%- $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
+      <%- if $sections['mirrors'] and !$sections['mirrors'].empty { -%>
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."<%= $registry %>"]
-        <% if $sections['mirrors']['endpoint'] { -%>
+        <%- if $sections['mirrors']['endpoint'] { -%>
           endpoint = ["<%= $sections['mirrors']['endpoint'] %>"]
-        <% } -%>
-      <% } -%>
-      <% } -%>
+        <%- } -%>
+      <%- } -%>
+      <%- } -%>
       [plugins."io.containerd.grpc.v1.cri".registry.configs]
-      <% $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
-      <% if $sections['auth'] and !$sections['auth'].empty { -%>
+      <%- $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
+      <%- if $sections['auth'] and !$sections['auth'].empty { -%>
         [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= $registry %>".auth]
-        <% if $sections['auth']['username'] { -%>
+        <%- if $sections['auth']['username'] { -%>
           username = "<%= $sections['auth']['username'] %>"
-        <% } -%>
-        <% if $sections['auth']['password'] { -%>
+        <%- } -%>
+        <%- if $sections['auth']['password'] { -%>
           password = "<%= $sections['auth']['password'] %>"
-        <% } -%>
-        <% if $sections['auth']['auth'] { -%>
+        <%- } -%>
+        <%- if $sections['auth']['auth'] { -%>
           auth = "<%= $sections['auth']['auth'] %>"
-        <% } -%>
-        <% if $sections['auth']['identitytoken'] { -%>
+        <%- } -%>
+        <%- if $sections['auth']['identitytoken'] { -%>
           identitytoken = "<%= $sections['auth']['identitytoken'] %>"
-        <% } -%>
-      <% } -%>
-      <% } -%>
-      <% $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
-      <% if $sections['tls'] and !$sections['tls'].empty { -%>
+        <%- } -%>
+      <%- } -%>
+      <%- } -%>
+      <%- $containerd_plugins_registry.map |Any $registry, Any $sections| { -%>
+      <%- if $sections['tls'] and !$sections['tls'].empty { -%>
         [plugins."io.containerd.grpc.v1.cri".registry.configs."<%= $registry %>".tls]
-        <% if $sections['tls']['ca_file'] { -%>
+        <%- if $sections['tls']['ca_file'] { -%>
           ca_file = "<%= $sections['tls']['ca_file'] %>"
-        <% } -%>
-        <% if $sections['tls']['cert_file'] { -%>
+        <%- } -%>
+        <%- if $sections['tls']['cert_file'] { -%>
           cert_file = "<%= $sections['tls']['cert_file'] %>"
-        <% } -%>
-        <% if $sections['tls']['key_file'] { -%>
+        <%- } -%>
+        <%- if $sections['tls']['key_file'] { -%>
           key_file = "<%= $sections['tls']['key_file'] %>"
-        <% } -%>
-        <% if $sections['tls']['insecure_skip_verify'] { -%>
+        <%- } -%>
+        <%- if $sections['tls']['insecure_skip_verify'] { -%>
           insecure_skip_verify = <%= $sections['tls']['insecure_skip_verify'] %>
-        <% } -%>
-      <% } -%>
-      <% } -%>
+        <%- } -%>
+      <%- } -%>
+      <%- } -%>
     [plugins."io.containerd.grpc.v1.cri".image_decryption]
       key_model = ""
     [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
