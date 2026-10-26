@@ -189,8 +189,11 @@ def configure_puppet_agent(role)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
   # Ensure agent knows server hostname
   run_shell('puppet config set server puppet --section main')
-  run_shell('systemctl start puppet')
-  run_shell('systemctl enable puppet')
+  # The tests drive every agent run themselves. A running puppet service would
+  # hold the agent lock on its own schedule, and a concurrent `puppet agent -t`
+  # then skips its run and exits 1.
+  run_shell('systemctl stop puppet', expect_failures: true)
+  run_shell('systemctl disable puppet', expect_failures: true)
   execute_agent(role)
 end
 
@@ -205,9 +208,16 @@ def clear_certs(role)
   run_shell('rm -rf /etc/kubernetes/kubelet.conf /etc/kubernetes/pki/ca.crt /etc/kubernetes/bootstrap-kubelet.conf')
 end
 
+def agent_output(result)
+  "puppet agent exited #{result.exit_code}\nSTDOUT:\n#{result.stdout}\nSTDERR:\n#{result.stderr}"
+end
+
 def execute_agent(role)
   ENV['TARGET_HOST'] = target_roles(role)[0][:name]
-  run_shell('puppet agent --test', expect_failures: true)
+  run_shell('puppet agent --test', expect_failures: true) do |r|
+    # Setup runs may fail by design (e.g. before the agent's cert is signed); log them for diagnosis only.
+    puts "#{role} setup run (not a test failure): #{agent_output(r)}" unless [0, 2].include?(r.exit_code)
+  end
 end
 
 def reset_and_restart_containerd
