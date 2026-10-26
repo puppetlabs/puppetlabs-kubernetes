@@ -11,7 +11,7 @@ describe 'we are able to setup a controller and workers', :integration do
     describe 'set up controller' do
       it 'sets up the controller' do
         run_shell('puppet agent -t', expect_failures: true) do |r|
-          expect(r.exit_code.to_s).to match(%r{0|2})
+          expect(r.exit_code.to_s).to match(%r{0|2}), agent_output(r)
         end
       end
     end
@@ -24,7 +24,7 @@ describe 'we are able to setup a controller and workers', :integration do
     describe 'set up worker' do
       it 'sets up the worker' do
         run_shell('puppet agent -t', expect_failures: true) do |r|
-          expect(r.exit_code.to_s).to match(%r{0|2})
+          expect(r.exit_code.to_s).to match(%r{0|2}), agent_output(r)
         end
       end
     end
@@ -37,7 +37,7 @@ describe 'we are able to setup a controller and workers', :integration do
     describe 'set up worker' do
       it 'sets up the worker' do
         run_shell('puppet agent -t', expect_failures: true) do |r|
-          expect(r.exit_code.to_s).to match(%r{0|2})
+          expect(r.exit_code.to_s).to match(%r{0|2}), agent_output(r)
         end
       end
     end
