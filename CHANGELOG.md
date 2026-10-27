@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.3.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v8.3.0) - 2026-10-27
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v8.2.0...v8.3.0)
+
+### Added
+
+- (MODULES-12064) Allow puppet/kmod 5.1.x [#731](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/731) ([imaqsood](https://github.com/imaqsood))
+- (MODULES-11996) Allow puppet/archive 9.x [#730](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/730) ([imaqsood](https://github.com/imaqsood))
+
+### Fixed
+
+- (MODULES-12072) Stop the puppet service on integration test workers [#732](https://github.com/puppetlabs/puppetlabs-kubernetes/pull/732) ([imaqsood](https://github.com/imaqsood))
+
 ## [v8.2.0](https://github.com/puppetlabs/puppetlabs-kubernetes/tree/v8.2.0) - 2026-09-24
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-kubernetes/compare/v8.1.1...v8.2.0)
