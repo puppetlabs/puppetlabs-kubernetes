@@ -22,6 +22,7 @@ Rakefile:
     # MODULES-11735: new in voxpupuli-puppet-lint-plugins 7.0 (needed for Puppet 9 support);
     # see the matching comment in Rakefile.
     - params_not_optional_with_undef
+    - anchor_resource
   profiles:
     strict:
       configs:
@@ -65,15 +66,21 @@ spec/spec_helper.rb:
   delete: true
 .rubocop.yml:
   include_todos: true
-# MODULES-11735: pin puppetlabs_spec_helper and puppet_litmus above pdk-templates'
-# own defaults (>= 8.0 and ~> 2.5 respectively), which are loose enough for a
-# scheduled `pdk update` to silently revert this PR: puppetlabs_spec_helper 8.0.0
-# still pins puppet-lint ~> 4.0 (conflicts with voxpupuli-puppet-lint-plugins ~> 7.0,
-# needed for Puppet 9), and puppet_litmus below 2.8.0 lacks the Puppet 9 collection
-# support matrix_from_metadata_v3 needs to generate this module's Puppet 9 Spec lane.
+# MODULES-11735: pin puppet_litmus above pdk-templates' own default (~> 2.5):
+# puppet_litmus below 2.8.0 lacks the Puppet 9 collection support
+# matrix_from_metadata_v3 needs to generate this module's Puppet 9 Spec lane.
+# (puppetlabs_spec_helper is no longer overridden: pdk-templates main pins it per
+# gem source, ~> 9.0 on puppetcore and ~> 8.0 on public gems. MODULES-12013)
 Gemfile:
   overrides:
-    - gem: 'puppetlabs_spec_helper'
-      version: '~> 9.0'
     - gem: 'puppet_litmus'
       version: '~> 2.8'
+  # gems the module added by hand (MODULES-11997 pdk update)
+  optional:
+    ":development":
+    # 1.1.0 keeps tooling/ in the built module for acceptance (CAT-2095); it needs
+    # minitar ~> 0.9, which can't resolve with Puppet 9 on Ruby 4, so Ruby 4 takes
+    # the version puppet_litmus pulls in (specs don't build the module)
+    - gem: puppet-modulebuilder
+      version: 1.1.0
+      condition: "Gem.ruby_version < Gem::Version.new('4.0')"
