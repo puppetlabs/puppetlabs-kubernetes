@@ -244,14 +244,14 @@ describe 'kubernetes::config::kubeadm', type: :class do
     it { is_expected.to contain_file('/etc/default/etcd').with_content(%r{ETCD_DATA_DIR="/var/lib/bar"}) }
   end
 
-  context 'with version = 1.12 and node_name => foo and cloud_provider => aws' do
+  context 'with version = 1.32.0 and node_name => foo and cloud_provider => aws' do
     let(:params) do
       {
-        'kubernetes_version' => '1.12.3',
+        'kubernetes_version' => '1.32.0',
         'node_name' => 'foo',
         'cloud_provider' => 'aws',
         'cloud_config' => :undef,
-        'kubelet_extra_arguments' => ['foo: bar']
+        'kubelet_extra_arguments' => [{ 'name' => 'foo', 'value' => 'bar' }]
       }
     end
 
@@ -264,11 +264,15 @@ describe 'kubernetes::config::kubeadm', type: :class do
     end
 
     it 'has cloud-provider==aws in first YAML document (InitConfig) NodeRegistration' do
-      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include('cloud-provider' => params['cloud_provider'])
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include({ 'name' => 'cloud-provider', 'value' => params['cloud_provider'] })
     end
 
     it 'does not have cloud-config in second YAML document (InitConfig) NodeRegistration' do
-      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include('cloud-config')
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).not_to include({ 'name' => 'cloud-provider' })
+    end
+
+    it 'has foo extra arg in first YAML document (InitConfig) NodeRegistration' do
+      expect(config_yaml[0]['nodeRegistration']['kubeletExtraArgs']).to include({ 'name' => 'foo', 'value' => 'bar' })
     end
   end
 
