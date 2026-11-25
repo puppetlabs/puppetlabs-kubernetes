@@ -596,6 +596,10 @@
 # [*wait_for_default_sa_try_sleep*]
 #   Defaults to 6
 #
+# [*manage_service_d_dir*]
+#   Determine whether to manage service.d directory for systemd services
+#   Defaults to true
+#
 # Authors
 # -------
 #
@@ -757,6 +761,7 @@ class kubernetes (
   Integer $wait_for_default_sa_tries                      = 5,
   Integer $wait_for_default_sa_try_sleep                  = 6,
   Hash[String[1], Boolean] $feature_gates                 = {},
+  Boolean $manage_service_d_dir                           = true,
 ) {
   if !$facts['os']['family'] in ['Debian', 'RedHat'] {
     notify { "The OS family ${facts['os']['family']} is not supported by this module": }
