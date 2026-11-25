@@ -49,7 +49,13 @@ describe 'kubernetes::kube_addons', type: :class do
       )
     }
 
-    it { is_expected.to contain_exec('schedule on controller') }
+    ['control-plane', 'master'].each do |role|
+      it {
+        is_expected.to contain_exec("schedule on controller #{role}").with_command(
+          "kubectl taint nodes foo node-role.kubernetes.io/#{role}-",
+        )
+      }
+    end
 
     it { is_expected.not_to contain_exec('Install cni network (preinstall)') }
     it { is_expected.not_to contain_file('/etc/kubernetes/calico-installation.yaml') }
